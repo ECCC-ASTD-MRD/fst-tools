@@ -4,6 +4,7 @@
 #include "qqqfilt.cdk"
 
       integer i,j,l,sum
+      integer nb_elem,lng_liste,istart, iend
 
       external argdims
       integer argdims
@@ -39,24 +40,8 @@
         return
       endif
 
-      do j=1, (fltwgtlng(inout)+1)/2
-         do I=1, fltwgtlng(inout)
-           fltweight(i,j,inout) = 0
-         enddo
-      enddo
-
       do i=1, fltwgtlng(inout)
         fltlist(i,inout)=weightlst(i)
-      enddo
-
-      do j=1,(fltwgtlng(inout) + 1)/2
-         sum = 0
-         do i=j, fltwgtlng(inout) - j + 1
-            sum = sum + fltlist(I,inout)
-         enddo
-         do i=j,fltwgtlng(inout) - j + 1
-            fltweight(i,j,inout) = float(fltlist(i,inout)) / float(sum)
-         enddo
       enddo
 
 

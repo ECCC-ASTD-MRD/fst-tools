@@ -760,81 +760,6 @@ c     ***************************************************************
       return
       end
 c     ***************************************************************
-c     *                        F I L T R E                          *
-c     * Object :                                                    *
-c     *         To filter data.                                     *
-c     *                                                             *
-c     * Arguments :                                                 *
-c     *            IN /  ni    : x dimension of data                *
-c     *            IN /  nj    : y dimension of data                *
-c     *            IN /  Npass : nombre de passes pour le filtrage  * 
-c     *            IN /  list  : liste des nombres de filtre        *
-c     *            IN /  L     : dimension de la liste              *
-c     *         IN/OUT/  slab  : les donnees a filtrer              *
-c     *                                                             *
-c     ***************************************************************
-      subroutine filtre (slab, NI, NJ, nrows, Npass, facteur, list, L)
-      implicit none
-      
-      integer NI, NJ, nrows
-      integer l,list(L)
-      real slab(NI ,NJ)
-      real facteur(-L/2:L/2,(L+1)/2)
-      real temp, result1, result2
-      integer k,I,J, ier
-      integer nb_elm
-      integer Npass, pass
-    
-      pointer(presult1,result1(NI-2))
-      pointer(presult2,result2(NJ-2))
-      
-      
-*     call stkmemw(ni,presult1)
-*     call stkmemw(nj,presult2)
-      call hpalloc(presult1,ni,ier,0)
-      call hpalloc(presult2,nj,ier,0)
- 
-      do pass=1, Npass
-         do J=1, NJ
-            do I=2, NI-1
-               temp = 0
-               nb_elm = min(I-1,NI-I,L/2)
-               do k = -nb_elm, nb_elm
-                  temp = temp + slab(I+k,J) *
-     %                 facteur(k,(L/2+1)-nb_elm)
-               enddo
-               result1(I) = temp
-            enddo
-            do I=2, NI-1
-               slab(I,J) = result1(I)
-            enddo
-         enddo
-         
-         do I=1, NI
-            do J=2, NJ-1
-               temp=0
-               nb_elm = min(J-1,NJ-J,L/2)
-               do k = -nb_elm, nb_elm
-                  temp = temp + slab(I,J+k) * 
-     %                 facteur(k,(L/2+1)-nb_elm)
-               enddo
-               result2(J) = temp
-            enddo
-            do J=2, NJ-1
-               slab(I,J) = result2(J)
-            enddo
-         enddo
-      enddo
-      
-*     call unstakw(presult2)
-*      call unstakw(presult1)
-      call hpdeallc(presult1,ier,0)
-      call hpdeallc(presult2,ier,0)
-      
-      return
-      end
-      
-c     ***************************************************************
 c     *                       W S T D F X Y                         *
 c     * Object :                                                    *
 c     *         To write record ('>>' and '^^') in standard file    *
@@ -1307,8 +1232,7 @@ c     ***************************************************************
           write (6, *) ' CHAMP FILTRE A L''ECRITURE'
 *          call statfld4 (champ,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
-          call filtre (champ, NI, NJ, 0, fltntimes(2), fltweight(1,1,2),
-     &         fltlist(1,2), fltwgtlng(2))
+          call filtre (champ, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
 *          call statfld4 (champ,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
         endif
@@ -4761,8 +4685,7 @@ C faite
           write (6, *) ' CHAMP FILTRE A LA LECTURE'
 *          call statfld4 (fld,nomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
-          call filtre (fld, NI, NJ, 0, fltntimes(1), fltweight(1,1,1),
-     &         fltlist(1,1), fltwgtlng(1))
+          call filtre (fld, NI, NJ, 0, fltntimes(1), fltlist(1,1), fltwgtlng(1))
 *          call statfld4 (fld,nomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
         endif
@@ -5172,6 +5095,92 @@ C faite
       return 
       end
       
+c     ***************************************************************
+c     *                        F I L T R E                          *
+c     * Object :                                                    *
+c     *         To filter data.                                     *
+c     *                                                             *
+c     * Arguments :                                                 *
+c     *            IN /  ni    : x dimension of data                *
+c     *            IN /  nj    : y dimension of data                *
+c     *            IN /  Npass : nombre de passes pour le filtrage  * 
+c     *            IN /  list  : list des nombres de filtre        *
+c     *            IN /  L     : dimension de la list              *
+c     *         IN/OUT/  slab  : les donnees a filtrer              *
+c     *                                                             *
+c     ***************************************************************
+      subroutine filtre (slab, NI, NJ, nrows, Npass, list, L)
+      implicit none
+      
+      integer NI, NJ, nrows
+      integer l,list(L)
+      real slab(NI ,NJ)
+      real facteur(-4:4,5)
+      real temp
+      integer k,I,J, ier
+      integer nb_elm
+      integer Npass, pass
+      integer nb_elem, lng_list, istart, iend
+      real sum
+    
+      real result1(ni), result2(nj)
+ 
+      nb_elem = (l+1)/2
+      istart = -nb_elem + 1
+      iend = nb_elem -1
+
+      do j=1, nb_elem
+         do I=istart,iend
+           facteur(i,j) = 0.0
+         enddo
+      enddo
+
+      do j=1, nb_elem-1
+         sum = 0.0
+         do i=-j,j
+            sum = sum + list(I+nb_elem)
+         enddo
+
+         do i=-j,j
+            facteur(i,nb_elem-j) = 1.0*(list(i+nb_elem)) / sum
+         enddo
+      enddo
+      do pass=1, Npass
+         do J=1, NJ
+            do I=2, NI-1
+               temp = 0
+               nb_elm = min(I-1,NI-I,L/2)
+               do k = -nb_elm, nb_elm
+                  temp = temp + slab(I+k,J) *
+     %                 facteur(k,(L/2+1)-nb_elm)
+               enddo
+               result1(I) = temp
+            enddo
+            do I=2, NI-1
+               slab(I,J) = result1(I)
+            enddo
+         enddo
+         
+         do I=1, NI
+            do J=2, NJ-1
+               temp=0
+               nb_elm = min(J-1,NJ-J,L/2)
+               do k = -nb_elm, nb_elm
+                  temp = temp + slab(I,J+k) * 
+     %                 facteur(k,(L/2+1)-nb_elm)
+               enddo
+               result2(J) = temp
+            enddo
+            do J=2, NJ-1
+               slab(I,J) = result2(J)
+            enddo
+         enddo
+      enddo
+      
+      return
+      end
+      
+
       subroutine testseq
 
       integer nigem, njgem, nigauss, njgauss
@@ -6919,6 +6928,7 @@ C faite
 #include "qqqfilt.cdk"
 
       integer i,j,l,sum
+      integer nb_elem,lng_liste,istart, iend
 
       external argdims
       integer argdims
@@ -6954,24 +6964,8 @@ C faite
         return
       endif
 
-      do j=1, (fltwgtlng(inout)+1)/2
-         do I=1, fltwgtlng(inout)
-           fltweight(i,j,inout) = 0
-         enddo
-      enddo
-
       do i=1, fltwgtlng(inout)
         fltlist(i,inout)=weightlst(i)
-      enddo
-
-      do j=1,(fltwgtlng(inout) + 1)/2
-         sum = 0
-         do i=j, fltwgtlng(inout) - j + 1
-            sum = sum + fltlist(I,inout)
-         enddo
-         do i=j,fltwgtlng(inout) - j + 1
-            fltweight(i,j,inout) = float(fltlist(i,inout)) / float(sum)
-         enddo
       enddo
 
 
@@ -7560,7 +7554,7 @@ C faite
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.12',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.13',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

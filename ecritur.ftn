@@ -160,8 +160,7 @@
           write (6, *) ' CHAMP FILTRE A L''ECRITURE'
 *          call statfld4 (champ,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
-          call filtre (champ, NI, NJ, 0, fltntimes(2), fltweight(1,1,2),
-     &         fltlist(1,2), fltwgtlng(2))
+          call filtre (champ, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
 *          call statfld4 (champ,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
         endif

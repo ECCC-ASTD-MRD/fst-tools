@@ -15,8 +15,7 @@
           write (6, *) ' CHAMP FILTRE A LA LECTURE'
 *          call statfld4 (fld,nomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
-          call filtre (fld, NI, NJ, 0, fltntimes(1), fltweight(1,1,1),
-     &         fltlist(1,1), fltwgtlng(1))
+          call filtre (fld, NI, NJ, 0, fltntimes(1), fltlist(1,1), fltwgtlng(1))
 *          call statfld4 (fld,nomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 *     &         ,0)
         endif
