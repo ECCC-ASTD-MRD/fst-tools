@@ -193,7 +193,7 @@
           if (ier .lt. 0) write(6,*)
      $         ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
-          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^') then
+          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then
              goto 99999
           endif
 

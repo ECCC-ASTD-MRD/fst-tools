@@ -67,7 +67,7 @@
 
 *     
 *     
-      if (it.eq.8) then
+      if (it.eq.gr_tape2) then
          iunit=2
       else
          iunit=1
@@ -77,8 +77,8 @@
 *  SI LU SUR UNIT 1 ON ECRIT LES 2 RECORDS SUR UNIT 2
 *     
       
-      if (it.ne.11) then
-         if (it.ne.8) then
+      if (it.ne.gr_stations) then
+         if (it.ne.gr_tape2) then
             ier = chkenrpos(1,2,ip1,ip2,ip3)
             if (ier.lt.0) then
                print *, '<gritp12> enregistrements positionnels absents!'
@@ -88,8 +88,8 @@
          endif
          
          if (mode.eq.1) then
-            ireclo = fstinf(1, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(1, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
             
             ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,
      $           datypx, lip1, lip2, lip3, typvarx, nomx, etikx,
@@ -99,8 +99,8 @@
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
          else
-            ireclo = fstinf(1, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(1, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
             ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,
      $           datypx, lip1, lip2, lip3, typvarx, nomx, etikx,
      $           grref, ig1ref, ig2ref, ig3ref, ig4ref, 
@@ -153,7 +153,7 @@
 *     
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
 *     
-      if (it.eq.11) then
+      if (it.eq.gr_stations) then
          call fillcoord(tmplat,tmplon,coordll,ncoords)
          gdout = ezgdef(nix,njx,cgrtyp,cgtypxy,ig1la,ig2la,
      $        ig3la,ig4la,tmplon,tmplat)

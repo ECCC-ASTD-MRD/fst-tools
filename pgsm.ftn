@@ -1,6 +1,7 @@
-	program pgsm
+        program pgsm
 
-	call pgsm2
+        call pgsm2
 
-	stop
-	end
+        stop
+        end
+

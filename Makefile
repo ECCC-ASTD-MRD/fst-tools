@@ -1,4 +1,4 @@
-include Makefile_$(ARCH)$(ABI)
+include /usr/local/env/armnlib/include/$(ARCH)$(ABI)/Makefile_addons
 
 .SUFFIXES : .ftn .f .c .o
 
@@ -13,6 +13,7 @@ FFLAGS =
 CFLAGS = 
 
 OPTIMIZ = -O 2
+OPTIMIZ =  -debug -O 0
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
@@ -25,19 +26,10 @@ default: obj
 .ftn.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
 
-.ftn.f:
-	rm -f $*.f
-
-	r.ftntof -P $(DEFINE) $< > $*.f
-	chmod 444 $*.f
-
 .c.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
-.f.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
-OBJET = pgsm.o c_pgsm.o
+OBJET = f_pgsm.o c_pgsm.o
 
 FICHIERS_CDK = \
 accum.cdk     chck.cdk     ecrires.cdk  idents.cdk   lnkflds.cdk  qqqfilt.cdk\
@@ -50,8 +42,8 @@ FICHIERS_FTN = \
 calcul.ftn     ecrits.ftn     gristdb.ftn      liren.ftn    pgsmglue.ftn   routines.ftn\
 champ.ftn      ecritur.ftn    gritp12.ftn      lopascm.ftn  pgsmlic.ftn    scalair.ftn\
 champ_seq.ftn  epais.ftn      loupmir.ftn  pgsmlir.ftn    setintx.ftn\
-chkenrpos.ftn  fillcoord.ftn  grlalon.ftn      lrsmdes.ftn  pgsmluk.ftn    setxtrap.ftn\
-chmpdif.ftn    heure.ftn        macpcp.ftn   plmnmod.ftn    sorti.ftn\
+chkenrpos.ftn  chk_hy.ftn     fillcoord.ftn  grlalon.ftn      lrsmdes.ftn  pgsmluk.ftn    setxtrap.ftn\
+chmpdif.ftn    heure.ftn      macpcp.ftn   plmnmod.ftn    sorti.ftn\
 comme.ftn      grigaus.ftn    imprime.ftn      messags.ftn  prefiltre.ftn  symetri.ftn\
 conlalo.ftn    grigef.ftn     initid.ftn       metsym.ftn   putfld.ftn     testseq.ftn\
 conver.ftn     grigrib.ftn    initseq.ftn      operat.ftn   qaaqr.ftn      uvect.ftn\
@@ -65,8 +57,6 @@ c_pgsm.c
 
 FICHIERS = $(FICHIERS_FTN) $(FICHIERS_C) 
 
-pgsm.o : pgsm.f
-
 f_pgsm.ftn: $(FICHIERS_FTN) $(FICHIERS_CDK)
 	cat $(FICHIERS_FTN) > f_pgsm.ftn
 
@@ -77,11 +67,11 @@ genlib: $(OBJET)
 #Creer ou mettre a jour la programmatheque 
 	$(AR) rcv $(MYLIB) $(OBJET)
 
-pgsm: pgsm.o
-	r.build -o $@ -obj *.o -librmn
+pgsm2000: 
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_005
 
-pgsm89: pgsm.o
-	r.build -o $@ -obj *.o -librmn rmnbeta -fstd89
+pgsm89: 
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_005 -fstd89
 
 pgsmnew: c_pgsm.o
 	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
@@ -95,20 +85,15 @@ pgsm-stereo:
 pgsm-exp:
 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
+pgsm-debug:
+	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta 
+
 pgsm-exp89:
 	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta -fstd89
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
-	-if [ "*.ftn" != "`echo *.ftn`" ] ; \
-	then \
-	for i in *.ftn ; \
-	do \
-	fn=`r.basename $$i '.ftn'`; \
-	rm -f $$fn.f; \
-	done \
-	fi
-	rm *.o pgsm.f
+	rm -f *.o f_pgsm.f pgsm2000 pgsm89
 
 fastclean:
 	rm *.o pgsm.f	

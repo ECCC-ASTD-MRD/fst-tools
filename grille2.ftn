@@ -203,7 +203,7 @@
             write(6,*)' MAUVAIS APPEL GRILLE(STDB,NI,NJ,NORD/SUD/GLOBAL) '
             call pgsmabt
          endif
-      elseif (it.eq.gr_tape1.or.it.eq.gr_tape2) then
+      elseif (it.eq.gr_tape1.or.it.eq.gr_tape2.or.it.eq.gr_stations) then
 *...................................................................
 *     
 *     CALCUL GRILLE TAPE1/TAPE2 LAT-LON OU X-Y

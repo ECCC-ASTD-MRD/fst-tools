@@ -1471,7 +1471,7 @@ c     ***************************************************************
 
 *     
 *     
-      if (it.eq.8) then
+      if (it.eq.gr_tape2) then
          iunit=2
       else
          iunit=1
@@ -1481,8 +1481,8 @@ c     ***************************************************************
 *  SI LU SUR UNIT 1 ON ECRIT LES 2 RECORDS SUR UNIT 2
 *     
       
-      if (it.ne.11) then
-         if (it.ne.8) then
+      if (it.ne.gr_stations) then
+         if (it.ne.gr_tape2) then
             ier = chkenrpos(1,2,ip1,ip2,ip3)
             if (ier.lt.0) then
                print *, '<gritp12> enregistrements positionnels absents!'
@@ -1492,8 +1492,8 @@ c     ***************************************************************
          endif
          
          if (mode.eq.1) then
-            ireclo = fstinf(1, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(1, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
             
             ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,
      $           datypx, lip1, lip2, lip3, typvarx, nomx, etikx,
@@ -1503,8 +1503,8 @@ c     ***************************************************************
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
          else
-            ireclo = fstinf(1, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(1, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
             ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,
      $           datypx, lip1, lip2, lip3, typvarx, nomx, etikx,
      $           grref, ig1ref, ig2ref, ig3ref, ig4ref, 
@@ -1557,7 +1557,7 @@ c     ***************************************************************
 *     
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
 *     
-      if (it.eq.11) then
+      if (it.eq.gr_stations) then
          call fillcoord(tmplat,tmplon,coordll,ncoords)
          gdout = ezgdef(nix,njx,cgrtyp,cgtypxy,ig1la,ig2la,
      $        ig3la,ig4la,tmplon,tmplat)
@@ -1898,7 +1898,7 @@ c     ***************************************************************
           if (ier .lt. 0) write(6,*)
      $         ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
-          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^') then
+          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then
              goto 99999
           endif
 
@@ -2720,6 +2720,45 @@ C faite
       call hpdeallc(ayp, ier, 1)
       
       chkenrpos = 0
+
+      return
+      end
+      subroutine chk_hy(lu_in, lu_out)
+      implicit none
+      
+      integer lu_in, lu_out
+      external fstinl,fstprm, fstecr, fstluk
+      integer fstinl, fstprm, fstecr, fstluk
+      integer liste(256)
+      logical rewrit
+      
+      character *12 cetiket
+      character *4 cnomvar,cnomx
+      character *2 ctypvar
+      character *1 cigtyp
+      
+      integer dateo,i
+      integer deet,ig1,ig2,ig3,ig4
+      integer irec,ip1,ip2,ip3,ni,nj,nk,nrecs,ier,npas
+      integer nbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
+      real hydata(4096)
+
+      irec=fstinl(lu_in,ni,nj,nk,-1,'            ',-1,-1,-1,'  ','HY  ', liste, nrecs, 256)
+
+      rewrit = .true.
+      do i=1,nrecs
+         irec = liste(i)
+         ier=fstprm(irec, dateo,deet,npas,ni, nj, nk, nbits,cdatyp,
+     $        ip1,ip2,ip3,ctypvar,cnomvar,cetiket,
+     $        cigtyp,ig1,ig2, ig3, ig4, cswa, clng, cdltf, cubc, 
+     $        extra1, extra2, extra3)
+         ier=fstluk(hydata, irec, ni, nj, nk)
+         ier = fstecr(hydata,hydata,-nbits,lu_out,dateo,deet,npas,
+     $           ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,
+     $           cigtyp,ig1,ig2,ig3,ig4,cdatyp,rewrit )
+
+      enddo
+         
 
       return
       end
@@ -6148,7 +6187,7 @@ C faite
             write(6,*)' MAUVAIS APPEL GRILLE(STDB,NI,NJ,NORD/SUD/GLOBAL) '
             call pgsmabt
          endif
-      elseif (it.eq.gr_tape1.or.it.eq.gr_tape2) then
+      elseif (it.eq.gr_tape1.or.it.eq.gr_tape2.or.it.eq.gr_stations) then
 *...................................................................
 *     
 *     CALCUL GRILLE TAPE1/TAPE2 LAT-LON OU X-Y
@@ -6895,12 +6934,10 @@ C faite
       
       fltoggle(inout)=.true.
       if (argdims(2).le.1) then
-        if (weightlst(1).eq.0) then
-          fltoggle(inout)=.false.
-        endif
-        return
+         fltoggle(inout)=.false.
+         return
       endif
-        
+      
       fltwgtlng(inout)=argdims(2)
       fltntimes(inout)=ntimes
       fltverb(inout)=verbose
@@ -7216,12 +7253,13 @@ C faite
       legvar=0
       return
       end
-	program pgsm
+        program pgsm
 
-	call pgsm2
+        call pgsm2
 
-	stop
-	end
+        stop
+        end
+
 ***programme pgsm 
 *	    programme general de sortie des modeles
 *               programme utilitaire d'interpolation horizontale
@@ -7317,7 +7355,7 @@ C faite
 	
 	character *8 qlxcon(101),qlxlcon(4)
 	integer      qlxval(101)     
-	logical      qlxlval(4)
+	integer      qlxlval(4)
 
 	
 	integer ezsetopt
@@ -7494,7 +7532,7 @@ C faite
 	data qlxcon(100)/'IP3'     /  qlxval(100)/      6 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
-	data(qlxlval(i),i=1,2)/.true.,.false./
+	data(qlxlval(i),i=1,2)/1,0/
 
 
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -7515,7 +7553,7 @@ C faite
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.4',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.7',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7820,7 +7858,7 @@ C faite
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 		
-	do i=1,101
+	do i=1,103
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -7883,13 +7921,10 @@ C faite
 *
 *   initialise variable de printsr
 *
-*
-*      iopc= fstopc('tolrnc','errors',.true.)
-*   if (.not.message) iopc= fstopc('tolrnc','debugs',.true.) 
-	
 	if (tmplatp .ne. 0) call hpdeallc(tmplatp,ier,1)
 	if (tmplonp .ne. 0) call hpdeallc(tmplonp,ier,1)
 	
+	call chk_hy(1,2)
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
 	   ier = fstfrm(lnkdiun(i))
@@ -7903,6 +7938,10 @@ c	call fstunl
 	         ier = fstvoi(2, 'RND')
 	      endif
 	   endif
+
+
+
+
 	   ier = fstfrm(2)
 	   call fclos(2) 
 	else

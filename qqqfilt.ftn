@@ -26,12 +26,10 @@
       
       fltoggle(inout)=.true.
       if (argdims(2).le.1) then
-        if (weightlst(1).eq.0) then
-          fltoggle(inout)=.false.
-        endif
-        return
+         fltoggle(inout)=.false.
+         return
       endif
-        
+      
       fltwgtlng(inout)=argdims(2)
       fltntimes(inout)=ntimes
       fltverb(inout)=verbose

@@ -93,7 +93,7 @@
 	
 	character *8 qlxcon(101),qlxlcon(4)
 	integer      qlxval(101)     
-	logical      qlxlval(4)
+	integer      qlxlval(4)
 
 	
 	integer ezsetopt
@@ -270,7 +270,7 @@
 	data qlxcon(100)/'IP3'     /  qlxval(100)/      6 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
-	data(qlxlval(i),i=1,2)/.true.,.false./
+	data(qlxlval(i),i=1,2)/1,0/
 
 
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -291,7 +291,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.4',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.7',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -596,7 +596,7 @@
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 		
-	do i=1,101
+	do i=1,103
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -659,13 +659,10 @@
 *
 *   initialise variable de printsr
 *
-*
-*      iopc= fstopc('tolrnc','errors',.true.)
-*   if (.not.message) iopc= fstopc('tolrnc','debugs',.true.) 
-	
 	if (tmplatp .ne. 0) call hpdeallc(tmplatp,ier,1)
 	if (tmplonp .ne. 0) call hpdeallc(tmplonp,ier,1)
 	
+	call chk_hy(1,2)
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
 	   ier = fstfrm(lnkdiun(i))
@@ -679,6 +676,10 @@ c	call fstunl
 	         ier = fstvoi(2, 'RND')
 	      endif
 	   endif
+
+
+
+
 	   ier = fstfrm(2)
 	   call fclos(2) 
 	else
