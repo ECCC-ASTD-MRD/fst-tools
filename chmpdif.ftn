@@ -177,8 +177,12 @@
                lcl_ip1tab(i) = ip1tab(i)
             enddo
          endif
+      else
+         do i=1,num1
+            lcl_ip1tab(i) = ip1tab(i)
+         enddo
       endif
-
+      
 *     execution de chaque paire dans la liste
 *     
 

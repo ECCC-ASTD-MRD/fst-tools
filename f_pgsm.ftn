@@ -3223,8 +3223,12 @@ C faite
                lcl_ip1tab(i) = ip1tab(i)
             enddo
          endif
+      else
+         do i=1,num1
+            lcl_ip1tab(i) = ip1tab(i)
+         enddo
       endif
-
+      
 *     execution de chaque paire dans la liste
 *     
 
@@ -7611,7 +7615,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.9',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.11',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

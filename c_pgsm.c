@@ -28,6 +28,8 @@ FILE *ftnUnits[100];
 ****
 */
 
+void strconvdate(char strdate[], int fstdate);
+
 int f77name(pgsmform)(char format[],int *nrepeats, int *lenFormat, int fortranLenFormat)
 {
    char cFormat[32], cNrepeats[8];
@@ -286,15 +288,11 @@ GetIdent(char string[],int item, char *nomvar, char *typvar, char *etiket,
         break;
 
       case DATEO:
-	mode = -3;
-	f77name(newdate)(&dateo, &yyyymmdd, &hhmmssss, &mode);
-        sprintf(string, "%08d %08d", yyyymmdd, hhmmssss);
+	strconvdate(string, dateo);
         break;
 
       case DATEV:
-	mode = -3;
-	f77name(newdate)(&datev, &yyyymmdd, &hhmmssss, &mode);
-        sprintf(string, "%08d %08d", yyyymmdd, hhmmssss);
+	strconvdate(string, datev);
         break;
 
       case NI:
@@ -344,3 +342,23 @@ ImprimeIdent(char longString[], int items[],char *separateur, char *nomvar, char
       }
 }
 
+void strconvdate(char strdate[], int fstdate)
+{
+  int lfstdate, yyyymmdd, hhmmssss, mode;
+  int yyyy, month, day, hour, minutes, sec, fracsec;
+  
+  mode = -3;
+  lfstdate = fstdate;
+
+  f77name(newdate)(&lfstdate, &yyyymmdd, &hhmmssss, &mode);
+
+  yyyy = yyyymmdd / 10000;
+  month = (yyyymmdd / 100) % 100;
+  day   = yyyymmdd % 100;
+
+  hour = hhmmssss / 1000000;
+  minutes = (hhmmssss / 10000) % 100;
+  sec = (hhmmssss % 100);
+
+  sprintf(strdate, "%04d-%02d-%02dT%02d:%02d:%02dZ", yyyy, month, day, hour, minutes, sec);
+}
