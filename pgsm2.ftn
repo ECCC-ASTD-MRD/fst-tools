@@ -89,13 +89,12 @@
 #include "nivos.cdk"
 #include "gdz.cdk"
 #include "champseq.cdk"
+#include "styles.cdk"
 	
-	
-	character *8 qlxcon(115),qlxlcon(4)
-	integer      qlxval(115)     
+	character *8 qlxcon(120),qlxlcon(4)
+	integer      qlxval(120)     
 	integer      qlxlval(4)
 
-	
 	integer ezsetopt
 	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
 	external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
@@ -291,6 +290,8 @@
 	data qlxcon(113)/'HYBRID'  /  qlxval(113)/ -1005 /
 	data qlxcon(114)/'THETA'   /  qlxval(114)/ -1006 /
 	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
+	data qlxcon(116)/'OLDSTYLE'/  qlxval(116)/ 3 /
+	data qlxcon(117)/'NEWSTYLE'/  qlxval(117)/ 2 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -314,7 +315,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.1',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -616,8 +617,9 @@
 	call qlxins (unefois,'UNEFOIS',  dum, 1, 1) 
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
+	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
 		
-	do i=1,115
+	do i=1,117
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -637,6 +639,7 @@
 	date3 = -1
 
 	diese = 1
+	ip1style = 2
 *
 *   defaut pour fichier de sorti
 *

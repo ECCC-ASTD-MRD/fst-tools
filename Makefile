@@ -68,7 +68,7 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm2002: 
-	r.build -o $@ -obj *.o $(HOME)/src/utils/diese/dies.o  $(HOME)/src/utils/diese/fillgrid.o -librmn rmnbeta
+	r.build -o $@ -obj *.o $(HOME)/src/interp/*.o $(HOME)/src/utils/diese/dies.o  $(HOME)/src/utils/diese/fillgrid.o -librmn rmnbeta
 
 pgsm2000: 
 	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006

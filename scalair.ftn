@@ -85,6 +85,8 @@
       logical sym,symetri
       real fbidon
       real, dimension(:), allocatable :: ax, ay
+
+      real, dimension(:), pointer :: tmpout
 *
       integer liste(24000),nrecs
       nunv=0 
@@ -258,8 +260,9 @@ C faite
                 endif
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
+                tmpout => tmpif2
              else
-                tmpif2 => tmpif1
+                tmpout => tmpif1
                 if (message) write(6,660) cnom
  660            format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
              endif
@@ -272,10 +275,10 @@ C faite
                 cnomvar=cnomqr
              endif
              
-             call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,
+             call ecritur(tmpout,npack,dat,deet,npas,li,lj,1,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-             if (.not.associated(tmpif2, target = tmpif1)) then
+             if (associated(tmpif2)) then
                 deallocate(tmpif2)
              endif
              deallocate(tmpif1)

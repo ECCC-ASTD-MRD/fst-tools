@@ -144,6 +144,7 @@
 #include "dates.cdk"
 #include "llccmm.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 
       character *12 cetiqet
       character *4 cnomvar
@@ -182,7 +183,7 @@
       lip1 = ip1(1)
       if (argdims(4) > 1) then
          p = transfer(ip1(1), p)
-         call convip(lip1, p, ip1(2), 1, string, .false.)
+         call convip(lip1, p, ip1(2), ip1style, string, .false.)
       endif
 
       ier = fstcvt(      nom,    type,  letiket,  igtyp, 
@@ -461,6 +462,7 @@
 #include "ecrires.cdk"
 #include "dummys.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 *
 *
       character *12 cetiqet
@@ -500,7 +502,7 @@
       lniv = niv(1)
       if (argdims(4) > 1) then
          p = transfer(niv(1), p)
-         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
  100  ier = fstcvt(    nom,   type, letiket,    -1,
@@ -886,6 +888,7 @@ c     ***************************************************************
 #include "grilles.cdk"
 #include "llccmm.cdk"
 #include "lnkflds.cdk"
+#include "styles.cdk"
 *----------------------------------------------------------------------
 *
 *
@@ -915,7 +918,6 @@ c     ***************************************************************
       endif
 
 
-      champpr(1) = -1 
       nchamp = min0(31,nchamp)
 
       champpr(30) = ipr30(1)
@@ -947,7 +949,12 @@ c     ***************************************************************
       champpr(4)  = ipr4(1)
       champpr(3)  = ipr3(1)
       champpr(2)  = ipr2(1)
-      champpr(1)  = ipr1(1)
+      
+      if (nchamp >= 2) then
+         champpr(1)  = ipr1(1)
+      else
+         champpr(1)  = -1
+      endif
 *
       kinds(30) = ipr30(2)
       kinds(29) = ipr29(2)
@@ -1001,7 +1008,7 @@ c     ***************************************************************
       do i=1,nparm
          if (argdims(i+1) > 1) then
             p = transfer(champpr(i), p)
-            call convip(champpr(i), p, -1*kinds(i)-1000, 1, string, .false.)
+            call convip(champpr(i), p, -1*kinds(i)-1000, ip1style, string, .false.)
             endif
       enddo
 
@@ -1755,6 +1762,8 @@ c     ***************************************************************
       logical sym,symetri
       real fbidon
       real, dimension(:), allocatable :: ax, ay
+
+      real, dimension(:), pointer :: tmpout
 *
       integer liste(24000),nrecs
       nunv=0 
@@ -1928,8 +1937,9 @@ C faite
                 endif
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
+                tmpout => tmpif2
              else
-                tmpif2 => tmpif1
+                tmpout => tmpif1
                 if (message) write(6,660) cnom
  660            format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
              endif
@@ -1942,10 +1952,10 @@ C faite
                 cnomvar=cnomqr
              endif
              
-             call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,
+             call ecritur(tmpout,npack,dat,deet,npas,li,lj,1,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-             if (.not.associated(tmpif2, target = tmpif1)) then
+             if (associated(tmpif2)) then
                 deallocate(tmpif2)
              endif
              deallocate(tmpif1)
@@ -2043,6 +2053,7 @@ C faite
 #include "champseq.cdk"
 #include "lnkflds.cdk"
 #include "heures.cdk"
+#include "styles.cdk"
 *
       character*12 etiket
       character*4 nomvar
@@ -2113,7 +2124,7 @@ C faite
       if (listniv(ntitems, 1) > 1000000 .and. listniv(ntitems,2)  < 0) then
          do i=1,argdims(2),2   
             p = transfer(listniv(ntitems,i), p)
-            call convip(listniv(ntitems, i/2+1), p, -1*listniv(ntitems, (i+1))-1000, 1, string, .false.)
+            call convip(listniv(ntitems, i/2+1), p, -1*listniv(ntitems, (i+1))-1000, ip1style, string, .false.)
          enddo
          nitems2(ntitems) = argdims(2)/2
       endif
@@ -2867,6 +2878,7 @@ C faite
 #include "ecrires.cdk"
 #include "indptr.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 
 *
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime, fstopc,messags,fstcvt
@@ -2908,7 +2920,7 @@ C faite
       if (argdims(4) > 1) then
          lniv = niv(1)
          p = transfer(niv(1), p)
-         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
  100  ier = fstcvt(    nom,   type, letiket ,    -1, cnomvar,ctypvar, cetiket, cigtyp,     .true.) 
@@ -3172,6 +3184,7 @@ C faite
 #include "packin.cdk"
 #include "dummys.cdk"
 #include "gdz.cdk"
+#include "styles.cdk"
 *
       character*12 cetiket
       character*4 cnoment, cnomsrt
@@ -3257,7 +3270,7 @@ C faite
          if (ip1tab(1) > 1000000 .and. ip1tab(2) < 0) then
             do i=1,num1,2   
                p = transfer(ip1tab(i), p)
-               call convip(lcl_ip1tab(i/2+1), p, -1*ip1tab(i+1)-1000, 1, string, .false.)
+               call convip(lcl_ip1tab(i/2+1), p, -1*ip1tab(i+1)-1000, ip1style, string, .false.)
             enddo
             num1 = num1 / 2
             nloop = nloop / 2
@@ -3943,6 +3956,8 @@ C faite
 #include "accum.cdk"
 #include "llccmm.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
+
 *
       character*12 cetike,cetiket
       character*4 cnomvar, cnumve
@@ -3993,7 +4008,7 @@ C faite
       lniv = niv(1)
       if (argdims(4) > 1) then
          p = transfer(niv(1), p)
-         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
       ier = fstcvt(    nom,    type,  letiket,     -1,
@@ -7426,13 +7441,12 @@ c     ***************************************************************
 #include "nivos.cdk"
 #include "gdz.cdk"
 #include "champseq.cdk"
+#include "styles.cdk"
 	
-	
-	character *8 qlxcon(115),qlxlcon(4)
-	integer      qlxval(115)     
+	character *8 qlxcon(120),qlxlcon(4)
+	integer      qlxval(120)     
 	integer      qlxlval(4)
 
-	
 	integer ezsetopt
 	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
 	external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
@@ -7628,6 +7642,8 @@ c     ***************************************************************
 	data qlxcon(113)/'HYBRID'  /  qlxval(113)/ -1005 /
 	data qlxcon(114)/'THETA'   /  qlxval(114)/ -1006 /
 	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
+	data qlxcon(116)/'OLDSTYLE'/  qlxval(116)/ 3 /
+	data qlxcon(117)/'NEWSTYLE'/  qlxval(117)/ 2 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -7651,7 +7667,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.1',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7953,8 +7969,9 @@ c     ***************************************************************
 	call qlxins (unefois,'UNEFOIS',  dum, 1, 1) 
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
+	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
 		
-	do i=1,115
+	do i=1,117
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -7974,6 +7991,7 @@ c     ***************************************************************
 	date3 = -1
 
 	diese = 1
+	ip1style = 2
 *
 *   defaut pour fichier de sorti
 *

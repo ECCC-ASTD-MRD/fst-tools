@@ -65,6 +65,7 @@
 #include "grilles.cdk"
 #include "llccmm.cdk"
 #include "lnkflds.cdk"
+#include "styles.cdk"
 *----------------------------------------------------------------------
 *
 *
@@ -94,7 +95,6 @@
       endif
 
 
-      champpr(1) = -1 
       nchamp = min0(31,nchamp)
 
       champpr(30) = ipr30(1)
@@ -126,7 +126,12 @@
       champpr(4)  = ipr4(1)
       champpr(3)  = ipr3(1)
       champpr(2)  = ipr2(1)
-      champpr(1)  = ipr1(1)
+      
+      if (nchamp >= 2) then
+         champpr(1)  = ipr1(1)
+      else
+         champpr(1)  = -1
+      endif
 *
       kinds(30) = ipr30(2)
       kinds(29) = ipr29(2)
@@ -180,7 +185,7 @@
       do i=1,nparm
          if (argdims(i+1) > 1) then
             p = transfer(champpr(i), p)
-            call convip(champpr(i), p, -1*kinds(i)-1000, 1, string, .false.)
+            call convip(champpr(i), p, -1*kinds(i)-1000, ip1style, string, .false.)
             endif
       enddo
 

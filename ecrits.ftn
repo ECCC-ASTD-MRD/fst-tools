@@ -59,6 +59,7 @@
 #include "dates.cdk"
 #include "llccmm.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 
       character *12 cetiqet
       character *4 cnomvar
@@ -97,7 +98,7 @@
       lip1 = ip1(1)
       if (argdims(4) > 1) then
          p = transfer(ip1(1), p)
-         call convip(lip1, p, ip1(2), 1, string, .false.)
+         call convip(lip1, p, ip1(2), ip1style, string, .false.)
       endif
 
       ier = fstcvt(      nom,    type,  letiket,  igtyp, 

@@ -49,6 +49,7 @@
 #include "ecrires.cdk"
 #include "indptr.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 
 *
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime, fstopc,messags,fstcvt
@@ -90,7 +91,7 @@
       if (argdims(4) > 1) then
          lniv = niv(1)
          p = transfer(niv(1), p)
-         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
  100  ier = fstcvt(    nom,   type, letiket ,    -1, cnomvar,ctypvar, cetiket, cigtyp,     .true.) 

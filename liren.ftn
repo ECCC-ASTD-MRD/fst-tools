@@ -50,6 +50,7 @@
 #include "ecrires.cdk"
 #include "dummys.cdk"
 #include "blancs.cdk"
+#include "styles.cdk"
 *
 *
       character *12 cetiqet
@@ -89,7 +90,7 @@
       lniv = niv(1)
       if (argdims(4) > 1) then
          p = transfer(niv(1), p)
-         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
  100  ier = fstcvt(    nom,   type, letiket,    -1,
