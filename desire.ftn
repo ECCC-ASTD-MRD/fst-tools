@@ -11,6 +11,7 @@
 *              "  "      "    FEV 91 BUG DECODING ETIKET
 *Revision 003   M. Lepine - mars 98 - extensions pour fstd98
 *Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
+*Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
 *     LANGUAGA FTN77
 *  
 *ARGUMENTS
@@ -38,10 +39,19 @@
 
       D = -1
    10 IF(NREQ .EQ. NMD) THEN
-         IF(DIAG .OR. DEBUG)
-     X   PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
+c         IF(DIAG .OR. DEBUG)
+         PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
          RETURN
       ENDIF
+      if ((argdims(1) .gt. 10) .or. (argdims(2) .gt. 10) .or.
+     %    (argdims(3) .gt. 10) .or. (argdims(4) .gt. 10) .or.
+     %    (argdims(5) .gt. 10) .or. (argdims(6) .gt. 10) .or.
+     %    (argdims(7) .gt. 10)) then
+         PRINT*,
+     %'** LE MAXIMUM DE 10 ELEMENTS POUR UN ARGUMENT DE SELECTION EST DEPASSE **' 
+         PRINT *,'** SEULS LES 10 PREMIERS ELEMENTS SERONT TRAITES **'
+         PRINT *,'** VEUILLEZ UTILISER UN DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE **'
+      endif
   
 *     COMPTE LES DIRECTIVES DESIRE/EXCLURE
       IF(D .EQ. 0) NEXC = NEXC + 1
