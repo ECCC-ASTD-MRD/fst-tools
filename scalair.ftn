@@ -217,7 +217,7 @@ C faite
           
           skip = .false.
           
-          if (cigtyp.eq.'#'.and.diese.eq.0) then
+          if (cigtyp.eq.'#'.and.diese.eq.1) then
 	     res = diesisincache(irec)
 	     if (res.lt.0) then
                 key=diesinf(iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ctypvar, cnomvar)

@@ -1848,7 +1848,7 @@ C faite
           
           skip = .false.
           
-          if (cigtyp.eq.'#'.and.diese.eq.0) then
+          if (cigtyp.eq.'#'.and.diese.eq.1) then
 	     res = diesisincache(irec)
 	     if (res.lt.0) then
                 key=diesinf(iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ctypvar, cnomvar)
@@ -7354,25 +7354,25 @@ c     ***************************************************************
 #include "champseq.cdk"
 	
 	
-	character *8 qlxcon(101),qlxlcon(4)
-	integer      qlxval(101)     
+	character *8 qlxcon(107),qlxlcon(4)
+	integer      qlxval(107)     
 	integer      qlxlval(4)
 
 	
 	integer ezsetopt
-	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs, 
-     $ qqqintx, setxtrap, liren, lirsr, plmnmod, pluss, 
-     $ moinse, moinss, ecrits,moyene, operat, modul2e, modul2s,
-     $ expon, racine,alogn, outlalo, foise, foiss, divisee, divises, pgcoupe, 
-     $ moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho,qqqform,qqqident,coord,qqqfilt
+	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
+	external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
+	external moinse, moinss, ecrits,moyene, operat, modul2e, modul2s
+	external expon, racine,alogn, outlalo, foise, foiss, divisee, divises, pgcoupe
+	external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
+	external qqqform,qqqident,coord,qqqfilt
 *       
-	external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi,
-     $         fstnbr,fstunl,fstouv
+	external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi
+	external fstnbr,fstunl,fstouv
 	external fclos,exfin,lrsmde,lrsmds,fstopc,qlxopt
 *
 	integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstouv
-	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,
-     $       nlirmds,nlirmde
+	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
 	real dum
 
 *
@@ -7431,9 +7431,9 @@ c     ***************************************************************
 	data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
 	data qlxcon( 3) /'TOUT'    /  qlxval( 3) /     -1 /
 	data qlxcon( 4) /'ALL'     /  qlxval( 4) /     -1 /
-	data qlxcon( 4) /'ALL'     /  qlxval( 4) /     -1 /
 	data qlxcon( 5) /'COMTEUR' /  qlxval( 5) /   4095 /
 	data qlxcon( 6) /'IMPRIM'  /  qlxval( 6) / 999999 /
+	data qlxcon( 7) /'STD'     /  qlxval( 7) /   gr_a /
 	data qlxcon( 8) /'MS'      /  qlxval( 8) /      2 /
 	data qlxcon( 9) /'SEQ'     /  qlxval( 9) /      3 /
 	data qlxcon(10) /'R'       /  qlxval(10) /      1 /
@@ -7441,8 +7441,6 @@ c     ***************************************************************
 	data qlxcon(12) /'NORD'    /  qlxval(12) /      1 /
 	data qlxcon(13) /'SUD'     /  qlxval(13) /      2 /
 	data qlxcon(14) /'GLOBAL'  /  qlxval(14) /      0 /
-
-	data qlxcon( 7) /'STD'     /  qlxval( 7) / gr_a /
 	data qlxcon(15) /'LATLON'  /  qlxval(15) / gr_latlon /
 	data qlxcon(16) /'PS'      /  qlxval(16) / gr_ps   /
 	data qlxcon(17) /'TAPE4'   /  qlxval(17) / gr_tape4 /
@@ -7454,83 +7452,88 @@ c     ***************************************************************
 	data qlxcon(23) /'XYDIR'   /  qlxval(23) / gr_xydir /
 	data qlxcon(24) /'LLDIR'   /  qlxval(24) / gr_lldir /
 	data qlxcon(25) /'LLLIST'  /  qlxval(25) / gr_lllist/
-	data qlxcon(61) /'STATIONS'/  qlxval(61) / gr_stations /
-	data qlxcon(101)/'STEREO'  /  qlxval(101)/ gr_stereo /
-	data qlxcon(59) /'GRIB'    /  qlxval(59) / gr_grib/
+	data qlxcon(26) /'ANAL'    /  qlxval(26) / "A   "/
+	data qlxcon(27) /'PREV'    /  qlxval(27) / "P   "/
+	data qlxcon(28) /'Z'       /  qlxval(28) / "GZ  "/
+	data qlxcon(29) /'T'       /  qlxval(29) / "TT  "/
+	data qlxcon(30) /'Q'       /  qlxval(30) / "QQ  "/
+	data qlxcon(31) /'QR'      /  qlxval(31) / "QR  "/
+	data qlxcon(32) /'D'       /  qlxval(32) / "DD  "/
+	data qlxcon(33) /'PP'      /  qlxval(33) / "PP  "/
+	data qlxcon(34) /'CC'      /  qlxval(34) / "CC  "/
+	data qlxcon(35) /'W'       /  qlxval(35) / "WW  "/
+	data qlxcon(36) /'ES'      /  qlxval(36) / "ES  "/
+	data qlxcon(37) /'EPAIS'   /  qlxval(37) / "DFGZ"/
+	data qlxcon(38) /'MAC'     /  qlxval(38) / "DFST"/
+	data qlxcon(39) /'PCP'     /  qlxval(39) / "DFPR"/
+	data qlxcon(40) /'UV'      /  qlxval(40) / "UV  "/
+	data qlxcon(41) /'VENT'    /  qlxval(41) / "VENT"/
+	data qlxcon(42) /'NUAGES'  /  qlxval(42) / "NUAG"/
+	data qlxcon(43) /'ECM'     /  qlxval(43) / "F2  "/
+	data qlxcon(44) /'PNM'     /  qlxval(44) / "PN  "/
+	data qlxcon(45) /'PSURF'   /  qlxval(45) / "P0"  /
+	data qlxcon(46) /'TSRF'    /  qlxval(46) / "TS"  /
+	data qlxcon(47) /'TMER'    /  qlxval(47) / "TM  "/
+	data qlxcon(48) /'MT'      /  qlxval(48) / "MT  "/
+	data qlxcon(49) /'VOISIN'  /  qlxval(49) /   100 /
+	data qlxcon(50) /'LINEAIR' /  qlxval(50) /     1 /
+	data qlxcon(51) /'CUBIQUE' /  qlxval(51) /     3 /
+	data qlxcon(52) /'ABORT'   /  qlxval(52) /    13 /
+	data qlxcon(53) /'MINIMUM' /  qlxval(53) /     5 /
+	data qlxcon(54) /'MAXIMUM' /  qlxval(54) /     4 /
 	data qlxcon(55) /'GEF'     /  qlxval(55) / gr_gem /
 	data qlxcon(56) /'GEM'     /  qlxval(56) / gr_gef /
+	data qlxcon(57) /'WAIT'    /  qlxval(57) /     0 /
+	data qlxcon(58) /'GO'      /  qlxval(58) /     1 /
+	data qlxcon(59) /'GRIB'    /  qlxval(59) / gr_grib/
+	data qlxcon(60) /'FORMATEE'/  qlxval(60) /     5 /
+	data qlxcon(61) /'STATIONS'/  qlxval(61) / gr_stations /
+	data qlxcon(62) /'ADD'     /  qlxval(62) /     1 /
+	data qlxcon(63) /'RESET'   /  qlxval(63) /     0 /
+	data qlxcon(64) /'EST'     /  qlxval(64) /     3 /
+	data qlxcon(65) /'OUEST'   /  qlxval(65) /     4 /
+	data qlxcon(66) /'NONE'    /  qlxval(66) /     5 /
+	data qlxcon(67) /'NOMVAR'  /  qlxval(67) /     1 /
+	data qlxcon(68) /'TYPVAR'  /  qlxval(68) /     2 /
+	data qlxcon(69) /'ETIKET'  /  qlxval(69) /     3 /
+	data qlxcon(70) /'IP01'    /  qlxval(70) /     4 /
+	data qlxcon(71) /'IP02'    /  qlxval(71) /     5 /
+	data qlxcon(72) /'IP03'    /  qlxval(72) /     6 /
+	data qlxcon(73) /'DATEO'   /  qlxval(73) /     7 /
+	data qlxcon(74) /'DATEV'   /  qlxval(74) /     8 /
+	data qlxcon(75) /'LAT'     /  qlxval(75) /    12 /
+	data qlxcon(76) /'LON'     /  qlxval(76) /    13 /
+	data qlxcon(77) /'NI'      /  qlxval(77) /     9 /
+	data qlxcon(78) /'NJ'      /  qlxval(78) /    10 /
+	data qlxcon(79) /'NK'      /  qlxval(79) /    11 /
+	data qlxcon(80) /'WDUV'    /  qlxval(80) /"WDUV" /
+	data qlxcon(81) /'ON'      /  qlxval(81) /     1 /
+	data qlxcon(82) /'OFF'     /  qlxval(82) /     0 /
+	data qlxcon(83) /'VERBOSE' /  qlxval(83) /     1 /
+	data qlxcon(84) /'LECTURE' /  qlxval(84) /     1 /
+	data qlxcon(85) /'ECRITURE'/  qlxval(85) /     2 /
+	data qlxcon(86) /'SEQWPRM' /  qlxval(86) /     4 /
+	data qlxcon(87) /'AUCUNE'  /  qlxval(87) /     0 /
 	data qlxcon(88) /'COMME'   /  qlxval(88) / gr_comme /
-
-	data qlxcon(26) /'ANAL'    /  qlxval(26) / "A    "/
-	data qlxcon(27) /'PREV'    /  qlxval(27) / "P    "/
-	data qlxcon(28) /'Z'       /  qlxval(28) / "GZ   "/
-	data qlxcon(29) /'T'       /  qlxval(29) / "TT   "/
-	data qlxcon(30) /'Q'       /  qlxval(30) / "QQ   "/
-	data qlxcon(31) /'QR'      /  qlxval(31) / "QR   "/
-	data qlxcon(32) /'D'       /  qlxval(32) / "DD   "/
-	data qlxcon(33) /'PP'      /  qlxval(33) / "PP   "/
-	data qlxcon(34) /'CC'      /  qlxval(34) / "CC   "/
-	data qlxcon(35) /'W'       /  qlxval(35) / "WW   "/
-	data qlxcon(36) /'ES'      /  qlxval(36) / "ES   "/
-	data qlxcon(37) /'EPAIS'   /  qlxval(37) /  "DFGZ"/
-	data qlxcon(38) /'MAC'     /  qlxval(38) /  "DFST"/
-	data qlxcon(39) /'PCP'     /  qlxval(39) /  "DFPR"/
-	data qlxcon(40) /'UV'      /  qlxval(40) /  "UV  "/
-	data qlxcon(41) /'VENT'    /  qlxval(41) /  "VENT"/
-	data qlxcon(42) /'NUAGES'  /  qlxval(42) /  "NUAG"/
-	data qlxcon(43) /'ECM'     /  qlxval(43) /  "F2  "/
-	data qlxcon(44) /'PNM'     /  qlxval(44) /  "PN  "/
-	data qlxcon(45) /'PSURF'   /  qlxval(45) /  "P0"  /
-	data qlxcon(46) /'TSRF'    /  qlxval(46) /  "TS"  /
-	data qlxcon(47) /'TMER'    /  qlxval(47) /  "TM  "/
-	data qlxcon(48) /'MT'      /  qlxval(48) /  "MT  "/
-	data qlxcon(49) /'VOISIN'  /  qlxval(49) /    100 /
-	data qlxcon(50) /'LINEAIR' /  qlxval(50) /      1 /
-	data qlxcon(51) /'CUBIQUE' /  qlxval(51) /      3 /
-	data qlxcon(52) /'ABORT'   /  qlxval(52) /     13 /
-	data qlxcon(53) /'MINIMUM' /  qlxval(53) /      5 /
-	data qlxcon(54) /'MAXIMUM' /  qlxval(54) /      4 /
-	data qlxcon(57) /'WAIT'    /  qlxval(57) /      0 /
-	data qlxcon(58) /'GO'      /  qlxval(58) /      1 /
-	data qlxcon(60) /'FORMATEE'/  qlxval(60) /      5 /
-	data qlxcon(62) /'ADD'     /  qlxval(62) /      1 /
-	data qlxcon(63) /'RESET'   /  qlxval(63) /      0 /
-	data qlxcon(64) /'EST'     /  qlxval(64) /      3 /
-	data qlxcon(65) /'OUEST'   /  qlxval(65) /      4 /
-	data qlxcon(66) /'NONE'    /  qlxval(66) /      5 /
-	data qlxcon(67) /'NOMVAR'  /  qlxval(67) /      1 /
-	data qlxcon(68) /'TYPVAR'  /  qlxval(68) /      2 /
-	data qlxcon(69) /'ETIKET'  /  qlxval(69) /      3 /
-	data qlxcon(70) /'IP01'    /  qlxval(70) /      4 /
-	data qlxcon(71) /'IP02'    /  qlxval(71) /      5 /
-	data qlxcon(72) /'IP03'    /  qlxval(72) /      6 /
-	data qlxcon(73) /'DATEO'   /  qlxval(73) /      7 /
-	data qlxcon(74) /'DATEV'   /  qlxval(74) /      8 /
-	data qlxcon(75) /'LAT'     /  qlxval(75) /     12 /
-	data qlxcon(76) /'LON'     /  qlxval(76) /     13 /
-	data qlxcon(77) /'NI'      /  qlxval(77) /      9 /
-	data qlxcon(78) /'NJ'      /  qlxval(78) /     10 /
-	data qlxcon(79) /'NK'      /  qlxval(79) /     11 /
-	data qlxcon(80) /'WDUV'    /  qlxval(80) / "WDUV" /
-	data qlxcon(81) /'ON'      /  qlxval(81) /      1 /
-	data qlxcon(82) /'OFF'     /  qlxval(82) /      0 /
-	data qlxcon(83) /'VERBOSE' /  qlxval(83) /      1 /
-	data qlxcon(84) /'LECTURE' /  qlxval(84) /      1 /
-	data qlxcon(85) /'ECRITURE'/  qlxval(85) /      2 /
-	data qlxcon(86) /'SEQWPRM' /  qlxval(86) /      4 /
-	data qlxcon(87) /'AUCUNE'  /  qlxval(87) /      0 /
-	data qlxcon(89) /'LIKE'    /  qlxval(89) /     12 /
-	data qlxcon(90) /'IP1A'    /  qlxval(90) /  65001 /
-	data qlxcon(91) /'IP1B'    /  qlxval(91) /  65002 /
-	data qlxcon(92) /'IP2A'    /  qlxval(92) /  65003 /
-	data qlxcon(93) /'IP2B'    /  qlxval(93) /  65004 /
-	data qlxcon(94) /'IP3A'    /  qlxval(94) /  65005 /
-	data qlxcon(95) /'IP3B'    /  qlxval(95) /  65006 /
-	data qlxcon(96) /'FENTREE' /  qlxval(96) /      1 /
-	data qlxcon(97) /'FSORTIE' /  qlxval(97) /      2 /
-	data qlxcon(98) /'LOCAL'   /  qlxval(98) /      1 /
-	data qlxcon(99) /'IP1'     /  qlxval(99) /      4 /
-	data qlxcon(100)/'IP3'     /  qlxval(100)/      6 /
+	data qlxcon(89) /'LIKE'    /  qlxval(89) /    12 /
+	data qlxcon(90) /'IP1A'    /  qlxval(90) / 65001 /
+	data qlxcon(91) /'IP1B'    /  qlxval(91) / 65002 /
+	data qlxcon(92) /'IP2A'    /  qlxval(92) / 65003 /
+	data qlxcon(93) /'IP2B'    /  qlxval(93) / 65004 /
+	data qlxcon(94) /'IP3A'    /  qlxval(94) / 65005 /
+	data qlxcon(95) /'IP3B'    /  qlxval(95) / 65006 /
+	data qlxcon(96) /'FENTREE' /  qlxval(96) /     1 /
+	data qlxcon(97) /'FSORTIE' /  qlxval(97) /     2 /
+	data qlxcon(98) /'LOCAL'   /  qlxval(98) /     1 /
+	data qlxcon(99) /'IP1'     /  qlxval(99) /     4 /
+	data qlxcon(100)/'IP3'     /  qlxval(100)/     6 /
+	data qlxcon(101)/'STEREO'  /  qlxval(101)/ gr_stereo /
+	data qlxcon(102)/'IPUN'    /  qlxval(102)/     4 /
+	data qlxcon(103)/'IPDEUX'  /  qlxval(103)/     5 /
+	data qlxcon(104)/'IPTROIS' /  qlxval(104)/     6 /
+	data qlxcon(105)/'IPONE'   /  qlxval(105)/     4 /
+	data qlxcon(106)/'IPTWO'   /  qlxval(106)/     5 /
+	data qlxcon(107)/'IPTHREE' /  qlxval(107)/     6 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -7554,7 +7557,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.13',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.10.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7859,7 +7862,7 @@ c     ***************************************************************
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 		
-	do i=1,103
+	do i=1,107
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -8506,10 +8509,10 @@ c	call fstunl
 
       integer i
 
-*      print *, 'qqqident', position, separateur
-*      do i=1,16
-*        print *, i, items(i)
-*     enddo
+c      print *, 'qqqident', position, separateur
+c      do i=1,16
+c        print *, i, items(i)
+c      enddo
 
       qposition = position
       if (qposition.eq.5) then

@@ -12,10 +12,10 @@
 
       integer i
 
-*      print *, 'qqqident', position, separateur
-*      do i=1,16
-*        print *, i, items(i)
-*     enddo
+c      print *, 'qqqident', position, separateur
+c      do i=1,16
+c        print *, i, items(i)
+c      enddo
 
       qposition = position
       if (qposition.eq.5) then
