@@ -1,0 +1,30 @@
+      real tmpif0,tmpif1,tmpif2,tmpif3,tmpif4,tmpift,tmproot
+      real tmplat,tmplon,tmplatg,tmplong
+      
+      pointer (tmpif0p,tmpif0(*))
+      pointer (tmpif1p,tmpif1(*))
+      pointer (tmpif2p,tmpif2(*))
+      pointer (tmpif3p,tmpif3(*))
+      pointer (tmpif4p,tmpif4(*))
+      pointer (tmpiftp,tmpift(*))
+      pointer (tmplatp,tmplat(*))
+      pointer (tmplonp,tmplon(*))
+      pointer (tmplatgp,tmplatg(*))
+      pointer (tmplongp,tmplong(*))
+      pointer (tmprootp,tmproot(*))
+      
+      common /llccmm/ tmpif0p,tmpif1p,tmpif2p,tmpif3p,tmpif4p,
+     $                tmpiftp,tmprootp,tmplatp,tmplonp,
+     $                tmplatgp,tmplongp
+
+*
+*
+#if defined (doc)
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*         - bloc /lcm    /  bufl(1)
+*             - bufl - champ dont la longueur varie selon les
+*                      ressources demandees par l'usager
+*
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+*

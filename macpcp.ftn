@@ -1,0 +1,239 @@
+*
+***s/p macpcp interpole ajustement convectif ou precipitation
+*
+      subroutine macpcp(cnom,npar,itime)
+#include "impnone.cdk"
+*     
+*auteur  p.sarrazin fevrier 82  drpn dorval p.q. canada
+*     
+*revision 4.0.2
+*     conversion variables type hollerith -> type caractere
+*   y. chartier -aout 90- drpn dorval quebec
+*
+*revision 5.2
+*   support des grilles sources de type Z
+*
+*langage ratfor
+*
+*objet(macpcp)
+*          extraire la difference entre deux champs dont les
+*          heures  sont differents
+*          avec routine fstinf on extrait le record necessaire pour
+*          routine fstprm qui identifit les parametres utilises
+*          par routine lire
+*          on reserve la memoire pour les deux champs de travail
+*          routine ecritur identifit la sorte de fichier utilisee
+*          pour ecrire
+*
+*librairies
+*         -source  armnsrc,drpn
+*         -objet   pgsmlib,id=armnpjs.
+*
+*arguments
+*  in    nom    nom du champ
+*  in    npar    nombre de locations utilisees dans itime
+*  in    itime   table contenant 2 heures ou niveaux
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+*messages 
+*          'mauvais appel a champ il devrait y avoir 3 arguments'
+*           record n'existe pas sur fichier d'entre (macpcp)
+*
+*modules
+      external ecritur,fstinf,pgsmlir,memoir,fstprm,symetri
+      external loupneg,loupsou,fstopc,pgsmabt,imprime,messags,fstcvt
+      external liraxez
+      integer fstprm,fstinf,pgsmlir,fstopc,fstcvt
+*     
+*appel     via champ
+*         call macpcp(nom,npar,itime)
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+#include "voir.cdk"
+#include "dummys.cdk"
+#include "llccmm.cdk"
+#include "accum.cdk"
+#include "param.cdk"
+#include "indptr.cdk"
+#include "grilles.cdk"
+#include "lires.cdk"
+#include "ecrires.cdk"
+#include "dates.cdk"
+#include "packin.cdk"
+#include "gdz.cdk"
+*     
+      character *12 cetike,cetiket
+      character *4 cnomvar, cnom 
+      character *1 cigtyp
+      character *2 ctypvar
+      
+      real valeur
+      real fbidon
+      
+      integer i, itime(2),ig1,ig2,ig3,ig4,ip1,irec1,irec2
+      integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc 
+      integer cdatyp,cnbits
+      integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
+      integer ezqkdef, ezdefset, ezsint
+      integer iunit
+      logical symetri,sym
+      
+      iunit = 1
+*     
+      if (npar.ne.2) then
+         if (message) then
+            write(6,*)'MAUVAIS APPEL DOIT AVOIR 3 ARGUMENTS  (MACPCP)'
+         endif
+         return
+      endif
+*     
+*     identifier le numero de chaque record avec fstinf
+*     
+*     # doit etre egal a zero dans fichier d'ENTRE
+      ip1=0  
+         if (date .eq. 1) then
+            if (date3.eq.-1) then
+               date=date2
+            else
+               call newdate(date, date2, date3, 3)
+            endif
+         endif
+
+*     
+*     modification de hollerith a caractere
+*     
+      cnomvar = cnom
+      if (etikent(1) .ne. -1) then
+         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+      else 
+         cetiket = '        '
+      endif
+      
+      if (typeent .ne. -1) then
+         write(ctypvar, '(A1)') typeent
+      else 
+         ctypvar = ' '
+      endif
+      
+      
+      irec1=fstinf(1,ni,nj,nk,date,cetiket,ip1,
+     $     itime(1),ip3ent,ctypvar,cnomvar)
+      irec2=fstinf(1,ni,nj,nk,date,cetiket,ip1,
+     $     itime(2),ip3ent,ctypvar,cnomvar)
+      
+*     #  record n'EXISTE PAS
+      if (irec2 .lt. 0 .or.irec1 .lt. 0) then
+         write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (MACPCP)'
+         write(6,*)' VERIFIER IP2-IP3ENT  IP1=0 SUR FICHIER D ENTRE'
+         return
+      endif
+      
+      if (nk.gt.1) then
+         write(6,*)'************************************************'
+         write(6,*)'         PGSM N ACCEPTE PAS UN          '
+         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (MACPCP)'
+         write(6,*)'************************************************'
+         call pgsmabt
+      endif
+*     
+*     
+*     identifier parametres pour champ 1
+*     
+      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,
+     $     jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp, 
+     $     ig1,ig2,ig3,ig4,
+     $     cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
+*     
+*     verifier si grille gaussienne ni doit etre pair
+*     
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+*     
+*     
+*     lire champ no 1
+*     
+      call hpalloc(tmpif1p,ni*nj,ier,1)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      if (date .eq. 0 .or. date .eq. 1) date=date2
+      
+      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+     $     ctypvar,cnomvar,cigtyp)
+      
+      if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+*     
+*     identifier parametres pour champ 2
+*     
+      ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,
+     $     jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,
+     $     ig1,ig2,ig3,ig4,
+     $     cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
+*     
+*     verifier si grille gaussienne ni doit etre pair
+*     
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+*     
+*     lire champ 2
+*     
+      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      if (date .eq. 0 .or. date .eq. 1) date=date2
+      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+     $     ctypvar,cnomvar,cigtyp)
+      if (printen)  call imprime(cnomvar,tmpif2,ni,nj)
+*     
+*     difference entre les deux champs
+*     
+      nn = ni*nj
+      call loupsou(tmpif1,tmpif2,nn) 
+*     
+*     
+*     interpolation horizontale
+*     
+      if (cgrtyp.eq.'*') then
+         call chkenrpos(1,2,ig1,ig2,ig3)
+      else
+*     #  variable symetrique oui=.true. 
+         if (ig1.ne.0) sym = symetri(cnomvar) 
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = ezsint(tmpif2, tmpif1)
+      endif
+*     
+*     #   jp1 - contient heure du premier champ
+*     #   jp2 - contient heure du deuxieme champ
+      jp1 = itime(1)   
+      jp2 = itime(2)
+      jp3 = 0
+*     
+*     deet et npas contiennent les dernieres valeurs lues dans le dernier record
+*     
+*     eliminer toutes les valeurs du champ negative precip
+*     et acumulateur d'ajustement ne peuvent etre negatif
+*     
+      lilj=li*lj
+      valeur=0.0
+      call loupneg(tmpif2,valeur,1,lilj,1)
+*     
+*     ecrire sur fichier standard,ms,sequentiel
+*     
+      if (cgrtyp.eq.'*') then
+         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
+     $        jp1,jp2,jp3,
+     $        ctypvar,cnomvar,cetike,cigtyp,ig1,ig2,ig3,ig4)
+      else
+         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+     $        ctypvar,cnomvar,cetike,cgrtyp,lg1,lg2,lg3,lg4)
+      endif
+*     
+*     remetre espace des champs de travail
+*     
+      call hpdeallc(tmpif1p,ier,1)
+      call hpdeallc(tmpif2p,ier,1)
+*     
+      return
+      end
+      
+      

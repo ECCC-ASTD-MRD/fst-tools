@@ -1,0 +1,6 @@
+      integer      lnkdiun(40),niun,inputmod
+      integer      sequentiel,random
+
+      parameter (sequentiel=1,random=2)
+      
+      common /lnkflds/ lnkdiun, niun,inputmod

@@ -1,0 +1,13 @@
+      INTEGER NPACK
+      COMMON/PACKIN/NPACK
+*
+*
+#if defined (DOC)
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*         - BLOC /PACKIN /NPACK
+*           NPACK  -COMPACTION DU DATA SUR FICHIER DE SORTIE
+*                   UTILISER PAR PUTFLD 
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+#endif
+*

@@ -1,0 +1,9 @@
+      INTEGER DAT,DEET
+*
+#if defined (DOC)
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*        - BLOC /PARAM/  INTEGER DAT,DEET
+*          DEFINIR VARIABLES COMME ENTIER
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+*

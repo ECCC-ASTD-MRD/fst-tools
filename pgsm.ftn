@@ -1,0 +1,6 @@
+	program pgsm
+
+	call pgsm2
+
+	stop
+	end

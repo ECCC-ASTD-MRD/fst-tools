@@ -1,0 +1,49 @@
+      subroutine pgsmgetlatlon(ilat, ilon)
+#include "impnone.cdk"
+      integer ilat, ilon
+#include "llccmm.cdk"
+
+      ilat = tmplatp
+      ilon = tmplonp
+
+      return
+      end
+
+      subroutine pgsmsetiset
+#include "impnone.cdk"
+
+#include "indptr.cdk"
+
+      iset = 0
+
+      return
+      end
+
+      subroutine pgsmsetngr(newngr)
+#include "impnone.cdk"
+      integer newngr
+#include "grilles.cdk"
+
+      ngr = newngr
+
+      return
+      end
+
+      subroutine pgsminitptr
+
+#include "llccmm.cdk"
+
+      tmpif0p = 0
+      tmpif1p = 0
+      tmpif2p = 0
+      tmpif3p = 0
+      tmpif4p = 0
+      tmpiftp = 0
+      tmprootp= 0
+      tmplatp = 0
+      tmplonp = 0
+      tmplatgp= 0
+      tmplongp= 0
+
+      return
+      end

@@ -1,0 +1,719 @@
+***programme pgsm 
+*	    programme general de sortie des modeles
+*               programme utilitaire d'interpolation horizontale
+*               interpoler  ajustement convectif,precip,epaisseurs
+*               calcul du vent sqrt(u**2 + v**2)
+*               interpolation des vecteurs u et v horizontalement
+*               interpolation des 3 niveaux de nuages
+*               interpolation horizontale de variables scalaires
+*
+*auteur    - p.sarrazin octobre 1981 drpn dorval p.q.  canada
+*
+*revision 
+*        4.0.1  - conversion au fichier standard 89  p. sarrazin
+*                 modification avril 90 p. sarrazin dorval canada drpn
+*
+*        4.0.2  - leger nettoyage du code
+*               - conversion des variables contenant des informations
+*                 alphanumeriques de type hollerith a caractere
+*               - elimination des macros "hcar" et "lcar"
+*               - conversion appels a "lexins" par "qlxins" 
+*               - conversion pour cyber-910
+*                 y. chartier -juillet-aout 90- drpn dorval quebec
+*
+*        5.0    - utilisation des nouveaux interpolateurs
+*                 y. chartier - mai 1991 - drpn dorval quebec
+*
+*        5.1    - utilisation de fichiers d'entree lies avec "fstlnk"
+*                 y. chartier - mai 1991 - drpn dorval quebec
+*
+*        5.2    - support des grilles source de type z
+*        5.3    - conversion de RATFOR a FORTRAN
+*                 Y. Chartier - aout 1995
+*        5.4    - Optimisation des interpolateurs pour l'extension
+*                 selective des grilles. 
+*        5.5    - Interpolation a partir de fichiers d'entree SQI
+*                 Support des grilles Lambert
+*                 Introduction de la librairie C gctpc
+*        5.6    - Introduction des directives COORD et GRILLE(STATIONS)
+*                 sortie(ASCII)
+*        5.7    - Support des fichiers standards 98
+*        6.0    - Introduction de ezscint comme interpolateur principal
+*        6.8    - Support des grilles diese
+*        6.9    - Support des grilles T (stereographiques generalisees)
+*
+*langage   - fortran 
+*
+*objet(pgsm)
+*          interpolateur horizontal qui permet de faire des 
+*          interpolations (cubique,lineaire,voisin) d'une grille a
+*          une autre ou d'une grille a un point
+*          permet de faire des operations sur deux champs
+*          (gros calculateur de poche)
+*          fichier d'entre doit-etre format standard random 
+*          sorti standard random ou sequentiel - seq ms - random ms
+*
+*librairies
+*		  - rmnxlib.a
+
+*fichiers 
+*         - tape1  - fichier d'entree  (standard) 
+*         - tape2  - fichier de sortie standard..direct(writms)...sequentiel
+*         - tape3  - fichier de records positionels ('^^','>>')
+*         - tape5  - fichier d'entree(directives) 
+*         - tape6  - fichier de sortie sur imprimante
+*
+*----------------------------------------------------------------------------
+#include "defin.cdk"
+	subroutine pgsm2
+#include "impnone.cdk"
+*
+#include "lnkflds.cdk"
+#include "dates.cdk"
+#include "charac.cdk"
+#include "pairs.cdk"
+#include "accum.cdk"
+#include "chck.cdk"
+#include "grilles.cdk"
+#include "heures.cdk"
+#include "symnom.cdk"
+#include "llccmm.cdk"
+#include "convers.cdk"
+#include "champs.cdk"
+#include "lires.cdk"
+#include "ecrires.cdk"
+#include "enrege.cdk"
+#include "packin.cdk"
+#include "indptr.cdk"
+#include "voir.cdk"
+#include "nivos.cdk"
+#include "gdz.cdk"
+#include "champseq.cdk"
+	
+	
+	character *8 qlxcon(101),qlxlcon(4)
+	integer      qlxval(101)     
+	logical      qlxlval(4)
+
+	
+	integer ezsetopt
+	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs, 
+     $ qqqintx, setxtrap, liren, lirsr, plmnmod, pluss, 
+     $ moinse, moinss, ecrits,moyene, operat, modul2e, modul2s,
+     $ expon, racine,alogn, outlalo, foise, foiss, divisee, divises, pgcoupe, 
+     $ moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho,qqqform,qqqident,coord,qqqfilt
+*       
+	external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi,
+     $         fstnbr,fstunl,fstouv
+	external fclos,exfin,lrsmde,lrsmds,fstopc,qlxopt
+*
+	integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstouv
+	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,
+     $       nlirmds,nlirmde
+	real dum
+
+*
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	data listl/40*'IMENT.','OZSRT.','ISLL.','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
+	data defo /40*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
+	data lfn  /40*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
+
+	data lnkdiun / 1, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+     $                20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+     $                30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+     $                40, 41, 42, 43, 44, 45, 46, 47, 48, 49 /
+   
+	data form/'(A8)'/
+*
+	data nheure,  heures, nnoms,  npack,  nhur, nomb, ichck 
+     $       /0,  MXHEURE*-2, 0,      -16,    1,    0,    0/
+*
+	data nomss /40*'  '/
+  
+	data ecarts,     facts,     pose,     ixlat, ixlon  
+     $    /40*0.0,     40*1.0,   .false.,   0,     0 /
+*
+   	data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo 
+     $       /  1,    0,     0,        1,      0,     0 /
+*
+	data valid, voire,   voirs, message,seldat    
+     $  /.false.,.false., .false.,.true.,.false.  /
+*
+	data numero,  numdel,  iset,  nbrow,  ip4   
+     $    / 1,           1,    -2,      0,    0    /
+*
+	data paire(1) /  'VENT    UU  VV  UV      ' /
+	data paire(2) /  'UV      UU  VV  ??      ' /
+	data paire(3) /  'VENTUVS US  VS  UV      ' /
+	data paire(4) /  'UVS     US  VS  ??      ' /
+	data paire(5) /  'WDUV    UU  VV  UV  WD  ' /
+	data paire(6) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
+*
+	data unefois,once,vvent/.false.,.false.,.false./
+*
+	data cnomqq, cnomqr, cnommt /'QQ', 'QR', 'MT'/ 
+*
+	data printen,printsr,mtdone/.false.,.false.,.false./
+*
+ 	data nis,njs,nif,njf,ninc,njnc,if9/1,1,1000,1000,10,10,0/
+*
+   	data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
+*
+   	data if7,if8,npairuv,npair/0,0,4,6/
+*	
+   	data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
+
+	data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
+	data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
+	data qlxcon( 3) /'TOUT'    /  qlxval( 3) /     -1 /
+	data qlxcon( 4) /'ALL'     /  qlxval( 4) /     -1 /
+	data qlxcon( 4) /'ALL'     /  qlxval( 4) /     -1 /
+	data qlxcon( 5) /'COMTEUR' /  qlxval( 5) /   4095 /
+	data qlxcon( 6) /'IMPRIM'  /  qlxval( 6) / 999999 /
+	data qlxcon( 8) /'MS'      /  qlxval( 8) /      2 /
+	data qlxcon( 9) /'SEQ'     /  qlxval( 9) /      3 /
+	data qlxcon(10) /'R'       /  qlxval(10) /      1 /
+	data qlxcon(11) /'A'       /  qlxval(11) /     -1 /
+	data qlxcon(12) /'NORD'    /  qlxval(12) /      1 /
+	data qlxcon(13) /'SUD'     /  qlxval(13) /      2 /
+	data qlxcon(14) /'GLOBAL'  /  qlxval(14) /      0 /
+
+	data qlxcon( 7) /'STD'     /  qlxval( 7) / gr_a /
+	data qlxcon(15) /'LATLON'  /  qlxval(15) / gr_latlon /
+	data qlxcon(16) /'PS'      /  qlxval(16) / gr_ps   /
+	data qlxcon(17) /'TAPE4'   /  qlxval(17) / gr_tape4 /
+	data qlxcon(18) /'GAUSS'   /  qlxval(18) / gr_g /
+	data qlxcon(19) /'STDB'    /  qlxval(19) / gr_b /
+	data qlxcon(20) /'TAPE1'   /  qlxval(20) / gr_tape1 /
+	data qlxcon(21) /'TAPE2'   /  qlxval(21) / gr_tape2 /
+	data qlxcon(22) /'XYLIS'   /  qlxval(22) / gr_xylis /
+	data qlxcon(23) /'XYDIR'   /  qlxval(23) / gr_xydir /
+	data qlxcon(24) /'LLDIR'   /  qlxval(24) / gr_lldir /
+	data qlxcon(25) /'LLLIST'  /  qlxval(25) / gr_lllist/
+	data qlxcon(61) /'STATIONS'/  qlxval(61) / gr_stations /
+	data qlxcon(101)/'STEREO'  /  qlxval(101)/ gr_stereo /
+	data qlxcon(59) /'GRIB'    /  qlxval(59) / gr_grib/
+	data qlxcon(55) /'GEF'     /  qlxval(55) / gr_gem /
+	data qlxcon(56) /'GEM'     /  qlxval(56) / gr_gef /
+	data qlxcon(88) /'COMME'   /  qlxval(88) / gr_comme /
+
+	data qlxcon(26) /'ANAL'    /  qlxval(26) / "A    "/
+	data qlxcon(27) /'PREV'    /  qlxval(27) / "P    "/
+	data qlxcon(28) /'Z'       /  qlxval(28) / "GZ   "/
+	data qlxcon(29) /'T'       /  qlxval(29) / "TT   "/
+	data qlxcon(30) /'Q'       /  qlxval(30) / "QQ   "/
+	data qlxcon(31) /'QR'      /  qlxval(31) / "QR   "/
+	data qlxcon(32) /'D'       /  qlxval(32) / "DD   "/
+	data qlxcon(33) /'PP'      /  qlxval(33) / "PP   "/
+	data qlxcon(34) /'CC'      /  qlxval(34) / "CC   "/
+	data qlxcon(35) /'W'       /  qlxval(35) / "WW   "/
+	data qlxcon(36) /'ES'      /  qlxval(36) / "ES   "/
+	data qlxcon(37) /'EPAIS'   /  qlxval(37) /  "DFGZ"/
+	data qlxcon(38) /'MAC'     /  qlxval(38) /  "DFST"/
+	data qlxcon(39) /'PCP'     /  qlxval(39) /  "DFPR"/
+	data qlxcon(40) /'UV'      /  qlxval(40) /  "UV  "/
+	data qlxcon(41) /'VENT'    /  qlxval(41) /  "VENT"/
+	data qlxcon(42) /'NUAGES'  /  qlxval(42) /  "NUAG"/
+	data qlxcon(43) /'ECM'     /  qlxval(43) /  "F2  "/
+	data qlxcon(44) /'PNM'     /  qlxval(44) /  "PN  "/
+	data qlxcon(45) /'PSURF'   /  qlxval(45) /  "P0"  /
+	data qlxcon(46) /'TSRF'    /  qlxval(46) /  "TS"  /
+	data qlxcon(47) /'TMER'    /  qlxval(47) /  "TM  "/
+	data qlxcon(48) /'MT'      /  qlxval(48) /  "MT  "/
+	data qlxcon(49) /'VOISIN'  /  qlxval(49) /    100 /
+	data qlxcon(50) /'LINEAIR' /  qlxval(50) /      1 /
+	data qlxcon(51) /'CUBIQUE' /  qlxval(51) /      3 /
+	data qlxcon(52) /'ABORT'   /  qlxval(52) /     13 /
+	data qlxcon(53) /'MINIMUM' /  qlxval(53) /      5 /
+	data qlxcon(54) /'MAXIMUM' /  qlxval(54) /      4 /
+	data qlxcon(57) /'WAIT'    /  qlxval(57) /      0 /
+	data qlxcon(58) /'GO'      /  qlxval(58) /      1 /
+	data qlxcon(60) /'FORMATEE'/  qlxval(60) /      5 /
+	data qlxcon(62) /'ADD'     /  qlxval(62) /      1 /
+	data qlxcon(63) /'RESET'   /  qlxval(63) /      0 /
+	data qlxcon(64) /'EST'     /  qlxval(64) /      3 /
+	data qlxcon(65) /'OUEST'   /  qlxval(65) /      4 /
+	data qlxcon(66) /'NONE'    /  qlxval(66) /      5 /
+	data qlxcon(67) /'NOMVAR'  /  qlxval(67) /      1 /
+	data qlxcon(68) /'TYPVAR'  /  qlxval(68) /      2 /
+	data qlxcon(69) /'ETIKET'  /  qlxval(69) /      3 /
+	data qlxcon(70) /'IP01'    /  qlxval(70) /      4 /
+	data qlxcon(71) /'IP02'    /  qlxval(71) /      5 /
+	data qlxcon(72) /'IP03'    /  qlxval(72) /      6 /
+	data qlxcon(73) /'DATEO'   /  qlxval(73) /      7 /
+	data qlxcon(74) /'DATEV'   /  qlxval(74) /      8 /
+	data qlxcon(75) /'LAT'     /  qlxval(75) /     12 /
+	data qlxcon(76) /'LON'     /  qlxval(76) /     13 /
+	data qlxcon(77) /'NI'      /  qlxval(77) /      9 /
+	data qlxcon(78) /'NJ'      /  qlxval(78) /     10 /
+	data qlxcon(79) /'NK'      /  qlxval(79) /     11 /
+	data qlxcon(80) /'WDUV'    /  qlxval(80) / "WDUV" /
+	data qlxcon(81) /'ON'      /  qlxval(81) /      1 /
+	data qlxcon(82) /'OFF'     /  qlxval(82) /      0 /
+	data qlxcon(83) /'VERBOSE' /  qlxval(83) /      1 /
+	data qlxcon(84) /'LECTURE' /  qlxval(84) /      1 /
+	data qlxcon(85) /'ECRITURE'/  qlxval(85) /      2 /
+	data qlxcon(86) /'SEQWPRM' /  qlxval(86) /      4 /
+	data qlxcon(87) /'AUCUNE'  /  qlxval(87) /      0 /
+	data qlxcon(89) /'LIKE'    /  qlxval(89) /     12 /
+	data qlxcon(90) /'IP1A'    /  qlxval(90) /  65001 /
+	data qlxcon(91) /'IP1B'    /  qlxval(91) /  65002 /
+	data qlxcon(92) /'IP2A'    /  qlxval(92) /  65003 /
+	data qlxcon(93) /'IP2B'    /  qlxval(93) /  65004 /
+	data qlxcon(94) /'IP3A'    /  qlxval(94) /  65005 /
+	data qlxcon(95) /'IP3B'    /  qlxval(95) /  65006 /
+	data qlxcon(96) /'FENTREE' /  qlxval(96) /      1 /
+	data qlxcon(97) /'FSORTIE' /  qlxval(97) /      2 /
+	data qlxcon(98) /'LOCAL'   /  qlxval(98) /      1 /
+	data qlxcon(99) /'IP1'     /  qlxval(99) /      4 /
+	data qlxcon(100)/'IP3'     /  qlxval(100)/      6 /
+
+	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
+	data(qlxlval(i),i=1,2)/.true.,.false./
+
+
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+*           listl=position  iment(tape1 standard),isll(tape4 sequentiel)
+*                 ozsrt(tape2 - standard - seq file - random ms)
+*           defo=liste des defauts pour iment,isll,ozsrt,i,l
+*           lfn=liste que l usager propose pour remplacer
+*           6=nombre de lfn
+*           nequiv=nombre d'equivalence output de ccard
+*
+*
+	nequiv=-1
+	call ccard(listl,defo,lfn,49,nequiv)
+	ier = fnom(5,lfn(43),'SEQ',0)
+	ier = fnom(6,lfn(44),'SEQ',0)
+	
+*
+*          imprime boite debut du programme
+*
+	jdate= exdb(' PGSM  ',' V6.9.4',  lfn(45)) 
+
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	call qqqfilt(1,0,0,0)
+	call qqqfilt(2,0,0,0)
+
+	if (lfn(1).ne.'SCRAP'.and.lfn(47).ne.'SCRAP') then
+	  print *,'***************************************************'
+	  print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
+	  print *,'* SEQUENTIELS ET RANDOM                           *'
+	  print *,'***************************************************'
+	  jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+	  call qqexit(13)
+	endif	
+	
+	if (lfn(47).ne.'SCRAP') then
+	  inputmod = SEQUENTIEL
+	else
+	  inputmod = RANDOM
+	endif
+	
+	if (lfn(48).ne.'SCRAP') then
+	  ier = fnom(3,lfn(48),'RND+OLD+R/O',0)
+	  ier = fstouv(3,'RND')
+	endif
+	
+	if (lfn(49).ne.'NON') then
+	  ier = ezsetopt('verbose', 'yes')
+	endif
+	
+	
+	if (inputmod.eq.RANDOM) then
+	  niun = 1
+ 100	  if (lfn(niun) .ne.'SCRAP') then
+	    niun = niun+1
+	    goto 100
+	  endif
+	  
+	  niun = niun - 1
+	  if (niun .lt. 1) then
+	    print *
+	1	 ,'***************************************************'
+	    print *, '* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
+	    print *
+	1	 ,'***************************************************'
+	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+	    call qqexit(13)
+	  endif	
+	  do i=1, niun
+	    ier = fnom(lnkdiun(i),lfn(i),'RND+OLD+R/O',0)
+	    if (ier .lt. 0) then	         
+	      print *,'************************************************'
+	      print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(i)
+	      print *,'************************************************'
+	      jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+	      call qqexit(13)
+	    endif
+	  enddo
+	else
+	  niun = 1
+	  ier = fnom(lnkdiun(1),lfn(47),'STD+SEQ+OLD+R/O',0)
+	  if (ier .lt. 0) then	         
+	    print *,'************************************************'
+	    print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(47)
+	    print *,'************************************************'
+	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+	    call qqexit(13)
+	  endif
+	endif
+	
+*
+*
+*
+	mtype =   MTYP
+	maxnoms = MAXNOM 
+	
+	call initseq
+	
+*       
+*	
+*  initialise les dictionnaires
+*
+	call qlxopt ('CARMOT', 4)
+	call qlxinx (sorti,'SORTIE', nsort,0103,2)
+*                        3 appels reconnus  1=sortie(std,noenrg) noenrg>=2
+*                                           2=sortie(ms,noenrg,jwrit)
+*                                           3=sortie(seq)
+*
+	
+	call qlxinx (heure,'HEURE',nheure, 0140,2)
+	call qlxinx (heure, 'IP2',nheure, 0140,2) 
+*                     2 appels  1=heure(00,12,24,25.....max20) minimum 1
+*                               2=champ(mac,00,06) minimum 2 pour
+*                               2=champ(pcp,00,06) minimum 2 pour
+*                               accumulateur d"ajustement ou precipitation
+*
+	call qlxinx (qqqintx,'SETINTX',nsetin, 0101,2) 
+*
+*                        appel - setintx(voisin) avec le plus proche
+*                                setintx(lineair) interpolation lineaire
+*                                setintx(cubique) interpolation cubique(defaut) 
+*
+	call qlxinx (setxtrap,'EXTRAP',nsetex, 0101,2) 
+*
+*                        appel - setintx(voisin) avec le plus proche
+*                                setintx(lineair) interpolation lineaire
+*                                setintx(cubique) interpolation cubique(defaut) 
+*
+	call qlxinx (champ,'CHAMP',nchamp, 0131,2)
+*                     appel - champ(z,niveau)  niveau=1000,850,.......
+*                           - champ(t,niveau)  niveau=1000,850,.......
+*                           - champ(q,niveau)  niveau=1000,850,.......
+*                           - champ(d,niveau)  niveau=1000,850,.......
+*                           - champ(w,niveau)  niveau=1000,850,.......
+*                           - champ(es,niveau)  niveau=1000,850,.......
+*                           - champ(uv,niveau)  niveau=1000,850,.......
+*                           - champ(uvs)  pas de niveau vent de surface
+*                           - champs(ventuvs) voir directive paires(.....
+*                           - champ(vent,niveau) niveau=1000,850,.......
+*                           - champ(nuage)  nuage bas,moyen,haut
+*                                   rec 1=bas  rec 2= moyen  rec 3=haut
+*                           - champ(ecm)  epaisseur de la couche limite
+*                           - champ(pnm)  pression au niveau de la mer
+*                           - champ(psurf)  pression a la surface
+*                           - champ(ts)  temperature a la surface
+*                           - champ(epais,niveau1,niveau2) niveau2 - niveau1
+*                           - champ(mac,heure1,heure2)  heure2 - heure1
+*                           - champ(pcp,heure1,heure2)  heure2 - heure1
+*
+	call qlxinx (chmpdif,'CHMPDIF',npar,0508,2)
+*
+*                 appel - chmpdif (noment,nomsrt,ip1tab,ip2tab,ip3tab)
+*                    ex:  chmpdif ("gz","dz",[1000,500],12,0)
+*                         z500mb - z1000mb  a 12hr
+*                         fichier de sorti aura ip1=1000, ip2=500,ip3=12
+*                    ex:  chmpdif ("gz","dz",1000,[6,12,18,24],0)
+*                         z1000mb 6hr - z1000mb  a 12hr
+*                         fichier de sorti aura ip1=1000, ip2=6, ip3=12
+*                    ex:  chmpdif ("gz","dz",1000,6,[1,2,3,4])
+*                         z1000mb 6hr ip3=1 - z1000mb  6hr ip3=2
+*                         fichier de sorti aura ip1=1000, ip2=1, ip3=2
+*
+	call qlxinx (champ_seq,'CHAMPSEQ',npar,0303,2)
+*
+*                 appel - champseq(['GZ','TT','UU'],[1000,850,500],WAIT)
+*                 appel - champ_seq(' ',[1000,850,500],WAIT)
+*                 appel - champ_seq(['GZ','TT','UU'],-1,GO)
+
+	call qlxinx (convs, 'CONV',ncon, 0305,2)
+*
+*                 appel - conv(nom, ecart, facteur, bas, haut) directive
+*                         conv("ts", -273.16, 1.0,-280.0, -250.0)
+*                         routine conver dans ecriture soustrait
+*                         273.16 au champ et multiplit par 1.0
+*                         enleve toutes les valeurs plus petites que -280
+*                         enleve toutes les valeurs plus grandes que -250
+*                         avant d ecrire le champ 
+	call qlxinx (grille2,'GRILLE',  ngr, 0109,2)
+*          8 appels a grille    1=grille(std,nni,nnj,lg1)
+*                                 std=standard lat lon
+*                                 nni=nombre de pts est-ouest
+*                                 nnj=nombre de pts nord-sud
+*                                 lg1=0  global
+*                                    =1  hem nord 
+*                                    =2  hem sud
+*                               2=grille(latlon,nni,nnj,lat0,lon0,dlat,dlon)
+*                                 latlon=grille lat lon
+*                                 nni= nombre de pts est-ouest
+*                                 nnj= nombre de pts nord-sud
+*                                 lat0=premiere lat du coin degree
+*                                 lon0=premiere lon du coin degree
+*                                 dlat=espacement entre latitude  (degree)
+*                                 dlon=espacement entre longitude (degree)
+*
+*                               3=grille(ps,nni,nnj,pi,pj,d60,dgrw)
+*                                 ps  =polaire stereographique
+*                                 nni =nombre pts est-ouest (dir i)
+*                                 nnj =nombre de pts nord-sud (dir j) 
+*                                 pi  =position du pole nord(pi=26)
+*                                 pj  = position du pole nord(pj=28)
+*                                 d60 =distance en metres entre les pts
+*                                      a 60 degrees nord (latitude)
+*                                 drgw=angle entre l"axe x et greewich
+*
+*                               4=grille(tape4,nni,nnj,ip1,ip2,ip3)
+*                                 tape4=fichier contenant nni*nnj(lat-lon)
+*                                 nni  =nombre de pts est-ouest
+*                                 nnj  =nombre de pts nord-sud
+*                                 ip1  =definit par usager
+*                                 ip2  =definit par usager
+*                                 ip3  =definit par usager
+*
+*                               5=grille(stdb,nni,nnj,hem)
+*                                 stdb=standard b 
+*                                 nni  =nombre de pts est-ouest
+*                                 nnj  =nombre de pts nord-sud
+*                                 hem  =hemisphere 0=global 
+*                                                  1=nord
+*                                                  2=sud
+*
+*                               6=grille(gauss,nni,nnj,hem) 
+*                                 gauss=grille gaussienne lat-lon
+*                                 nni  =nombre de pts est-ouest
+*                                 nnj  =nombre de pts nord-sud
+*                                 hem  =hemisphere 0=global 
+*                                                  1=nord
+*                                                  2=sud
+*
+*                               7=grille(tape1,ip1,ip2,ip3,ip4,nord/sud)
+*                                 tape1=lit sur fichier 1 lat-lon ou xy
+*                                 ip1=valeur 0-32767
+*                                 ip2=valeur 0-32767
+*                                 ip3=valeur 0-4095
+*                                 ip4=valeur "xydir" ou "llist"
+*                                    =valeur "lldir" ou "xylis"
+*
+*                               8=grille(tape2,ip1,ip2,ip3,ip4,nord/sud)
+*                                 tape2 lit sur fichier 2 lat-lon ou xy
+*                                 ip1=valeur 0-32767
+*                                 ip2=valeur 0-32767
+*                                 ip3=valeur 0-4095
+*                                 ip4=valeur "xydir" ou "llist"
+*                                    =valeur "lldir" ou "xylis"
+*
+	call qlxinx (lrsmde,'LIRMODE',nlirmde,0708,2) 
+	call qlxinx (lrsmds,'LIRMODS',nlirmds,0708,2) 
+*
+*                  lrsmde(nomvar,typvar,date,niveau,heure,ip3,etiquet)
+*                  lrsmds(nomvar,typvar,date,niveau,heure,ip3,etiquet)
+*
+	call qlxinx (metsym,'METSYM',  nsym, 0202,2) 
+
+*                               metsym(z,oui)
+*                               z  =geopotentiel "gz"
+*                               oui=symetrique
+*
+	call qlxinx (outlalo,'OUTLALO', nlalo, 0108,2)
+*     outlalo(ip1,ip2,ip3,nomlat,nomlon,grtyp,etiklat,etiklon)
+*             ip1=valeur 0-32767
+*             ip2=valeur 0-32767
+*             ip3=valeur 0-4095
+*             nomlat=nom du champ de latitude 2 car
+*             nomlon=nom du champ de longitude 2 car
+*             grtyp=type de grille
+*             etiklat=nom de l'etiquette latitude 
+*             etiklon=nom de l'etiquette longitude
+*
+	call qlxinx (pairvct, "PAIRES",npairuv, 0305,2)
+*      ex: paires("uv","uu","vv",0) vecteur "uu","vv" geographique
+*                                     niveau donne par champ
+*      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
+*      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
+*
+   	call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
+   	call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
+   	call qlxinx (liren,'LIREE', nlire, 0708,2)
+	call qlxinx (lirsr,'LIRES', nlire, 0708,2)
+	call qlxinx(plmnmod,'PLUSE', najou, 0707,2)
+	call qlxinx (pluss,'PLUSS', najou, 0707,2) 
+	call qlxinx (foise,'FOISE', multp, 0707,2) 
+	call qlxinx (foiss,'FOISS', multp, 0707,2) 
+	call qlxinx (divisee,'DIVE', multp, 0707,2) 
+	call qlxinx (divises,'DIVS', multp, 0707,2) 
+	call qlxinx (moinse,'MOINSE', nenle, 0707,2)
+	call qlxinx (moinss,'MOINSS', nenle, 0707,2)
+	call qlxinx (moyene,'MOYENE', nmoys, 0101,2)
+   	call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)  
+   	call qlxinx (modul2e,'MODUL2E', nmod, 0707,2) 
+   	call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
+   	call qlxinx (racine,'RACINE', nraci, 0101,2)  
+   	call qlxinx (operat, 'PFOIS', npfo, 0303,2) 
+   	call qlxinx (expon, 'EXPON', npex, 0101,2) 
+   	call qlxinx (alogn, 'ALOGN', npex, 0101,2)
+*
+	call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
+	call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
+	call qlxinx (qqqform, 'FORMAT', dum, 0101, 2)
+	call qlxinx (coord,   'COORD',  dum, 0202, 2)
+	call qlxinx (qqqfilt, 'FILTRE', dum, 0204, 2)
+*
+  	call qlxins (npack,  'COMPAC',  dum, 1, 1)
+	call qlxins (message,'MESSAGE', dum, 1, 1)
+	call qlxins (numdel, 'DELTA',   dum, 1, 1) 
+	call qlxins (typeent,'TYPEENT', dum, 1, 1)
+	call qlxins (typesrt,'TYPESRT', dum, 1, 1)
+	call qlxins ( voire, 'VOIRENT', dum, 1, 1) 
+	call qlxins ( voirs, 'VOIRSRT', dum, 1, 1) 
+        call qlxINS ( pose,  'PAUSE',   dum, 1, 1) 
+	call qlxins ( date,  'DATE',    dum, 3, 1)
+	call qlxins (seldat, 'OPDAT',   dum, 1, 1)
+	call qlxins (printen,'PRINTEN', dum,7, 1) 
+	call qlxins (printsr,'PRINTSR', dum,7, 1)
+	call qlxins (etikent,'ETIKENT', nwetike, 3, 1)
+	call qlxins (etiksrt,'ETIKSRT', nwetiks, 3, 1)
+	call qlxins (numero, 'ENREG',   dum, 1, 1) 
+	call qlxins (ip2srt, 'IP2SRT',  dum, 1, 1) 
+	call qlxins (ip3ent, 'IP3ENT',  dum, 1, 1)
+	call qlxins (ip3srt, 'IP3SRT',  dum, 1, 1) 
+	call qlxins (unefois,'UNEFOIS',  dum, 1, 1) 
+	call qlxins (once,   'ONCE',  dum, 1, 1) 
+	call qlxins (diese,  'DIESE',dum,1,1)
+		
+	do i=1,101
+	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
+	enddo      
+	
+	do i=1,2
+	   call qlxins(qlxlval(i), qlxlcon(i), dum, 1, 0)  
+	enddo    
+*
+*   defaut pour lire fichier d'entre
+*
+	typeent = -1
+	etikent(1) = -1
+	etikent(2) = -1
+	
+	ip3ent = -1
+	date  = -1
+	date2 = -1
+	date3 = -1
+
+	diese = 1
+*
+*   defaut pour fichier de sorti
+*
+	ip3srt= -1
+	ip2srt=-1
+	etiksrt(1) = -1
+	etiksrt(2) = -1 
+	etiksrt(3) = -1 
+	
+	typesrt= -1
+*
+*
+*    initialiser avec .true. champ symetrique
+*
+	nsym = 2
+	call cmetsym('GZ',.true.)
+	call cmetsym('TT',.true.)
+	call cmetsym('DD',.true.)
+	call cmetsym('WW',.true.)
+	call cmetsym('ES',.true.)
+	call cmetsym('F2',.true.)
+	call cmetsym('PN',.true.)
+	call cmetsym('PS',.true.)
+	call cmetsym('TS',.true.)
+*
+	call cmetsym('QQ',.false.)
+*
+*
+*    directives de l'usager
+*
+	
+*
+*    initialisation parametres de sortie pour fichier formate
+
+	call initid
+
+	
+	iopc= fstopc('MSGLVL',lfn(46),.false.)
+	ipose= 0
+	call readlx(5,kend,ipose)
+*
+*   initialise variable de printsr
+*
+*
+*      iopc= fstopc('tolrnc','errors',.true.)
+*   if (.not.message) iopc= fstopc('tolrnc','debugs',.true.) 
+	
+	if (tmplatp .ne. 0) call hpdeallc(tmplatp,ier,1)
+	if (tmplonp .ne. 0) call hpdeallc(tmplonp,ier,1)
+	
+	iopc= fstopc('MSGLVL','INFORMS',.false.)
+	do i=1,niun
+	   ier = fstfrm(lnkdiun(i))
+	   call fclos(lnkdiun(i)) 
+	enddo
+c	call fstunl
+	
+	if (mode.eq.1) then 
+	   if (voirs)  then
+	      if (message) then
+	         ier = fstvoi(2, 'RND')
+	      endif
+	   endif
+	   ier = fstfrm(2)
+	   call fclos(2) 
+	else
+#if defined (unix)
+         if (mode.eq.2) then
+	      write (6, *) 
+     $      'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
+	      write (6, *) 'DANS CETTE VERSION DE PGSM'
+	   endif
+#endif
+*
+*    fermer fichier sequentiel
+*
+     	   if (mode.eq.3)  then
+	      call fclos(2) 
+	   endif
+
+     	   if (mode.eq.4)  then
+	      call pgsmcf(2) 
+	   endif
+	endif
+*
+*
+*
+*  fermer fichier 4 dans grille
+*
+*
+*  imprime boite avec le temps d execution du pgm  pgsm
+*
+	if (ipose.gt.0) then
+	   jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+	   call qqexit(13)
+	else
+	   jdate= exfin('  PGSM  ', 'OK', 'NON')
+	endif
+*
+*	 stop
+	 end

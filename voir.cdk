@@ -1,0 +1,7 @@
+      LOGICAL VOIRE,VOIRS,POSE,MESSAGE
+      COMMON/VOIR/ VOIRE,VOIRS, POSE, MESSAGE
+*     
+*     
+#if defined (DOC)
+#endif
+*

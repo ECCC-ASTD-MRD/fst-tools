@@ -1,0 +1,262 @@
+*
+***s/p epaisur  difference entre 2 champs de hauteur
+*
+      subroutine epaisur(iheur, npar, niveau)
+#include "impnone.cdk"
+      external ecritur,fstinf,pgsmlir,memoir,fstprm,pgsmabt,
+     $     fstcvt,symetri, imprime,loupsou,fstopc,messags,
+     $     liraxez
+      integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
+      integer ezsint, ezqkdef, ezdefset
+*
+*auteur  p.sarrazin janvier 82  drpn dorval p.q. canada
+*revision 4.0.2
+*
+*   conversion des variables hollerith en caracteres
+*   y. chartier -aout 90- drpn dorval quebec.
+*
+*langage ratfor
+*
+*objet(epaisur)
+*          lire sur fichier standard 2 champs de hauteur
+*          prendre la difference entre les 2 champs ecrire le
+*          resultat sur fichier approprie(standard,ms,seq)
+*
+*librairies
+*         -source  armnsrc,drpn
+*         -objet   pgsmlib,id=armnpjs.
+*
+*arguments
+*   in    iheur   heure des champs (gz) 
+*   in    npar    nombre de niveaux ( 2)
+*   in    niveau  table(2) contenant les 2 niveaux
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*messages 
+*     record n existe pas sur fichier d entre (epaisur)
+*
+*modules  fstinf,fstprm,pgsmlir,rgscint,ecritur
+*
+*appel   via champ
+*        call epaisur(iheur,npar,niveau)
+*
+* - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+#include "llccmm.cdk"
+*
+*
+#include "voir.cdk"
+*
+*
+#include "accum.cdk"
+*
+*
+#include "param.cdk"
+*
+*
+#include "indptr.cdk"
+*
+*
+#include "grilles.cdk"
+*
+*
+#include "lires.cdk"
+*
+*
+#include "ecrires.cdk"
+*
+*
+#include "dates.cdk"
+*
+*
+#include "packin.cdk"
+*
+*
+#include "gdz.cdk"
+*
+
+      character *12 cetiket
+      character *4 cnomvar
+      character *2 ctypvar
+      character*1 cigtyp
+      
+      real fbidon
+      integer iunit
+      
+      integer i, niveau(2),iheur,npar,ni,nj,nk,jp1,jp2,jp3,ig1,iopc,
+     $     ig2,ig3,ig4,irec1,irec2,num1,num2,nn,cnbits,cdatyp,cswa,clng,
+     $     cdltf,cubc,extra1,extra2,extra3
+      
+      
+      logical sym,symetri
+      iunit = 1
+*     
+*     heure ou iheur dans cette routine ne peut-etre -1 heure(tout) pas valide
+*     
+      if (iheur.eq.-1) then
+         write(6,*)
+     $        'HEURE NE PEUT-ETRE -1(TOUT/ALL) AVEC DIRECTIVE EPAIS'
+         call pgsmabt
+      endif
+*
+*  identifier le numero de chaque record avec fstinf
+*
+         if (date .eq. 1) then
+            if (date3.eq.-1) then
+               date=date2
+            else
+               call newdate(date, date2, date3, 3)
+            endif
+         endif
+
+
+*
+*  modification de hollerith a caractere
+*
+      if (etikent(1) .ne. -1) then
+         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+      else 
+         cetiket = '        '
+      endif
+      
+      if (typeent .ne. -1) then
+         write(ctypvar, '(A1)') typeent
+      else 
+         ctypvar = ' '
+      endif
+      
+      
+      cigtyp = ' '
+      
+*     
+      irec1=fstinf(1,ni,nj,nk,date,cetiket,niveau(1),iheur,ip3ent,
+     $     ctypvar,'GZ')
+      irec2=fstinf(1,ni,nj,nk,date,cetiket,niveau(2),iheur,ip3ent,
+     $     ctypvar,'GZ')
+      if (irec2 .lt. 0 .or. irec1 .lt. 0) then
+         write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (EPAISEUR)'
+         return
+      endif
+      
+      if (nk.gt.1) then
+         write(6,*)'**************************************************'
+         write(6,*)'         PGSM N ACCEPTE PAS UN          '
+         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (EPAISUR)'
+         write(6,*)'**************************************************'
+         call pgsmabt
+      endif
+*     
+*     identifier parametres pour champ 1
+*     
+      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,
+     $     jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,
+     $     ig1,ig2,ig3,ig4,cswa, clng, cdltf, cubc, 
+     $     extra1, extra2, extra3)
+
+      if (ier .lt. 0) then
+         write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
+      endif
+*     
+*     verifier si grille gaussienne ni doit etre pair
+*     
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0) then
+         call messags(ni)
+      endif
+      
+*     
+*     
+*     lire champ no 1
+*     
+      call hpalloc(tmpif1p,ni*nj,ier,1)
+      if (.not.message) then
+         iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      endif
+
+      if (date .eq. 1) then
+         if (date3.eq.-1) then
+            date=date2
+         else
+            call newdate(date, date2, date3, 3)
+         endif
+      endif
+*     
+      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+     $     ctypvar, 'GZ', cigtyp) 
+*
+      if (printen) then
+         call imprime(cnomvar,tmpif1,ni,nj)
+      endif
+*
+*     identifier parametres pour champ 2
+*     
+      ier = fstprm( irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,
+     $     jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp, 
+     $     ig1,ig2,ig3,ig4, cswa,clng,cdltf,cubc,extra1,extra2,extra3)
+      if (ier .lt. 0) then
+         write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
+      endif
+*     
+*     verifier si grille gaussienne ni doit etre pair
+*     
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  then
+         call messags(ni)
+      endif
+*     
+*     lire champ 2
+*     
+      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      if (.not.message)  then
+         iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      endif
+
+      if (date .eq. 1) then
+         if (date3.eq.-1) then
+            date=date2
+         else
+            call newdate(date, date2, date3, 3)
+         endif
+      endif
+
+      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+     $     ctypvar, 'GZ', cigtyp)
+      if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+*
+*  difference entre les deux champs
+*
+      nn = ni*nj
+      call loupsou(tmpif1,tmpif2,nn) 
+*
+*     interpolation horizontale
+*     
+      if (ig1.ne.0) sym=symetri(cnomvar)
+
+      if (cgrtyp.eq.'*') then
+         call chkenrpos(1,2,ig1,ig2,ig3)
+         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
+     $        niveau(1),niveau(2),iheur,
+     $        ctypvar,'DZ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
+      else
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = ezsint(tmpif2, tmpif1)
+*     
+*     
+         jp1 = niveau(1)
+         jp2 = niveau(2)
+         jp3 = iheur   
+*     
+*     ecrire sur fichier standard,ms,sequentiel
+*     
+         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+     $        ctypvar,'DZ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+
+      endif
+*     function qui identifie si la variable est symetrique( h.n. - h.s.)
+*     le test n'est pas applicable pour une situation  globale
+*     
+      call hpdeallc(tmpif1p,ier,1)
+      call hpdeallc(tmpif2p,ier,1)
+*     
+      return 
+      end
+      

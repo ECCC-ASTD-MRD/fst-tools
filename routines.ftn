@@ -1,0 +1,286 @@
+c     ***************************************************************
+c     *                     A S S E M B L E                         *
+c     * Object :                                                    *
+c     *         To assemble data field                              *
+c     *                                                             *
+c     * Arguments :                                                 *
+c     *            IN     ni    : 1st dimension of field ZOUT       *
+c     *            IN     nj    : 2nd dimension of field ZOUT       *
+c     *            IN     nrows : 3rd dimension of field ZOUT       *
+c     *            IN     slab  : data to assemble                  *
+c     *            IN     nX    : dimension of hxpos                *
+c     *            IN     hxpos : indicator of position in the grid *
+c     *                                                             *
+c     *            OUT    ZOUT  : field to return (assembled)       *
+c     *                                                             *
+c     ***************************************************************
+      subroutine assemble(ZOUT,ni,nj,nrows,slab,nX,hxpos)
+      implicit none
+      
+      integer nj, ni, nX, nrows
+      real ZOUT(ni * nj, nrows)
+      integer hxpos(nX)
+      real slab(nX,nrows)
+      integer I,k
+      do k=1, nrows
+         do I=1, nX
+            ZOUT(hxpos(I), k) = slab(I,k)
+         enddo
+      enddo
+      return
+      end
+c     ***************************************************************
+c     *                     W R T S T D F                           *
+c     * Object :                                                    *
+c     *         To write standard file (FSTD)                       *
+c     *                                                             *
+c     * Arguments :                                                 *
+c     *            IN    ZOUT   : data field to read                *
+c     *            IN    iun    : unit number of the file           *
+c     *            IN    dateo  : origin date of the field          *
+c     *            IN    deet   : time step length in seconds       *
+c     *            IN    npas   : time step number                  *
+c     *            IN    ni     : 1st dimension of field            *
+c     *            IN    nj     : 2nd dimension of field            *
+c     *            IN    nrows  : 3rd dimension of field            *
+c     *            IN    ip1    : descriptor 1 (1 to 32767)         *
+c     *            IN    ip2    : descriptor 2 (1 to 32767)         *
+c     *            IN    ip3    : descriptor 3 (1 to 32767)         *
+c     *            IN    typvar : field type                        *
+c     *            IN    nomvar : name of field                     *
+c     *            IN    etiket : 9 caracter stamp                  *
+c     *            IN    grtyp  : grid type                         *
+c     *            IN    ig1    : grid descriptor 1 (0 to 2047)     *
+c     *            IN    ig2    : grid descriptor 2 (0 to 2047)     *
+c     *            IN    ig3    : grid descriptor 3 (0 to 65535)    *
+c     *            IN    ig4    : grid descriptor 4 (0 to 65535)    *
+c     *            IN    datyp  : type of data field                *
+c     *            IN    Nextra : number of extra parameters        *
+c     *                           (Nextra >= 0)                     *
+c     *            IN    xtra   : field of optionnal variable       *
+c     *                                (absent IF Nextra = 0)       *
+c     *                                                             *
+c     ***************************************************************
+      subroutine wrtstdf (ZOUT,iun, dateo, deet, npas, ni, nj,nxgrid,
+     %           nygrid,  nrows, ip1, ip2, ip3, typvar,nomvar, etiket,
+     %           grtyp, ig1, ig2, ig3, ig4, datyp,Nextra,xtra, nbits,
+     %           iflt,list,L, S)
+      implicit none
+      integer fstecr
+      integer ni, nj, nrows, k, Nextra, i, j
+      integer nxgrid, nygrid
+      real ZOUT(ni , nj, nrows), work(1), xtra(nrows, Nextra)
+      integer ip1(nrows), ip2(nrows), ip3(nrows),npak, nbits(nrows)
+      integer ig1, ig2, ig3, ig4
+      integer iun, datyp(nrows)
+      integer npas, deet, dateo
+      character *4 nomvar(nrows)
+      character *4 typvar(nrows)
+      character *4 grtyp
+      character *12 etiket
+      integer ierr, ier, S 
+      real Temp
+      integer L, iflt(nrows)
+      integer list(L)
+      integer sum
+      real FACT
+      pointer (pfact,FACT(L, (L + 1)/2))
+      pointer (ptemp,Temp(nxgrid, nj))
+
+*     call stkmemw(l*(l+1)/2,pfact)
+      call hpalloc(pfact,L * (L+1)/2,ier, 0)
+      do k=1, (L+1)/2
+         do I=1, L
+            fact(I,k) = 0
+         enddo
+      enddo
+      do k=1,(L + 1)/2
+         sum = 0
+         do I=k, L - k + 1
+            sum = sum + list(I)
+         enddo
+         do I=k,L - k + 1
+            FACT(I,k) = float(list(I)) / float(sum)
+         enddo
+      enddo
+*     call stkmemw(nxgrid*nj,ptemp)
+      call hpalloc(ptemp, (nxgrid * nj), ier, 0)
+      do 300 k=1, nrows
+         npak = -nbits(k)
+         if (nxgrid .eq. (ni + 1)) then
+            do j=1, nj
+               do i=1, ni                  
+                  Temp(i,j) = ZOUT(i,j,k)
+               enddo
+            enddo
+            do j=1,nj
+               Temp(nxgrid,j) = Temp(1,j)
+            enddo
+            if ((iflt(k) .GT. 0) .and. (L .gt. 1)) then
+               call filtre (Temp,nxgrid,nj,nrows,iflt(k),FACT,list,L)
+            endif    
+            ierr = fstecr(Temp, work, npak, iun, dateo, deet, 
+     %           npas, nxgrid, nj, 1, ip1(k), ip2(k), ip3(k), 
+     %           typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8),
+     %           grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k),
+     %           .false.)
+            
+         else 
+            if ((iflt(k) .GT. 0) .and. (L .gt. 1)) then
+               call filtre (ZOUT(1,1,k),nxgrid,nj,nrows,iflt(k),FACT
+     %              ,list,L)
+            endif    
+            ierr = fstecr(ZOUT(1,1,k), work, npak, iun, dateo, deet, 
+     %           npas, ni, nj, 1, ip1(k), ip2(k), ip3(k), 
+     %           typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8),
+     %           grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k),
+     %           .false.)
+         endif
+ 300  continue
+      
+*      call unstakw(pfact)
+*      call unstakw(ptemp)
+      call hpdeallc(pfact,ier,0) 
+      call hpdeallc(ptemp,ier,0)
+      
+      if (Nextra .ne. 0) then
+         ierr = fstecr(xtra ,WORK,npak, iun, 20002020,
+     %        1, 1, nrows, Nextra,1, 0,0,S,'|',
+     %        '||' ,'||||*||||','x',0,0,
+     %        0,0,1, .false.) 
+      endif
+      
+      return
+      end
+c     ***************************************************************
+c     *                        F I L T R E                          *
+c     * Object :                                                    *
+c     *         To filter data.                                     *
+c     *                                                             *
+c     * Arguments :                                                 *
+c     *            IN /  ni    : x dimension of data                *
+c     *            IN /  nj    : y dimension of data                *
+c     *            IN /  Npass : nombre de passes pour le filtrage  * 
+c     *            IN /  list  : liste des nombres de filtre        *
+c     *            IN /  L     : dimension de la liste              *
+c     *         IN/OUT/  slab  : les donnees a filtrer              *
+c     *                                                             *
+c     ***************************************************************
+      subroutine filtre (slab, NI, NJ, nrows, Npass, facteur, list, L)
+      implicit none
+      
+      integer NI, NJ, nrows
+      integer l,list(L)
+      real slab(NI ,NJ)
+      real facteur(-L/2:L/2,(L+1)/2)
+      real temp, result1, result2
+      integer k,I,J, ier
+      integer nb_elm
+      integer Npass, pass
+    
+      pointer(presult1,result1(NI-2))
+      pointer(presult2,result2(NJ-2))
+      
+      
+*     call stkmemw(ni,presult1)
+*     call stkmemw(nj,presult2)
+      call hpalloc(presult1,ni,ier,0)
+      call hpalloc(presult2,nj,ier,0)
+ 
+      do pass=1, Npass
+         do J=1, NJ
+            do I=2, NI-1
+               temp = 0
+               nb_elm = min(I-1,NI-I,L/2)
+               do k = -nb_elm, nb_elm
+                  temp = temp + slab(I+k,J) *
+     %                 facteur(k,(L/2+1)-nb_elm)
+               enddo
+               result1(I) = temp
+            enddo
+            do I=2, NI-1
+               slab(I,J) = result1(I)
+            enddo
+         enddo
+         
+         do I=1, NI
+            do J=2, NJ-1
+               temp=0
+               nb_elm = min(J-1,NJ-J,L/2)
+               do k = -nb_elm, nb_elm
+                  temp = temp + slab(I,J+k) * 
+     %                 facteur(k,(L/2+1)-nb_elm)
+               enddo
+               result2(J) = temp
+            enddo
+            do J=2, NJ-1
+               slab(I,J) = result2(J)
+            enddo
+         enddo
+      enddo
+      
+*     call unstakw(presult2)
+*      call unstakw(presult1)
+      call hpdeallc(presult1,ier,0)
+      call hpdeallc(presult2,ier,0)
+      
+      return
+      end
+      
+c     ***************************************************************
+c     *                       W S T D F X Y                         *
+c     * Object :                                                    *
+c     *         To write record ('>>' and '^^') in standard file    *
+c     *                                                             *
+c     * Arguments :                                                 *
+c     *            IN    xpos   : field to write (dim : ni)         *
+c     *            IN    ypos   : filed to write (dim : nj)         *
+c     *            IN    iun    : unit number of the file           *
+c     *            IN    datoe  : date of origine of the field      *
+c     *            IN    deet   : time step lenght in seconds       *
+c     *            IN    npas   : time step number                  *
+c     *            IN    ni     : dimension of xpos                 *
+c     *            IN    nj     : dimension of ypos                 *
+c     *            IN    ip1    : descriptor 1                      *
+c     *            IN    ip2    : descriptor 2                      *
+c     *            IN    ip3    : descriptor 3                      *
+c     *            IN    etiket : 9 caracter stamp                  *
+c     *            IN    grtyp_ : grid type for ">>" and "^^"       *
+c     *            IN    ig1_   : grid descriptor 1 of ">>" and "^^"*
+c     *            IN    ig2_   : grid descriptor 2 of ">>" and "^^"*
+c     *            IN    ig3_   : grid descriptor 3 of ">>" and "^^"*
+c     *            IN    ig4_   : grid descriptor 4 of ">>" and "^^"*
+c     *                                                             *
+c     ***************************************************************
+      subroutine wstdfxy (xpos, ypos, iun, dateo, deet, npas, ni, nj,
+     % 	                  ip1, ip2, ip3, etiket, grtyp_, ig1_,
+     %                    ig2_, ig3_, ig4_)
+      implicit none
+      integer fstecr
+      integer ni, nj
+      real xpos(ni), ypos(nj), work(1)
+      integer ip1, ip2, ip3
+      integer ig1_, ig2_, ig3_, ig4_
+      integer datyp, npak, npas, deet, dateo
+      
+      integer i
+      
+      character *4 grtyp_
+      character *12 etiket
+      integer ierr, iun
+      npak = -24
+      datyp = 1
+      
+      ierr = fstecr(xpos, work, npak, iun, dateo, deet, 
+     %                 npas, ni, 1, 1, ip1, ip2, ip3, 
+     %                 'X', '>>', etiket,
+     %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
+     %                 .false.)
+      ierr = fstecr(ypos, work, npak, iun, dateo, deet, 
+     %                 npas, 1, nj, 1, ip1, ip2, ip3, 
+     %                 'X', '^^', etiket,
+     %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
+     %                 .false.)
+   
+      return
+      end

@@ -1,0 +1,80 @@
+      integer function chkenrpos(luin, luout, ip1, ip2, ip3)
+      implicit none
+      
+#include "indptr.cdk"
+
+      real ax, ay
+	
+      pointer (axp, ax(*))
+      pointer (ayp, ay(*))
+
+      integer luin, luout, ip1, ip2, ip3
+      integer lip1, lip2, lip3
+      
+      integer fstinf, fstluk, fstecr, fstprm
+      external fstinf, fstluk, fstecr, fstprm
+      
+      integer ni1, nj1, nk1, ni2, nj2, nk2
+      integer ier,ier1, ier2
+      
+      character*2 typvarx, typvary, grtyp, grref
+      character*12 etikx, etiky
+      character*4 nomx, nomy
+      character*24 chaine
+      integer  cdatyp
+      integer dateo, deet, npas, nbits,datyp, ig1, ig2, ig3,
+     $     ig1ref, ig2ref, ig3ref, ig4ref, 
+     $     swa, lng, dltf, ubc, extra1, extra2, extra3, npak
+
+      
+      if (mode.eq.1) then
+         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '>>  ')
+         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '^^  ')
+         
+         if (ier1.ge.0.and.ier2.ge.0) then
+            chkenrpos = 0
+            return
+         endif
+         
+      endif
+      
+      ier1 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+      ier2 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+      
+      if (ier1.lt.0.or.ier2.lt.0) then
+         chkenrpos = -1
+         return
+      endif
+      
+      ier = fstprm(ier1, dateo, deet, npas, ni1, nj1, nk1, nbits,
+     $     datyp, lip1, lip2, lip3, typvarx, nomx, etikx,
+     $     grref, ig1ref, ig2ref, ig3ref, ig4ref, 
+     $     swa, lng, dltf, ubc, extra1, extra2, extra3)
+      
+      ier = fstprm(ier2, dateo, deet, npas, ni2, nj2, nk2, nbits,
+     $     datyp, lip1, lip2, lip3, typvary, nomy, etiky,
+     $     grref, ig1ref, ig2ref, ig3ref, ig4ref, 
+     $     swa, lng, dltf, ubc, extra1, extra2, extra3)
+      
+      call hpalloc(axp,ni1*nj1*nk1,ier,1)
+      call hpalloc(ayp,ni2*nj2*nk2,ier,1)
+      
+      ier = fstluk(ax, ier1, ni1, nj1, nk1)
+      ier = fstluk(ay, ier2, ni2, nj2, nk2)
+      
+      call ecritur(ax,-nbits,dateo,deet,npas,ni1,nj1,nk1,
+     $     lip1,lip2,lip3, 
+     $     typvarx,nomx,etikx,grref,ig1ref,ig2ref,ig3ref,ig4ref)
+      
+      call ecritur(ay,-nbits,dateo,deet,npas,ni2,nj2,nk2,
+     $     lip1,lip2,lip3, 
+     $     typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
+      
+
+      call hpdeallc(axp, ier, 1)
+      call hpdeallc(ayp, ier, 1)
+      
+      chkenrpos = 0
+
+      return
+      end

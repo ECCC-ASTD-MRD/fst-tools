@@ -1,0 +1,35 @@
+***s/p qqqintx  choisir le degre de l'interpolation
+      subroutine qqqintx(ordre)
+      integer ordre
+*
+*auteur  Y.Chartier Dec 91
+*    Utilise le nouveau dispatcher de fscint.f pour ajuster
+*    le degre d'interpolation
+*
+*
+*  e      ordre     ordre de l'interpolation 0,1, ou 3
+*
+*implicites
+**
+      character*8 op 
+      
+
+      if (.not.(ordre .eq. 100 .or.ordre .eq. 1.or.ordre .eq. 3)) then
+         print *,
+     $      '<QQQINTX>: MAUVAISE VALEUR - VALEUR DEVRAIT ETRE 0, 1 OU 3'
+	 print *, '<QQQINTX>: ORDRE D''INTERPOLATION INITIALISE A 3'
+         call ezsetopt('interp_degree','cubic')
+      else
+	 if (ordre .eq. 100) then
+            call ezsetopt('interp_degree', 'nearest')
+	 else if (ordre. eq. 1) then
+            call ezsetopt('interp_degree', 'linear')
+         else
+            call ezsetopt('interp_degree', 'cubic')
+         endif
+      endif
+      
+      return
+      end
+      
+      

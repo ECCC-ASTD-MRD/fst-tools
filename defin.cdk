@@ -1,0 +1,18 @@
+#define MTYP    32
+#define NIVOMAX 40
+#define MAXNOM  40 
+#define MXCHAMP 31 
+#define MXHEURE 40 
+#define NPAIRMX 40 
+
+#if !defined (NEC)
+#define BIT1CAR 8 
+#define BIT2CAR 16 
+#define qlxinxs  qlxinx 
+#else
+#define BIT1CAR 8 
+#define BIT2CAR 16 
+#define qlxinxs  qlxinx  
+#endif
+
+

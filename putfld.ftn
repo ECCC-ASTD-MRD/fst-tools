@@ -1,0 +1,20 @@
+      subroutine putfld(fld, buf, iun,ibidon,iwrit,
+     $     ni,nj,nbrow,npkc,istamp)
+      integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
+      real fld(ni, nj)
+      real buf(ni, nj)
+      
+      call putfld1(fld, ni*nj, iun)
+      
+      return
+      end
+      
+      subroutine putfld1(fld, ni, iun)
+      integer ni, iun
+      real fld(ni)
+      
+      write(iun) (fld(i), i=1,ni)
+      
+      return 
+      end
+      

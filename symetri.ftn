@@ -1,0 +1,68 @@
+*
+***FONCTION SYMETRI FUNCTION QUI RECONNAIT SI LA VARIABLE EST SYMETRIQUE
+*
+      logical function symetri(cnom)
+#include "impnone.cdk"
+      external cmetsym  
+#include "defin.cdk"
+*
+*AUTEUR  P.SARRAZIN  FEVRIER  DRPN  DORVAL  P.Q.  CANADA
+*
+*REVISION 4.0.2
+*   MODIFICATION ARGUMENT D'ENTREE "NOM"
+*      DE "INTEGER" A "CHARACTER*2"
+*   Y. CHARTIER DRPN DORVAL QUEBEC
+*LANGAGE RATFOR
+*
+*OBJET(SYMETRI)
+*         VERIFIER SI UNE VARIABLE EST SYMETRIQUE .TRUE.=SYMETRIQUE
+*         MESSAGE SI VARIABLE N EST PAS RECONNUE DEFAULT SYMETRIQUE
+*          SI UNE VARIABLE N EST PAS RECONNUE ELLE EST CONSIDEREE
+*          COMME SYMETRIQUE
+*
+*LIBRAIRIES
+*         -SOURCE  ARMNSRC,DRPN
+*         -OBJET   PGSMLIB,ID=ARMNPJS.
+*
+*ARGUMENTS
+*   IN    NOM    NOM DE LA VARIABLE
+*
+*
+*APPEL    VIA MACPCP,EPAISUR
+*         SYMETRI(NOMBRE)
+*
+*MESSAGES 
+*         LA SYMETRIE DE LA VARIABLE  EST INCONNUE
+*         ON LA SUPPOSE SYMETRIQUE
+*
+*MODULES
+*
+* - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -*
+*
+#include "voir.cdk"
+*
+*
+#include "symnom.cdk"
+*
+*
+      integer  i
+      character*4 cnom
+*     
+      symetri = .true.
+*     
+      
+      do i = 1,nnoms
+         if (cnom.eq.noms(i)) then
+            symetri = ssym(i) 
+            return
+         endif
+      enddo
+*
+      if (message) write(6,101)cnom
+ 101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ', 
+     $     a2,' - EST INCONNUE',
+     $     ' ON LA SUPPOSE SYMETRIQUE *****'//)
+*
+      call cmetsym(cnom, .true.)
+      return
+      end 

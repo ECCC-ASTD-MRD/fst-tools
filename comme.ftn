@@ -1,0 +1,145 @@
+*
+***S/P   COMME   LIRE UN CHAMP DANS ACCUMULATEUR
+*
+      subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet) 
+#include "impnone.cdk"
+      external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime 
+      external fstopc,messags,fstcvt
+      integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
+*
+*AUTEUR P. SARRAZIN  AOUT 82 DRPN DORVAL P.Q. CANADA
+*
+*LANGAGE RATFOR
+*
+*OBJET(COMME)
+*         LIRE UN CHAMP SUR FICHIER 1 OU 2 ET SAUVE DANS UN ACCUMULATEUR
+*         POUR ETRE UTILISER PAR LES DIRECTIVES PLUSE-PLUSS 
+*         MOINSE-MOINSS-PFOIS-MOYENE-RACINE-MODUL2E-MODUL2S 
+*
+*LIBRAIRIES
+*         -SOURCE  ARMNSRC,DRPN
+*         -OBJET   PGSMLIB,ID=ARMNPJS.
+*
+*ARGUMENTS
+*   IN   NOM     NOM DU CHAMP LCAR(GZ),"TT"...... 
+*   IN   TYPE    TYPE DE CHAMP "P"=PREVISION  "A" ANALYSE
+*   IN   NIV     NIVEAU DU CHAMP
+*   IN   IHR     HEURE DU CHAMP
+*   IN   IP3     LIBRE(USAGER) COMPTEUR POUR MOYENE UTILISER PAR ECRITS
+*   IN   ETIQET  ETIQUETTE 10 CARACTERES
+*
+*IMPLICITES
+*MESSAGES 
+*         RECORD N EXISTE PAS SUR FICHIER (FSTINF DANS COMME)
+*         RECORD N EXISTE PAS (PGSMLIR DANS ROUTINE COMME)
+*
+*MODULES  FSTINF,PGSMABT,FSTPRM,MEMOIR,PGSMLIR
+*
+*APPEL     VIA DIRECTIVE
+*         LIREE(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQUET)
+*         LIRES(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQUET)
+*
+* -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*
+#include "accum.cdk"
+#include "chck.cdk"
+#include "voir.cdk"
+#include "llccmm.cdk"
+#include "indptr.cdk"
+#include "lires.cdk"
+#include "dummys.cdk"
+#include "grilles.cdk"
+#include "gdz.cdk"
+*
+*
+      character *12 cetiqet
+      character *4 cnomvar
+      character *2 ctypvar
+      character *1 cigtyp
+      character *4 cbidon
+      integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,num1,type
+      integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa 
+      integer iopc, bidon
+
+      integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
+      external  ezqkdef, ezgxprm, gdll, argdims
+*     
+*     
+*     MODIFICATION DE HOLLERITH A CARACTERE
+*     
+      bidon = 0
+      cnomvar = '    '
+      ctypvar = '  '
+      cetiqet = '            '
+      cigtyp  = ' '
+
+      letiket(1) = etiqet(1)
+      letiket(2) = "    "
+      letiket(3) = "    "
+      if (argdims(8).gt.1) then 
+         letiket(2) = etiqet(2)
+      endif
+      if (argdims(8).gt.2) then 
+         letiket(3) = etiqet(3)
+      endif
+
+ 100  ier = fstcvt(    nom,   type, letiket,    bidon,
+     $             cnomvar,ctypvar,cetiqet,cbidon,.true.)
+      if (cnomvar.eq.'  '.and.ctypvar.eq.' '.and.cetiqet.eq.'        '.
+     $     and.niv.eq.-1.and.ihr.eq.-1.and.
+     $     ip3.eq.-1.and.idat.eq.-1) then
+         print *, '****************************************************'
+         print *, '*             Un chausson avec ca?                 *'
+         print *, '****************************************************'
+         call pgsmabt
+      endif
+
+      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,ip3,
+     $     ctypvar,cnomvar)
+      if (irec1 .lt. 0)   then
+         write(6,*)
+     $        'RECORD N EXISTE PAS SUR FICHIER (FSTINF LIREE-LIRES)'
+         call pgsmabt
+      endif
+*     
+      if (nnk.gt.1)   then
+         write(6,*)'*************************************************'
+         write(6,*)'         PGSM N ACCEPTE PAS UN          '
+         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (LIREE-LIRES)'
+         write(6,*)'*************************************************'
+         call pgsmabt
+      endif
+*     
+*     
+*  #  clef pour directive pluse,moinse,ecrits....
+*     
+*     
+      ier = fstprm(irec1,idatt,ideet,npas,nni,nnj,nnk, cnbits,cdatyp,
+     $     jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiqet,cigtyp,igg1,igg2,igg3,
+     $     igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+      
+      
+      if (ier .lt. 0) then
+         write(6,*)'RECORD N EXISTE PAS (comme)'
+         call pgsmabt
+      endif
+
+*    ALLOCATION DE LA MEMOIRE 
+*
+      if (cigtyp.ne.'Z'.and.cigtyp.ne.'Y') then
+         gdout = ezqkdef(nni,nnj, cigtyp,igg1,igg2,igg3,igg4,iunit)
+         ier = ezgxprm(gdout,li,lj,cgrtyp,
+     $        lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
+         call hpalloc(tmplonp,li*lj,ier,1)
+         call hpalloc(tmplatp,li*lj,ier,1)
+      else
+         call gritp12(7,igg1,igg2,igg3)
+      endif
+
+*
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
+
+      return
+*     
+      end 
+      

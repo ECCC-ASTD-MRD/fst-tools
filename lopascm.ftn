@@ -1,0 +1,72 @@
+*
+      subroutine lopascm(sortent,entre,fact,nombre)
+#include "impnone.cdk"
+*
+*AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
+*
+*OBJET(LOPASCM)
+*         LOPASCM - ADDITIONNE,SOUSTRAIT,MULTIPLI DEUX CHAMPS OU SOMME
+*                   DEUX CHAMPS DONT CHAQUE PT EST AU CARRE 
+*
+*LIBRAIRIES
+*         -SOURCE  ARMNSRC,DRPN
+*         -OBJET   PGSMLIB,ID=ARMNPJS.
+*
+*ARGUMENTS
+* IN-OUT  SORTENT - RESULTAT DE L'OPERATION ET ENTRE DU CHAMP
+*   IN    ENTRE   - DEUXIEME CHAMP POUR OPERATION 
+*   IN    FACT    - OPERATEUR 1=ADDITIONNE , -1=SOUSTRAIT 3=MULTIPLI
+*                             2=ADDITIONNE CHAQUE POINT AU CARRE
+*   IN    NOMBRE  - NOMBRE DE POINTS DANS LES CHAMPS SORTENT/ENTRE
+*
+*APPEL
+*     - VIA PLMNMOD 
+*      CALL LOPASCM(SORTENT,ENTRE,FACT,NOMBRE)
+*
+*----------------------------------------------------------------------
+*
+#include "voir.cdk"
+*
+*
+*
+      integer nombre,i,fact
+      real sortent(nombre),entre(nombre)
+*     
+*       SOUSTRAIT SI FACT=-1  ADDITIONNE SI FACT=1
+*
+      if (abs(fact).eq.1) then
+         do i=1,nombre
+            sortent(i)=sortent(i) + entre(i)*fact
+         enddo
+*     
+*     ADDITIONNE CHAQUE POINT DES DEUX CHAMPS AU CARRE
+*     
+      else if (fact.eq.2)  then
+         do i=1,nombre
+            sortent(i)=sortent(i)**2 + entre(i)**2
+         enddo
+*     
+*     MULTIPLIT CHAQUE POINT DES DEUX CHAMPS
+*     
+      else if (fact.eq.3) then
+         do i=1,nombre
+            sortent(i)=sortent(i)*entre(i)
+         enddo
+      else  if (fact.eq.4) then
+         do i=1,nombre
+            if (entre(i).eq.0.0) then
+               print *, 'LOPASCM - Un des elements du tableau a une valeur de 0.0'
+               print *, 'Division impossible - sortie forcee'
+               call qqexit(13)
+            endif
+         enddo
+         do i=1,nombre
+            sortent(i)=sortent(i)/entre(i)
+         enddo
+      else
+         write(6,*)' ERREUR DANS ROUTINE LOPASCM (FACT..?)'
+      endif
+*     
+      return
+      end
+      

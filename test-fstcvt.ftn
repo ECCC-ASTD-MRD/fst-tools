@@ -1,0 +1,32 @@
+*
+***S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL 
+*
+      program testfstcvt
+
+      character *12 cetiqet
+      character *4 cnomvar
+      character *2 ctypvar
+      character *1 cigtyp
+
+      integer nomvar, typvar, etiqet(3), igtyp
+
+      integer fstcvt
+      external fstcvt
+      
+*-----------------------------------------------------------------
+*
+      nomvar = "TTTT"
+      typvar = "EEec"
+      etiqet(1) = "AAAA"
+      etiqet(2) = "BBBB"
+      etiqet(3) = "CCCC"
+      igtyp  = "Z   "
+      
+      ier = fstcvt(  nomvar,    typvar,  etiqet,  igtyp, 
+     $     cnomvar, ctypvar, cetiqet, cigtyp, .true.)
+      print *, nom, '--', type, '--' , etiqet, '--', igtyp
+      print *, cnomvar, '--', ctypvar, '--' , cetiqet, '--', cigtyp
+      
+      stop 
+      end
+

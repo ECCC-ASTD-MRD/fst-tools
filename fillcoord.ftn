@@ -1,0 +1,13 @@
+      subroutine fillcoord(lat,lon,coord,ncoords)
+#include "impnone.cdk"
+      real lat(*),lon(*),coord(512,2)
+      integer ncoords
+      
+      integer i
+
+      do i=1,ncoords
+         lat(i) = coord(i,1)
+         lon(i) = coord(i,2)
+         enddo
+      return
+      end

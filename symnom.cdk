@@ -1,0 +1,27 @@
+      INTEGER NNOMS,MAXNOMS,NSYM,NSYMM
+      LOGICAL SSYM(MAXNOM)
+      COMMON /SYMNOM/ NNOMS,MAXNOMS,NSYM,NSYMM,SSYM
+      
+      CHARACTER*4 NOMS(MAXNOM)
+      COMMON /CSYMNOM/ NOMS
+*     
+*     
+#if defined (DOC)
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*         - BLOC /SYMNOM /NNOMS, MAXNOMS,NOMS(MAXNOM),SSYM(MAXNOM),NSYM,NSYMM
+*
+*           NNOMS  -INITIALISER PGSM NNOMS=0 UTILISER DANS METSYM
+*                   COMPTEUR POUR TABLE DE SYMETRI
+*           MAXNOMS-CHANGE DE NOM A CAUSE DU DEFINE MAXNOMS=MAXNOM
+*                   INITIALISER DANS PGSM
+*           NOMS   - TABLE CONTENANT LES NOMS DES VARIABLES SYMETRIQUE
+*           SSYM   -TABLE DE CORRESPONDANCE AVEC TABLE NOMS 
+*                   EX: NOMS(1)=LCAR(GZ) ALORS SSYM(1)=.TRUE.
+*                   GEOPOTENTIEL EST SYMETRIQUE
+*           NSYM   -VALEUR TRANSFERRE DANS NSYMM CAUSE READLX
+*           NSYMM  -NOMBRE D'ARGUMENTS DANS LA DIRECTIVE METSYM
+*                   NSYMM DOIT ETRE EGAL A DEUX
+*
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+*

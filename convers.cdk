@@ -1,0 +1,25 @@
+      integer ncon,nomb
+      real ecarts,facts,bass,hauts
+      common/tabls/ncon,nomb,ecarts(40),facts(40),bass(40),hauts(40)
+      
+      character*2 nomss(40)
+      common /ctabls/ nomss
+*     
+*
+*
+#if defined (doc)
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*         - bloc /tabls / nomb,nomss(40),ecarts(40),facts(40),bass(40),hauts(40)
+*
+*           nomb - indice augmenter a chaque appel de convs 
+*           noms - table contenant tous les noms des champs a modifier
+*           ecarts - ecart correspondant a chaque nom
+*           facts - facteur correspondant a chaque nom
+*           bass -valeur de chaque champ(minimale acceptee) correspondant
+*                 a chaque champ  dans la table des noms max=40
+*           hauts - valeur maximale de chaque pt du champ correspondant
+*                   dans la table des noms max=40 
+*
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+*

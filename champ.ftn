@@ -1,0 +1,254 @@
+*     
+***   S/P CHAMP, IDENTIFICATION DU CHAMP APPELER ROUTINE APPROPRIEE
+*     
+#include "defin.cdk"
+      subroutine champ(nom,ipr1,ipr2,ipr3,ipr4,ipr5,
+     $     ipr6,ipr7,ipr8,ipr9, 
+     $     ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,
+     $     ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,
+     $     ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
+#include "impnone.cdk"
+*     
+*AUTEUR
+*   P. SARRAZIN JANVIER 82 DRPN DORVAL P.Q. CANADA
+*REVISION 4.0.2
+*         CONVERSION DES VARIABLES HOLLERITH EN CARACTERE
+*         MODIFS SUR LES TESTS TOUCHANT LE TABLEAU "PAIRE"
+*         Y. CHARTIER AOUT 90 DRPN DORVAL QUEBEC. 
+*
+*LANGAGE RATFOR
+*
+*OBJET(CHAMP)
+*         POINT D'ENTREE APPELE PAR LA DIRECTIVE
+*         CHAMP(NOM,  PARM1,PARM2....PARMX)
+*         EX.  CHAMP(Z,1000,850,700,500)
+*         LE S/P CHAMP APPELLE LE SOUS PROGRAMME APPROPRIE
+*         POUR LE TYPE DE CHAMP DEMANDE 
+*
+*LIBRAIRIES
+*         -SOURCE  ARMNSRC,DRPN
+*         -OBJET   PGSMLIB,ID=ARMNPJS.
+*
+*
+*ARGUMENTS
+*  IN    NOM         NOM DU CHAMP (DIRECTIVES DE L'USAGER)
+*  IN    IPR1-IPR30  DESCRIPTEURS SUPLEMENTAIRES (HEURES - NIVEAUX)
+*                    DEMANDEES PAR L'USAGER
+*
+*IMPLICITES
+*
+*     MODULES
+      external fstcvt, argdims,
+     $     grille2,epaisur,macpcp,uvectur,scalair
+*
+*APPEL
+*          VIA DIRECTIVE
+*          CHAMP(NOM,IPR1......IPR30)
+*          MAXIMUM DE 30 IPR
+*
+*MESSAGES 
+*          TYPE DE GRILLE NON DEFINI DEFAUT=GRILLE P.S.NORD(2805)
+*          DIRECTIVE HEURE PAS NECESSAIRE POUR MAC(ST)
+*          DIRECTIVE HEURE PAS NECESSAIRE POUR PRECIP
+*
+*-----------------------------------------------------------------------
+*
+#include "heures.cdk"
+*
+*
+#include "voir.cdk"
+#include "accum.cdk"
+#include "indptr.cdk"
+#include "dates.cdk"
+#include "champs.cdk"
+#include "lires.cdk"
+#include "pairs.cdk"
+#include "ecrires.cdk"
+#include "grilles.cdk"
+#include "llccmm.cdk"
+#include "lnkflds.cdk"
+*----------------------------------------------------------------------
+*
+*
+*
+      integer ihr,ihrs,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7
+      integer ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15
+      integer ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23
+      integer ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30,nparm
+      integer i,np,nw,trouve
+      integer fstcvt,argdims 
+      
+      integer nom(2)
+      character*8 cnom 
+*
+*
+      if (inputmod.eq.SEQUENTIEL) then
+	   print *,'***************************************************'
+	   print *,'* ON NE PEUT UTILISER LA DIRECTIVE "CHAMP"        *' 
+	   print *,'* AVEC UN FICHIER D ENTREE SEQUENTIEL             *'
+	   print *,'*                                                 *'
+	   print *,'* UTILISEZ PLUTOT LA DIRECTIVE "CHAMP_SEQ"        *'
+	   print *,'***************************************************'
+           return
+      endif
+
+
+      champpr(1) = -1 
+      nchamp = min0(31,nchamp)
+      go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+     $     21,22,23,24,25,26,27,28,29,30,31) ,nchamp
+ 31   champpr(30) = ipr30
+ 30   champpr(29) = ipr29
+ 29   champpr(28) = ipr28
+ 28   champpr(27) = ipr27
+ 27   champpr(26) = ipr26
+ 26   champpr(25) = ipr25
+ 25   champpr(24) = ipr24
+ 24   champpr(23) = ipr23
+ 23   champpr(22) = ipr22
+ 22   champpr(21) = ipr21
+ 21   champpr(20) = ipr20
+ 20   champpr(19) = ipr19
+ 19   champpr(18) = ipr18
+ 18   champpr(17) = ipr17
+ 17   champpr(16) = ipr16
+ 16   champpr(15) = ipr15
+ 15   champpr(14) = ipr14
+ 14   champpr(13) = ipr13
+ 13   champpr(12) = ipr12
+ 12   champpr(11) = ipr11
+ 11   champpr(10) = ipr10
+ 10   champpr(9) = ipr9
+ 9    champpr(8) = ipr8
+ 8    champpr(7) = ipr7
+ 7    champpr(6) = ipr6
+ 6    champpr(5) = ipr5
+ 5    champpr(4) = ipr4
+ 4    champpr(3) = ipr3
+ 3    champpr(2) = ipr2
+ 2    champpr(1) = ipr1
+*
+ 1    nw = min(argdims(1), 2) 
+  
+      if (nw.eq.1) then
+         if (nom(1).eq.-1) then
+            cnom = ' '
+         else
+            write(cnom, '(A4)') nom(1)
+         endif
+      else
+         write(cnom,'(2A4)') (nom(i), i=1,nw)
+      endif
+      call low2up(cnom,cnom)
+*     
+      nchmp = nchamp
+*
+*
+      nparm = max0(1,nchmp - 1)
+      if (tmplatp.eq.0.and.cgrtyp.ne.'*') then
+         if (message) then
+            write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
+         endif
+         ngr=8
+         call grille2(3,51,55,26.,28.,381000.,350.,1) 
+      endif
+*
+      if (cnom.eq.'DFPR'.or.cnom.eq.'DFST')  go to 99999
+*
+*   VERIFIER SI DIRECTIVE HEURE EXISTE OBLIGATOIRE AVEC CHAMP
+*
+      if (nhur.eq.0) then
+         write(6,*)'  ON DOIT DEFINIR DIRECTIVE HEURE '
+         return
+      endif
+*
+99999 continue
+*
+      if (npair.gt.NPAIRMX) npair=NPAIRMX
+*
+      do ihrs = 1, nhur
+         ihr = heures(ihrs)
+*
+*   CALCUL DES VECTEURS OU DE LA VITESSE DU VENT
+*
+         trouve=0
+         do np=1,npair
+            if (cnom.eq.paire(np)(1:8)) trouve=np
+         enddo
+*
+*  SI ON A TROUVE ON VA A L'INTERPOLATION
+*
+         if (trouve.ne. 0) then
+            vvent  = .false.
+            wdvent = .false.
+            if (paire(trouve)(17:20).ne.'??  ') then
+               vvent= .true.
+            endif
+            if (paire(trouve)(21:24).eq.'WD  ') then
+               wdvent= .true.
+               vvent = .true.
+            endif
+
+            if (cgrtyp.eq.'*') then
+               write (6,*) 'GRILLE(AUCUNE) NE FONCTIONNE QUE POUR LES VARIABLES'
+               write (6,*) 'PCP, EPAIS, DFST ET NUAG'
+            else
+               call uvectur(paire(trouve)(9:12), paire(trouve)(13:16),
+     $              paire(trouve)(17:20),ihr,nparm,champpr)
+            endif
+*     
+*     CALCUL LA DIFFERENCE ENTRE DEUX "GZ"
+*     
+*     
+         else if (cnom.eq.'DFGZ') then
+            call epaisur(ihr, nparm, champpr)
+*
+*     CALCUL LA DIFFERENCE ENTRE DEUX "ST ACCUMULATEUR D'AJUSTEMENT"
+*
+*
+         else if (cnom.eq.'DFST') then
+            if (ihrs.eq.1)   then
+               call macpcp('ST', nparm, champpr)
+               if (message) then
+                  if (nhur.gt.1)
+     $                 write(6,*)' HEURE PAS NECESSAIRE  (ST)'
+               endif
+            endif
+*
+*
+*     CALCUL LA DIFFERENCE ENTRE DEUX "PR" PRECIPITATION
+*     
+         else if (cnom.eq.'DFPR') then
+            if (ihrs.eq.1) then
+               call macpcp('PR', nparm, champpr)
+               if (message) then
+                  if (nhur.gt.1) then
+                     write(6,*)
+     $                    'DIRECTIVE HEURE PAS NECESSAIRE POUR PRECIP'
+                  endif
+               endif
+            endif
+*     
+*     INTERPOLATION DES NUAGES BAS,MOYEN,HAUT
+*     
+         else if (cnom.eq.'NUAG') then
+            call scalair('NB', ihr, 1, champpr) 
+            call scalair('NM', ihr, 1, champpr) 
+            call scalair('NH', ihr, 1, champpr) 
+            
+*     AUTRE NOM  (GZ,TT,DD,WW,QQ,ES,DZ,ST,PR........)
+*     
+         else 
+            if (cgrtyp.eq.'*') then
+               write (6,*) 'GRILLE(AUCUNE) NE FONCTIONNE QUE POUR LES VARIABLES'
+               write (6,*) 'PCP, EPAIS, DFST ET NUAG'
+            else
+               call scalair(cnom, ihr, nparm, champpr)
+            endif
+         endif
+         
+      enddo
+
+      return 
+      end
+      

@@ -1,0 +1,15 @@
+      INTEGER NPAIR,npairmx,NPAIRUV
+      COMMON/PAIR/NPAIR,npairmx,NPAIRUV
+      
+      CHARACTER*24 PAIRE
+      COMMON/CPAIR/PAIRE(NPAIRMX)
+*
+*
+#if defined (DOC)
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*            - BLOC /PAIR/ NPAIR,PAIRE(5,NPAIRMX) 
+*                    INTEGER NPAIR,PAIRE
+*
+*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+*
