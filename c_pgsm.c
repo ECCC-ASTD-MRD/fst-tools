@@ -29,6 +29,7 @@ FILE *ftnUnits[100];
 */
 
 void strconvdate(char strdate[], int fstdate);
+static int c_dateform = 1;
 
 int f77name(pgsmform)(char format[],int *nrepeats, int *lenFormat, int fortranLenFormat)
 {
@@ -128,7 +129,7 @@ int f77name(pgsmcf)(int *iun)
 */
 
 int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format,int *position,int *idents,char *separateur,
-             char *nomvar,char *typvar,char *etiket,int *dateo,int *datev,int *ip1,int *ip2,int *ip3,
+             char *nomvar,char *typvar,char *etiket,int *dateo,int *datev,int *dateform, int *ip1,int *ip2,int *ip3,
              float *lat,float *lon)
 {
    int i,j;
@@ -140,6 +141,7 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
    int npts = *ni * *nj * *nk;
    int nrepeats;
 
+   c_dateform = *dateform;
    
    strncpy(c_nomvar,nomvar,4);
    strncpy(c_typvar,typvar,2);
@@ -347,18 +349,35 @@ void strconvdate(char strdate[], int fstdate)
   int lfstdate, yyyymmdd, hhmmssss, mode;
   int yyyy, month, day, hour, minutes, sec, fracsec;
   
-  mode = -3;
-  lfstdate = fstdate;
+  switch(c_dateform)
+    {
+    case 0:
+      sprintf(strdate, "%08d", fstdate);
+      break;
 
-  f77name(newdate)(&lfstdate, &yyyymmdd, &hhmmssss, &mode);
+    case 1:
+      mode = -3;
+      lfstdate = fstdate;
+      
+      f77name(newdate)(&lfstdate, &yyyymmdd, &hhmmssss, &mode);
+      sprintf(strdate, "%08d.%08d", yyyymmdd, hhmmssss);
+      break;
 
-  yyyy = yyyymmdd / 10000;
-  month = (yyyymmdd / 100) % 100;
-  day   = yyyymmdd % 100;
-
-  hour = hhmmssss / 1000000;
-  minutes = (hhmmssss / 10000) % 100;
-  sec = (hhmmssss % 100);
-
-  sprintf(strdate, "%04d-%02d-%02dT%02d:%02d:%02dZ", yyyy, month, day, hour, minutes, sec);
+    case 2:
+      mode = -3;
+      lfstdate = fstdate;
+      
+      f77name(newdate)(&lfstdate, &yyyymmdd, &hhmmssss, &mode);
+      
+      yyyy = yyyymmdd / 10000;
+      month = (yyyymmdd / 100) % 100;
+      day   = yyyymmdd % 100;
+      
+      hour = hhmmssss / 1000000;
+      minutes = (hhmmssss / 10000) % 100;
+      sec = (hhmmssss % 100);
+      
+      sprintf(strdate, "%04d-%02d-%02dT%02d:%02d:%02dZ", yyyy, month, day, hour, minutes, sec);
+      break;
+    }
 }

@@ -1,4 +1,4 @@
-      integer ip1style
+      integer ip1style, dateform
 
-      common /styles/ ip1style
+      common /styles/ ip1style, dateform
 

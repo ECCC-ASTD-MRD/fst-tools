@@ -1164,6 +1164,7 @@ c     ***************************************************************
 #include "dummys.cdk"
 #include "idents.cdk"
 #include "qqqfilt.cdk"
+#include "styles.cdk"
 *
 *-----------------------------------------------------------------
 *
@@ -1318,7 +1319,7 @@ c     ***************************************************************
             gdout = ezgetgdout()
             ier = gdll(gdout, tmplat,tmplon)
             call pgsmwr(2,champ,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,
-     $           idat,idatv,ip1,ip2,ip3,tmplat,tmplon)
+     $           idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
 
 *     
          else
@@ -3142,7 +3143,7 @@ C faite
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit, chkenrpos, nk
+      integer iunit, chkenrpos
       real fbidon, p
       character*8 string
       integer npts
@@ -7291,13 +7292,6 @@ c     ***************************************************************
       legvar=0
       return
       end
-        program pgsm
-
-        call pgsm2
-
-        stop
-        end
-
 ***programme pgsm 
 *	    programme general de sortie des modeles
 *               programme utilitaire d'interpolation horizontale
@@ -7365,7 +7359,7 @@ c     ***************************************************************
 *
 *----------------------------------------------------------------------------
 #include "defin.cdk"
-	subroutine pgsm2
+	subroutine pgsm
 #include "impnone.cdk"
 *
 #include "lnkflds.cdk"
@@ -7592,6 +7586,10 @@ c     ***************************************************************
 	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
 	data qlxcon(116)/'OLDSTYLE'/  qlxval(116)/ 3 /
 	data qlxcon(117)/'NEWSTYLE'/  qlxval(117)/ 2 /
+	
+	data qlxcon(118)/'STAMP'   /  qlxval(118)/ 0 /	
+	data qlxcon(119)/'YMDHMS'  /  qlxval(119)/ 1 /	
+	data qlxcon(120)/'ISO8601' /  qlxval(120)/ 2 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -7615,7 +7613,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.11',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.13.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7918,8 +7916,9 @@ c     ***************************************************************
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
+	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
 		
-	do i=1,117
+	do i=1,120
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -7940,6 +7939,7 @@ c     ***************************************************************
 
 	diese = 1
 	ip1style = 2
+	dateform = 1
 *
 *   defaut pour fichier de sorti
 *

@@ -65,7 +65,7 @@
 *
 *----------------------------------------------------------------------------
 #include "defin.cdk"
-	subroutine pgsm2
+	subroutine pgsm
 #include "impnone.cdk"
 *
 #include "lnkflds.cdk"
@@ -292,6 +292,10 @@
 	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
 	data qlxcon(116)/'OLDSTYLE'/  qlxval(116)/ 3 /
 	data qlxcon(117)/'NEWSTYLE'/  qlxval(117)/ 2 /
+	
+	data qlxcon(118)/'STAMP'   /  qlxval(118)/ 0 /	
+	data qlxcon(119)/'YMDHMS'  /  qlxval(119)/ 1 /	
+	data qlxcon(120)/'ISO8601' /  qlxval(120)/ 2 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -315,7 +319,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.12',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.13.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -618,8 +622,9 @@
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
+	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
 		
-	do i=1,117
+	do i=1,120
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -640,6 +645,7 @@
 
 	diese = 1
 	ip1style = 2
+	dateform = 1
 *
 *   defaut pour fichier de sorti
 *

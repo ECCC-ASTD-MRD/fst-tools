@@ -81,6 +81,7 @@
 #include "dummys.cdk"
 #include "idents.cdk"
 #include "qqqfilt.cdk"
+#include "styles.cdk"
 *
 *-----------------------------------------------------------------
 *
@@ -235,7 +236,7 @@
             gdout = ezgetgdout()
             ier = gdll(gdout, tmplat,tmplon)
             call pgsmwr(2,champ,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,
-     $           idat,idatv,ip1,ip2,ip3,tmplat,tmplon)
+     $           idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
 
 *     
          else

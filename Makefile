@@ -49,7 +49,7 @@ conlalo.ftn    grigef.ftn     initid.ftn       metsym.ftn   putfld.ftn     stenf
 conver.ftn     grigrib.ftn    initseq.ftn      operat.ftn   qaaqr.ftn      uvect.ftn\
 convs.ftn      grille2.ftn    itrouve.ftn      outlalo.ftn  qqqecho.ftn    vdauv.ftn\
 coord.ftn      grillps.ftn    gristereo.ftn    lastcol.ftn      pairvct.ftn  qqqfilt.ftn    verlalo.ftn\
-coupe.ftn      grilstd.ftn    legvar.ftn       pgsm.ftn     pgsm2.ftn      qqqform.ftn\
+coupe.ftn      grilstd.ftn    legvar.ftn       pgsm2.ftn      qqqform.ftn\
 coupzm.ftn     griltp4.ftn    liraxez.ftn      pgsmabt.ftn  qqqident.ftn
 
 FICHIERS_C = \
@@ -67,8 +67,11 @@ genlib: $(OBJET)
 #Creer ou mettre a jour la programmatheque 
 	$(AR) rcv $(MYLIB) $(OBJET)
 
+pgsmflib: 
+	r.build -o pgsm -libpath $(PGSM) -libappl pgsm -librmn rmnbeta -bidon -main pgsm
+
 pgsm2002: 
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -librmn rmnbeta
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -bidon -main pgsm -librmn rmn_x
 
 pgsm2000: 
 	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_006

@@ -96,7 +96,7 @@
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit, chkenrpos, nk
+      integer iunit, chkenrpos
       real fbidon, p
       character*8 string
       integer npts
