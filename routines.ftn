@@ -79,16 +79,12 @@ c     ***************************************************************
       character *4 grtyp
       character *12 etiket
       integer ierr, ier, S 
-      real Temp
       integer L, iflt(nrows)
       integer list(L)
       integer sum
-      real FACT
-      pointer (pfact,FACT(L, (L + 1)/2))
-      pointer (ptemp,Temp(nxgrid, nj))
-
-*     call stkmemw(l*(l+1)/2,pfact)
-      call hpalloc(pfact,L * (L+1)/2,ier, 0)
+      real, dimension (:,:), allocatable :: fact, temp
+      
+      allocate(fact(L, (L+1)/2))
       do k=1, (L+1)/2
          do I=1, L
             fact(I,k) = 0
@@ -103,8 +99,8 @@ c     ***************************************************************
             FACT(I,k) = float(list(I)) / float(sum)
          enddo
       enddo
-*     call stkmemw(nxgrid*nj,ptemp)
-      call hpalloc(ptemp, (nxgrid * nj), ier, 0)
+
+      allocate(temp(nxgrid, nj))
       do 300 k=1, nrows
          npak = -nbits(k)
          if (nxgrid .eq. (ni + 1)) then
@@ -137,11 +133,9 @@ c     ***************************************************************
      %           .false.)
          endif
  300  continue
-      
-*      call unstakw(pfact)
-*      call unstakw(ptemp)
-      call hpdeallc(pfact,ier,0) 
-      call hpdeallc(ptemp,ier,0)
+
+      deallocate(temp)
+      deallocate(fact)
       
       if (Nextra .ne. 0) then
          ierr = fstecr(xtra ,WORK,npak, iun, 20002020,

@@ -3,10 +3,7 @@
       
 #include "indptr.cdk"
 
-      real ax, ay
-	
-      pointer (axp, ax(*))
-      pointer (ayp, ay(*))
+      real, dimension (:), allocatable :: ax, ay
 
       integer luin, luout, ip1, ip2, ip3
       integer lip1, lip2, lip3
@@ -56,8 +53,8 @@
      $     grref, ig1ref, ig2ref, ig3ref, ig4ref, 
      $     swa, lng, dltf, ubc, extra1, extra2, extra3)
       
-      call hpalloc(axp,ni1*nj1*nk1,ier,1)
-      call hpalloc(ayp,ni2*nj2*nk2,ier,1)
+      allocate(ax(ni1*nj1*nk1))
+      allocate(ay(ni2*nj2*nk2))
       
       ier = fstluk(ax, ier1, ni1, nj1, nk1)
       ier = fstluk(ay, ier2, ni2, nj2, nk2)
@@ -70,9 +67,8 @@
      $     lip1,lip2,lip3, 
      $     typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
       
-
-      call hpdeallc(axp, ier, 1)
-      call hpdeallc(ayp, ier, 1)
+      deallocate(ax)
+      deallocate(ay)
       
       chkenrpos = 0
 

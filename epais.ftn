@@ -167,7 +167,7 @@
 *     
 *     lire champ no 1
 *     
-      call hpalloc(tmpif1p,ni*nj,ier,1)
+      allocate(tmpif1(ni*nj))
       if (.not.message) then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -204,7 +204,7 @@
 *     
 *     lire champ 2
 *     
-      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      allocate(tmpif1(max0(li*lj,ni*nj)))
       if (.not.message)  then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -254,8 +254,8 @@
 *     function qui identifie si la variable est symetrique( h.n. - h.s.)
 *     le test n'est pas applicable pour une situation  globale
 *     
-      call hpdeallc(tmpif1p,ier,1)
-      call hpdeallc(tmpif2p,ier,1)
+      deallocate(tmpif1)
+      deallocate(tmpif2)
 *     
       return 
       end

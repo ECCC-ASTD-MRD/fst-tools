@@ -49,6 +49,7 @@
 #include "lires.cdk"
 #include "ecrires.cdk"
 #include "dummys.cdk"
+#include "blancs.cdk"
 *
 *
       character *12 cetiqet
@@ -73,8 +74,8 @@
       cigtyp  = ' '
       
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -124,8 +125,7 @@
 *
 *    ALLOCATION DE LA MEMOIRE 
 *
-      call hpalloc(tmpif0p,nni*nnj*nnk,ier,1)
-*      call hpalloc(tmpiftp,nni*nnj*nnk,ier,1)
+      allocate(tmpif0(nni*nnj*nnk))
 *
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       num1 =pgsmlir(tmpif0,iunit,nni,nnj,nnk,idat,cetiqet,jpp1,jpp2,

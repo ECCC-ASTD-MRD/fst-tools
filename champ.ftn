@@ -145,7 +145,7 @@
 *
 *
       nparm = max0(1,nchmp - 1)
-      if (tmplatp.eq.0.and.cgrtyp.ne.'*') then
+      if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
          endif

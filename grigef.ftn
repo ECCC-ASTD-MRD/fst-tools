@@ -36,10 +36,10 @@
 *     
 *     RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *     
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
-      call hpalloc(tmplatgp,nni*nnj,ier,1)
-      call hpalloc(tmplongp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(tmplatg(nni*nnj))
+      allocate(tmplong(nni*nnj))
 *     
       cgrtyp='E'
       call cxgaig(cgrtyp,lg1,lg2,lg3,lg4,xlat1,xlon1,xlat2,xlon2)

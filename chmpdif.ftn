@@ -106,7 +106,7 @@
          return
       endif
   
-      if (tmplatp.eq.0.and.cgrtyp.ne.'*') then
+      if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
          endif
@@ -261,7 +261,7 @@
 *     
 *     lire champ no 1
 *     
-         call hpalloc(tmpif1p,ni*nj,ier,1 )
+         allocate(tmpif1(ni*nj))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -304,7 +304,7 @@
 *     lire champ 2
 *     
 
-         call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1 )
+         allocate(tmpif2(max0(li*lj,ni*nj)))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -315,7 +315,7 @@
          endif
 *     
          irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,ip1tab(ii),
-     $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment)
+     $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment,cigtyp)
 *     
 *     
          if (printen)  call imprime(cnoment,tmpif2,ni,nj)
@@ -410,8 +410,8 @@
 *     
 *     remetre espace des champs de travail
 *     
-         call hpdeallc(tmpif2p,ier,1)
-         call hpdeallc(tmpif1p,ier,1)
+      deallocate(tmpif2)
+      deallocate(tmpif1)
 *     
       enddo
 *     

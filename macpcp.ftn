@@ -154,7 +154,7 @@
 *     
 *     lire champ no 1
 *     
-      call hpalloc(tmpif1p,ni*nj,ier,1)
+      allocate(tmpif1(ni*nj))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       
@@ -177,7 +177,7 @@
 *     
 *     lire champ 2
 *     
-      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      allocate(tmpif2(max0(li*lj,ni*nj)))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
@@ -230,8 +230,8 @@
 *     
 *     remetre espace des champs de travail
 *     
-      call hpdeallc(tmpif1p,ier,1)
-      call hpdeallc(tmpif2p,ier,1)
+      deallocate(tmpif2)
+      deallocate(tmpif1)
 *     
       return
       end

@@ -64,6 +64,7 @@
 #include "chck.cdk"
 #include "accum.cdk"
 #include "llccmm.cdk"
+#include "blancs.cdk"
 *
       character*12 cetike,cetiket
       character*4 cnomvar, cnumve
@@ -99,8 +100,8 @@
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -180,7 +181,7 @@
 *
 *    ALLOCATION DE LA MEMOIRE 
 *
-         call hpalloc(tmpif1p,nni*nnj*nnk,ier,1)
+         allocate(tmpif1(nni*nnj*nnk))
 *
          ier = pgsmluk(tmpif1, irec, nni, nnj, nnk,cnomvar,cigty)
          if (ier.lt.0)  then
@@ -204,7 +205,7 @@
          call lopascm(tmpif0,tmpif1,aa,itot)
 *     
 *
-         call hpdeallc(tmpif1p,ier,1)
+         deallocate(tmpif1)
 *     
          if (aa.ne.1.or.unefois.or.once) goto 11
          irec = fstsui(iunit,nie,nje,nke)

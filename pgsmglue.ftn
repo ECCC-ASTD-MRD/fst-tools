@@ -1,14 +1,3 @@
-      subroutine pgsmgetlatlon(ilat, ilon)
-#include "impnone.cdk"
-      integer ilat, ilon
-#include "llccmm.cdk"
-
-      ilat = tmplatp
-      ilon = tmplonp
-
-      return
-      end
-
       subroutine pgsmsetiset
 #include "impnone.cdk"
 
@@ -33,17 +22,17 @@
 
 #include "llccmm.cdk"
 
-      tmpif0p = 0
-      tmpif1p = 0
-      tmpif2p = 0
-      tmpif3p = 0
-      tmpif4p = 0
-      tmpiftp = 0
-      tmprootp= 0
-      tmplatp = 0
-      tmplonp = 0
-      tmplatgp= 0
-      tmplongp= 0
+      nullify(tmpif0)
+      nullify(tmpif1)
+      nullify(tmpif2)
+      nullify(tmpif3)
+      nullify(tmpif4)
+      nullify(tmpift)
+      nullify(tmproot)
+      nullify(tmplat)
+      nullify(tmplon)
+      nullify(tmplatg)
+      nullify(tmplong)
 
       return
       end

@@ -209,7 +209,7 @@
 *
 *     lire champ
 *     
-         call hpalloc(tmpif1p,ni*nj,ier,1 )
+         allocate(tmpif1(ni*nj))
 *     
          if (.not.message) then
             iopc= fstopc('TOLRNC','DEBUGS',.true.) 
@@ -286,7 +286,7 @@
            call ecritur(champ,npack,dat,deet,npas,ni,1,1,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
         endif
-        call hpdeallc(tmpif1p,ier,1)
+        deallocate(tmpif1)
       enddo
       
 *     

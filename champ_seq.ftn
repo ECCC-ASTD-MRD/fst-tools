@@ -77,7 +77,7 @@
          return
       endif
   
-      if (tmplatp.eq.0) then
+      if (.not.associated(tmplat)) then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE P.S.(2805)'
          endif
@@ -153,8 +153,8 @@
                      if (listnom(i,j).eq.nomvar.or.listnom(i,j).eq.' '.and..not.processed) then
                         do k=1,nitems2(i)
                            if (listniv(i,k).eq.ip1.or.listniv(i,k).eq.-1.and..not.processed) then
-                              call hpalloc(tmpif1p,ni*nj*nk,ier,1 )
-                              call hpalloc(tmpif2p,li*lj,ier,1 )
+                              allocate(tmpif1(ni*nj*nk))
+                              allocate(tmpif2(li*lj))
                               ier=pgsmluk(tmpif1,irec,ni,nj,nk,nomvar,cigtyp)
 *     
                               if (nk .gt. 1) then
@@ -173,8 +173,8 @@
      $                             li,lj,1,ip1,ip2,ip3,
      $                             typvar,nomvar,etiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-                              call hpdeallc(tmpif2p,ier,1)
-                              call hpdeallc(tmpif1p,ier,1)
+                              deallocate(tmpif2)
+                              deallocate(tmpif1)
                               processed=.true.
                            endif
                         enddo

@@ -177,11 +177,10 @@
           
 *     allouer memoire
           
-          call hpalloc(tmpif1p,ni*nj,ier,1)
-          call hpalloc(tmpif2p,ni*nj,ier,1)
-          call hpalloc(tmpif3p,li*lj,ier,1)
-          call hpalloc(tmpif4p,li*lj,ier,1)
-          
+          allocate(tmpif1(ni*nj))
+          allocate(tmpif2(ni*nj))
+          allocate(tmpif3(li*lj))
+          allocate(tmpif4(li*lj))
 *     
 *     lire champ nom1
 *     
@@ -266,11 +265,11 @@
 *     
                 
              else
-               call hpdeallc(tmpif3p,ier,1)
-               call hpdeallc(tmpif4p,ier,1)
-               tmpif3p = tmpif1p
-               tmpif4p = tmpif2p
-               if (message) then
+                deallocate(tmpif3)
+                deallocate(tmpif4)
+                tmpif3 => tmpif1
+                tmpif4 => tmpif2
+                if (message) then
                   write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
                endif
             endif
@@ -293,11 +292,11 @@
 *     
          endif
          
-         call hpdeallc(tmpif1p,ier,1)
-         call hpdeallc(tmpif2p,ier,1)
+         if (.not.associated(tmpif3,tmpif1)) deallocate(tmpif3)
+         if (.not.associated(tmpif4,tmpif2)) deallocate(tmpif4)
+         deallocate(tmpif1)
+         deallocate(tmpif2)
          
-         if (tmpif3p .ne. tmpif1p) call hpdeallc(tmpif3p,ier,1)
-         if (tmpif4p .ne. tmpif2p)  call hpdeallc(tmpif4p,ier,1)
       enddo
 *     
 *     

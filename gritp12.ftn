@@ -143,12 +143,12 @@
 *     
 *     INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
 *     
-      call hpalloc(tmplonp,li*lj,ier,1)
-      call hpalloc(tmplatp,li*lj,ier,1)
+      allocate(tmplon(li*lj))
+      allocate(tmplat(li*lj))
       
       if (cgtypxy.eq.'E') then
-         call hpalloc(tmplongp,li*lj,ier,1)
-         call hpalloc(tmplatgp,li*lj,ier,1)
+         allocate(tmplong(li*lj))
+         allocate(tmplatg(li*lj))
       endif
 *     
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 

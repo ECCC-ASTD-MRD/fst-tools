@@ -50,6 +50,7 @@
 #include "dummys.cdk"
 #include "grilles.cdk"
 #include "gdz.cdk"
+#include "blancs.cdk"
 *
 *
       character *12 cetiqet
@@ -74,8 +75,8 @@
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(8).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -130,8 +131,8 @@
          gdout = ezqkdef(nni,nnj, cigtyp,igg1,igg2,igg3,igg4,iunit)
          ier = ezgxprm(gdout,li,lj,cgrtyp,
      $        lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-         call hpalloc(tmplonp,li*lj,ier,1)
-         call hpalloc(tmplatp,li*lj,ier,1)
+         allocate(tmplon(li*lj))
+         allocate(tmplat(li*lj))
       else
          call gritp12(7,igg1,igg2,igg3)
       endif

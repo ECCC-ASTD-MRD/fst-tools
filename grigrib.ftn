@@ -30,12 +30,10 @@
       integer nni,nnj,ihm,hem,ier,npts
       integer ig1,ig2,ig3,ig4
       integer tmpig1, tmpig2, tmpig3, tmpig4
-      real x,y
       integer ezqkdef
       external ezqkdef
       
-      pointer (xp, x(*))
-      pointer (yp, y(*))
+      real, dimension(:), allocatable :: x, y
 *     
 *     RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *     
@@ -47,10 +45,11 @@
          nnj = nint(xg(9))
       endif
       
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
-      call hpalloc(xp,     nni*nnj,ier,1)
-      call hpalloc(yp,     nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(x(nni*nnj))
+      allocate(y(nni*nnj))
 *     
 *     
       li=nni
@@ -70,8 +69,8 @@
 
       gdout = ezqkdef(nni,nnj,cgrtyp,ig1,ig2,ig3,ig4,1)
       
-      call hpdeallc(xp,ier, 1)
-      call hpdeallc(yp,ier, 1)
+      deallocate(x)
+      deallocate(y)
       
       return
       end 

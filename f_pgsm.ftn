@@ -144,6 +144,7 @@
 #include "enrege.cdk"
 #include "dates.cdk"
 #include "llccmm.cdk"
+#include "blancs.cdk"
 
       character *12 cetiqet
       character *4 cnomvar
@@ -166,8 +167,8 @@
       cetiqet = '            '
       cigtyp  = ' '
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(8).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -327,8 +328,7 @@
       endif
 *
 *
-      call hpdeallc(tmpif0p,ier,1)
-*      call hpdeallc(tmpiftp,ier,1)
+      deallocate(tmpif0)
 *
  600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),
      $     'TAILLE ',2(i5,'- '),
@@ -379,8 +379,8 @@
 *     
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
 *     
       lg1=hem
       cgrtyp='B'
@@ -450,6 +450,7 @@
 #include "lires.cdk"
 #include "ecrires.cdk"
 #include "dummys.cdk"
+#include "blancs.cdk"
 *
 *
       character *12 cetiqet
@@ -474,8 +475,8 @@
       cigtyp  = ' '
       
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -525,8 +526,7 @@
 *
 *    ALLOCATION DE LA MEMOIRE 
 *
-      call hpalloc(tmpif0p,nni*nnj*nnk,ier,1)
-*      call hpalloc(tmpiftp,nni*nnj*nnk,ier,1)
+      allocate(tmpif0(nni*nnj*nnk))
 *
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       num1 =pgsmlir(tmpif0,iunit,nni,nnj,nnk,idat,cetiqet,jpp1,jpp2,
@@ -556,17 +556,6 @@
       go to 100
       end 
       
-      subroutine pgsmgetlatlon(ilat, ilon)
-#include "impnone.cdk"
-      integer ilat, ilon
-#include "llccmm.cdk"
-
-      ilat = tmplatp
-      ilon = tmplonp
-
-      return
-      end
-
       subroutine pgsmsetiset
 #include "impnone.cdk"
 
@@ -591,17 +580,17 @@
 
 #include "llccmm.cdk"
 
-      tmpif0p = 0
-      tmpif1p = 0
-      tmpif2p = 0
-      tmpif3p = 0
-      tmpif4p = 0
-      tmpiftp = 0
-      tmprootp= 0
-      tmplatp = 0
-      tmplonp = 0
-      tmplatgp= 0
-      tmplongp= 0
+      nullify(tmpif0)
+      nullify(tmpif1)
+      nullify(tmpif2)
+      nullify(tmpif3)
+      nullify(tmpif4)
+      nullify(tmpift)
+      nullify(tmproot)
+      nullify(tmplat)
+      nullify(tmplon)
+      nullify(tmplatg)
+      nullify(tmplong)
 
       return
       end
@@ -686,16 +675,12 @@ c     ***************************************************************
       character *4 grtyp
       character *12 etiket
       integer ierr, ier, S 
-      real Temp
       integer L, iflt(nrows)
       integer list(L)
       integer sum
-      real FACT
-      pointer (pfact,FACT(L, (L + 1)/2))
-      pointer (ptemp,Temp(nxgrid, nj))
-
-*     call stkmemw(l*(l+1)/2,pfact)
-      call hpalloc(pfact,L * (L+1)/2,ier, 0)
+      real, dimension (:,:), allocatable :: fact, temp
+      
+      allocate(fact(L, (L+1)/2))
       do k=1, (L+1)/2
          do I=1, L
             fact(I,k) = 0
@@ -710,8 +695,8 @@ c     ***************************************************************
             FACT(I,k) = float(list(I)) / float(sum)
          enddo
       enddo
-*     call stkmemw(nxgrid*nj,ptemp)
-      call hpalloc(ptemp, (nxgrid * nj), ier, 0)
+
+      allocate(temp(nxgrid, nj))
       do 300 k=1, nrows
          npak = -nbits(k)
          if (nxgrid .eq. (ni + 1)) then
@@ -744,11 +729,9 @@ c     ***************************************************************
      %           .false.)
          endif
  300  continue
-      
-*      call unstakw(pfact)
-*      call unstakw(ptemp)
-      call hpdeallc(pfact,ier,0) 
-      call hpdeallc(ptemp,ier,0)
+
+      deallocate(temp)
+      deallocate(fact)
       
       if (Nextra .ne. 0) then
          ierr = fstecr(xtra ,WORK,npak, iun, 20002020,
@@ -963,7 +946,7 @@ c     ***************************************************************
 *
 *
       nparm = max0(1,nchmp - 1)
-      if (tmplatp.eq.0.and.cgrtyp.ne.'*') then
+      if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
          endif
@@ -1181,8 +1164,6 @@ c     ***************************************************************
       
       real*8 delta_t
 
-*     
-*      call hpalloc(tmpiftp,ni*nj + 20,ier,1)
       if (etiksrt(1) .eq. -1) then
          cetksrt = cetiket
       else
@@ -1318,7 +1299,6 @@ c     ***************************************************************
             endif
          endif
       endif
-*      call hpdeallc(tmpiftp,ier,1)
 *     
 *     
  600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),
@@ -1473,12 +1453,12 @@ c     ***************************************************************
 *     
 *     INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
 *     
-      call hpalloc(tmplonp,li*lj,ier,1)
-      call hpalloc(tmplatp,li*lj,ier,1)
+      allocate(tmplon(li*lj))
+      allocate(tmplat(li*lj))
       
       if (cgtypxy.eq.'E') then
-         call hpalloc(tmplongp,li*lj,ier,1)
-         call hpalloc(tmplatgp,li*lj,ier,1)
+         allocate(tmplong(li*lj))
+         allocate(tmplatg(li*lj))
       endif
 *     
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
@@ -1715,9 +1695,7 @@ c     ***************************************************************
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       logical sym,symetri
       real fbidon
-      real ax, ay
-      pointer (axp, ax(*))
-      pointer (ayp, ay(*))
+      real, dimension(:), allocatable :: ax, ay
 *
       integer liste(24000),nrecs
       nunv=0 
@@ -1851,16 +1829,16 @@ C faite
           if (cigtyp.eq.'#'.and.diese.eq.1) then
 	     res = diesisincache(irec)
 	     if (res.lt.0) then
-                key=diesinf(iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ctypvar, cnomvar)
-                call hpalloc(tmpif1p,ni*nj,ier,1)
-                call hpalloc(axp,ni,ier,1)
-                call hpalloc(ayp,nj,ier,1)
-                ier = dieslir(iunit, key, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
+                allocate(tmpif1(ni*nj))
+                allocate(ax(ni))
+                allocate(ay(nj))
+                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
              else
                 skip = .true.
              endif
           else
-             call hpalloc(tmpif1p,ni*nj,ier,1)
+             allocate(tmpif1(ni*nj))
              key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
           endif
           
@@ -1882,7 +1860,7 @@ C faite
 *     
 *     interpolation
 *     
-                call hpalloc(tmpif2p,li*lj,ier,1)
+                allocate(tmpif2(li*lj))
                 
                 if (cigtyp.eq.'#'.and.diese.eq.0) then
                    gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
@@ -1892,7 +1870,7 @@ C faite
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
              else
-                tmpif2p = tmpif1p
+                tmpif2 => tmpif1
                 if (message) write(6,660) cnom
  660            format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
              endif
@@ -1908,10 +1886,10 @@ C faite
              call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-             if (tmpif2p .ne. tmpif1p) then
-                call hpdeallc(tmpif2p,ier,1)
+             if (.not.associated(tmpif2, target = tmpif1)) then
+                deallocate(tmpif2)
              endif
-             call hpdeallc(tmpif1p,ier,1)
+             deallocate(tmpif1)
 *     
           endif
 99999     continue
@@ -2030,7 +2008,7 @@ C faite
          return
       endif
   
-      if (tmplatp.eq.0) then
+      if (.not.associated(tmplat)) then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE P.S.(2805)'
          endif
@@ -2106,8 +2084,8 @@ C faite
                      if (listnom(i,j).eq.nomvar.or.listnom(i,j).eq.' '.and..not.processed) then
                         do k=1,nitems2(i)
                            if (listniv(i,k).eq.ip1.or.listniv(i,k).eq.-1.and..not.processed) then
-                              call hpalloc(tmpif1p,ni*nj*nk,ier,1 )
-                              call hpalloc(tmpif2p,li*lj,ier,1 )
+                              allocate(tmpif1(ni*nj*nk))
+                              allocate(tmpif2(li*lj))
                               ier=pgsmluk(tmpif1,irec,ni,nj,nk,nomvar,cigtyp)
 *     
                               if (nk .gt. 1) then
@@ -2126,8 +2104,8 @@ C faite
      $                             li,lj,1,ip1,ip2,ip3,
      $                             typvar,nomvar,etiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-                              call hpdeallc(tmpif2p,ier,1)
-                              call hpdeallc(tmpif1p,ier,1)
+                              deallocate(tmpif2)
+                              deallocate(tmpif1)
                               processed=.true.
                            endif
                         enddo
@@ -2322,7 +2300,7 @@ C faite
 *     
 *     lire champ no 1
 *     
-      call hpalloc(tmpif1p,ni*nj,ier,1)
+      allocate(tmpif1(ni*nj))
       if (.not.message) then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -2359,7 +2337,7 @@ C faite
 *     
 *     lire champ 2
 *     
-      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      allocate(tmpif1(max0(li*lj,ni*nj)))
       if (.not.message)  then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -2409,8 +2387,8 @@ C faite
 *     function qui identifie si la variable est symetrique( h.n. - h.s.)
 *     le test n'est pas applicable pour une situation  globale
 *     
-      call hpdeallc(tmpif1p,ier,1)
-      call hpdeallc(tmpif2p,ier,1)
+      deallocate(tmpif1)
+      deallocate(tmpif2)
 *     
       return 
       end
@@ -2574,10 +2552,7 @@ C faite
       
 #include "indptr.cdk"
 
-      real ax, ay
-	
-      pointer (axp, ax(*))
-      pointer (ayp, ay(*))
+      real, dimension (:), allocatable :: ax, ay
 
       integer luin, luout, ip1, ip2, ip3
       integer lip1, lip2, lip3
@@ -2627,8 +2602,8 @@ C faite
      $     grref, ig1ref, ig2ref, ig3ref, ig4ref, 
      $     swa, lng, dltf, ubc, extra1, extra2, extra3)
       
-      call hpalloc(axp,ni1*nj1*nk1,ier,1)
-      call hpalloc(ayp,ni2*nj2*nk2,ier,1)
+      allocate(ax(ni1*nj1*nk1))
+      allocate(ay(ni2*nj2*nk2))
       
       ier = fstluk(ax, ier1, ni1, nj1, nk1)
       ier = fstluk(ay, ier2, ni2, nj2, nk2)
@@ -2641,9 +2616,8 @@ C faite
      $     lip1,lip2,lip3, 
      $     typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
       
-
-      call hpdeallc(axp, ier, 1)
-      call hpdeallc(ayp, ier, 1)
+      deallocate(ax)
+      deallocate(ay)
       
       chkenrpos = 0
 
@@ -2758,8 +2732,8 @@ C faite
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE ET CALL ECRIRE (IWRK)
 *
-       call hpalloc(tmplatp,nni*nnj,ier,1)
-       call hpalloc(tmplonp,nni*nnj,ier,1)
+       allocate(tmplat(nni*nnj))
+       allocate(tmplon(nni*nnj))
 *
 *
 *   RECALCUL  LAT,LONG,DELTA LAT,DELTA LONG
@@ -2823,6 +2797,8 @@ C faite
 #include "lires.cdk"
 #include "ecrires.cdk"
 #include "indptr.cdk"
+#include "blancs.cdk"
+
 *
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime,
      $     fstopc,messags,fstcvt
@@ -2832,7 +2808,7 @@ C faite
       character *4 cnomvar
       character *2 ctypvar
       character *1 cigtyp
-      integer etiqet(2),idat,ihr,iip3,ip3,irec1,
+      integer etiqet(3),idat,ihr,iip3,ip3,irec1,
      $     iunit,niv,nom,num1,type 
       integer inomb,i,iopc 
       integer cnbits,cdatyp,cswa, clng,cdltf,cubc,extra1,extra2,extra3
@@ -2851,8 +2827,8 @@ C faite
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -2926,8 +2902,7 @@ C faite
 *     
 *     ALLOCATION DE LA MEMOIRE
 *     
-         call hpalloc(tmpif0p,nni*nnj*nnk,ier,1)
-*         call hpalloc(tmpiftp,nni*nnj*nnk,ier,1)
+      allocate(tmpif0(nni*nnj*nnk))
 *     
 *     SI COMPTEUR .NE. 4095 ICNT=1
 *     
@@ -3153,7 +3128,7 @@ C faite
          return
       endif
   
-      if (tmplatp.eq.0.and.cgrtyp.ne.'*') then
+      if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
          endif
@@ -3308,7 +3283,7 @@ C faite
 *     
 *     lire champ no 1
 *     
-         call hpalloc(tmpif1p,ni*nj,ier,1 )
+         allocate(tmpif1(ni*nj))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -3351,7 +3326,7 @@ C faite
 *     lire champ 2
 *     
 
-         call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1 )
+         allocate(tmpif2(max0(li*lj,ni*nj)))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -3362,7 +3337,7 @@ C faite
          endif
 *     
          irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,ip1tab(ii),
-     $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment)
+     $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment,cigtyp)
 *     
 *     
          if (printen)  call imprime(cnoment,tmpif2,ni,nj)
@@ -3457,8 +3432,8 @@ C faite
 *     
 *     remetre espace des champs de travail
 *     
-         call hpdeallc(tmpif2p,ier,1)
-         call hpdeallc(tmpif1p,ier,1)
+      deallocate(tmpif2)
+      deallocate(tmpif1)
 *     
       enddo
 *     
@@ -3723,7 +3698,7 @@ C faite
 *     
 *     lire champ no 1
 *     
-      call hpalloc(tmpif1p,ni*nj,ier,1)
+      allocate(tmpif1(ni*nj))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       
@@ -3746,7 +3721,7 @@ C faite
 *     
 *     lire champ 2
 *     
-      call hpalloc(tmpif2p,max0(li*lj,ni*nj),ier,1)
+      allocate(tmpif2(max0(li*lj,ni*nj)))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
@@ -3799,8 +3774,8 @@ C faite
 *     
 *     remetre espace des champs de travail
 *     
-      call hpdeallc(tmpif1p,ier,1)
-      call hpdeallc(tmpif2p,ier,1)
+      deallocate(tmpif2)
+      deallocate(tmpif1)
 *     
       return
       end
@@ -3872,6 +3847,7 @@ C faite
 #include "chck.cdk"
 #include "accum.cdk"
 #include "llccmm.cdk"
+#include "blancs.cdk"
 *
       character*12 cetike,cetiket
       character*4 cnomvar, cnumve
@@ -3907,8 +3883,8 @@ C faite
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -3988,7 +3964,7 @@ C faite
 *
 *    ALLOCATION DE LA MEMOIRE 
 *
-         call hpalloc(tmpif1p,nni*nnj*nnk,ier,1)
+         allocate(tmpif1(nni*nnj*nnk))
 *
          ier = pgsmluk(tmpif1, irec, nni, nnj, nnk,cnomvar,cigty)
          if (ier.lt.0)  then
@@ -4012,7 +3988,7 @@ C faite
          call lopascm(tmpif0,tmpif1,aa,itot)
 *     
 *
-         call hpdeallc(tmpif1p,ier,1)
+         deallocate(tmpif1)
 *     
          if (aa.ne.1.or.unefois.or.once) goto 11
          irec = fstsui(iunit,nie,nje,nke)
@@ -4351,6 +4327,7 @@ C faite
 #include "dummys.cdk"
 #include "grilles.cdk"
 #include "gdz.cdk"
+#include "blancs.cdk"
 *
 *
       character *12 cetiqet
@@ -4375,8 +4352,8 @@ C faite
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(8).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -4431,8 +4408,8 @@ C faite
          gdout = ezqkdef(nni,nnj, cigtyp,igg1,igg2,igg3,igg4,iunit)
          ier = ezgxprm(gdout,li,lj,cgrtyp,
      $        lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-         call hpalloc(tmplonp,li*lj,ier,1)
-         call hpalloc(tmplatp,li*lj,ier,1)
+         allocate(tmplon(li*lj))
+         allocate(tmplat(li*lj))
       else
          call gritp12(7,igg1,igg2,igg3)
       endif
@@ -4481,8 +4458,8 @@ C faite
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
 *     
       lg1=nhem
 *
@@ -4509,13 +4486,13 @@ C faite
 *     UTILISER PAR GRIGAUS POUR LE CALCUL DES LATITUDES
 *     LONGITUDES DANS GRGG ROUTINE
 *     
-      call hpalloc(tmprootp,nroot,ier,1)
+      allocate(tmproot(nroot))
       
       tmproot(1)= 100.0
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
       
 *     
-      call hpdeallc(tmprootp,ier,1)
+      deallocate(tmproot)
 *     
       return
       end 
@@ -4955,10 +4932,10 @@ C faite
 *     
 *     RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *     
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
-      call hpalloc(tmplatgp,nni*nnj,ier,1)
-      call hpalloc(tmplongp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(tmplatg(nni*nnj))
+      allocate(tmplong(nni*nnj))
 *     
       cgrtyp='E'
       call cxgaig(cgrtyp,lg1,lg2,lg3,lg4,xlat1,xlon1,xlat2,xlon2)
@@ -5307,12 +5284,10 @@ c     ***************************************************************
       integer nni,nnj,ihm,hem,ier,npts
       integer ig1,ig2,ig3,ig4
       integer tmpig1, tmpig2, tmpig3, tmpig4
-      real x,y
       integer ezqkdef
       external ezqkdef
       
-      pointer (xp, x(*))
-      pointer (yp, y(*))
+      real, dimension(:), allocatable :: x, y
 *     
 *     RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *     
@@ -5324,10 +5299,11 @@ c     ***************************************************************
          nnj = nint(xg(9))
       endif
       
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
-      call hpalloc(xp,     nni*nnj,ier,1)
-      call hpalloc(yp,     nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(tmplon(nni*nnj))
+      allocate(x(nni*nnj))
+      allocate(y(nni*nnj))
 *     
 *     
       li=nni
@@ -5347,8 +5323,8 @@ c     ***************************************************************
 
       gdout = ezqkdef(nni,nnj,cgrtyp,ig1,ig2,ig3,ig4,1)
       
-      call hpdeallc(xp,ier, 1)
-      call hpdeallc(yp,ier, 1)
+      deallocate(x)
+      deallocate(y)
       
       return
       end 
@@ -5790,11 +5766,10 @@ c     ***************************************************************
           
 *     allouer memoire
           
-          call hpalloc(tmpif1p,ni*nj,ier,1)
-          call hpalloc(tmpif2p,ni*nj,ier,1)
-          call hpalloc(tmpif3p,li*lj,ier,1)
-          call hpalloc(tmpif4p,li*lj,ier,1)
-          
+          allocate(tmpif1(ni*nj))
+          allocate(tmpif2(ni*nj))
+          allocate(tmpif3(li*lj))
+          allocate(tmpif4(li*lj))
 *     
 *     lire champ nom1
 *     
@@ -5879,11 +5854,11 @@ c     ***************************************************************
 *     
                 
              else
-               call hpdeallc(tmpif3p,ier,1)
-               call hpdeallc(tmpif4p,ier,1)
-               tmpif3p = tmpif1p
-               tmpif4p = tmpif2p
-               if (message) then
+                deallocate(tmpif3)
+                deallocate(tmpif4)
+                tmpif3 => tmpif1
+                tmpif4 => tmpif2
+                if (message) then
                   write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
                endif
             endif
@@ -5906,11 +5881,11 @@ c     ***************************************************************
 *     
          endif
          
-         call hpdeallc(tmpif1p,ier,1)
-         call hpdeallc(tmpif2p,ier,1)
+         if (.not.associated(tmpif3,tmpif1)) deallocate(tmpif3)
+         if (.not.associated(tmpif4,tmpif2)) deallocate(tmpif4)
+         deallocate(tmpif1)
+         deallocate(tmpif2)
          
-         if (tmpif3p .ne. tmpif1p) call hpdeallc(tmpif3p,ier,1)
-         if (tmpif4p .ne. tmpif2p)  call hpdeallc(tmpif4p,ier,1)
       enddo
 *     
 *     
@@ -6061,15 +6036,10 @@ c     ***************************************************************
 *     
       cgtypxy='L'
 *
-      if (tmplatp .ne.0)  call hpdeallc(tmplatp,ier,1)
-      tmplatp=0
-      if (tmplonp .ne.0)  call hpdeallc(tmplonp,ier,1)
-      tmplonp=0
-      
-      if (tmplatgp .ne.0)  call hpdeallc(tmplatgp,ier,1)
-      tmplatgp=0
-      if (tmplongp .ne.0)  call hpdeallc(tmplongp,ier,1)
-      tmplongp=0
+      if (associated(tmplat)) deallocate(tmplat)
+      if (associated(tmplon)) deallocate(tmplon)
+      if (associated(tmplatg)) deallocate(tmplatg)
+      if (associated(tmplong)) deallocate(tmplong)
       
 *     
       if (it.lt.0 .or. it.gt.14) then
@@ -6362,7 +6332,7 @@ c     ***************************************************************
 *
 *
 *
-      if (tmplatp.eq.0) then
+      if (.not.associated(tmplat)) then
          if (message)write(6,*)'GRILLE NON DEFINIE ..GRILLE P.S.(2805)'
          ngr=8
          call grille2(3,51,55,26.,28.,381000.,350.,1) 
@@ -6585,8 +6555,8 @@ c     ***************************************************************
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-       call hpalloc(tmplatp,nni*nnj,ier,1)
-       call hpalloc(tmplonp,nni*nnj,ier,1)
+       allocate(tmplat(nni*nnj))
+       allocate(tmplon(nni*nnj))
 *
 *
        li=nni
@@ -6651,8 +6621,8 @@ c     ***************************************************************
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-       call hpalloc(tmplatp,nni*nnj,ier,1)
-       call hpalloc(tmplonp,nni*nnj,ier,1)
+       allocate(tmplat(nni*nnj))
+       allocate(tmplon(nni*nnj))
 *
 *
        li=nni
@@ -7228,8 +7198,8 @@ c     ***************************************************************
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-       call hpalloc(tmplatp,nni*nnj,ier,1)
-       call hpalloc(tmplonp,nni*nnj,ier,1)
+       allocate(tmplat(nni*nnj))
+       allocate(tmplon(nni*nnj))
 *
 *
 
@@ -7557,7 +7527,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.10.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.11.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7600,11 +7570,9 @@ c     ***************************************************************
 	  
 	  niun = niun - 1
 	  if (niun .lt. 1) then
-	    print *
-	1	 ,'***************************************************'
-	    print *, '* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
-	    print *
-	1	 ,'***************************************************'
+	    print *,'***************************************************'
+	    print *,'* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
+	    print *,'***************************************************'
 	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
 	    call qqexit(13)
 	  endif	
@@ -7925,8 +7893,8 @@ c     ***************************************************************
 *
 *   initialise variable de printsr
 *
-	if (tmplatp .ne. 0) call hpdeallc(tmplatp,ier,1)
-	if (tmplonp .ne. 0) call hpdeallc(tmplonp,ier,1)
+	if (associated(tmplat)) deallocate(tmplat)
+	if (associated(tmplon)) deallocate(tmplon)
 	
 	call chk_hy(1,2)
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
@@ -8218,7 +8186,7 @@ c	call fstunl
 *
 *     lire champ
 *     
-         call hpalloc(tmpif1p,ni*nj,ier,1 )
+         allocate(tmpif1(ni*nj))
 *     
          if (.not.message) then
             iopc= fstopc('TOLRNC','DEBUGS',.true.) 
@@ -8295,7 +8263,7 @@ c	call fstunl
            call ecritur(champ,npack,dat,deet,npas,ni,1,1,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
         endif
-        call hpdeallc(tmpif1p,ier,1)
+        deallocate(tmpif1)
       enddo
       
 *     

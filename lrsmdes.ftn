@@ -48,6 +48,8 @@
 #include "lires.cdk"
 #include "ecrires.cdk"
 #include "indptr.cdk"
+#include "blancs.cdk"
+
 *
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime,
      $     fstopc,messags,fstcvt
@@ -57,7 +59,7 @@
       character *4 cnomvar
       character *2 ctypvar
       character *1 cigtyp
-      integer etiqet(2),idat,ihr,iip3,ip3,irec1,
+      integer etiqet(3),idat,ihr,iip3,ip3,irec1,
      $     iunit,niv,nom,num1,type 
       integer inomb,i,iopc 
       integer cnbits,cdatyp,cswa, clng,cdltf,cubc,extra1,extra2,extra3
@@ -76,8 +78,8 @@
       cigtyp  = ' '
 
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(7).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -151,8 +153,7 @@
 *     
 *     ALLOCATION DE LA MEMOIRE
 *     
-         call hpalloc(tmpif0p,nni*nnj*nnk,ier,1)
-*         call hpalloc(tmpiftp,nni*nnj*nnk,ier,1)
+      allocate(tmpif0(nni*nnj*nnk))
 *     
 *     SI COMPTEUR .NE. 4095 ICNT=1
 *     

@@ -59,6 +59,7 @@
 #include "enrege.cdk"
 #include "dates.cdk"
 #include "llccmm.cdk"
+#include "blancs.cdk"
 
       character *12 cetiqet
       character *4 cnomvar
@@ -81,8 +82,8 @@
       cetiqet = '            '
       cigtyp  = ' '
       letiket(1) = etiqet(1)
-      letiket(2) = "    "
-      letiket(3) = "    "
+      letiket(2) = blancs
+      letiket(3) = blancs
       if (argdims(8).gt.1) then 
          letiket(2) = etiqet(2)
       endif
@@ -242,8 +243,7 @@
       endif
 *
 *
-      call hpdeallc(tmpif0p,ier,1)
-*      call hpdeallc(tmpiftp,ier,1)
+      deallocate(tmpif0)
 *
  600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),
      $     'TAILLE ',2(i5,'- '),

@@ -61,15 +61,10 @@
 *     
       cgtypxy='L'
 *
-      if (tmplatp .ne.0)  call hpdeallc(tmplatp,ier,1)
-      tmplatp=0
-      if (tmplonp .ne.0)  call hpdeallc(tmplonp,ier,1)
-      tmplonp=0
-      
-      if (tmplatgp .ne.0)  call hpdeallc(tmplatgp,ier,1)
-      tmplatgp=0
-      if (tmplongp .ne.0)  call hpdeallc(tmplongp,ier,1)
-      tmplongp=0
+      if (associated(tmplat)) deallocate(tmplat)
+      if (associated(tmplon)) deallocate(tmplon)
+      if (associated(tmplatg)) deallocate(tmplatg)
+      if (associated(tmplong)) deallocate(tmplong)
       
 *     
       if (it.lt.0 .or. it.gt.14) then

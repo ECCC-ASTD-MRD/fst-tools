@@ -39,8 +39,8 @@
 *     
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
 *     
       lg1=hem
       cgrtyp='B'

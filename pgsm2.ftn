@@ -294,7 +294,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.10.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.11.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -337,11 +337,9 @@
 	  
 	  niun = niun - 1
 	  if (niun .lt. 1) then
-	    print *
-	1	 ,'***************************************************'
-	    print *, '* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
-	    print *
-	1	 ,'***************************************************'
+	    print *,'***************************************************'
+	    print *,'* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
+	    print *,'***************************************************'
 	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
 	    call qqexit(13)
 	  endif	
@@ -662,8 +660,8 @@
 *
 *   initialise variable de printsr
 *
-	if (tmplatp .ne. 0) call hpdeallc(tmplatp,ier,1)
-	if (tmplonp .ne. 0) call hpdeallc(tmplonp,ier,1)
+	if (associated(tmplat)) deallocate(tmplat)
+	if (associated(tmplon)) deallocate(tmplon)
 	
 	call chk_hy(1,2)
 	iopc= fstopc('MSGLVL','INFORMS',.false.)

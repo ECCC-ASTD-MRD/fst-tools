@@ -109,8 +109,6 @@
       
       real*8 delta_t
 
-*     
-*      call hpalloc(tmpiftp,ni*nj + 20,ier,1)
       if (etiksrt(1) .eq. -1) then
          cetksrt = cetiket
       else
@@ -246,7 +244,6 @@
             endif
          endif
       endif
-*      call hpdeallc(tmpiftp,ier,1)
 *     
 *     
  600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),

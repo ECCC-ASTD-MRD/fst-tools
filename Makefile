@@ -67,6 +67,9 @@ genlib: $(OBJET)
 #Creer ou mettre a jour la programmatheque 
 	$(AR) rcv $(MYLIB) $(OBJET)
 
+pgsm2002: 
+	r.build -o $@ -obj *.o $(HOME)/src/utils/diese/dies.o  $(HOME)/src/utils/diese/fillgrid.o -librmn rmnbeta
+
 pgsm2000: 
 	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006
 

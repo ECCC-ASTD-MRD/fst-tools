@@ -84,9 +84,7 @@
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       logical sym,symetri
       real fbidon
-      real ax, ay
-      pointer (axp, ax(*))
-      pointer (ayp, ay(*))
+      real, dimension(:), allocatable :: ax, ay
 *
       integer liste(24000),nrecs
       nunv=0 
@@ -220,16 +218,16 @@ C faite
           if (cigtyp.eq.'#'.and.diese.eq.1) then
 	     res = diesisincache(irec)
 	     if (res.lt.0) then
-                key=diesinf(iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ctypvar, cnomvar)
-                call hpalloc(tmpif1p,ni*nj,ier,1)
-                call hpalloc(axp,ni,ier,1)
-                call hpalloc(ayp,nj,ier,1)
-                ier = dieslir(iunit, key, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
+                allocate(tmpif1(ni*nj))
+                allocate(ax(ni))
+                allocate(ay(nj))
+                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
              else
                 skip = .true.
              endif
           else
-             call hpalloc(tmpif1p,ni*nj,ier,1)
+             allocate(tmpif1(ni*nj))
              key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
           endif
           
@@ -251,7 +249,7 @@ C faite
 *     
 *     interpolation
 *     
-                call hpalloc(tmpif2p,li*lj,ier,1)
+                allocate(tmpif2(li*lj))
                 
                 if (cigtyp.eq.'#'.and.diese.eq.0) then
                    gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
@@ -261,7 +259,7 @@ C faite
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
              else
-                tmpif2p = tmpif1p
+                tmpif2 => tmpif1
                 if (message) write(6,660) cnom
  660            format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
              endif
@@ -277,10 +275,10 @@ C faite
              call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
-             if (tmpif2p .ne. tmpif1p) then
-                call hpdeallc(tmpif2p,ier,1)
+             if (.not.associated(tmpif2, target = tmpif1)) then
+                deallocate(tmpif2)
              endif
-             call hpdeallc(tmpif1p,ier,1)
+             deallocate(tmpif1)
 *     
           endif
 99999     continue

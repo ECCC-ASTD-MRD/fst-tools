@@ -35,8 +35,8 @@
 *
 *   RESERVER MEMOIR POUR LATITUDE ET LONGITUDE
 *
-      call hpalloc(tmplatp,nni*nnj,ier,1)
-      call hpalloc(tmplonp,nni*nnj,ier,1)
+      allocate(tmplat(nni*nnj))
+      allocate(tmplon(nni*nnj))
 *     
       lg1=nhem
 *
@@ -63,13 +63,13 @@
 *     UTILISER PAR GRIGAUS POUR LE CALCUL DES LATITUDES
 *     LONGITUDES DANS GRGG ROUTINE
 *     
-      call hpalloc(tmprootp,nroot,ier,1)
+      allocate(tmproot(nroot))
       
       tmproot(1)= 100.0
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
       
 *     
-      call hpdeallc(tmprootp,ier,1)
+      deallocate(tmproot)
 *     
       return
       end 
