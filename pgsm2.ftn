@@ -286,12 +286,12 @@
 	nequiv=-1
 	call ccard(listl,defo,lfn,49,nequiv)
 	ier = fnom(5,lfn(43),'SEQ',0)
-	ier = fnom(6,lfn(44),'SEQ',0)
+*	ier = fnom(6,lfn(44),'SEQ',0)
 	
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.7',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.10',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

@@ -84,6 +84,8 @@
       real dgtord,dumfld,xg1,xg2,xg3,xg4
       integer iunit
       logical ssw
+
+      real*8 delta_t
       
       iunit = 1
 *     
@@ -156,7 +158,8 @@
 *     
 *     calcul la date pour le record de la variable nom2
 *     
-            call incdat(datdv,dat,(1800 + deet*npas)/3600)
+            delta_t = deet*npas/3600.0
+            call incdatr(datdv,dat,delta_t)
             irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,
      $           ctypvar,cnom2)
             if (irecv .lt. 0) then

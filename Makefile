@@ -68,10 +68,10 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm2000: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_005
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_x
 
 pgsm89: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_005 -fstd89
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_x -fstd89
 
 pgsmnew: c_pgsm.o
 	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
@@ -86,10 +86,19 @@ pgsm-exp:
 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-debug:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta 
+	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005
+
+pgsm-debug89:
+	r.build -o pgsm89 -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
 
 pgsm-exp89:
 	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta -fstd89
+
+pgsm6.9.8:
+	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005
+
+pgsm6.9.8_89:
+	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

@@ -106,6 +106,8 @@
 
       integer gdll,ezgetgdout
       external gdll,ezgetgdout
+      
+      real*8 delta_t
 
 *     
 *      call hpalloc(tmpiftp,ni*nj + 20,ier,1)
@@ -230,8 +232,8 @@
                istamp=0
             endif
 
-            call incdat(idatv,idat,(deet*npas+1800)/3600)
-
+            delta_t = deet*npas/3600.0
+            call incdatr(idatv,idat,delta_t)
 
             gdout = ezgetgdout()
             ier = gdll(gdout, tmplat,tmplon)

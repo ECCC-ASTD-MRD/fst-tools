@@ -1253,6 +1253,8 @@ c     ***************************************************************
 
       integer gdll,ezgetgdout
       external gdll,ezgetgdout
+      
+      real*8 delta_t
 
 *     
 *      call hpalloc(tmpiftp,ni*nj + 20,ier,1)
@@ -1377,8 +1379,8 @@ c     ***************************************************************
                istamp=0
             endif
 
-            call incdat(idatv,idat,(deet*npas+1800)/3600)
-
+            delta_t = deet*npas/3600.0
+            call incdatr(idatv,idat,delta_t)
 
             gdout = ezgetgdout()
             ier = gdll(gdout, tmplat,tmplon)
@@ -5684,6 +5686,8 @@ C faite
       real dgtord,dumfld,xg1,xg2,xg3,xg4
       integer iunit
       logical ssw
+
+      real*8 delta_t
       
       iunit = 1
 *     
@@ -5756,7 +5760,8 @@ C faite
 *     
 *     calcul la date pour le record de la variable nom2
 *     
-            call incdat(datdv,dat,(1800 + deet*npas)/3600)
+            delta_t = deet*npas/3600.0
+            call incdatr(datdv,dat,delta_t)
             irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,
      $           ctypvar,cnom2)
             if (irecv .lt. 0) then
@@ -7548,12 +7553,12 @@ C faite
 	nequiv=-1
 	call ccard(listl,defo,lfn,49,nequiv)
 	ier = fnom(5,lfn(43),'SEQ',0)
-	ier = fnom(6,lfn(44),'SEQ',0)
+*	ier = fnom(6,lfn(44),'SEQ',0)
 	
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.7',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.10',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -8505,10 +8510,10 @@ c	call fstunl
 
       integer i
 
-      print *, 'qqqident', position, separateur
-      do i=1,16
-         print *, i, items(i)
-      enddo
+*      print *, 'qqqident', position, separateur
+*      do i=1,16
+*        print *, i, items(i)
+*     enddo
 
       qposition = position
       if (qposition.eq.5) then
