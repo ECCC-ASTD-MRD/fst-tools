@@ -6,12 +6,12 @@
       external exdb,exfin
 
       character * 8 cles(ncle)
-      character * 80 val(ncle), def(ncle)
+      character * 128 val(ncle), def(ncle)
       data cles / 'IMENT.','SEQ','STYLE' /
       data def / 'scrap','SEQ' ,'NEWSTYLE'/
       data val / 'scrap','RND' ,'OLDSTYLE'/
 
-      ier = exdb('VOIR','V98.02','NON')
+      ier = exdb('VOIR','V98.03','NON')
       ipos = -1
       call ccard (cles,def,val,ncle,ipos)
 
