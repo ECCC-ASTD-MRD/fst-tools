@@ -68,10 +68,10 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm2000: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_x
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006
 
 pgsm89: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_x -fstd89
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006 -fstd89
 
 pgsmnew: c_pgsm.o
 	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies efence -librmn rmnbeta

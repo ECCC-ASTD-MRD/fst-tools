@@ -205,8 +205,8 @@ C faite
 *     
           do i=1,npair 
              if (cnom.eq.' ') then
-                if ((paire(i)(9:10).eq.cnomvar).or.
-     $               (paire(i)(11:12).eq.cnomvar))  then
+                if ((paire(i)(9:10).eq.cnomvar(1:2)).or.
+     $               (paire(i)(13:14).eq.cnomvar(1:2)))  then
                    nunv=nunv + 1
                    go to 99999
               endif
@@ -297,7 +297,7 @@ C faite
          write(6,668)
  668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
          write(6,669)
- 669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIR????')
+ 669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
 *     
       endif
       return 

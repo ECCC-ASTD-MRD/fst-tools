@@ -1912,8 +1912,8 @@ C faite
 *     
           do i=1,npair 
              if (cnom.eq.' ') then
-                if ((paire(i)(9:10).eq.cnomvar).or.
-     $               (paire(i)(11:12).eq.cnomvar))  then
+                if ((paire(i)(9:10).eq.cnomvar(1:2)).or.
+     $               (paire(i)(13:14).eq.cnomvar(1:2)))  then
                    nunv=nunv + 1
                    go to 99999
               endif
@@ -2004,7 +2004,7 @@ C faite
          write(6,668)
  668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
          write(6,669)
- 669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIR????')
+ 669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
 *     
       endif
       return 
@@ -3107,12 +3107,14 @@ C faite
             v = '3'
          else if (val .eq. minimum) then
             v = 'MINIMUM'
+            call ezsetopt('extrap_degree', v)
          else if (val .eq. maximum) then
             v = 'MAXIMUM'
+            call ezsetopt('extrap_degree', v)
          else 
             v = 'ABORT'
+            call ezsetopt('extrap_degree', v)
          endif
-         call ezsetopt('extrap_degree', v)
       endif
       
       
@@ -7558,7 +7560,7 @@ C faite
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.9.10',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.9.12',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

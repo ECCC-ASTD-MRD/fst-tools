@@ -40,12 +40,14 @@
             v = '3'
          else if (val .eq. minimum) then
             v = 'MINIMUM'
+            call ezsetopt('extrap_degree', v)
          else if (val .eq. maximum) then
             v = 'MAXIMUM'
+            call ezsetopt('extrap_degree', v)
          else 
             v = 'ABORT'
+            call ezsetopt('extrap_degree', v)
          endif
-         call ezsetopt('extrap_degree', v)
       endif
       
       
