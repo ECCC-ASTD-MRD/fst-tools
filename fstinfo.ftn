@@ -13,6 +13,8 @@ c
       integer pnextra2,pnextra3
 c
       integer fstprm,pnseqout,ilen
+      integer longueur
+      external longueur
 c
       real*8 prtmp8
 c
@@ -72,12 +74,12 @@ c
 c
 c     ------ Initialisation des clefs de recherche -----
 c
-      if (ptvar(2) /= '-1') then
+      if (ptvar(2) .ne. '-1') then
         read(ptvar(2),*) pndatev
-      elseif(ptvar(3) /= '-1') then
+      elseif(ptvar(3) .ne. '-1') then
         read(ptvar(3)(1:8),*) pndatprintv
         read(ptvar(3)(9:),'(a8)') cltimev
-        ilen = len(trim(cltimev))
+        ilen = longueur(cltimev)
         cltimev = '00000000'
         read(ptvar(3)(9:9+ilen),'(a)') cltimev(1:ilen)
         read(cltimev,*) pntimev
