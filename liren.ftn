@@ -2,7 +2,7 @@
 ***S/P   LIREN   LIRE UN CHAMP DANS ACCUMULATEUR
 *
       subroutine liren(nom, type, idat, niv, ihr, ip3, etiqet) 
-#include "impnone.cdk"
+      implicit none
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime 
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
@@ -56,11 +56,14 @@
       character *4 cnomvar
       character *2 ctypvar
       character*1 cigtyp
-      integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv,nom,num1,type
+      integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv(2),nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa 
       integer iopc
       integer argdims, letiket(3)
       external argdims
+      integer lniv
+      real p
+      character*8 string
 *     
       iunit=1
       iip3=ip3
@@ -82,9 +85,16 @@
       if (argdims(7).gt.2) then 
          letiket(3) = etiqet(3)
       endif
+
+      lniv = niv(1)
+      if (argdims(4) > 1) then
+         p = transfer(niv(1), p)
+         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+      endif
+
  100  ier = fstcvt(    nom,   type, letiket,    -1,
      $     cnomvar,ctypvar,cetiqet,cigtyp,     .true.)
-      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,iip3,
+      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,lniv,ihr,iip3,
      $     ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)

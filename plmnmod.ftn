@@ -2,7 +2,7 @@
 ***S/P  ADDITIONNE SOUSTRAIT MULTIPLIT MODULE 2 CHAMPS
 *
       subroutine plmnmod(nom,type,idat,niv,ihr,ip3,etiqet) 
-#include "impnone.cdk"
+      implicit none
 *
       external fstinf,fstsui,fstprm,pgsmabt,imprime
       external lopascm,messags,memoir,pgsmluk,fstcvt
@@ -74,10 +74,13 @@
       integer type,etiqet(3),nom,aa,letiqet(3)
       integer idat,idate,ideete,if1,ig1e,ig2e,ig3e,ig4e
       integer ihr,ip3,irec,itot,iunit,jp1e,jp2e,jp3e,nie
-      integer niv,nje,nke,npase
+      integer niv(2),nje,nke,npase
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       integer argdims,letiket(3)
       external argdims
+      integer lniv
+      real p
+      character*8 string
 *     
 *    AA  MULTIPLICATEUR POUR AJOUTER OU SOUSTRAIRE
 *
@@ -109,10 +112,16 @@
          letiket(3) = etiqet(3)
       endif
 
+      lniv = niv(1)
+      if (argdims(4) > 1) then
+         p = transfer(niv(1), p)
+         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+      endif
+
       ier = fstcvt(    nom,    type,  letiket,     -1,
      $     cnomvar, ctypvar, cetiket, cigtyp,     .true.) 
 *     
-      irec=fstinf(iunit,nie,nje,nke,idat,cetiket,niv,ihr,ip3,
+      irec=fstinf(iunit,nie,nje,nke,idat,cetiket,lniv,ihr,ip3,
      $     ctypvar, cnomvar)
       
 

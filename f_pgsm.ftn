@@ -88,9 +88,8 @@
 *
       subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,
      $     etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt) 
-#include "impnone.cdk"
-      external conver,fstecr,fclos,memoir,pgsmabt,
-     $     imprims,fstopc,messags,fstcvt,putfld
+      implicit none
+      external conver,fstecr,fclos,memoir,pgsmabt,imprims,fstopc,messags,fstcvt,putfld
       integer fstecr,fstopc,fstcvt,iopc
 *
 *AUTEUR  P.SARRAZIN  AOUT 82  DRPN DORVAL P.Q. CANADA
@@ -152,7 +151,7 @@
       character *1 cigtyp
       
       integer i
-      integer nom,npac,idat,ip1,ip2,ip3,igtyp,imprim,npkc
+      integer nom,npac,idat,ip1(2),ip2,ip3,igtyp,imprim,npkc
       integer iun,istamp,etiqet(*),type,cdatyp
       integer ig1srt,ig2srt,ig3srt,ig4srt,ig1s,ig2s,ig3s,ig4s
       logical rewrit
@@ -160,6 +159,10 @@
 
       integer argdims
       external argdims
+      integer lip1
+      real p
+      character*8 string
+
 *-----------------------------------------------------------------
 *
       cnomvar = '    '
@@ -175,6 +178,13 @@
       if (argdims(8).gt.2) then 
          letiket(3) = etiqet(3)
       endif
+
+      lip1 = ip1(1)
+      if (argdims(4) > 1) then
+         p = transfer(ip1(1), p)
+         call convip(lip1, p, ip1(2), 1, string, .false.)
+      endif
+
       ier = fstcvt(      nom,    type,  letiket,  igtyp, 
      $     cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
@@ -188,7 +198,7 @@
       npkc=npac
       if (npac.eq.-1)  npkc=-16
       if (idat.eq.-1)  idat=idatt
-      if (ip1.eq.-1)  ip1=jpp1
+      if (lip1.eq.-1)  lip1=jpp1
       if (ip2.eq.-1)  ip2=jpp2
       if (ip3.eq.-1)  ip3=jpp3
       if (ip3.eq.   4095)  ip3=icnt  
@@ -233,7 +243,7 @@
          write(6,660) cnumv,idatt,jpp1,jpp2,jpp3,ctypv,cetik,cigty
  660     format('*   ENTRE     ',a2,2x,i10,3x,i5,3x,i2,
      $        3x,i3,4x,a1,4x,a10,3x,a1)
-         write(6,670) cnomvar,idat,ip1,ip2,ip3,ctypvar,cetiqet,cigtyp
+         write(6,670) cnomvar,idat,lip1,ip2,ip3,ctypvar,cetiqet,cigtyp
  670     format('*   SORTIE    ',a2,2x,i10,3x,i5,3x,i2,
      $        3x,i3,4x,a1,4x,a10,3x,a1)
 *
@@ -264,7 +274,7 @@
             cdatyp = 1
 *
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,ip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
+     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
      $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
          else
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
@@ -272,7 +282,7 @@
             rewrit = .false.
 *     
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,ip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
+     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
      $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
          endif
 #if defined (SGI) || defined (NEC)
@@ -302,7 +312,7 @@
          call putfld(tmpif0,tmpif0,iun,numero,iwrit,nni,nnj, 
      $        nbrow,npkc,istamp)
          if (message)then
-            write(6,600)ctypvar,cnomvar,ip1,ip2,
+            write(6,600)ctypvar,cnomvar,lip1,ip2,
      $           ip3,nni,nnj,iun,numero
          endif
          numero = numero + numdel
@@ -319,7 +329,7 @@
          call putfld(tmpif0,tmpif0,iun,0,iwrit,nni,nnj,
      $        nbrow,npkc,istamp)
          if (message) then
-            write(6,610)ctypvar,cnomvar,ip1,ip2,ip3,nni,nnj,iun
+            write(6,610)ctypvar,cnomvar,lip1,ip2,ip3,nni,nnj,iun
          endif
       else
          if (message) then
@@ -403,7 +413,7 @@
 ***S/P   LIREN   LIRE UN CHAMP DANS ACCUMULATEUR
 *
       subroutine liren(nom, type, idat, niv, ihr, ip3, etiqet) 
-#include "impnone.cdk"
+      implicit none
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime 
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
@@ -457,11 +467,14 @@
       character *4 cnomvar
       character *2 ctypvar
       character*1 cigtyp
-      integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv,nom,num1,type
+      integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv(2),nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa 
       integer iopc
       integer argdims, letiket(3)
       external argdims
+      integer lniv
+      real p
+      character*8 string
 *     
       iunit=1
       iip3=ip3
@@ -483,9 +496,16 @@
       if (argdims(7).gt.2) then 
          letiket(3) = etiqet(3)
       endif
+
+      lniv = niv(1)
+      if (argdims(4) > 1) then
+         p = transfer(niv(1), p)
+         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+      endif
+
  100  ier = fstcvt(    nom,   type, letiket,    -1,
      $     cnomvar,ctypvar,cetiqet,cigtyp,     .true.)
-      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,iip3,
+      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,lniv,ihr,iip3,
      $     ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)
@@ -808,7 +828,7 @@ c     ***************************************************************
      $     ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,
      $     ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,
      $     ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
-#include "impnone.cdk"
+      implicit none
 *     
 *AUTEUR
 *   P. SARRAZIN JANVIER 82 DRPN DORVAL P.Q. CANADA
@@ -855,8 +875,6 @@ c     ***************************************************************
 *-----------------------------------------------------------------------
 *
 #include "heures.cdk"
-*
-*
 #include "voir.cdk"
 #include "accum.cdk"
 #include "indptr.cdk"
@@ -872,15 +890,18 @@ c     ***************************************************************
 *
 *
 *
-      integer ihr,ihrs,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7
-      integer ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15
-      integer ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23
-      integer ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30,nparm
+      integer ihr,ihrs,nparm
+      integer ipr1(2),ipr2(2),ipr3(2),ipr4(2),ipr5(2),ipr6(2),ipr7(2)
+      integer ipr8(2),ipr9(2),ipr10(2),ipr11(2),ipr12(2),ipr13(2),ipr14(2),ipr15(2)
+      integer ipr16(2),ipr17(2),ipr18(2),ipr19(2),ipr20(2),ipr21(2),ipr22(2),ipr23(2)
+      integer ipr24(2),ipr25(2),ipr26(2),ipr27(2),ipr28(2),ipr29(2),ipr30(2)
       integer i,np,nw,trouve
       integer fstcvt,argdims 
+      integer kinds(30)
       
       integer nom(2)
-      character*8 cnom 
+      character*8 cnom, string
+      real p
 *
 *
       if (inputmod.eq.SEQUENTIEL) then
@@ -896,40 +917,70 @@ c     ***************************************************************
 
       champpr(1) = -1 
       nchamp = min0(31,nchamp)
-      go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
-     $     21,22,23,24,25,26,27,28,29,30,31) ,nchamp
- 31   champpr(30) = ipr30
- 30   champpr(29) = ipr29
- 29   champpr(28) = ipr28
- 28   champpr(27) = ipr27
- 27   champpr(26) = ipr26
- 26   champpr(25) = ipr25
- 25   champpr(24) = ipr24
- 24   champpr(23) = ipr23
- 23   champpr(22) = ipr22
- 22   champpr(21) = ipr21
- 21   champpr(20) = ipr20
- 20   champpr(19) = ipr19
- 19   champpr(18) = ipr18
- 18   champpr(17) = ipr17
- 17   champpr(16) = ipr16
- 16   champpr(15) = ipr15
- 15   champpr(14) = ipr14
- 14   champpr(13) = ipr13
- 13   champpr(12) = ipr12
- 12   champpr(11) = ipr11
- 11   champpr(10) = ipr10
- 10   champpr(9) = ipr9
- 9    champpr(8) = ipr8
- 8    champpr(7) = ipr7
- 7    champpr(6) = ipr6
- 6    champpr(5) = ipr5
- 5    champpr(4) = ipr4
- 4    champpr(3) = ipr3
- 3    champpr(2) = ipr2
- 2    champpr(1) = ipr1
+
+      champpr(30) = ipr30(1)
+      champpr(29) = ipr29(1)
+      champpr(28) = ipr28(1)
+      champpr(27) = ipr27(1)
+      champpr(26) = ipr26(1)
+      champpr(25) = ipr25(1)
+      champpr(24) = ipr24(1)
+      champpr(23) = ipr23(1)
+      champpr(22) = ipr22(1)
+      champpr(21) = ipr21(1)
+      champpr(20) = ipr20(1)
+      champpr(19) = ipr19(1)
+      champpr(18) = ipr18(1)
+      champpr(17) = ipr17(1)
+      champpr(16) = ipr16(1)
+      champpr(15) = ipr15(1)
+      champpr(14) = ipr14(1)
+      champpr(13) = ipr13(1)
+      champpr(12) = ipr12(1)
+      champpr(11) = ipr11(1)
+      champpr(10) = ipr10(1)
+      champpr(9)  = ipr9(1)
+      champpr(8)  = ipr8(1)
+      champpr(7)  = ipr7(1)
+      champpr(6)  = ipr6(1)
+      champpr(5)  = ipr5(1)
+      champpr(4)  = ipr4(1)
+      champpr(3)  = ipr3(1)
+      champpr(2)  = ipr2(1)
+      champpr(1)  = ipr1(1)
 *
- 1    nw = min(argdims(1), 2) 
+      kinds(30) = ipr30(2)
+      kinds(29) = ipr29(2)
+      kinds(28) = ipr28(2)
+      kinds(27) = ipr27(2)
+      kinds(26) = ipr26(2)
+      kinds(25) = ipr25(2)
+      kinds(24) = ipr24(2)
+      kinds(23) = ipr23(2)
+      kinds(22) = ipr22(2)
+      kinds(21) = ipr21(2)
+      kinds(20) = ipr20(2)
+      kinds(19) = ipr19(2)
+      kinds(18) = ipr18(2)
+      kinds(17) = ipr17(2)
+      kinds(16) = ipr16(2)
+      kinds(15) = ipr15(2)
+      kinds(14) = ipr14(2)
+      kinds(13) = ipr13(2)
+      kinds(12) = ipr12(2)
+      kinds(11) = ipr11(2)
+      kinds(10) = ipr10(2)
+      kinds(9)  = ipr9(2)
+      kinds(8)  = ipr8(2)
+      kinds(7)  = ipr7(2)
+      kinds(6)  = ipr6(2)
+      kinds(5)  = ipr5(2)
+      kinds(4)  = ipr4(2)
+      kinds(3)  = ipr3(2)
+      kinds(2)  = ipr2(2)
+      kinds(1)  = ipr1(2)
+*
+      nw = min(argdims(1), 2) 
   
       if (nw.eq.1) then
          if (nom(1).eq.-1) then
@@ -946,6 +997,14 @@ c     ***************************************************************
 *
 *
       nparm = max0(1,nchmp - 1)
+
+      do i=1,nparm
+         if (argdims(i+1) > 1) then
+            p = transfer(champpr(i), p)
+            call convip(champpr(i), p, -1*kinds(i)-1000, 1, string, .false.)
+            endif
+      enddo
+
       if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
@@ -1609,7 +1668,7 @@ c     ***************************************************************
       return 
       end
       
-*
+
 ***s/p scalair  interpolation horizontale d un champ
 *               defini par l usager
 *     
@@ -1934,7 +1993,7 @@ C faite
 *
 #include "defin.cdk"
       subroutine champ_seq (listn,listip1,waitOrGo)
-#include "impnone.cdk"
+      implicit none
       integer listn(*),listip1(*),waitOrGo
       external ecritur,fstrwd,pgsmlir,fstprm,symetri,fstsel,fstsui,pgsmluk
       external loupneg,loupsou,fstopc,argdims,pgsmabt,imprims,grille2 
@@ -1993,10 +2052,11 @@ C faite
       integer ig1,ig2,ig3,ig4,irec,iunit
       integer num1,num2,num3,nloop,deet
       integer ip1,ip2,ip3,i,j,k
-      integer ni,nj,nk,nbits,datyp,
-     $     swa, lng, dltf, ubc, extra1, extra2, extra3
+      integer ni,nj,nk,nbits,datyp,swa, lng, dltf, ubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym,heureok,ip3ok,processed
+      character*8 string
+      real p
 
       real fbidon
       iunit = 1
@@ -2049,6 +2109,15 @@ C faite
       do i=1,argdims(2)
          listniv(ntitems,i) = listip1(i)
       enddo
+
+      if (listniv(ntitems, 1) > 1000000 .and. listniv(ntitems,2)  < 0) then
+         do i=1,argdims(2),2   
+            p = transfer(listniv(ntitems,i), p)
+            call convip(listniv(ntitems, i/2+1), p, -1*listniv(ntitems, (i+1))-1000, 1, string, .false.)
+         enddo
+         nitems2(ntitems) = argdims(2)/2
+      endif
+     
 
       if (waitOrGo.eq.WAIT) then
          return
@@ -2800,20 +2869,20 @@ C faite
 #include "blancs.cdk"
 
 *
-      external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime,
-     $     fstopc,messags,fstcvt
+      external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime, fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
 *     
       character *12 cetiket
       character *4 cnomvar
       character *2 ctypvar
       character *1 cigtyp
-      integer etiqet(3),idat,ihr,iip3,ip3,irec1,
-     $     iunit,niv,nom,num1,type 
-      integer inomb,i,iopc 
+      integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv(2),nom,num1,type 
+      integer inomb,i,iopc,lniv 
       integer cnbits,cdatyp,cswa, clng,cdltf,cubc,extra1,extra2,extra3
       integer argdims, letiket(3)
       external argdims
+      real p 
+      character*8 string
 *     
       iunit=1
       iip3=ip3
@@ -2834,12 +2903,16 @@ C faite
       endif
       if (argdims(7).gt.2) then 
          letiket(3) = etiqet(3)
+      endif 
+      
+      if (argdims(4) > 1) then
+         lniv = niv(1)
+         p = transfer(niv(1), p)
+         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
       endif
 
- 100  ier = fstcvt(    nom,   type, letiket ,    -1, 
-     $             cnomvar,ctypvar, cetiket, cigtyp,     .true.) 
-      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiket,niv,ihr,iip3,
-     $     ctypvar,cnomvar)
+ 100  ier = fstcvt(    nom,   type, letiket ,    -1, cnomvar,ctypvar, cetiket, cigtyp,     .true.) 
+      irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiket,lniv,ihr,iip3, ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)' RECORD N EXISTE PAS (FSTINF LIRMDE-LIRMDS)'
          call pgsmabt
@@ -2856,8 +2929,7 @@ C faite
       ichck=1
 *     
 *     
-      ier = fstprm( irec1,idatt,ideet,npas,nni,nnj,nnk,
-     $     cnbits,cdatyp,
+      ier = fstprm( irec1,idatt,ideet,npas,nni,nnj,nnk,cnbits,cdatyp,
      $     jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiket,cigtyp,igg1,igg2,
      $     igg3,igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRMDE'
@@ -3033,6 +3105,7 @@ C faite
       integer  fstinf,pgsmlir,fstprm,fstopc,fstcvt
       integer ezqkdef, ezsint, ezdefset
       integer ip1s, ip2s, ip3s
+      integer incip1
 *
 *auteur  p.sarrazin juillet 86  drpn dorval p.q. canada
 *revision 
@@ -3109,6 +3182,7 @@ C faite
       integer jp1,jp2,jp3,jp01,jp02,jp03,jp11,jp12,jp13,ni,nj,nk,nn
       integer lesips(3),jp(3)
       integer ip1tab(40),ip2tab(40),ip3tab(40),noment,nomsrt
+      integer lcl_ip1tab(40)
       integer num1,num2,num3,nloop,dat1,dat2,deet1,deet2,npas1,npas2 
       integer datsrt,deetsrt,npassrt,i,j,k,ii,jj,kk,iloop,n
       integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,
@@ -3116,18 +3190,19 @@ C faite
       integer argdims
       logical symetri,sym
       integer iunit
-      real fbidon
-
+      real fbidon, p
+      character*8 string
+      
 *     
       iunit = 1
       if (npar.lt. 5) then
          if (message) then
             write(6,*)
-     $     'DIRECTIVE CHMPDIF IL DEVRAIT Y AVOIR AU MOINS 5 ARGUMENTS (CHMPDIF)'
+     $           'DIRECTIVE CHMPDIF IL DEVRAIT Y AVOIR AU MOINS 5 ARGUMENTS (CHMPDIF)'
          endif
          return
       endif
-  
+      
       if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
@@ -3174,8 +3249,28 @@ C faite
          return
       endif
 
+*
+*     Ajustement pour IP1s reels
+
+      
+      if (argdims(3) > 1) then
+         if (ip1tab(1) > 1000000 .and. ip1tab(2) < 0) then
+            do i=1,num1,2   
+               p = transfer(ip1tab(i), p)
+               call convip(lcl_ip1tab(i/2+1), p, -1*ip1tab(i+1)-1000, 1, string, .false.)
+            enddo
+            num1 = num1 / 2
+            nloop = nloop / 2
+         endif
+      else
+         do i=1,num1
+            lcl_ip1tab(i) = ip1tab(i)
+         enddo
+      endif
+
 *     execution de chaque paire dans la liste
 *     
+
       do iloop=1,nloop,2
          if (num1.gt.1) then
             i=iloop
@@ -3233,9 +3328,9 @@ C faite
          endif
          
          
-         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,ip1tab(i),ip2tab(j),
+         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),
      $        ip3tab(k),ctypvar,cnoment)
-         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,ip1tab(ii),ip2tab(jj),
+         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),
      $        ip3tab(kk),ctypvar,cnoment)
          if (irec2 .lt. 0 .or.irec1 .lt. 0) then
           write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (CHMPDIF)'
@@ -3293,7 +3388,7 @@ C faite
             endif
          endif
 *     
-         irec1=pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,ip1tab(i),
+         irec1=pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,lcl_ip1tab(i),
      $        ip2tab(j), ip3tab(k),ctypvar,cnoment,cigtyp)
 *     
          if (printen)  call imprime(cnoment,tmpif1,ni,nj)
@@ -3336,7 +3431,7 @@ C faite
             endif
          endif
 *     
-         irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,ip1tab(ii),
+         irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,lcl_ip1tab(ii),
      $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment,cigtyp)
 *     
 *     
@@ -3362,19 +3457,19 @@ C faite
 *     ecrire le ip1,ip2,ip3 correspondant aux definitions
 *     
          if (num1.gt.1) then
-            jp(1)=ip1tab(i) 
-            jp(2)=ip1tab(ii)
+            jp(1)=lcl_ip1tab(i) 
+            jp(2)=lcl_ip1tab(ii)
             jp(3)=ip2tab(j) 
          endif
 *     
          if (num2.gt.1) then
-            jp(1)=ip1tab(i) 
+            jp(1)=lcl_ip1tab(i) 
             jp(2)=ip2tab(j) 
             jp(3)=ip2tab(jj)
          endif
 *     
          if (num3.gt.1) then
-            jp(1)=ip1tab(i) 
+            jp(1)=lcl_ip1tab(i) 
             jp(2)=ip3tab(k) 
             jp(3)=ip3tab(kk)
          endif
@@ -3785,7 +3880,7 @@ C faite
 ***S/P  ADDITIONNE SOUSTRAIT MULTIPLIT MODULE 2 CHAMPS
 *
       subroutine plmnmod(nom,type,idat,niv,ihr,ip3,etiqet) 
-#include "impnone.cdk"
+      implicit none
 *
       external fstinf,fstsui,fstprm,pgsmabt,imprime
       external lopascm,messags,memoir,pgsmluk,fstcvt
@@ -3857,10 +3952,13 @@ C faite
       integer type,etiqet(3),nom,aa,letiqet(3)
       integer idat,idate,ideete,if1,ig1e,ig2e,ig3e,ig4e
       integer ihr,ip3,irec,itot,iunit,jp1e,jp2e,jp3e,nie
-      integer niv,nje,nke,npase
+      integer niv(2),nje,nke,npase
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       integer argdims,letiket(3)
       external argdims
+      integer lniv
+      real p
+      character*8 string
 *     
 *    AA  MULTIPLICATEUR POUR AJOUTER OU SOUSTRAIRE
 *
@@ -3892,10 +3990,16 @@ C faite
          letiket(3) = etiqet(3)
       endif
 
+      lniv = niv(1)
+      if (argdims(4) > 1) then
+         p = transfer(niv(1), p)
+         call convip(lniv, p, -1*niv(2)-1000, 1, string, .false.)
+      endif
+
       ier = fstcvt(    nom,    type,  letiket,     -1,
      $     cnomvar, ctypvar, cetiket, cigtyp,     .true.) 
 *     
-      irec=fstinf(iunit,nie,nje,nke,idat,cetiket,niv,ihr,ip3,
+      irec=fstinf(iunit,nie,nje,nke,idat,cetiket,lniv,ihr,ip3,
      $     ctypvar, cnomvar)
       
 
@@ -7324,8 +7428,8 @@ c     ***************************************************************
 #include "champseq.cdk"
 	
 	
-	character *8 qlxcon(107),qlxlcon(4)
-	integer      qlxval(107)     
+	character *8 qlxcon(115),qlxlcon(4)
+	integer      qlxval(115)     
 	integer      qlxlval(4)
 
 	
@@ -7505,6 +7609,26 @@ c     ***************************************************************
 	data qlxcon(106)/'IPTWO'   /  qlxval(106)/     5 /
 	data qlxcon(107)/'IPTHREE' /  qlxval(107)/     6 /
 
+*               KIND =0, p est en hauteur (m) par rapport au niveau de la mer
+*               KIND =1, p est en sigma (0.0 -> 1.0)
+*               KIND =2, p est en pression (mb)
+*               KIND =3, p est un code arbitraire
+*               KIND =4, p est en hauteur (M) par rapport au niveau du sol
+*               KIND =5, p est en coordonnee hybride
+*               KIND =6, p est en coordonnee theta
+*               KIND =15, rererve (entiers)
+*               KIND =21, p est en GalChen
+
+
+	data qlxcon(108)/'METERS'  /  qlxval(108)/ -1000 /
+	data qlxcon(109)/'SIGMA'   /  qlxval(109)/ -1001 /
+	data qlxcon(110)/'MBAR'    /  qlxval(110)/ -1002 /
+	data qlxcon(111)/'OTHER'   /  qlxval(111)/ -1003 /
+	data qlxcon(112)/'METERAGL'/  qlxval(112)/ -1004 /
+	data qlxcon(113)/'HYBRID'  /  qlxval(113)/ -1005 /
+	data qlxcon(114)/'THETA'   /  qlxval(114)/ -1006 /
+	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
+
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
 
@@ -7527,7 +7651,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.11.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7830,7 +7954,7 @@ c     ***************************************************************
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 		
-	do i=1,107
+	do i=1,115
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	

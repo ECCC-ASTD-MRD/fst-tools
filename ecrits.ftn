@@ -3,9 +3,8 @@
 *
       subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,
      $     etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt) 
-#include "impnone.cdk"
-      external conver,fstecr,fclos,memoir,pgsmabt,
-     $     imprims,fstopc,messags,fstcvt,putfld
+      implicit none
+      external conver,fstecr,fclos,memoir,pgsmabt,imprims,fstopc,messags,fstcvt,putfld
       integer fstecr,fstopc,fstcvt,iopc
 *
 *AUTEUR  P.SARRAZIN  AOUT 82  DRPN DORVAL P.Q. CANADA
@@ -67,7 +66,7 @@
       character *1 cigtyp
       
       integer i
-      integer nom,npac,idat,ip1,ip2,ip3,igtyp,imprim,npkc
+      integer nom,npac,idat,ip1(2),ip2,ip3,igtyp,imprim,npkc
       integer iun,istamp,etiqet(*),type,cdatyp
       integer ig1srt,ig2srt,ig3srt,ig4srt,ig1s,ig2s,ig3s,ig4s
       logical rewrit
@@ -75,6 +74,10 @@
 
       integer argdims
       external argdims
+      integer lip1
+      real p
+      character*8 string
+
 *-----------------------------------------------------------------
 *
       cnomvar = '    '
@@ -90,6 +93,13 @@
       if (argdims(8).gt.2) then 
          letiket(3) = etiqet(3)
       endif
+
+      lip1 = ip1(1)
+      if (argdims(4) > 1) then
+         p = transfer(ip1(1), p)
+         call convip(lip1, p, ip1(2), 1, string, .false.)
+      endif
+
       ier = fstcvt(      nom,    type,  letiket,  igtyp, 
      $     cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
@@ -103,7 +113,7 @@
       npkc=npac
       if (npac.eq.-1)  npkc=-16
       if (idat.eq.-1)  idat=idatt
-      if (ip1.eq.-1)  ip1=jpp1
+      if (lip1.eq.-1)  lip1=jpp1
       if (ip2.eq.-1)  ip2=jpp2
       if (ip3.eq.-1)  ip3=jpp3
       if (ip3.eq.   4095)  ip3=icnt  
@@ -148,7 +158,7 @@
          write(6,660) cnumv,idatt,jpp1,jpp2,jpp3,ctypv,cetik,cigty
  660     format('*   ENTRE     ',a2,2x,i10,3x,i5,3x,i2,
      $        3x,i3,4x,a1,4x,a10,3x,a1)
-         write(6,670) cnomvar,idat,ip1,ip2,ip3,ctypvar,cetiqet,cigtyp
+         write(6,670) cnomvar,idat,lip1,ip2,ip3,ctypvar,cetiqet,cigtyp
  670     format('*   SORTIE    ',a2,2x,i10,3x,i5,3x,i2,
      $        3x,i3,4x,a1,4x,a10,3x,a1)
 *
@@ -179,7 +189,7 @@
             cdatyp = 1
 *
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,ip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
+     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
      $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
          else
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
@@ -187,7 +197,7 @@
             rewrit = .false.
 *     
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,ip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
+     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
      $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
          endif
 #if defined (SGI) || defined (NEC)
@@ -217,7 +227,7 @@
          call putfld(tmpif0,tmpif0,iun,numero,iwrit,nni,nnj, 
      $        nbrow,npkc,istamp)
          if (message)then
-            write(6,600)ctypvar,cnomvar,ip1,ip2,
+            write(6,600)ctypvar,cnomvar,lip1,ip2,
      $           ip3,nni,nnj,iun,numero
          endif
          numero = numero + numdel
@@ -234,7 +244,7 @@
          call putfld(tmpif0,tmpif0,iun,0,iwrit,nni,nnj,
      $        nbrow,npkc,istamp)
          if (message) then
-            write(6,610)ctypvar,cnomvar,ip1,ip2,ip3,nni,nnj,iun
+            write(6,610)ctypvar,cnomvar,lip1,ip2,ip3,nni,nnj,iun
          endif
       else
          if (message) then

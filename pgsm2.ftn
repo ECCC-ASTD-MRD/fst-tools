@@ -91,8 +91,8 @@
 #include "champseq.cdk"
 	
 	
-	character *8 qlxcon(107),qlxlcon(4)
-	integer      qlxval(107)     
+	character *8 qlxcon(115),qlxlcon(4)
+	integer      qlxval(115)     
 	integer      qlxlval(4)
 
 	
@@ -272,6 +272,26 @@
 	data qlxcon(106)/'IPTWO'   /  qlxval(106)/     5 /
 	data qlxcon(107)/'IPTHREE' /  qlxval(107)/     6 /
 
+*               KIND =0, p est en hauteur (m) par rapport au niveau de la mer
+*               KIND =1, p est en sigma (0.0 -> 1.0)
+*               KIND =2, p est en pression (mb)
+*               KIND =3, p est un code arbitraire
+*               KIND =4, p est en hauteur (M) par rapport au niveau du sol
+*               KIND =5, p est en coordonnee hybride
+*               KIND =6, p est en coordonnee theta
+*               KIND =15, rererve (entiers)
+*               KIND =21, p est en GalChen
+
+
+	data qlxcon(108)/'METERS'  /  qlxval(108)/ -1000 /
+	data qlxcon(109)/'SIGMA'   /  qlxval(109)/ -1001 /
+	data qlxcon(110)/'MBAR'    /  qlxval(110)/ -1002 /
+	data qlxcon(111)/'OTHER'   /  qlxval(111)/ -1003 /
+	data qlxcon(112)/'METERAGL'/  qlxval(112)/ -1004 /
+	data qlxcon(113)/'HYBRID'  /  qlxval(113)/ -1005 /
+	data qlxcon(114)/'THETA'   /  qlxval(114)/ -1006 /
+	data qlxcon(115)/'GALCHEN' /  qlxval(115)/ -1021 /
+
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
 
@@ -294,7 +314,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.11.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.0',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -597,7 +617,7 @@
 	call qlxins (once,   'ONCE',  dum, 1, 1) 
 	call qlxins (diese,  'DIESE',dum,1,1)
 		
-	do i=1,107
+	do i=1,115
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	

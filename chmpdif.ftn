@@ -11,6 +11,7 @@
       integer  fstinf,pgsmlir,fstprm,fstopc,fstcvt
       integer ezqkdef, ezsint, ezdefset
       integer ip1s, ip2s, ip3s
+      integer incip1
 *
 *auteur  p.sarrazin juillet 86  drpn dorval p.q. canada
 *revision 
@@ -87,6 +88,7 @@
       integer jp1,jp2,jp3,jp01,jp02,jp03,jp11,jp12,jp13,ni,nj,nk,nn
       integer lesips(3),jp(3)
       integer ip1tab(40),ip2tab(40),ip3tab(40),noment,nomsrt
+      integer lcl_ip1tab(40)
       integer num1,num2,num3,nloop,dat1,dat2,deet1,deet2,npas1,npas2 
       integer datsrt,deetsrt,npassrt,i,j,k,ii,jj,kk,iloop,n
       integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,
@@ -94,18 +96,19 @@
       integer argdims
       logical symetri,sym
       integer iunit
-      real fbidon
-
+      real fbidon, p
+      character*8 string
+      
 *     
       iunit = 1
       if (npar.lt. 5) then
          if (message) then
             write(6,*)
-     $     'DIRECTIVE CHMPDIF IL DEVRAIT Y AVOIR AU MOINS 5 ARGUMENTS (CHMPDIF)'
+     $           'DIRECTIVE CHMPDIF IL DEVRAIT Y AVOIR AU MOINS 5 ARGUMENTS (CHMPDIF)'
          endif
          return
       endif
-  
+      
       if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
             write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
@@ -152,8 +155,28 @@
          return
       endif
 
+*
+*     Ajustement pour IP1s reels
+
+      
+      if (argdims(3) > 1) then
+         if (ip1tab(1) > 1000000 .and. ip1tab(2) < 0) then
+            do i=1,num1,2   
+               p = transfer(ip1tab(i), p)
+               call convip(lcl_ip1tab(i/2+1), p, -1*ip1tab(i+1)-1000, 1, string, .false.)
+            enddo
+            num1 = num1 / 2
+            nloop = nloop / 2
+         endif
+      else
+         do i=1,num1
+            lcl_ip1tab(i) = ip1tab(i)
+         enddo
+      endif
+
 *     execution de chaque paire dans la liste
 *     
+
       do iloop=1,nloop,2
          if (num1.gt.1) then
             i=iloop
@@ -211,9 +234,9 @@
          endif
          
          
-         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,ip1tab(i),ip2tab(j),
+         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),
      $        ip3tab(k),ctypvar,cnoment)
-         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,ip1tab(ii),ip2tab(jj),
+         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),
      $        ip3tab(kk),ctypvar,cnoment)
          if (irec2 .lt. 0 .or.irec1 .lt. 0) then
           write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (CHMPDIF)'
@@ -271,7 +294,7 @@
             endif
          endif
 *     
-         irec1=pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,ip1tab(i),
+         irec1=pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,lcl_ip1tab(i),
      $        ip2tab(j), ip3tab(k),ctypvar,cnoment,cigtyp)
 *     
          if (printen)  call imprime(cnoment,tmpif1,ni,nj)
@@ -314,7 +337,7 @@
             endif
          endif
 *     
-         irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,ip1tab(ii),
+         irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,lcl_ip1tab(ii),
      $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment,cigtyp)
 *     
 *     
@@ -340,19 +363,19 @@
 *     ecrire le ip1,ip2,ip3 correspondant aux definitions
 *     
          if (num1.gt.1) then
-            jp(1)=ip1tab(i) 
-            jp(2)=ip1tab(ii)
+            jp(1)=lcl_ip1tab(i) 
+            jp(2)=lcl_ip1tab(ii)
             jp(3)=ip2tab(j) 
          endif
 *     
          if (num2.gt.1) then
-            jp(1)=ip1tab(i) 
+            jp(1)=lcl_ip1tab(i) 
             jp(2)=ip2tab(j) 
             jp(3)=ip2tab(jj)
          endif
 *     
          if (num3.gt.1) then
-            jp(1)=ip1tab(i) 
+            jp(1)=lcl_ip1tab(i) 
             jp(2)=ip3tab(k) 
             jp(3)=ip3tab(kk)
          endif
