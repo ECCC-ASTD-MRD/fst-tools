@@ -96,12 +96,13 @@
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit, chkenrpos
+      integer iunit, chkenrpos, nk
       real fbidon, p
       character*8 string
       
 *     
       iunit = 1
+      nk = 1
       if (npar.lt. 5) then
          if (message) then
             write(6,*)
@@ -422,7 +423,7 @@
 *     
 *     
       if (cgrtyp.eq.'*') then
-         call ecritur(tmpif1,npack,datsrt,deetsrt,npassrt,ni,nj,1,
+         call ecritur(tmpif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk,
      $        jp(1),jp(2),jp(3),
      $        ctypvar,cnomsrt,cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else

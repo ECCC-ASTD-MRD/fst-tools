@@ -578,44 +578,6 @@
       go to 100
       end 
       
-      subroutine pgsmsetiset
-#include "impnone.cdk"
-
-#include "indptr.cdk"
-
-      iset = 0
-
-      return
-      end
-
-      subroutine pgsmsetngr(newngr)
-#include "impnone.cdk"
-      integer newngr
-#include "grilles.cdk"
-
-      ngr = newngr
-
-      return
-      end
-
-      subroutine pgsminitptr
-
-#include "llccmm.cdk"
-
-      nullify(tmpif0)
-      nullify(tmpif1)
-      nullify(tmpif2)
-      nullify(tmpif3)
-      nullify(tmpif4)
-      nullify(tmpift)
-      nullify(tmproot)
-      nullify(tmplat)
-      nullify(tmplon)
-      nullify(tmplatg)
-      nullify(tmplong)
-
-      return
-      end
 c     ***************************************************************
 c     *                     A S S E M B L E                         *
 c     * Object :                                                    *
@@ -1534,12 +1496,14 @@ c     ***************************************************************
          gdout = ezgdef(nix,njx,cgrtyp,cgtypxy,ig1la,ig2la,
      $        ig3la,ig4la,tmplon,tmplat)
 
+         nj = 1
+         nk = 1
          if (mode.eq.1) then
-            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,1,1,
+            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvarx,nomvarx,etiketx,cgtypxy,ig1lo,ig2lo,ig3lo,ig4lo)
             
-            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,1,1,
+            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvary,nomvary,etikety,cgtypxy,ig1la,ig2la,ig3la,ig4la)
          endif
@@ -1952,7 +1916,7 @@ C faite
                 cnomvar=cnomqr
              endif
              
-             call ecritur(tmpout,npack,dat,deet,npas,li,lj,1,jp1,jp2,
+             call ecritur(tmpout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
              if (associated(tmpif2)) then
@@ -2422,7 +2386,7 @@ C faite
 
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)
-         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
+         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,nk,
      $        niveau(1),niveau(2),iheur,
      $        ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
@@ -2437,7 +2401,7 @@ C faite
 *     
 *     ecrire sur fichier standard,ms,sequentiel
 *     
-         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,
      $        ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 
       endif
@@ -3178,12 +3142,13 @@ C faite
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit, chkenrpos
+      integer iunit, chkenrpos, nk
       real fbidon, p
       character*8 string
       
 *     
       iunit = 1
+      nk = 1
       if (npar.lt. 5) then
          if (message) then
             write(6,*)
@@ -3504,7 +3469,7 @@ C faite
 *     
 *     
       if (cgrtyp.eq.'*') then
-         call ecritur(tmpif1,npack,datsrt,deetsrt,npassrt,ni,nj,1,
+         call ecritur(tmpif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk,
      $        jp(1),jp(2),jp(3),
      $        ctypvar,cnomsrt,cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
@@ -3699,9 +3664,12 @@ C faite
       
       real valeur
       real fbidon
+
+      real, dimension(ni*nj):: lclif1
+      real, dimension(li*lj) :: lclif2
       
       integer i, itime(2),ig1,ig2,ig3,ig4,ip1,irec1,irec2
-      integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc 
+      integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc
       integer cdatyp,cnbits
       integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer ezqkdef, ezdefset, ezsint, chkenrpos
@@ -3709,6 +3677,7 @@ C faite
       logical symetri,sym
       
       iunit = 1
+      nk = 1
 *     
       if (npar.ne.2) then
          if (message) then
@@ -3782,14 +3751,13 @@ C faite
 *     
 *     lire champ no 1
 *     
-      allocate(tmpif1(ni*nj))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       
-      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+      num1 = pgsmlir(lclif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
      $     ctypvar,cnomvar,cigtyp)
       
-      if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+      if (printen)  call imprime(cnomvar,lclif1,ni,nj)
 *     
 *     identifier parametres pour champ 2
 *     
@@ -3805,17 +3773,16 @@ C faite
 *     
 *     lire champ 2
 *     
-      allocate(tmpif2(max0(li*lj,ni*nj)))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
-      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+      num2 = pgsmlir(lclif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
      $     ctypvar,cnomvar,cigtyp)
-      if (printen)  call imprime(cnomvar,tmpif2,ni,nj)
+      if (printen)  call imprime(cnomvar,lclif2,ni,nj)
 *     
 *     difference entre les deux champs
 *     
       nn = ni*nj
-      call loupsou(tmpif1,tmpif2,nn) 
+      call loupsou(lclif1,lclif2,nn) 
 *     
 *     
 *     interpolation horizontale
@@ -3827,7 +3794,7 @@ C faite
          if (ig1.ne.0) sym = symetri(cnomvar) 
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
-         ier = ezsint(tmpif2, tmpif1)
+         ier = ezsint(lclif2, lclif1)
       endif
 *     
 *     #   jp1 - contient heure du premier champ
@@ -3843,23 +3810,20 @@ C faite
 *     
       lilj=li*lj
       valeur=0.0
-      call loupneg(tmpif2,valeur,1,lilj,1)
+      call loupneg(lclif2,valeur,1,lilj,1)
 *     
 *     ecrire sur fichier standard,ms,sequentiel
 *     
       if (cgrtyp.eq.'*') then
-         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
-     $        jp1,jp2,jp3,
+         call ecritur(lclif1,npack,dat,deet,npas,ni,nj,nk,jp1,jp2,jp3,
      $        ctypvar,cnomvar,cetike,cigtyp,ig1,ig2,ig3,ig4)
       else
-         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+         call ecritur(lclif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,
      $        ctypvar,cnomvar,cetike,cgrtyp,lg1,lg2,lg3,lg4)
       endif
 *     
 *     remetre espace des champs de travail
 *     
-      deallocate(tmpif2)
-      deallocate(tmpif1)
 *     
       return
       end
@@ -5773,6 +5737,7 @@ c     ***************************************************************
       
       real, dimension(:), pointer :: uuout,vvout
       iunit = 1
+      nk = 1
 *     
 *
       do 23000 iprs = 1,npar 
@@ -5895,7 +5860,7 @@ c     ***************************************************************
              ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
 	     uuout => tmpif3
              
-             call  ecritur(uuout,npack,dat,deet,npas,li,lj,1,
+             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
      $            jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,
      $            lg1,lg2,lg3,lg4)
              
@@ -5906,7 +5871,7 @@ c     ***************************************************************
                    endif
                 enddo
                 vvout => tmpif4
-                call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
+                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
      $               jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,
      $               lg1,lg2,lg3,lg4)
              endif
@@ -5952,14 +5917,14 @@ c     ***************************************************************
 *     
 *     ecrire vecteur u
 *     
-            call ecritur(uuout,npack,dat,deet,npas,li,lj,1,
+            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
      $           jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
 *     
 *     ecrire vecteur v
 *     
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
      $           jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
@@ -7635,7 +7600,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.6',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.7',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -8187,6 +8152,8 @@ c	call fstunl
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       character*8 cdummy
       integer      dummy
+      integer un 
+      un = 1
       
       cnomvar = cnom
 *     
@@ -8364,13 +8331,13 @@ c	call fstunl
 *     ecrit champ zonal 
 *     
         if (cjcoup.eq.'ZON') then
-           call ecritur(champ,npack,dat,deet,npas,1,nj,1,jp1,jp2,
+           call ecritur(champ,npack,dat,deet,npas,un,nj,nk,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
 *     
 *     ecrit champ  meridional
 *     
         else
-           call ecritur(champ,npack,dat,deet,npas,ni,1,1,jp1,jp2,
+           call ecritur(champ,npack,dat,deet,npas,ni,un,un,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
         endif
         deallocate(tmpif1)

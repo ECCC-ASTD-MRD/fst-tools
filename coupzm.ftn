@@ -100,6 +100,8 @@
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       character*8 cdummy
       integer      dummy
+      integer un 
+      un = 1
       
       cnomvar = cnom
 *     
@@ -277,13 +279,13 @@
 *     ecrit champ zonal 
 *     
         if (cjcoup.eq.'ZON') then
-           call ecritur(champ,npack,dat,deet,npas,1,nj,1,jp1,jp2,
+           call ecritur(champ,npack,dat,deet,npas,un,nj,nk,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
 *     
 *     ecrit champ  meridional
 *     
         else
-           call ecritur(champ,npack,dat,deet,npas,ni,1,1,jp1,jp2,
+           call ecritur(champ,npack,dat,deet,npas,ni,un,un,jp1,jp2,
      $          jp3,ctypvar,cnomvar,cetiket,cigtyp,ig1,ig2,ig3,ig4)
         endif
         deallocate(tmpif1)

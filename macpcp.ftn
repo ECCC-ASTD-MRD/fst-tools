@@ -71,9 +71,11 @@
       
       real valeur
       real fbidon
+
+      real, dimension(:), allocatable :: lclif1, lclif2
       
       integer i, itime(2),ig1,ig2,ig3,ig4,ip1,irec1,irec2
-      integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc 
+      integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc
       integer cdatyp,cnbits
       integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer ezqkdef, ezdefset, ezsint, chkenrpos
@@ -81,6 +83,7 @@
       logical symetri,sym
       
       iunit = 1
+      nk = 1
 *     
       if (npar.ne.2) then
          if (message) then
@@ -154,14 +157,14 @@
 *     
 *     lire champ no 1
 *     
-      allocate(tmpif1(ni*nj))
+      allocate(lclif1(ni*nj))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
       
-      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+      num1 = pgsmlir(lclif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
      $     ctypvar,cnomvar,cigtyp)
       
-      if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+      if (printen)  call imprime(cnomvar,lclif1,ni,nj)
 *     
 *     identifier parametres pour champ 2
 *     
@@ -177,17 +180,17 @@
 *     
 *     lire champ 2
 *     
-      allocate(tmpif2(max0(li*lj,ni*nj)))
+      allocate(lclif2(max0(li*lj,ni*nj)))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       if (date .eq. 0 .or. date .eq. 1) date=date2
-      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
+      num2 = pgsmlir(lclif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
      $     ctypvar,cnomvar,cigtyp)
-      if (printen)  call imprime(cnomvar,tmpif2,ni,nj)
+      if (printen)  call imprime(cnomvar,lclif2,ni,nj)
 *     
 *     difference entre les deux champs
 *     
       nn = ni*nj
-      call loupsou(tmpif1,tmpif2,nn) 
+      call loupsou(lclif1,lclif2,nn) 
 *     
 *     
 *     interpolation horizontale
@@ -199,7 +202,7 @@
          if (ig1.ne.0) sym = symetri(cnomvar) 
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
-         ier = ezsint(tmpif2, tmpif1)
+         ier = ezsint(lclif2, lclif1)
       endif
 *     
 *     #   jp1 - contient heure du premier champ
@@ -215,23 +218,22 @@
 *     
       lilj=li*lj
       valeur=0.0
-      call loupneg(tmpif2,valeur,1,lilj,1)
+      call loupneg(lclif2,valeur,1,lilj,1)
 *     
 *     ecrire sur fichier standard,ms,sequentiel
 *     
       if (cgrtyp.eq.'*') then
-         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
-     $        jp1,jp2,jp3,
+         call ecritur(lclif1,npack,dat,deet,npas,ni,nj,nk,jp1,jp2,jp3,
      $        ctypvar,cnomvar,cetike,cigtyp,ig1,ig2,ig3,ig4)
       else
-         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+         call ecritur(lclif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,
      $        ctypvar,cnomvar,cetike,cgrtyp,lg1,lg2,lg3,lg4)
       endif
 *     
 *     remetre espace des champs de travail
 *     
-      deallocate(tmpif2)
-      deallocate(tmpif1)
+      deallocate(lclif2)
+      deallocate(lclif1)
 *     
       return
       end

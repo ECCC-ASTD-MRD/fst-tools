@@ -209,7 +209,7 @@
 
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)
-         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
+         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,nk,
      $        niveau(1),niveau(2),iheur,
      $        ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
@@ -224,7 +224,7 @@
 *     
 *     ecrire sur fichier standard,ms,sequentiel
 *     
-         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
+         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,
      $        ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 
       endif

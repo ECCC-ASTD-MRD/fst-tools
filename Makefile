@@ -39,7 +39,7 @@ champseq.cdk  defin.cdk    grilles.cdk  lires.cdk    pairs.cdk   voir.cdk\
 charac.cdk    dummys.cdk   heures.cdk   llccmm.cdk   param.cdk
 
 FICHIERS_FTN = \
-calcul.ftn     ecrits.ftn     gristdb.ftn      liren.ftn    pgsmglue.ftn   routines.ftn\
+calcul.ftn     ecrits.ftn     gristdb.ftn      liren.ftn    routines.ftn\
 champ.ftn      ecritur.ftn    gritp12.ftn      lopascm.ftn  pgsmlic.ftn    scalair.ftn\
 champ_seq.ftn  epais.ftn      loupmir.ftn  pgsmlir.ftn    setintx.ftn\
 chkenrpos.ftn  chk_hy.ftn     fillcoord.ftn  grlalon.ftn      lrsmdes.ftn  pgsmluk.ftn    setxtrap.ftn\
@@ -68,7 +68,7 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm2002: 
-	r.build -o $@ -obj *.o $(HOME)/src/interp/*.o $(HOME)/src/utils/diese/dies.o  $(HOME)/src/utils/diese/fillgrid.o -librmn rmnbeta
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -librmn rmnbeta
 
 pgsm2000: 
 	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_006

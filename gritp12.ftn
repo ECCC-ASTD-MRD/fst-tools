@@ -158,12 +158,14 @@
          gdout = ezgdef(nix,njx,cgrtyp,cgtypxy,ig1la,ig2la,
      $        ig3la,ig4la,tmplon,tmplat)
 
+         nj = 1
+         nk = 1
          if (mode.eq.1) then
-            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,1,1,
+            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvarx,nomvarx,etiketx,cgtypxy,ig1lo,ig2lo,ig3lo,ig4lo)
             
-            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,1,1,
+            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvary,nomvary,etikety,cgtypxy,ig1la,ig2la,ig3la,ig4la)
          endif

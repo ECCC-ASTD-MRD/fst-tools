@@ -315,7 +315,7 @@
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.6',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.7',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

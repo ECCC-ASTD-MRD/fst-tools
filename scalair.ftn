@@ -275,7 +275,7 @@ C faite
                 cnomvar=cnomqr
              endif
              
-             call ecritur(tmpout,npack,dat,deet,npas,li,lj,1,jp1,jp2,
+             call ecritur(tmpout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,
      $            jp3,ctypvar,cnomvar,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 *     
              if (associated(tmpif2)) then

@@ -89,6 +89,7 @@
       
       real, dimension(:), pointer :: uuout,vvout
       iunit = 1
+      nk = 1
 *     
 *
       do 23000 iprs = 1,npar 
@@ -211,7 +212,7 @@
              ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
 	     uuout => tmpif3
              
-             call  ecritur(uuout,npack,dat,deet,npas,li,lj,1,
+             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
      $            jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,
      $            lg1,lg2,lg3,lg4)
              
@@ -222,7 +223,7 @@
                    endif
                 enddo
                 vvout => tmpif4
-                call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
+                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
      $               jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,
      $               lg1,lg2,lg3,lg4)
              endif
@@ -268,14 +269,14 @@
 *     
 *     ecrire vecteur u
 *     
-            call ecritur(uuout,npack,dat,deet,npas,li,lj,1,
+            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
      $           jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
 *     
 *     ecrire vecteur v
 *     
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
      $           jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
