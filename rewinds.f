@@ -1,0 +1,95 @@
+*** S/R REWINDS
+*     REWIND LE FICHIER SOURCE AU DEBUT 
+      SUBROUTINE REWINDS( DSN, TIPE )
+      IMPLICIT NONE 
+      INTEGER  DSN(*), TIPE(*)
+*ARGUMENTS
+*  ENTRE    - DSN   - DATASET NAME DU FICHIER A REBOBINER.
+*    "      - TIPE  - TYPE DU FICHIER.
+*
+*AUTEURS
+*VERSION ORIGINALE Y. BOURASSA OCT 90
+*REVISION 001      "      "    VERSION UNIX
+*         002      "      "    MAR 92 ALLEL A LOW2UP POUR TYPE
+*         003      "      "    MAI 92 ABORT SI FICHIER INEXISTANT
+*         004      "      "     "  "  SKIP ABORT SI EN INTERACTIF 
+*
+*LANGUAGE   - FTN77 
+*
+      CHARACTER*8 LIN128
+      PARAMETER   (LIN128='(32A4)')
+      INTEGER   NMR, NMS, NME, NMN, NMM, NMD
+      PARAMETER(NMR=12, NMS=25, NME=20, NMN=40, NMM=10, NMD=20)
+      COMMON/LOGIQ/  SCRI, XPRES, ESAIS, DM1, DEBUG, SELEC, BOX, DIAG,
+     x               INTERAC, ZA
+      LOGICAL        SCRI, XPRES, ESAIS, DM1, DEBUG, SELEC, BOX, DIAG,
+     x               INTERAC, ZA
+      COMMON/DESRS/  JOURS(4), NREQ, SAUV, DESEXC(NMD), SATISF(NMD),
+     X               NEXC, REQ(11,4,NMD), SUP(8,NMD), NIS, NJS, NKS,
+     X               IG1S, IG2S, IG3S, IG4S, REQN(NMD), REQT(NMD),
+     X               REQE(NMD), Z1, Z2, Z3, ZD
+      INTEGER        NREQ, SAUV, DESEXC, SATISF, NEXC, REQ, SUP, NIS, 
+     X               NJS, NKS, IG1S, IG2S, IG3S, IG4S, REQN, REQT, REQE,
+     X               JOURS, Z1, Z2, Z3, ZD
+      COMMON/TAPES / MEOF, COPIES, NDS, NDD, EOF, CEOF, LEOF, LIMITE, 
+     X               NFS,  NFSO,   SOURCES(35), NRECMIN
+      INTEGER        MEOF, COPIES, NDS, NDD, EOF, CEOF, LEOF, LIMITE, 
+     X               NFS,  NFSO,   SOURCES, NRECMIN
+      COMMON/FICHES/ NP, FIXD, ECR, SSEQ, VS, OUVS, DSEQ, VD, OUVD
+      INTEGER        NP
+      LOGICAL            FIXD, ECR, SSEQ, VS, OUVS, DSEQ, VD, OUVD
+      COMMON /CHAR/  NS, ND, SNOM, DNOM, ZE, ETI, ETIS(10,NMD), 
+     X               ZT, TYP, TYPS(10,NMD), GTY, GTYS(NMD), GTYPS,
+     X               ZN, NOM, NOMS(10,NMD), ETAT
+      CHARACTER *1   GTY, GTYS, GTYPS
+      CHARACTER *2   ZT, TYP, TYPS
+      CHARACTER *4   ZN, NOM, NOMS
+      CHARACTER *6   ETAT
+      CHARACTER *12  ZE, ETI, ETIS
+      CHARACTER *128 NS, ND
+      CHARACTER *15  SNOM, DNOM
+*
+*MODULES
+      EXTERNAL      ARGDIMS, FSTRWD, OUVRES, LOW2UP, FSTABT
+*
+**
+      INTEGER       ARGDIMS, FSTRWD, I
+      CHARACTER*15  T
+      CHARACTER*128 DN
+*     DECODE LE TYPE DE FICHIER (DOIT ETRE SEQ.)
+      IF(NP .EQ. 2) THEN
+         WRITE(T, LIN128) (TIPE(I), I=1,ARGDIMS(2))
+         CALL LOW2UP(T, T)
+      ELSE
+         T = 'SEQ'
+      ENDIF
+      IF(INDEX(T,'RND') .EQ. 0) THEN
+         SSEQ = .TRUE.
+         IF(INDEX(T,'FTN') .GT. 0) THEN
+            SNOM = 'STD+SEQ+FTN'
+         ELSE
+            SNOM = 'STD+SEQ'
+         ENDIF
+      ELSE
+         PRINT*,'PAS DE REWIND POSSIBLE'
+         RETURN
+      ENDIF
+*     DECODE LE NOM DU FICHIER 
+      IF(DSN(1) .NE. -1) THEN
+         WRITE(DN, LIN128) (DSN(I), I=1,ARGDIMS(1))
+         CALL OUVRES( DN )
+      ENDIF
+      IF( OUVS ) THEN
+         I = FSTRWD( SOURCES )
+         IF(DEBUG .OR. INTERAC) 
+     X      WRITE(6,*)' LE FICHIER ',DN,' POSITIONNNE AU DEBUT'
+      ELSE
+         IF( INTERAC ) THEN
+            WRITE(6,*)' LE FICHIER ',DN,' PAS OUVERT'
+            RETURN
+         ELSE
+            CALL FSTABT
+         ENDIF
+      ENDIF
+      RETURN
+      END 

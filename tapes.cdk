@@ -1,0 +1,4 @@
+      COMMON/TAPES / MEOF, COPIES, NDS, NDD, EOF, CEOF, LEOF, LIMITE, 
+     X               NFS,  NFSO,   SOURCES(35), NRECMIN
+      INTEGER        MEOF, COPIES, NDS, NDD, EOF, CEOF, LEOF, LIMITE, 
+     X               NFS,  NFSO,   SOURCES, NRECMIN

@@ -1,0 +1,98 @@
+*** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
+*
+      SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
+  
+      IMPLICIT NONE 
+  
+      INTEGER  TV, NV, LBL(*), DATE, IP1, IP2, IP3
+*
+*AUTEURS
+*VERSION ORIGINALE Y. BOURASSA JUL 91
+*REVISION      001 "      "    JUL 92 COUPE DW DE DATE
+*              002 "      "    OCT 92 PADING DU LABEL
+*LANGUAGA FTN77
+*  
+*ARGUMENTS
+*ENTRE   TV   -  TYPEVAR 
+*  "     NV   -  NOMVAR  
+*  "     LBL  -  ETIKET  
+*  "     DATE -  DATE
+*  "     IP1  -  IP1 
+*  "     IP2  -  IP2
+*  "     IP3  -  IP3
+*
+#include "maxprms.cdk"
+#include "logiq.cdk"
+#include "fiches.cdk"
+#include "char.cdk"
+#include "desrs.cdk"
+*MODULE
+*  
+      EXTERNAL     FSTCVT, ARGDOPE, HOLACAR
+**
+      INTEGER      FSTCVT, ARGDOPE, I, LIS(10)
+      CHARACTER *1 G
+      CHARACTER *2 T
+      CHARACTER *4 N
+      CHARACTER *12 E
+      DATA         LIS/10*0/
+
+      ZA = .FALSE.
+      ZD = -1
+      Z1 = -1
+      Z2 = -1
+      Z3 = -1
+      ZT = '??'
+      ZN = '????'
+      ZE = '????????????' 
+
+      GO TO(70, 60, 50, 40, 30, 20, 10) NP
+   10 IF(IP3 .NE. -1) THEN
+         ZA = .TRUE.
+         Z3 = IP3
+         IF( DEBUG ) WRITE(6,*)' ZIP3 = ',Z3
+      ENDIF
+   20 IF(IP2 .NE. -1) THEN
+         ZA = .TRUE.
+         Z2 = IP2
+         IF( DEBUG ) WRITE(6,*)' ZIP2 = ',Z2
+      ENDIF
+   30 IF(IP1 .NE. -1) THEN
+         ZA = .TRUE.
+         Z1 = IP1
+         IF( DEBUG ) WRITE(6,*)' ZIP1 = ',Z1
+      ENDIF
+   40 IF(DATE .NE. -1) THEN
+         ZA = .TRUE.
+         ZD = DATE - DATE/1000000000*1000000000
+         IF( DEBUG ) WRITE(6,*)' ZDAT = ',ZD
+      ENDIF
+   50 IF(LBL(1) .NE. -1) THEN
+         I = ARGDOPE(3, LIS, 10)
+         CALL HOLACAR(ZE, LIS, I, LBL, 12)
+         IF(ZE .NE. '????????????') THEN
+            ZA = .TRUE.
+            IF( DEBUG ) WRITE(6,*)' ZETIKET= -',ZE,'-'
+         ENDIF
+      ENDIF
+   60 IF(NV .NE. -1) THEN
+         I = FSTCVT(NV, -1, -1, -1, ZN, T, E, G, .TRUE.)
+         IF(ZN .NE. '????') THEN
+            ZA = .TRUE.
+            IF( DEBUG ) WRITE(6,*)' ZNOM= -',ZN,'-'
+         ENDIF
+      ENDIF
+   70 IF(TV .NE. -1) THEN
+         I = FSTCVT(-1, TV, -1, -1, N, ZT, E, G, .TRUE.)
+            IF(ZT .NE. '??') THEN
+            ZA = .TRUE.
+            IF( DEBUG ) WRITE(6,*)' ZTYP= -',ZT,' -'
+         ENDIF
+      ENDIF
+     
+      RETURN 
+      END 
+
+
+
+

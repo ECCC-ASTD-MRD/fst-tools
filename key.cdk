@@ -1,0 +1,4 @@
+      COMMON /KEY/   KLE(60), DEF1(60), DEF2(60), PRINTR
+      CHARACTER*8    KLE
+      CHARACTER*128           DEF1,     DEF2,     PRINTR
+

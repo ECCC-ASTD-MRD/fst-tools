@@ -1,0 +1,44 @@
+***S/P ENTSORT   METTRE DES ENTIERS EN ORDRE ASCENDANT
+*
+      SUBROUTINE ENTSORT(ENTIERS, NBRE) 
+      IMPLICIT NONE 
+      INTEGER    NBRE, ENTIERS(NBRE)
+*
+*AUTEURS  VERSION ORIGINALE  M. VALIN DRPN DORVAL P. Q. CANADA
+*         REVISION 001       Y. BOURASSA (RATFOR @AFTN 77) JUL 83
+*
+*LANGAGE FTN 77
+*
+*OBJET(ENTSORT)
+*            METTRE DES ENTIERS EN ORDRE ASCENDANT
+*
+*ARGUMENTS
+* IN/OUT  - ENTIERS - RETOURNE LES ENTIERS EN ORDRE ASCENDANT
+* IN/OUT  - NBRE    - NOMBRE D'ENTIERS RETOURNES
+*
+**
+      INTEGER X, I, J, K
+      IF(NBRE .GT. 1) THEN
+         DO 20 I = 1, NBRE-1
+            K = I
+            DO 10 J = I+1, NBRE
+               IF(ENTIERS(K) .GT. ENTIERS(J))  K=J
+   10          CONTINUE
+            IF(K .NE. I) THEN 
+               X          = ENTIERS(K)
+               ENTIERS(K) = ENTIERS(I)
+               ENTIERS(I) = X 
+            ENDIF
+   20       CONTINUE
+*        ELIMINATION DES NOMBRES EGAUX DE LA LISTE
+         I = 1
+         DO 30 J=2,NBRE
+            IF(ENTIERS(I) .NE. ENTIERS(J)) THEN
+               I = I+1
+               IF(I .NE. J) ENTIERS(I) = ENTIERS(J)
+            ENDIF
+   30       CONTINUE
+         NBRE = I
+      ENDIF
+      RETURN
+      END 
