@@ -63,7 +63,10 @@
 *         M. Lepine        Reload, bug fix c_fnom  - mars 1999 - v5.4
 *         M. Lepine        Menage des if defined - mars 2000 - v5.5
 *         M. Lepine        Reload pour datev (fstd89) - oct 2000 - v5.6
-*         M. Lepine        Possibilite d'appel a convip pour les ip1 - juil 2001 - v5.7
+*         M. Lepine        Possibilite d'appel a convip pour les ip1 
+*                          + fichier source read only - juil 2001 - v5.7
+*         M. Lepine        Julhr en julsec - oct 2001 - v5.8
+*         M. Lepine        fichier de sortie R/W obligatoire - Dec 2001 - v5.81
 *
 *LANGAGE  - FTN77
 *
@@ -240,7 +243,7 @@
 	DEF1(10) = '/dev/null'
       ENDIF
 
-      DEBUG  = (DEF1(13)  .EQ.'DEBUGS')
+      DEBUG  = (DEF1(13)  .EQ.'DEBUG')
       FASTIO = (DEF1(22).EQ.'OUI') 
       DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
       IF((DEF1(16).NE.'NON') .OR. (DEF1(4).NE.'NON') .OR.
@@ -268,9 +271,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V5.7','NON')
+         I = EXDB('EDITFST','V5.81','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V5.7   ***'
+         WRITE(6,*)'***   E D I T F S T   V5.81   ***'
       ENDIF
 
 

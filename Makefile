@@ -1,4 +1,6 @@
-.SUFFIXES : .ftn .f .cdk
+SUFFIXES:
+
+.SUFFIXES : .ftn .f .cdk .o
 
 SHELL = /bin/sh
 
@@ -94,11 +96,11 @@ weofile.o:     weofile.ftn     lin128.cdk      maxprms.cdk     logiq.cdk       \
 zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
                desrs.cdk       char.cdk
 
-absolu: $(OBJECTS) 
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_x
+absolu: $(OBJECTS)
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
 
-oldstuff: $(OBJECTS) 
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn
+oldstuff: $(OBJECTS)
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

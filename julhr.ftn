@@ -28,3 +28,32 @@
 
       RETURN
       END 
+
+*** S/R TROUVE LA DATE JULIENNE EN SECONDES A PARTIR D'UN CMC STAMP
+      SUBROUTINE JULSEC(JDS8, CMCD )
+  
+      IMPLICIT NONE 
+  
+      INTEGER *8  JDS8
+      INTEGER CMCD
+  
+*ARGUMENTS
+* SORTIE  JDS8  - JOUR JULIEN EN SECONDES 
+* ENTRE   CMCD -  DATE FORMAT CMC (stamp)
+*
+*AUTEUR       - M. Lepine - Oct 2001 -
+*
+*     LANGUAGE FTN77
+  
+      INTEGER Debut 
+*     Date de depart pour references et calcul de difference (1 jan 1900)
+      DATA Debut /010100000/  
+
+      EXTERNAL difdatr
+      real *8 nhours
+
+      call difdatr(cmcd,Debut,nhours)
+      jds8 = nhours*3600. + 0.5             ! nint en integer*8
+
+      RETURN
+      END 

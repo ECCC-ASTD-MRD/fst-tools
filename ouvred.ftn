@@ -28,7 +28,7 @@
 #include "fiches.cdk"
 *
 *MODULES
-      EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, FSTABT
+      EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit
 
       INTEGER  FSTOUV, FNOM, FSTNBR, FSTINF, RENDUA, I, J, K
 
@@ -67,7 +67,7 @@
       IF( OUVD ) CALL FERMED
 
 *     RETOURNE OUVRED >= 0 SI OUVERT
-      IF(FNOM(3, DN, DNOM, 0) .EQ. 0) THEN
+      IF(FNOM(3, DN, DNOM//'R/W', 0) .EQ. 0) THEN
          OUVRED = FSTOUV(3, DNOM)
          ND     = DN
          OUVD   = .TRUE.
@@ -91,7 +91,7 @@
          ELSE
             PRINT*,' *                ABORT                 *'
             PRINT*,'  **************************************'
-            CALL FSTABT
+            CALL qqexit(55)
          ENDIF
       ENDIF
 

@@ -17,6 +17,7 @@
 *           "     "       JAN 92 BUG PREMIERE ALLOCATION MEMOIRE
 *Revision 009   M. Lepine - mars 98 - extensions pour fstd98
 *Revision 010   M. Lepine - Oct  98 - Ajout du test de nrecmin
+*Revision 010   M. Lepine - Dec  01 - Termine dans le cas d'une erreur d'ecriture
 *
 *LANGAGE  - FTN77
 #include "maxprms.cdk"
@@ -26,18 +27,21 @@
 #include "key.cdk"
 #include "char.cdk"
 #include "fiches.cdk"
-      COMMON /   / BUFL(1)
-      INTEGER      BUFL
-*     - BUFL       CHAMP DONT LA LONGUEUR VARIE SELON LES RESSOURCES
+C      COMMON /   / BUFL(1)
+C      INTEGER      BUFL
+      integer, dimension ( : ), allocatable :: buftemp
+*     - buftemp    CHAMP DONT LA LONGUEUR VARIE SELON LES RESSOURCES
 *                  NECESSAIRES, LA ROUTINE MEMOIR RESERVE L'ESPASSE
-*                  (LINGUEUR INITIALE = 1)
-      EXTERNAL     MEMOIRH, FSTPRM, FSTSUI, FSTECR, FSTINF, FSTWEO,
+*                  (LONGUEUR INITIALE = 1)
+      EXTERNAL     FSTPRM, FSTSUI, FSTECR, FSTINF, FSTWEO,
      X             CRITSUP, DESIRE, FSTLUK, FSTFRM, FSTEOF, FSTABT,
-     X             JULHR, QQEXIT
+     X             JULSEC, QQEXIT
       INTEGER      FSTINF, FSTEOF, IG1, XTRA1, NI, I, IREC, DATE, SWA,
      X             FSTPRM, FSTFRM, IG2, XTRA2, NJ, J, DEET,       LNG,
      X             FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC,
-     X             FSTLUK, FSTWEO, IG4, NBITS, NM,    NPAS, IP(4), IST
+     X             FSTLUK, FSTWEO, IG4, NBITS, NM,    NPAS, IST
+      integer *8   IP(4)
+      integer      IP1,IP2,IP3
   
       LOGICAL      FIRSTP, BONNE, OK, EXCL
       SAVE         NM, IST
@@ -63,8 +67,11 @@
       IF( DEBUG ) WRITE(6,*)' FIRSTP=',FIRSTP,'  OK=',OK,
      X                      ' BONNE=',BONNE
    20 I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,
-     X           IP(1), IP(2), IP(3), TYP, NOM, ETI, GTY, IG1, IG2,
+     X           IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2,
      X           IG3, IG4, SWA, LNG, DLFT, UBC, XTRA1, XTRA2, XTRA3)
+      IP(1)=IP1
+      IP(2)=IP2
+      IP(3)=IP3
       IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
          WRITE(6,*)'IMPOSSIBLE DE COPIER ENREGISTREMENT NO.',IREC,
      X             ' NBITS =',NBITS 
@@ -72,11 +79,11 @@
       ENDIF
 
       IF(FIRSTP .OR. OK) THEN 
-*        CALCUL DE L'HEURE JULIENNE (AU MOIN DU PREMIER ENREGISTREMENT).
-         CALL JULHR(IP(4), DATE)
-         IP(4) = IP(4) + (DEET*NPAS+1800)/3600
+*        CALCUL DE La "SECONDE JULIENNE" (AU MOIN DU PREMIER ENREGISTREMENT).
+         CALL JULSEC(IP(4), DATE)
+         IP(4) = IP(4) +  DEET*NPAS    ! possiblement +1800/3600 (en option $$)
          IF(DEBUG .AND. FIRSTP) WRITE(6,*)'DATE ENRG. #1= ',DATE,
-     X                                    ' JUL. HEURE=',IP(4)
+     X                                    ' JUL. SECONDES=',IP(4)
          FIRSTP = .FALSE.
          IF( DEBUG ) WRITE(6,*)' FIRSTP=',FIRSTP,' OK=',OK, 
      X                         ' BONNE=',BONNE
@@ -98,7 +105,7 @@
          ENDIF
 
 *        TEST DES IP1-2-3 ET DE LA DATE
-   40    DO 60 J=4,1,-1 
+   40    DO 61 J=4,1,-1 
 *           SI LE PARAMETRE EST UNIVERSEL
             IF(REQ(11,J,K) .EQ. 0) THEN
                IF(J.EQ.4 .AND. (FIXD.OR.DM1)) BONNE = .TRUE.
@@ -110,12 +117,13 @@
                GO TO 110
             ELSE
 *              REQUETE CONTIENT UN INTERVALE AVEC SAUT
-                IF(IP(J).GE.REQ(1,J,K) .AND. 
+               IF(IP(J).GE.REQ(1,J,K) .AND. 
      X            IP(J).LE.REQ(2,J,K) .AND. 
      X            MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K)).EQ.0) GOTO 60
                GO TO 110
             ENDIF
    60       CONTINUE
+   61       CONTINUE
 
 *        TEST DU TYVAR
          IF(REQT(K) .NE. 0)  THEN
@@ -162,11 +170,14 @@
   
 *     CONTROLE DE LA MEMOIRE TEMPON AVANT LECTURE
   120 IF(LNG .GT. NM) THEN
-         IF(IST .NE. 0) CALL MEMOIRH(BUFL, IST, 0)
+C         IF(IST .NE. 0) CALL MEMOIRH(BUFL, IST, 0)
+         IF(IST .NE. 0) deallocate(buftemp) 
          NM = LNG
-         CALL MEMOIRH(BUFL, IST, NM)
+         allocate(BUFtemp(NM))
+         ist = 1
+C         CALL MEMOIRH(BUFL, IST, NM)
       ENDIF
-      I = FSTLUK(BUFL(IST), IREC, NI, NJ, NK)
+      I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
       IF( ZA ) THEN
          IF(Z1 .NE. -1)  IP(1) = Z1
          IF(Z2 .NE. -1)  IP(2) = Z2
@@ -188,9 +199,16 @@
   130          CONTINUE
          ENDIF
       ENDIF
-      I = FSTECR(BUFL(IST), BUFL(IST), -NBITS, 3, DATE, DEET,
-     X           NPAS, NI, NJ, NK, IP(1), IP(2), IP(3), TYP, NOM,
+      ip1 = IP(1)
+      ip2 = IP(2)
+      ip3 = IP(3)
+      I = FSTECR(BUFtemp, BUFtemp, -NBITS, 3, DATE, DEET,
+     X           NPAS, NI, NJ, NK, IP1, IP2, IP3, TYP, NOM,
      X           ETI, GTY, IG1, IG2, IG3, IG4, DTYP, ECR)
+      if (i .lt. 0) then
+         write(6,*) 'EDITFST aborts: write error'
+         call qqexit(55)
+      endif
       COPIES = COPIES + 1
       LIMITE = LIMITE - 1
       IF(LIMITE .EQ. 0) GO TO 180

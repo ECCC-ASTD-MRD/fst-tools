@@ -28,7 +28,7 @@
 #include "fiches.cdk"
 *
 *MODULES  
-      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, FSTABT, JULHR,
+      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, FSTABT, JULSEC,
      X              LOW2UP
 *
 **
@@ -51,7 +51,7 @@
   
 *     SI ON DOIT MODIFIER LA DATE PASSEE
       IF(NP .GT. 1) CALL INCDAT(K, K, ECART)
-      CALL JULHR(JOURS(1) , K)
+      CALL JULSEC(JOURS(1) , K)
       JOURS(2) = 0
       JOURS(3) = 0
       JOURS(4) = 1
@@ -71,7 +71,7 @@
             JOURS(1) = JOURS(1) + DUREE 
          ENDIF
          IF(NP .GT. 3) THEN
-            JOURS(3) = ABS( DELTA )
+            JOURS(3) = ABS( DELTA ) * 3600   ! remettre en secondes
          ELSE
             JOURS(3) = 1
          ENDIF

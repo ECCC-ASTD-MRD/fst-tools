@@ -71,7 +71,6 @@
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN
          if (argdims(5) .gt. 1) then
-            print *,'Debug+ appel a ip1_to_newip1'
             call ip1_to_newip1(ip1,ip1,newip1,argdims(5),nip1)
             CALL EXDES(newip1, nip1, 1)
          else

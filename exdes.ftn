@@ -25,20 +25,26 @@
 *     LANGUAGE FTN77
 *
 *MODULES
-      EXTERNAL JULHR, FSTABT
+      EXTERNAL JULSEC, FSTABT
 *
 **
 #include "maxprms.cdk"
 #include "desrs.cdk"
 #include "fiches.cdk"
   
-      INTEGER  I, J, BOT(4), TOP(4)
+      INTEGER  I, J, BOT(4), TOP(4), temp, deltas
+      integer *8 J8
       SAVE     BOT, TOP
 *     LIMITE INFERIEURE = 0 POUR IP1-2-3 & JAN 01 1900 00Z POUR DATE
       DATA     BOT/0,0,0,010100000/
 *     LIMITE SUPERIEURE POUR IP1-2-3     & JAN 01 2219 00Z POUR DATE
       DATA     TOP/32767, 32767, 4095, 2008728800/
-  
+
+      IF (M .EQ. 4) THEN
+         DELTAS = 3600   ! Facteur multiplicatif pour passage en secondes
+      ELSE
+         DELTAS = 1
+      ENDIF
 *     FAUT-IL PRENDRE LA DATE DE LA PERIODE?
       IF(M.EQ.4 .AND. CLE(1).EQ.-4) THEN
          IF(JOURS(4) .EQ. 0) THEN
@@ -72,7 +78,7 @@
                REQ(3,M,NREQ) = CLE(3)
             ELSEIF(N .EQ. 4) THEN
 *              CHANGE REQUETE DE TYPE [@,-----,DELTA,--]
-               REQ(3,M,NREQ) = CLE(4)
+               REQ(3,M,NREQ) = CLE(4) * DELTAS
             ENDIF
          ELSE
 *           CHANGE REQUETE DE TYPE [-----,@]
@@ -84,13 +90,13 @@
             IF(N. GT. 3) THEN
                IF(CLE(3) .EQ. -3) THEN
 *                 CHANGE REQUETE DE TYPE [-----,@,DELTA,--]
-                  REQ(3,M,NREQ) = CLE(4)
+                  REQ(3,M,NREQ) = CLE(4) * DELTAS
                ELSEIF(N .EQ. 4) THEN
 *                 CHANGE REQUETE DE TYPE [-----,@,-----,--]
                   REQ(3,M,NREQ) = CLE(4)
                ELSE
 *                 CHANGE REQUETE DE TYPE [-----,@,-----,DELTA,--]
-                  REQ(3,M,NREQ) = CLE(5)
+                  REQ(3,M,NREQ) = CLE(5) * DELTAS
                ENDIF
             ENDIF
          ENDIF  
@@ -100,14 +106,15 @@
          I = REQ(11,M,NREQ)
          IF(I .EQ. -1) I=2
          DO 40 J=1,I
-            CALL JULHR(REQ(J,M,NREQ), REQ(J,M,NREQ))
+            temp = REQ(J,M,NREQ)
+            CALL JULSEC(REQ(J,M,NREQ), temp)
    40       CONTINUE
       ENDIF
 
       IF(REQ(11,M,NREQ) .EQ. -1) THEN
-         J = MAX(REQ(1,M,NREQ), REQ(2,M,NREQ))
+         J8 = MAX(REQ(1,M,NREQ), REQ(2,M,NREQ))
          REQ(1,M,NREQ) = MIN(REQ(1,M,NREQ), REQ(2,M,NREQ))
-         REQ(2,M,NREQ) = J
+         REQ(2,M,NREQ) = J8
       ENDIF
   
       RETURN
