@@ -67,12 +67,12 @@
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 *
 #include "voir.cdk"
-#include "llccmm.cdk"
 #include "accum.cdk"
 #include "champs.cdk"
 #include "indptr.cdk"
 #include "grilles.cdk"
 #include "lires.cdk"
+#include "llccmm.cdk"
 #include "ecrires.cdk"
 #include "dates.cdk"
 #include "packin.cdk"
@@ -99,6 +99,9 @@
       integer iunit, chkenrpos, nk
       real fbidon, p
       character*8 string
+      integer npts
+
+      real, dimension(:),allocatable :: lclif1, lclif2
       
 *     
       iunit = 1
@@ -169,11 +172,11 @@
             enddo
             num1 = num1 / 2
             nloop = nloop / 2
+         else
+            do i=1,num1
+               lcl_ip1tab(i) = ip1tab(i)
+            enddo
          endif
-      else
-         do i=1,num1
-            lcl_ip1tab(i) = ip1tab(i)
-         enddo
       endif
 
 *     execution de chaque paire dans la liste
@@ -286,7 +289,7 @@
 *     
 *     lire champ no 1
 *     
-         allocate(tmpif1(ni*nj))
+         allocate(lclif1(ni*nj))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -296,10 +299,10 @@
             endif
          endif
 *     
-         irec1=pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,lcl_ip1tab(i),
+         irec1=pgsmlir(lclif1,1,ni,nj,nk,date,cetiket,lcl_ip1tab(i),
      $        ip2tab(j), ip3tab(k),ctypvar,cnoment,cigtyp)
 *     
-         if (printen)  call imprime(cnoment,tmpif1,ni,nj)
+         if (printen)  call imprime(cnoment,lclif1,ni,nj)
 *     
 *     identifier parametres pour champ 2
 *     
@@ -329,7 +332,12 @@
 *     lire champ 2
 *     
 
-         allocate(tmpif2(max0(li*lj,ni*nj)))
+         npts = li*lj
+         if (npts < ni*nj) then
+            npts = ni*nj
+         endif
+
+         allocate(lclif2(npts))
          if (.not.message) ier = fstopc('TOLRNC','DEBUGS',.true.) 
          if (date .eq. 1) then
             if (date3.eq.-1) then
@@ -339,16 +347,16 @@
             endif
          endif
 *     
-         irec2=pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,lcl_ip1tab(ii),
+         irec2=pgsmlir(lclif2,1,ni,nj,nk,date,cetiket,lcl_ip1tab(ii),
      $        ip2tab(jj), ip3tab(kk),ctypvar,cnoment,cigtyp)
 *     
 *     
-         if (printen)  call imprime(cnoment,tmpif2,ni,nj)
+         if (printen)  call imprime(cnoment,lclif2,ni,nj)
 *     
 *     difference entre les deux champs
 *     
          nn = ni*nj
-         call loupsou(tmpif1,tmpif2,nn) 
+         call loupsou(lclif1,lclif2,nn) 
 *     
 *     interpolation horizontale
 *     
@@ -359,7 +367,7 @@
             
             gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
             ier = ezdefset(gdout, gdin)
-            ier = ezsint(tmpif2, tmpif1)
+            ier = ezsint(lclif2, lclif1)
          endif
 *     
 *     ecrire le ip1,ip2,ip3 correspondant aux definitions
@@ -423,11 +431,11 @@
 *     
 *     
       if (cgrtyp.eq.'*') then
-         call ecritur(tmpif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk,
+         call ecritur(lclif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk,
      $        jp(1),jp(2),jp(3),
      $        ctypvar,cnomsrt,cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
-         call ecritur(tmpif2,npack,datsrt,deetsrt,npassrt,
+         call ecritur(lclif2,npack,datsrt,deetsrt,npassrt,
      $        li,lj,1,jp(1),jp(2),jp(3),
      $        ctypvar,cnomsrt,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
       endif
@@ -435,8 +443,8 @@
 *     
 *     remetre espace des champs de travail
 *     
-      deallocate(tmpif2)
-      deallocate(tmpif1)
+      deallocate(lclif2)
+      deallocate(lclif1)
 *     
       enddo
 *     
