@@ -68,6 +68,7 @@
 *         M. Lepine        Julhr en julsec - oct 2001 - v5.8
 *         M. Lepine        fichier de sortie R/W obligatoire - Dec 2001 - v5.81
 *         M. Lepine        verification de la limite de 10 elements - Fev 2002 - v5.82
+*         M. Lepine        reload, bug fix fstecr mode reecriture - Mars 2002 - v5.83
 *
 *LANGAGE  - FTN77
 *
@@ -272,16 +273,20 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V5.82','NON')
+         I = EXDB('EDITFST','V5.83','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V5.82   ***'
+         WRITE(6,*)'***   E D I T F S T   V5.83   ***'
       ENDIF
 
 
       IF( DIAG ) THEN
          I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
+         print *,'Debug MSGLVL a INFORM'
+         I = FSTOPC('MSGLVL', 'INFORM', .true.)
       ELSE
          I = FSTOPC('MSGLVL', DEF1(13), .FALSE.)
+         print *,'Debug MSGLVL a def1(13)',def1(13)
+         I = FSTOPC('MSGLVL', DEF1(13), .true.)
       ENDIF
       IF(DEF1(14) .NE. 'FATALE') THEN
          I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)
