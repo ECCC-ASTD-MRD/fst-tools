@@ -87,6 +87,7 @@
 
       real*8 delta_t
       
+      real, dimension(:), pointer :: uuout,vvout
       iunit = 1
 *     
 *
@@ -208,21 +209,9 @@
              endif
              
              ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
+	     uuout => tmpif3
              
-*     if (cigtyp .eq. 'Z') then
-*     call liraxez(1, ni,nj,1,ig1,ig2,ig3,ig4)
-*     call iguvint(tmpif3,tmpif4,li,lj,tmplat,tmplon,
-*     $              tmpif1,tmpif2,ni,nj,cigtyp,
-*     $              grref,ig1ref,ig2ref,ig3ref,ig4ref,ssw,
-*     $              axex(iaxex), axey(iaxey))
-*     else
-*     call rguvint(tmpif3,tmpif4,li,lj,tmplat,tmplon,
-*     $              tmpif1,tmpif2,ni,nj,cigtyp,
-*     $              ig1,ig2,ig3,ig4,ssw)
-*     
-*     ecrire vitesse de vent
-*     
-             call  ecritur(tmpif3,npack,dat,deet,npas,li,lj,1,
+             call  ecritur(uuout,npack,dat,deet,npas,li,lj,1,
      $            jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,
      $            lg1,lg2,lg3,lg4)
              
@@ -232,7 +221,8 @@
                       tmpif4(i) = tmpif4(i) + 360.0
                    endif
                 enddo
-                call ecritur(tmpif4,npack,dat,deet,npas,li,lj,1,
+                vvout => tmpif4
+                call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
      $               jp1,jp2,jp3,ctypvar,'WD',cetike,cgrtyp,
      $               lg1,lg2,lg3,lg4)
              endif
@@ -257,6 +247,8 @@
                 ssw = .true.
 *     
                 ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
+                uuout => tmpif3
+                vvout => tmpif4
 *     
 *     apres interpolation horizontale passer de vitesse et direction
 *     aux composantes u et v
@@ -267,8 +259,8 @@
              else
                 deallocate(tmpif3)
                 deallocate(tmpif4)
-                tmpif3 => tmpif1
-                tmpif4 => tmpif2
+                uuout => tmpif1
+                vvout => tmpif2
                 if (message) then
                   write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
                endif
@@ -276,14 +268,14 @@
 *     
 *     ecrire vecteur u
 *     
-            call ecritur(tmpif3,npack,dat,deet,npas,li,lj,1,
+            call ecritur(uuout,npack,dat,deet,npas,li,lj,1,
      $           jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
 *     
 *     ecrire vecteur v
 *     
-            call ecritur(tmpif4,npack,dat,deet,npas,li,lj,1,
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
      $           jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,
      $           lg1,lg2,lg3,lg4)
 *     
@@ -292,8 +284,8 @@
 *     
          endif
          
-         if (.not.associated(tmpif3,tmpif1)) deallocate(tmpif3)
-         if (.not.associated(tmpif4,tmpif2)) deallocate(tmpif4)
+         if (.not.associated(tmpif3)) deallocate(tmpif3)
+         if (.not.associated(tmpif4)) deallocate(tmpif4)
          deallocate(tmpif1)
          deallocate(tmpif2)
          
