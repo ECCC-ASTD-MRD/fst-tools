@@ -192,12 +192,12 @@ c     ***************************************************************
       
       ierr = fstecr(xpos, work, npak, iun, dateo, deet, 
      %                 npas, ni, 1, 1, ip1, ip2, ip3, 
-     %                 'X', '>>', etiket,
+     %                 'X ', '>>  ', etiket,
      %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
      %                 .false.)
       ierr = fstecr(ypos, work, npak, iun, dateo, deet, 
      %                 npas, 1, nj, 1, ip1, ip2, ip3, 
-     %                 'X', '^^', etiket,
+     %                 'X ', '^^  ', etiket,
      %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
      %                 .false.)
    

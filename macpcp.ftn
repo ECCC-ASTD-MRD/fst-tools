@@ -76,7 +76,7 @@
       integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc 
       integer cdatyp,cnbits
       integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
-      integer ezqkdef, ezdefset, ezsint
+      integer ezqkdef, ezdefset, ezsint, chkenrpos
       integer iunit
       logical symetri,sym
       
@@ -106,15 +106,15 @@
 *     
       cnomvar = cnom
       if (etikent(1) .ne. -1) then
-         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
       else 
-         cetiket = '        '
+         cetiket = '            '
       endif
       
       if (typeent .ne. -1) then
-         write(ctypvar, '(A1)') typeent
+         write(ctypvar, '(A2)') typeent
       else 
-         ctypvar = ' '
+         ctypvar = '  '
       endif
       
       
@@ -193,7 +193,7 @@
 *     interpolation horizontale
 *     
       if (cgrtyp.eq.'*') then
-         call chkenrpos(1,2,ig1,ig2,ig3)
+         ier = chkenrpos(1,2,ig1,ig2,ig3)
       else
 *     #  variable symetrique oui=.true. 
          if (ig1.ne.0) sym = symetri(cnomvar) 

@@ -72,7 +72,7 @@
 *     
 *     MODIFICATION DE HOLLERITH A CARACTERE
 *     
-      cnomvar = '    '
+ 100  cnomvar = '    '
       ctypvar = '  '
       cetiqet = '            '
       cigtyp  = ' '
@@ -93,7 +93,7 @@
          call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
- 100  ier = fstcvt(    nom,   type, letiket,    -1,
+      ier = fstcvt(    nom,   type, letiket,    -1,
      $     cnomvar,ctypvar,cetiqet,cigtyp,     .true.)
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,lniv,ihr,iip3,
      $     ctypvar,cnomvar)

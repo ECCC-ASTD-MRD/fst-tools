@@ -71,7 +71,7 @@ pgsm2002:
 	r.build -o $@ -obj *.o $(HOME)/src/interp/*.o $(HOME)/src/utils/diese/dies.o  $(HOME)/src/utils/diese/fillgrid.o -librmn rmnbeta
 
 pgsm2000: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_006
 
 pgsm89: 
 	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006 -fstd89
@@ -102,6 +102,9 @@ pgsm6.9.8:
 
 pgsm6.9.8_89:
 	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
+
+pgsm-src:
+	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_006
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

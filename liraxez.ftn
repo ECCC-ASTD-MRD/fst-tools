@@ -44,9 +44,9 @@
       endif
 
       irecx = fstinf(iun, nix, njx, nkx, -1,' ', 
-     $     ig1, ig2, ig3,' ','>>')
+     $     ig1, ig2, ig3,'  ','>>  ')
       irecy = fstinf(iun, niy, njy, nky, -1,' ', 
-     $     ig1 ,ig2, ig3,' ','^^')
+     $     ig1 ,ig2, ig3,'  ','^^  ')
       
       if (irecy .lt. 0 .or.irecx .lt. 0) then
          print *, 

@@ -128,15 +128,15 @@
 *     
          
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
          else 
-            cetiket = '        '
+            cetiket = '            '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' '
+            ctypvar = '  '
          endif
          
          cigtyp = ' '

@@ -48,7 +48,7 @@
 *
 *     SI COUPE MERIDIONALE
 *     
-      if (ccoupe.eq.'MER') then
+      if (ccoupe.eq.'MER ') then
 *
          do i=1,ni  
             sum=0.0

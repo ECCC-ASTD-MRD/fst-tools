@@ -48,7 +48,7 @@
 *
 *     SI COUPE MERIDIONALE
 *     
-      if (ccoupe.eq.'MER') then
+      if (ccoupe.eq.'MER ') then
 *
          do i=1,ni  
             sum=0.0
@@ -484,7 +484,7 @@
 *     
 *     MODIFICATION DE HOLLERITH A CARACTERE
 *     
-      cnomvar = '    '
+ 100  cnomvar = '    '
       ctypvar = '  '
       cetiqet = '            '
       cigtyp  = ' '
@@ -505,7 +505,7 @@
          call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
       endif
 
- 100  ier = fstcvt(    nom,   type, letiket,    -1,
+      ier = fstcvt(    nom,   type, letiket,    -1,
      $     cnomvar,ctypvar,cetiqet,cigtyp,     .true.)
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,lniv,ihr,iip3,
      $     ctypvar,cnomvar)
@@ -810,12 +810,12 @@ c     ***************************************************************
       
       ierr = fstecr(xpos, work, npak, iun, dateo, deet, 
      %                 npas, ni, 1, 1, ip1, ip2, ip3, 
-     %                 'X', '>>', etiket,
+     %                 'X ', '>>  ', etiket,
      %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
      %                 .false.)
       ierr = fstecr(ypos, work, npak, iun, dateo, deet, 
      %                 npas, 1, nj, 1, ip1, ip2, ip3, 
-     %                 'X', '^^', etiket,
+     %                 'X ', '^^  ', etiket,
      %                 grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,
      %                 .false.)
    
@@ -996,7 +996,7 @@ c     ***************************************************************
             write(cnom, '(A4)') nom(1)
          endif
       else
-         write(cnom,'(2A4)') (nom(i), i=1,nw)
+         write(cnom,'(3A4)') (nom(i), i=1,nw)
       endif
       call low2up(cnom,cnom)
 *     
@@ -1075,7 +1075,7 @@ c     ***************************************************************
 *
          else if (cnom.eq.'DFST') then
             if (ihrs.eq.1)   then
-               call macpcp('ST', nparm, champpr)
+               call macpcp('ST  ', nparm, champpr)
                if (message) then
                   if (nhur.gt.1)
      $                 write(6,*)' HEURE PAS NECESSAIRE  (ST)'
@@ -1087,7 +1087,7 @@ c     ***************************************************************
 *     
          else if (cnom.eq.'DFPR') then
             if (ihrs.eq.1) then
-               call macpcp('PR', nparm, champpr)
+               call macpcp('PR  ', nparm, champpr)
                if (message) then
                   if (nhur.gt.1) then
                      write(6,*)
@@ -1099,9 +1099,9 @@ c     ***************************************************************
 *     INTERPOLATION DES NUAGES BAS,MOYEN,HAUT
 *     
          else if (cnom.eq.'NUAG') then
-            call scalair('NB', ihr, 1, champpr) 
-            call scalair('NM', ihr, 1, champpr) 
-            call scalair('NH', ihr, 1, champpr) 
+            call scalair('NB  ', ihr, 1, champpr) 
+            call scalair('NM  ', ihr, 1, champpr) 
+            call scalair('NH  ', ihr, 1, champpr) 
             
 *     AUTRE NOM  (GZ,TT,DD,WW,QQ,ES,DZ,ST,PR........)
 *     
@@ -1783,22 +1783,22 @@ c     ***************************************************************
 *
         
         if (etikent(1) .ne. -1) then
-          write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+          write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
         else 
-          cetiket = '        '
+          cetiket = '            '
         endif
         
         if (typeent .ne. -1) then
-          write(ctypvar, '(A1)') typeent
+          write(ctypvar, '(A2)') typeent
         else 
-          ctypvar = ' ' 
+          ctypvar = '  ' 
         endif
         
 *     identifier numero du record
 *
         if (cnom.eq.cnommt) then
           if (.not.mtdone) then
-            irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,' ',cnom,
+            irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,'  ',cnom,
      $           liste,nrecs,24000) 
             if (nrecs .eq. 0) then
               if (message) then
@@ -1881,7 +1881,7 @@ c     ***************************************************************
 C faite
 *     
           do i=1,npair 
-             if (cnom.eq.' ') then
+             if (cnom.eq.'    ') then
                 if ((paire(i)(9:10).eq.cnomvar(1:2)).or.
      $               (paire(i)(13:14).eq.cnomvar(1:2)))  then
                    nunv=nunv + 1
@@ -2256,38 +2256,17 @@ C faite
 * - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 *
 #include "llccmm.cdk"
-*
-*
 #include "voir.cdk"
-*
-*
 #include "accum.cdk"
-*
-*
 #include "param.cdk"
-*
-*
 #include "indptr.cdk"
-*
-*
 #include "grilles.cdk"
-*
-*
 #include "lires.cdk"
-*
-*
 #include "ecrires.cdk"
-*
-*
 #include "dates.cdk"
-*
-*
 #include "packin.cdk"
-*
-*
 #include "gdz.cdk"
 *
-
       character *12 cetiket
       character *4 cnomvar
       character *2 ctypvar
@@ -2299,6 +2278,7 @@ C faite
       integer i, niveau(2),iheur,npar,ni,nj,nk,jp1,jp2,jp3,ig1,iopc,
      $     ig2,ig3,ig4,irec1,irec2,num1,num2,nn,cnbits,cdatyp,cswa,clng,
      $     cdltf,cubc,extra1,extra2,extra3
+      integer chkenrpos
       
       
       logical sym,symetri
@@ -2327,15 +2307,15 @@ C faite
 *  modification de hollerith a caractere
 *
       if (etikent(1) .ne. -1) then
-         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
       else 
          cetiket = '        '
       endif
       
       if (typeent .ne. -1) then
-         write(ctypvar, '(A1)') typeent
+         write(ctypvar, '(A2)') typeent
       else 
-         ctypvar = ' '
+         ctypvar = '  '
       endif
       
       
@@ -2343,9 +2323,9 @@ C faite
       
 *     
       irec1=fstinf(1,ni,nj,nk,date,cetiket,niveau(1),iheur,ip3ent,
-     $     ctypvar,'GZ')
+     $     ctypvar,'GZ  ')
       irec2=fstinf(1,ni,nj,nk,date,cetiket,niveau(2),iheur,ip3ent,
-     $     ctypvar,'GZ')
+     $     ctypvar,'GZ  ')
       if (irec2 .lt. 0 .or. irec1 .lt. 0) then
          write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (EPAISEUR)'
          return
@@ -2377,7 +2357,6 @@ C faite
       endif
       
 *     
-*     
 *     lire champ no 1
 *     
       allocate(tmpif1(ni*nj))
@@ -2393,8 +2372,7 @@ C faite
          endif
       endif
 *     
-      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
-     $     ctypvar, 'GZ', cigtyp) 
+      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,ctypvar, 'GZ  ', cigtyp) 
 *
       if (printen) then
          call imprime(cnomvar,tmpif1,ni,nj)
@@ -2417,7 +2395,7 @@ C faite
 *     
 *     lire champ 2
 *     
-      allocate(tmpif1(max0(li*lj,ni*nj)))
+      allocate(tmpif2(max0(li*lj,ni*nj)))
       if (.not.message)  then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -2430,8 +2408,7 @@ C faite
          endif
       endif
 
-      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
-     $     ctypvar, 'GZ', cigtyp)
+      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,  ctypvar, 'GZ  ', cigtyp)
       if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
 *
 *  difference entre les deux champs
@@ -2444,10 +2421,10 @@ C faite
       if (ig1.ne.0) sym=symetri(cnomvar)
 
       if (cgrtyp.eq.'*') then
-         call chkenrpos(1,2,ig1,ig2,ig3)
+         ier = chkenrpos(1,2,ig1,ig2,ig3)
          call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
      $        niveau(1),niveau(2),iheur,
-     $        ctypvar,'DZ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
+     $        ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
@@ -2461,12 +2438,10 @@ C faite
 *     ecrire sur fichier standard,ms,sequentiel
 *     
          call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
-     $        ctypvar,'DZ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+     $        ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 
       endif
-*     function qui identifie si la variable est symetrique( h.n. - h.s.)
-*     le test n'est pas applicable pour une situation  globale
-*     
+
       deallocate(tmpif1)
       deallocate(tmpif2)
 *     
@@ -2606,20 +2581,20 @@ C faite
 *implicites
 **
       character*8 op 
-      
+      integer ezsetopt
 
       if (.not.(ordre .eq. 100 .or.ordre .eq. 1.or.ordre .eq. 3)) then
          print *,
      $      '<QQQINTX>: MAUVAISE VALEUR - VALEUR DEVRAIT ETRE 0, 1 OU 3'
 	 print *, '<QQQINTX>: ORDRE D''INTERPOLATION INITIALISE A 3'
-         call ezsetopt('interp_degree','cubic')
+         ier = ezsetopt('interp_degree','cubic')
       else
 	 if (ordre .eq. 100) then
-            call ezsetopt('interp_degree', 'nearest')
+            ier = ezsetopt('interp_degree', 'nearest')
 	 else if (ordre. eq. 1) then
-            call ezsetopt('interp_degree', 'linear')
+            ier = ezsetopt('interp_degree', 'linear')
          else
-            call ezsetopt('interp_degree', 'cubic')
+            ier = ezsetopt('interp_degree', 'cubic')
          endif
       endif
       
@@ -2654,8 +2629,8 @@ C faite
 
       
       if (mode.eq.1) then
-         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '>>  ')
-         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '^^  ')
+         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
          
          if (ier1.ge.0.and.ier2.ge.0) then
             chkenrpos = 0
@@ -3064,6 +3039,7 @@ C faite
       integer n, i, j
       integer ival
       real    rval
+      integer ier, ezsetval, ezsetopt
       
       character*8 op,v
       
@@ -3072,31 +3048,31 @@ C faite
       ival = val
       
       op = 'EXTRAP'
-      
+    
       if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum 
      $     .and. val .ne. abort .and. val .ne. oui) then
          v = 'VALEUR'
-         call ezsetval('extrap_value', rval)
-         call ezsetopt('extrap_degree', 'value')
+         ier = ezsetval('extrap_value', rval)
+         ier = ezsetopt('extrap_degree', 'value')
       else
          if (val .eq. 100) then
-            call ezsetopt('extrap_degree', 'NEAREST')
+            ier = ezsetopt('extrap_degree', 'NEAREST')
             v = '0'
          else if (val .eq. 1) then
-            call ezsetopt('extrap_degree', 'LINEAR')
+            ier =  ezsetopt('extrap_degree', 'LINEAR')
             v = '1'
          else if (val .eq. 3)  then
-            call ezsetopt('extrap_degree', 'CUBIC')
+            ier =  ezsetopt('extrap_degree', 'CUBIC')
             v = '3'
          else if (val .eq. minimum) then
             v = 'MINIMUM'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          else if (val .eq. maximum) then
             v = 'MAXIMUM'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          else 
             v = 'ABORT'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          endif
       endif
       
@@ -3202,7 +3178,7 @@ C faite
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit
+      integer iunit, chkenrpos
       real fbidon, p
       character*8 string
       
@@ -3325,19 +3301,19 @@ C faite
 *     
 *     modification de hollerith a caractere
 *     
-         write(cnoment,'(A2)') noment
-         write(cnomsrt,'(A2)') nomsrt
+         write(cnoment,'(A4)') noment
+         write(cnomsrt,'(A4)') nomsrt
          
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(n), n=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(n), n=1,nwetike)
          else 
             cetiket = '        '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' '
+            ctypvar = '  '
          endif
          
          
@@ -3458,7 +3434,7 @@ C faite
 *     interpolation horizontale
 *     
          if (cgrtyp.eq.'*') then
-            call chkenrpos(1,2,ig1,ig2,ig3)
+            ier = chkenrpos(1,2,ig1,ig2,ig3)
          else
 *     #  variable symetrique oui=.true. 
             
@@ -3487,7 +3463,7 @@ C faite
             jp(3)=ip3tab(kk)
          endif
          
-         if (cnomsrt.eq.' ') then
+         if (cnomsrt.eq.'    ') then
             cnomsrt=cnoment
          endif
 
@@ -3728,7 +3704,7 @@ C faite
       integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc 
       integer cdatyp,cnbits
       integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
-      integer ezqkdef, ezdefset, ezsint
+      integer ezqkdef, ezdefset, ezsint, chkenrpos
       integer iunit
       logical symetri,sym
       
@@ -3758,15 +3734,15 @@ C faite
 *     
       cnomvar = cnom
       if (etikent(1) .ne. -1) then
-         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
       else 
-         cetiket = '        '
+         cetiket = '            '
       endif
       
       if (typeent .ne. -1) then
-         write(ctypvar, '(A1)') typeent
+         write(ctypvar, '(A2)') typeent
       else 
-         ctypvar = ' '
+         ctypvar = '  '
       endif
       
       
@@ -3845,7 +3821,7 @@ C faite
 *     interpolation horizontale
 *     
       if (cgrtyp.eq.'*') then
-         call chkenrpos(1,2,ig1,ig2,ig3)
+         ier = chkenrpos(1,2,ig1,ig2,ig3)
       else
 *     #  variable symetrique oui=.true. 
          if (ig1.ne.0) sym = symetri(cnomvar) 
@@ -4482,7 +4458,7 @@ C faite
 
  100  ier = fstcvt(    nom,   type, letiket,    bidon,
      $             cnomvar,ctypvar,cetiqet,cbidon,.true.)
-      if (cnomvar.eq.'  '.and.ctypvar.eq.' '.and.cetiqet.eq.'        '.
+      if (cnomvar.eq.'    '.and.ctypvar.eq.'  '.and.cetiqet.eq.'            '.
      $     and.niv.eq.-1.and.ihr.eq.-1.and.
      $     ip3.eq.-1.and.idat.eq.-1) then
          print *, '****************************************************'
@@ -4851,7 +4827,7 @@ C faite
 *
       if (message) write(6,101)cnom
  101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ', 
-     $     a2,' - EST INCONNUE',
+     $     a4,' - EST INCONNUE',
      $     ' ON LA SUPPOSE SYMETRIQUE *****'//)
 *
       call cmetsym(cnom, .true.)
@@ -5162,7 +5138,7 @@ C faite
       logical sym
       character*2 cnom
       
-      write(cnom, '(A2)') nom
+      write(cnom, '(A4)') nom
       write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom 
       call cmetsym(cnom, sym)
       
@@ -5460,7 +5436,7 @@ c     ***************************************************************
 
       do i=1,nmaxlist1
          do j=1,nmaxlist2
-            listnom(i,j) = '  '
+            listnom(i,j) = '    '
             listniv(i,j) = -1
          enddo
          nitems1(i)=0
@@ -5815,15 +5791,15 @@ c     ***************************************************************
 *     modification de hollerith a caractere
 *     
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
          else 
-            cetiket = '        '
+            cetiket = '            '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' ' 
+            ctypvar = '  ' 
          endif
          
          
@@ -5850,7 +5826,7 @@ c     ***************************************************************
 *     
 *     identifier parametres champ nom1
 *     
-            cetike = '        '
+            cetike = '            '
             ier = fstprm( irecu, dat,deet,npas,ni, nj, nk, 
      $           cnbits,cdatyp,jp1,jp2, jp3,ctypvar,
      $           cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,
@@ -5931,7 +5907,7 @@ c     ***************************************************************
                 enddo
                 vvout => tmpif4
                 call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
-     $               jp1,jp2,jp3,ctypvar,'WD',cetike,cgrtyp,
+     $               jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,
      $               lg1,lg2,lg3,lg4)
              endif
              
@@ -5992,8 +5968,10 @@ c     ***************************************************************
 *     
          endif
          
-         if (.not.associated(tmpif3)) deallocate(tmpif3)
-         if (.not.associated(tmpif4)) deallocate(tmpif4)
+         if (associated(tmpif3)) deallocate(tmpif3)
+         if (associated(tmpif4)) deallocate(tmpif4)
+*         if (.not.associated(tmpif3)) deallocate(tmpif3)
+*         if (.not.associated(tmpif4)) deallocate(tmpif4)
          deallocate(tmpif1)
          deallocate(tmpif2)
          
@@ -6054,7 +6032,7 @@ c     ***************************************************************
       character*4 cnom, cnoma
       real bas,ecart,facteur,haut
 *     
-      write(cnom,'(A2)') nom	
+      write(cnom,'(A4)') nom	
       
       cnoma = cnom 
       i = 1
@@ -6511,8 +6489,6 @@ c     ***************************************************************
       character*16 form
 
       longueur = argdims(1)
-*      write(form,'(a1,i2.2,a3)') '(',longueur,'a4)'
-*      write(message,form) chaine
 
       message(1:80) = ' '
 
@@ -7659,7 +7635,7 @@ c     ***************************************************************
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.12.2',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.12.6',  lfn(45)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -8239,15 +8215,15 @@ c	call fstunl
 *     
          
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
          else 
-            cetiket = '        '
+            cetiket = '            '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' '
+            ctypvar = '  '
          endif
          
          cigtyp = ' '
@@ -8482,9 +8458,9 @@ c	call fstunl
       endif
 
       irecx = fstinf(iun, nix, njx, nkx, -1,' ', 
-     $     ig1, ig2, ig3,' ','>>')
+     $     ig1, ig2, ig3,'  ','>>  ')
       irecy = fstinf(iun, niy, njy, nky, -1,' ', 
-     $     ig1 ,ig2, ig3,' ','^^')
+     $     ig1 ,ig2, ig3,'  ','^^  ')
       
       if (irecy .lt. 0 .or.irecx .lt. 0) then
          print *, 

@@ -43,38 +43,17 @@
 * - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 *
 #include "llccmm.cdk"
-*
-*
 #include "voir.cdk"
-*
-*
 #include "accum.cdk"
-*
-*
 #include "param.cdk"
-*
-*
 #include "indptr.cdk"
-*
-*
 #include "grilles.cdk"
-*
-*
 #include "lires.cdk"
-*
-*
 #include "ecrires.cdk"
-*
-*
 #include "dates.cdk"
-*
-*
 #include "packin.cdk"
-*
-*
 #include "gdz.cdk"
 *
-
       character *12 cetiket
       character *4 cnomvar
       character *2 ctypvar
@@ -86,6 +65,7 @@
       integer i, niveau(2),iheur,npar,ni,nj,nk,jp1,jp2,jp3,ig1,iopc,
      $     ig2,ig3,ig4,irec1,irec2,num1,num2,nn,cnbits,cdatyp,cswa,clng,
      $     cdltf,cubc,extra1,extra2,extra3
+      integer chkenrpos
       
       
       logical sym,symetri
@@ -114,15 +94,15 @@
 *  modification de hollerith a caractere
 *
       if (etikent(1) .ne. -1) then
-         write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
       else 
          cetiket = '        '
       endif
       
       if (typeent .ne. -1) then
-         write(ctypvar, '(A1)') typeent
+         write(ctypvar, '(A2)') typeent
       else 
-         ctypvar = ' '
+         ctypvar = '  '
       endif
       
       
@@ -130,9 +110,9 @@
       
 *     
       irec1=fstinf(1,ni,nj,nk,date,cetiket,niveau(1),iheur,ip3ent,
-     $     ctypvar,'GZ')
+     $     ctypvar,'GZ  ')
       irec2=fstinf(1,ni,nj,nk,date,cetiket,niveau(2),iheur,ip3ent,
-     $     ctypvar,'GZ')
+     $     ctypvar,'GZ  ')
       if (irec2 .lt. 0 .or. irec1 .lt. 0) then
          write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (EPAISEUR)'
          return
@@ -164,7 +144,6 @@
       endif
       
 *     
-*     
 *     lire champ no 1
 *     
       allocate(tmpif1(ni*nj))
@@ -180,8 +159,7 @@
          endif
       endif
 *     
-      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
-     $     ctypvar, 'GZ', cigtyp) 
+      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,ctypvar, 'GZ  ', cigtyp) 
 *
       if (printen) then
          call imprime(cnomvar,tmpif1,ni,nj)
@@ -204,7 +182,7 @@
 *     
 *     lire champ 2
 *     
-      allocate(tmpif1(max0(li*lj,ni*nj)))
+      allocate(tmpif2(max0(li*lj,ni*nj)))
       if (.not.message)  then
          iopc= fstopc('TOLRNC','DEBUGS',.true.) 
       endif
@@ -217,8 +195,7 @@
          endif
       endif
 
-      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,
-     $     ctypvar, 'GZ', cigtyp)
+      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,  ctypvar, 'GZ  ', cigtyp)
       if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
 *
 *  difference entre les deux champs
@@ -231,10 +208,10 @@
       if (ig1.ne.0) sym=symetri(cnomvar)
 
       if (cgrtyp.eq.'*') then
-         call chkenrpos(1,2,ig1,ig2,ig3)
+         ier = chkenrpos(1,2,ig1,ig2,ig3)
          call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,1,
      $        niveau(1),niveau(2),iheur,
-     $        ctypvar,'DZ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
+     $        ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
@@ -248,12 +225,10 @@
 *     ecrire sur fichier standard,ms,sequentiel
 *     
          call ecritur(tmpif2,npack,dat,deet,npas,li,lj,1,jp1,jp2,jp3,
-     $        ctypvar,'DZ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+     $        ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 
       endif
-*     function qui identifie si la variable est symetrique( h.n. - h.s.)
-*     le test n'est pas applicable pour une situation  globale
-*     
+
       deallocate(tmpif1)
       deallocate(tmpif2)
 *     

@@ -25,8 +25,8 @@
 
       
       if (mode.eq.1) then
-         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '>>  ')
-         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, ' ', '^^  ')
+         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
          
          if (ier1.ge.0.and.ier2.ge.0) then
             chkenrpos = 0

@@ -107,15 +107,15 @@
 *     modification de hollerith a caractere
 *     
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
          else 
-            cetiket = '        '
+            cetiket = '            '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' ' 
+            ctypvar = '  ' 
          endif
          
          
@@ -142,7 +142,7 @@
 *     
 *     identifier parametres champ nom1
 *     
-            cetike = '        '
+            cetike = '            '
             ier = fstprm( irecu, dat,deet,npas,ni, nj, nk, 
      $           cnbits,cdatyp,jp1,jp2, jp3,ctypvar,
      $           cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,
@@ -223,7 +223,7 @@
                 enddo
                 vvout => tmpif4
                 call ecritur(vvout,npack,dat,deet,npas,li,lj,1,
-     $               jp1,jp2,jp3,ctypvar,'WD',cetike,cgrtyp,
+     $               jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,
      $               lg1,lg2,lg3,lg4)
              endif
              
@@ -284,8 +284,10 @@
 *     
          endif
          
-         if (.not.associated(tmpif3)) deallocate(tmpif3)
-         if (.not.associated(tmpif4)) deallocate(tmpif4)
+         if (associated(tmpif3)) deallocate(tmpif3)
+         if (associated(tmpif4)) deallocate(tmpif4)
+*         if (.not.associated(tmpif3)) deallocate(tmpif3)
+*         if (.not.associated(tmpif4)) deallocate(tmpif4)
          deallocate(tmpif1)
          deallocate(tmpif2)
          

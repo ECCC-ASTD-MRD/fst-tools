@@ -173,7 +173,7 @@
             write(cnom, '(A4)') nom(1)
          endif
       else
-         write(cnom,'(2A4)') (nom(i), i=1,nw)
+         write(cnom,'(3A4)') (nom(i), i=1,nw)
       endif
       call low2up(cnom,cnom)
 *     
@@ -252,7 +252,7 @@
 *
          else if (cnom.eq.'DFST') then
             if (ihrs.eq.1)   then
-               call macpcp('ST', nparm, champpr)
+               call macpcp('ST  ', nparm, champpr)
                if (message) then
                   if (nhur.gt.1)
      $                 write(6,*)' HEURE PAS NECESSAIRE  (ST)'
@@ -264,7 +264,7 @@
 *     
          else if (cnom.eq.'DFPR') then
             if (ihrs.eq.1) then
-               call macpcp('PR', nparm, champpr)
+               call macpcp('PR  ', nparm, champpr)
                if (message) then
                   if (nhur.gt.1) then
                      write(6,*)
@@ -276,9 +276,9 @@
 *     INTERPOLATION DES NUAGES BAS,MOYEN,HAUT
 *     
          else if (cnom.eq.'NUAG') then
-            call scalair('NB', ihr, 1, champpr) 
-            call scalair('NM', ihr, 1, champpr) 
-            call scalair('NH', ihr, 1, champpr) 
+            call scalair('NB  ', ihr, 1, champpr) 
+            call scalair('NM  ', ihr, 1, champpr) 
+            call scalair('NH  ', ihr, 1, champpr) 
             
 *     AUTRE NOM  (GZ,TT,DD,WW,QQ,ES,DZ,ST,PR........)
 *     

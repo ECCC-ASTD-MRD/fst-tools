@@ -86,7 +86,7 @@
 
  100  ier = fstcvt(    nom,   type, letiket,    bidon,
      $             cnomvar,ctypvar,cetiqet,cbidon,.true.)
-      if (cnomvar.eq.'  '.and.ctypvar.eq.' '.and.cetiqet.eq.'        '.
+      if (cnomvar.eq.'    '.and.ctypvar.eq.'  '.and.cetiqet.eq.'            '.
      $     and.niv.eq.-1.and.ihr.eq.-1.and.
      $     ip3.eq.-1.and.idat.eq.-1) then
          print *, '****************************************************'

@@ -96,7 +96,7 @@
      $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
-      integer iunit
+      integer iunit, chkenrpos
       real fbidon, p
       character*8 string
       
@@ -219,19 +219,19 @@
 *     
 *     modification de hollerith a caractere
 *     
-         write(cnoment,'(A2)') noment
-         write(cnomsrt,'(A2)') nomsrt
+         write(cnoment,'(A4)') noment
+         write(cnomsrt,'(A4)') nomsrt
          
          if (etikent(1) .ne. -1) then
-            write(cetiket,'(2A4)') (etikent(n), n=1,nwetike)
+            write(cetiket,'(3A4)') (etikent(n), n=1,nwetike)
          else 
             cetiket = '        '
          endif
          
          if (typeent .ne. -1) then
-            write(ctypvar, '(A1)') typeent
+            write(ctypvar, '(A2)') typeent
          else 
-            ctypvar = ' '
+            ctypvar = '  '
          endif
          
          
@@ -352,7 +352,7 @@
 *     interpolation horizontale
 *     
          if (cgrtyp.eq.'*') then
-            call chkenrpos(1,2,ig1,ig2,ig3)
+            ier = chkenrpos(1,2,ig1,ig2,ig3)
          else
 *     #  variable symetrique oui=.true. 
             
@@ -381,7 +381,7 @@
             jp(3)=ip3tab(kk)
          endif
          
-         if (cnomsrt.eq.' ') then
+         if (cnomsrt.eq.'    ') then
             cnomsrt=cnoment
          endif
 

@@ -106,22 +106,22 @@
 *
         
         if (etikent(1) .ne. -1) then
-          write(cetiket,'(2A4)') (etikent(i), i=1,nwetike)
+          write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
         else 
-          cetiket = '        '
+          cetiket = '            '
         endif
         
         if (typeent .ne. -1) then
-          write(ctypvar, '(A1)') typeent
+          write(ctypvar, '(A2)') typeent
         else 
-          ctypvar = ' ' 
+          ctypvar = '  ' 
         endif
         
 *     identifier numero du record
 *
         if (cnom.eq.cnommt) then
           if (.not.mtdone) then
-            irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,' ',cnom,
+            irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,'  ',cnom,
      $           liste,nrecs,24000) 
             if (nrecs .eq. 0) then
               if (message) then
@@ -204,7 +204,7 @@
 C faite
 *     
           do i=1,npair 
-             if (cnom.eq.' ') then
+             if (cnom.eq.'    ') then
                 if ((paire(i)(9:10).eq.cnomvar(1:2)).or.
      $               (paire(i)(13:14).eq.cnomvar(1:2)))  then
                    nunv=nunv + 1

@@ -80,7 +80,7 @@
       logical sym
       character*2 cnom
       
-      write(cnom, '(A2)') nom
+      write(cnom, '(A4)') nom
       write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom 
       call cmetsym(cnom, sym)
       

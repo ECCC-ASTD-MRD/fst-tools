@@ -42,7 +42,7 @@
       character*4 cnom, cnoma
       real bas,ecart,facteur,haut
 *     
-      write(cnom,'(A2)') nom	
+      write(cnom,'(A4)') nom	
       
       cnoma = cnom 
       i = 1

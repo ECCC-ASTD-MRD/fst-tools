@@ -11,8 +11,6 @@
       character*16 form
 
       longueur = argdims(1)
-*      write(form,'(a1,i2.2,a3)') '(',longueur,'a4)'
-*      write(message,form) chaine
 
       message(1:80) = ' '
 

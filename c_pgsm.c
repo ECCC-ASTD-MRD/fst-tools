@@ -28,11 +28,13 @@ FILE *ftnUnits[100];
 ****
 */
 
-int f77name(pgsmform)(char format[],int *lenFormat, int fortranLenFormat)
+int f77name(pgsmform)(char format[],int *nrepeats, int *lenFormat, int fortranLenFormat)
 {
-   char cFormat[32];
+   char cFormat[32], cNrepeats[8];
    int i, mode, yyyymmhh, hhmmssss;
    
+   *nrepeats = 0;
+
    for (i=0; i < 32; i++)
       {
       cFormat[i] = '\0';
@@ -45,11 +47,28 @@ int f77name(pgsmform)(char format[],int *lenFormat, int fortranLenFormat)
       i--;
       }
    
+   i = 0;
+   while (isdigit((char)format[i]))
+     {
+     cNrepeats[i] = format[i];
+     i++;
+     }
+   cNrepeats[i] = '\0';
+
+   if (i > 0)
+     {
+     sscanf(cNrepeats, "%d", nrepeats);
+     strcpy(format, &(format[i]));
+     }
+     
    cFormat[0] = '%';
    strcpy(&cFormat[1],&format[1]);
    
    cFormat[strlen(cFormat)] = (char) tolower(format[0]);
    strcpy(format, cFormat);
+
+
+     
    
 }
 
@@ -78,7 +97,7 @@ int f77name(pgsmof)(int *iun, char *nomFichier,int lenNomFichier)
       {
       i++;
       }
-   nomFichier[i] = NULL;
+   nomFichier[i] = (char)NULL;
       
    ftnUnits[*iun] = fopen(nomFichier, "w");
    if (ftnUnits[*iun] == NULL)
@@ -111,17 +130,18 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
              float *lat,float *lon)
 {
    int i,j;
-   char c_etiket[9],c_typvar[2],c_nomvar[3], c_separateur[2];
+   char c_etiket[16],c_typvar[4],c_nomvar[8], c_separateur[2];
    char string[256];
    char internalFormat[16],latlonformat[32];
    int latlonflag = 0;
    int longform=16;
    int npts = *ni * *nj * *nk;
+   int nrepeats;
 
    
-   strncpy(c_nomvar,nomvar,2);
-   strncpy(c_typvar,typvar,1);
-   strncpy(c_etiket,etiket,8);
+   strncpy(c_nomvar,nomvar,4);
+   strncpy(c_typvar,typvar,2);
+   strncpy(c_etiket,etiket,12);
    strncpy(internalFormat,format,16);
    c_separateur[0] = separateur[0];
 
@@ -130,12 +150,12 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
       c_separateur[0] = '\t';
       }
 
-   c_nomvar[2] = '\0';
-   c_typvar[1] = '\0';
-   c_etiket[8] = '\0';
+   c_nomvar[4] = '\0';
+   c_typvar[2] = '\0';
+   c_etiket[12] = '\0';
    c_separateur[1] = '\0';
 
-   f77name(pgsmform)(internalFormat,&longform,16);
+   f77name(pgsmform)(internalFormat,&nrepeats, &longform,16);
    sprintf(latlonformat,"%s%s%s%s","%s",internalFormat,"%s",internalFormat);
    i = 0;
    while (i < 16)
@@ -176,10 +196,6 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
             }
          }
 
-      if (j%5 == 0 && j != 0 && (*position == NORD || *position == SUD))
-         {
-         fprintf(ftnUnits[*iun],"\n");
-         }
       fprintf(ftnUnits[*iun], internalFormat, data[j]);
       
       if (latlonflag)
@@ -190,8 +206,16 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
          {
          if (j < npts-1)
             {
-            fprintf(ftnUnits[*iun], "%s", c_separateur);
-            }
+	    if (nrepeats == 0)
+	      {
+	      fprintf(ftnUnits[*iun], "%s", c_separateur);
+	      }
+	    else
+	      {
+	      if (0 == ((j+1) % nrepeats)) fprintf(ftnUnits[*iun], "\n");
+	      else fprintf(ftnUnits[*iun], "%s", c_separateur);
+	      }
+	    }
          }
       
       if (*position == NORD || *position == OUEST || *position == 0)

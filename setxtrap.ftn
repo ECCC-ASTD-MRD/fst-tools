@@ -14,6 +14,7 @@
       integer n, i, j
       integer ival
       real    rval
+      integer ier, ezsetval, ezsetopt
       
       character*8 op,v
       
@@ -22,31 +23,31 @@
       ival = val
       
       op = 'EXTRAP'
-      
+    
       if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum 
      $     .and. val .ne. abort .and. val .ne. oui) then
          v = 'VALEUR'
-         call ezsetval('extrap_value', rval)
-         call ezsetopt('extrap_degree', 'value')
+         ier = ezsetval('extrap_value', rval)
+         ier = ezsetopt('extrap_degree', 'value')
       else
          if (val .eq. 100) then
-            call ezsetopt('extrap_degree', 'NEAREST')
+            ier = ezsetopt('extrap_degree', 'NEAREST')
             v = '0'
          else if (val .eq. 1) then
-            call ezsetopt('extrap_degree', 'LINEAR')
+            ier =  ezsetopt('extrap_degree', 'LINEAR')
             v = '1'
          else if (val .eq. 3)  then
-            call ezsetopt('extrap_degree', 'CUBIC')
+            ier =  ezsetopt('extrap_degree', 'CUBIC')
             v = '3'
          else if (val .eq. minimum) then
             v = 'MINIMUM'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          else if (val .eq. maximum) then
             v = 'MAXIMUM'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          else 
             v = 'ABORT'
-            call ezsetopt('extrap_degree', v)
+            ier =  ezsetopt('extrap_degree', v)
          endif
       endif
       

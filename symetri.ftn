@@ -60,7 +60,7 @@
 *
       if (message) write(6,101)cnom
  101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ', 
-     $     a2,' - EST INCONNUE',
+     $     a4,' - EST INCONNUE',
      $     ' ON LA SUPPOSE SYMETRIQUE *****'//)
 *
       call cmetsym(cnom, .true.)
