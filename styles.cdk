@@ -1,0 +1,4 @@
+      integer ip1style
+
+      common /styles/ ip1style
+
