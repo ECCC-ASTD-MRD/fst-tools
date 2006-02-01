@@ -2,7 +2,7 @@
       SUBROUTINE OUVRES( DN ) 
   
       IMPLICIT      NONE
-      CHARACTER*(*) DN(35)
+      CHARACTER*(*) DN(120)
   
 *ARGUMENTS
 * ENTREE DN    -  LISTE DES NOMS DE FICHIER SOURCE
@@ -14,6 +14,7 @@
 *                                 FNOM-OUVRE-LINK VIA FSTNOL
 *                                 CHANGE APPEL A FSTVOI
 *         004  "      "    NOV 92 liimite a 15 nombre de fichiers
+*         005  M. Lepine   Juil 2005, limite du nombre de fichiers a 120
 *LANGUAGE FTN77
 *
 #include "maxprms.cdk"
