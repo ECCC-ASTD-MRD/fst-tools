@@ -18,6 +18,9 @@
 *Revision 009   M. Lepine - mars 98 - extensions pour fstd98
 *Revision 010   M. Lepine - Oct  98 - Ajout du test de nrecmin
 *Revision 010   M. Lepine - Dec  01 - Termine dans le cas d'une erreur d'ecriture
+*Revision 011   M. Lepine - Mai  02 - code de traitement des IP1 en valeurs reelle
+*Revision 012   M. Lepine - Oct  02 - save sur buftemp
+*Revision 013   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
 *
 *LANGAGE  - FTN77
 #include "maxprms.cdk"
@@ -30,18 +33,24 @@
 C      COMMON /   / BUFL(1)
 C      INTEGER      BUFL
       integer, dimension ( : ), allocatable :: buftemp
+      save buftemp
 *     - buftemp    CHAMP DONT LA LONGUEUR VARIE SELON LES RESSOURCES
-*                  NECESSAIRES, LA ROUTINE MEMOIR RESERVE L'ESPASSE
+*                  NECESSAIRES, LA ROUTINE MEMOIR RESERVE L'ESPACE
 *                  (LONGUEUR INITIALE = 1)
+      logical      ip1equiv
       EXTERNAL     FSTPRM, FSTSUI, FSTECR, FSTINF, FSTWEO,
-     X             CRITSUP, DESIRE, FSTLUK, FSTFRM, FSTEOF, FSTABT,
-     X             JULSEC, QQEXIT
+     X             CRITSUP, DESIRE, FSTLUK, FSTFRM, FSTEOF,
+     X             JULSEC, QQEXIT, convip, ip1equiv
       INTEGER      FSTINF, FSTEOF, IG1, XTRA1, NI, I, IREC, DATE, SWA,
      X             FSTPRM, FSTFRM, IG2, XTRA2, NJ, J, DEET,       LNG,
      X             FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC,
      X             FSTLUK, FSTWEO, IG4, NBITS, NM,    NPAS, IST
-      integer *8   IP(4)
-      integer      IP1,IP2,IP3
+      integer *8   IP(4), p_int8, kind_8, ior
+      intrinsic    ior
+      integer      IP1,IP2,IP3,kind,p_int
+      real         p
+      equivalence (p_int,p)
+      character *128 string
   
       LOGICAL      FIRSTP, BONNE, OK, EXCL
       SAVE         NM, IST
@@ -69,7 +78,18 @@ C      INTEGER      BUFL
    20 I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,
      X           IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2,
      X           IG3, IG4, SWA, LNG, DLFT, UBC, XTRA1, XTRA2, XTRA3)
-      IP(1)=IP1
+      CALL convip(IP1,p,kind,-1,string,.true.)
+      p_int8 = Z'80000000'
+      if (p .lt. 0) then
+         p = abs(p)
+         p_int8 = p_int8 - p_int
+      else
+         p_int8 = p_int8 + P_int
+      endif
+      kind_8 = kind
+      IP(1)= IOR(p_int8, ishft(kind_8,32))
+C      write(*,777) ip1,kind,p,ip(1)
+ 777  format('Debug+ cle(i)=',i10,' kind=',i2,' p =',e10.4,' IP(i) =',z16.16)
       IP(2)=IP2
       IP(3)=IP3
       IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
@@ -112,11 +132,23 @@ C      INTEGER      BUFL
             ELSEIF(REQ(11,J,K) .GT. 0) THEN 
 *              REQUETE CONTIENT UNE LISTE DE PARAMETRES
                DO 50 I=1,REQ(11,J,K)
-                  IF(IP(J) .EQ. REQ(I,J,K)) GO TO 60
+	          IF (J .EQ. 1) THEN
+                     IF(IP1EQUIV(IP(J),REQ(I,J,K))) GO TO 60	
+                  ELSE
+                     IF(IP(J) .EQ. REQ(I,J,K)) GO TO 60
+	          ENDIF
    50             CONTINUE
                GO TO 110
             ELSE
 *              REQUETE CONTIENT UN INTERVALE AVEC SAUT
+               if (j .eq. 1) then
+c                  write(*,888) REQ(1,J,K),REQ(2,J,K),
+c     %                 IP(J),IP(J)-REQ(1,J,K),REQ(3,J,K)
+c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
+ 888              format('Debug+ min=',z16.16,' max=',z16.16,' IP(1)=',z16.16,
+     %                 ' ip1-min=',z16.16,' delta=',z16.16) 
+ 889              format('Debug+ MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))=',z16.16)
+               endif
                IF(IP(J).GE.REQ(1,J,K) .AND. 
      X            IP(J).LE.REQ(2,J,K) .AND. 
      X            MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K)).EQ.0) GOTO 60
@@ -160,7 +192,7 @@ C      INTEGER      BUFL
 *        SI LA DIRECTIVE SATISFAITE EST UN EXCLURE            
          IF( DIAG ) WRITE(6,*)'CLE',IREC, 'TYPRVAR=',TYP,
      X                       ' NOMVAR=',NOM,' ETIKET=',ETI,
-     X                       ' IP1,2,3,DATE=',IP,' EXCLU'
+     X          ' IP1,2,3,DATE=',IP1,ip2,ip3,date,' EXCLU'
          GO TO 140
             
   110    CONTINUE
@@ -171,13 +203,14 @@ C      INTEGER      BUFL
 *     CONTROLE DE LA MEMOIRE TEMPON AVANT LECTURE
   120 IF(LNG .GT. NM) THEN
 C         IF(IST .NE. 0) CALL MEMOIRH(BUFL, IST, 0)
-         IF(IST .NE. 0) deallocate(buftemp) 
+         IF (allocated(buftemp)) deallocate(buftemp) 
          NM = LNG
          allocate(BUFtemp(NM))
          ist = 1
 C         CALL MEMOIRH(BUFL, IST, NM)
       ENDIF
       I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
+      IP(1) = IP1      ! remettre la valeur de ip1 provenant du fstprm
       IF( ZA ) THEN
          IF(Z1 .NE. -1)  IP(1) = Z1
          IF(Z2 .NE. -1)  IP(2) = Z2
@@ -233,7 +266,7 @@ C         CALL MEMOIRH(BUFL, IST, NM)
      X                                 ' DANS ', SOURCES(1),'...'
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
             WRITE(6,*) LEOF,' N''EST PAS ACCEPTABLE COMME EOF LOGOQUE'
-            CALL FSTABT
+            call qqexit(30)
          ENDIF
          IF(DSEQ .AND. CEOF.NE.0) THEN
             K = CEOF
@@ -245,7 +278,7 @@ C         CALL MEMOIRH(BUFL, IST, NM)
                ELSEIF(I .NE. 0) THEN
                   WRITE(6,*)'IMPOSSIBLE D''ECRIRE UNE MARQUE DE ',
      X                      'NIVEAU ',K,' DANS ', ND
-                  CALL FSTABT 
+                  call qqexit(31)
                ENDIF
             ENDIF
          ENDIF
@@ -261,7 +294,7 @@ C         CALL MEMOIRH(BUFL, IST, NM)
          ELSEIF(I .NE. 0) THEN
             WRITE(6,*)' IMPOSSIBLE D''ECRIRE UNE MARQUE DE NIVEAU',
      X                K,' DANS ', ND
-            CALL FSTABT
+            call qqexit(32)
          ENDIF
       ENDIF
   

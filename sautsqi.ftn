@@ -20,6 +20,7 @@
 *         003       "      "    FEV 92 LE FICHIER DOIT EXISTER
 *         004       "      "    MAR 92 CORRIGE BUG DANS TEST FSTINF
 *         005       "      "    MAI 92 SKIP ABORT SI EN INTERACTIF
+*         006       M. Lepine   Nov 05 Remplacement de fstabt par qqexit
 *
 *LANGUAGE   - FTN77 
 *
@@ -31,7 +32,7 @@
 #include "fiches.cdk"
 *
 *MODULES  
-      EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, FSTABT 
+      EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 
 *
 **
       INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL,
@@ -63,7 +64,7 @@
             IF( INTERAC ) THEN
                RETURN
             ELSE
-               CALL FSTABT
+               CALL qqexit(61)
             ENDIF
          ENDIF
          J = 3
@@ -75,7 +76,7 @@
             IF( INTERAC ) THEN
                RETURN
             ELSE
-               CALL FSTABT
+               CALL qqexit(62)
             ENDIF
          ENDIF
          J = SOURCES(1)
@@ -89,7 +90,7 @@
             IF( INTERAC ) THEN
                RETURN
             ELSE
-               CALL FSTABT
+               CALL qqexit(63)
             ENDIF
          ENDIF
       ENDIF
@@ -105,7 +106,7 @@
       IF(M.LT.1 .OR. M.GT.15) THEN
          PRINT*,' MAUVAISE MARQUE DE FIN DE FICHIER =',M,
      X          ' RENCONTREE DANS TAPE=',J
-         CALL FSTABT
+         CALL qqexit(64)
       ENDIF
       IF(DIAG .OR. DEBUG) WRITE(6,*)'RENCONTRE UN EOF #',M
       IF(M .LT. LEVEL) GO TO 10

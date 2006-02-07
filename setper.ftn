@@ -18,6 +18,7 @@
 *         Y BOURASSA NOV  90
 *REV 001  "     "    JUIL 91 ACCEPTE LES DATESTAMP CMC *
 *REV 002  "     "    FEV  92 APPEL A LOW2UP AVANT IOPDATM
+*Rev 003  M. Lepine  Nov  05 Remplacement de fstabt par qqexit
 *
 *LANGUAGE   - FTN77 
 *
@@ -28,7 +29,7 @@
 #include "fiches.cdk"
 *
 *MODULES  
-      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, FSTABT, JULSEC,
+      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC,
      X              LOW2UP
 *
 **
@@ -45,7 +46,7 @@
          K = IOPDATM( C )
          IF(K .EQ. 10101011) THEN
             PRINT*,'DATE DE IOPDATM INACCEPTABLE'
-            CALL FSTABT 
+            CALL qqexit(67) 
          ENDIF
       ENDIF
   

@@ -1,4 +1,4 @@
-*** FUNCTION OUVRE UN FICHIER DESTINATION
+***   FUNCTION OUVRE UN FICHIER DESTINATION
       FUNCTION OUVRED( DN ) 
   
       IMPLICIT      NONE
@@ -18,6 +18,9 @@
 *          004  "     "     MAI 92 SKIP ABORT EN INTERACTIF
 *          005  "     "     DEC 94 SI FICHIER DESTINATION EST SEQUENTIEL
 *                                  ON PLACE LE FICHIER A LA FIN AVANT COPIE
+*          006  M. Lepine   Fev 05 Utilisation optionnelle des fichiers remotes
+*          007  M. Lepine   Nov 05 Remplacement de tous les fstabt par qqexit
+*
 *LANGUAGE FTN77
 *
 #include "maxprms.cdk"
@@ -31,6 +34,7 @@
       EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit
 
       INTEGER  FSTOUV, FNOM, FSTNBR, FSTINF, RENDUA, I, J, K
+      integer ier
 
 *     SI DEJA OUVERT COMME DESTINATION, RELE NOMBRE D'ENREGISTREMENTS
       IF(DN.EQ.ND .AND. OUVD) THEN
@@ -56,19 +60,24 @@
             PRINT*,' *                ABORT                 *'
          ENDIF
          PRINT*,'  **************************************'
-         IF( INTERAC ) THEN
-            RETURN
-         ELSE
-            CALL FSTABT
-         ENDIF
+         CALL qqexit(54)
       ENDIF
 
 *     FERME LE FICHIER DESTINATION D'OUVERT
       IF( OUVD ) CALL FERMED
 
 *     RETOURNE OUVRED >= 0 SI OUVERT
-      IF(FNOM(3, DN, DNOM//'R/W', 0) .EQ. 0) THEN
+      ier = FNOM(3, DN, DNOM//'R/W+REMOTE', 0)
+      IF(ier .EQ. 0) THEN
          OUVRED = FSTOUV(3, DNOM)
+         if (ouvred .lt. 0) then
+            PRINT*,'  **************************************'
+            PRINT*,' *              ATTENTION               *'
+            PRINT*,'* ERREUR DANS FSTOUV FICHIER INUTILISABLE *'
+            PRINT*,' *                ABORT                 *'
+            PRINT*,'  **************************************'
+            CALL qqexit(55)
+         endif
          ND     = DN
          OUVD   = .TRUE.
          DSEQ   = INDEX(DNOM,'SEQ') .NE. 0

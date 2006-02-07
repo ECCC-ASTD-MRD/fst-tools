@@ -21,6 +21,7 @@
 *                                       CHANGE ALLEL A OUVRED
 *         004       "      "    MAI 92  SKIP ABORT SI EN INTERACTIF
 *                                       OUVRE FICHIER SOURCE AVANT DESTINATION
+*         005       M. Lepine   Nov 05  rempalcement de fstabt par qqexit
 *
 *LANGUAGE   - FTN77 
 *
@@ -33,7 +34,7 @@
 #include "tapes.cdk"
 *
 *MODULES  
-      EXTERNAL      SAUVDEZ, FSTABT, COPYSTX, OUVRES, OUVRED, DMPDES,
+      EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES,
      X              FSTINF,  FSTEOF, ARGDIMS, FERMES, LOW2UP
       INTEGER       FSTINF,  FSTEOF, ARGDIMS, OUVRED, NI, NJ, NK,
      X              N, M, I, J,
@@ -61,7 +62,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(70)
          ENDIF
       ENDIF
 
@@ -90,7 +91,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(71)
          ENDIF
       ENDIF
 
@@ -103,7 +104,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(72)
          ENDIF
       ENDIF
 
@@ -124,7 +125,7 @@
          IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
             WRITE(6,*) LEOF,' N''EST PAS ACCEPTABLE COMME EOF LOGOQUE'
-            CALL FSTABT
+            CALL qqexit(73)
          ENDIF
          IF(LEOF .LT. PRE) GO TO 90
          IF(LEOF.GE.POS .AND. POS.NE.0) GO TO 110 
@@ -149,7 +150,7 @@
          IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
             WRITE(6,*) LEOF,' N''EST PAS ACCEPTABLE COMME EOF LOGOQUE'
-            CALL FSTABT
+            CALL qqexit(74)
          ENDIF
          IF(LEOF .LT. POS) GO TO 100
       ENDIF

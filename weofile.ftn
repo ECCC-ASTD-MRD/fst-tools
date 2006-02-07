@@ -23,6 +23,7 @@
 *         002      "     "       MAR 92 APPEL A LOW2UP POUR TD
 *         003      "     "       AVR 93 FIX BUG DECODE DNOM
 *         004      "     "       MAI 92 SKIP ABORT SI INTERACTIF
+*         005      M. Lepine     Nov 05 remplacement de fstabt par qqexit
 #include "lin128.cdk"
 #include "logiq.cdk"
 #include "fiches.cdk"
@@ -30,7 +31,7 @@
 #include "char.cdk"
 *
 *MODULES
-      EXTERNAL      ARGDIMS, FSTWEO, OUVRED, FSTABT, LOW2UP
+      EXTERNAL      ARGDIMS, FSTWEO, OUVRED, qqexit, LOW2UP
 *
 **
       INTEGER       ARGDIMS, FSTWEO, OUVRED, L, M
@@ -55,7 +56,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(90)
          ENDIF
       ENDIF
 
@@ -66,7 +67,7 @@
             IF( INTERAC ) THEN
                RETURN
             ELSE
-               CALL FSTABT
+               CALL qqexit(91)
             ENDIF
          ELSE
             M = MARC
@@ -84,7 +85,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(92)
          ENDIF
       ENDIF
 

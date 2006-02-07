@@ -17,6 +17,9 @@
 *         002 "     "      - MAR 92 APPEL A LOW2UP POUT 'TS' ET 'DS'
 *         003 "     "      - AVR 92 FIX BUG DECODE DNOM
 *         004 "     "      - MAI 92 SKIP ABORT SI INTERACTIF
+*         005 M. Lepine      Nov 05 remplacement de fstabt par qqexit
+*         006       "        Fev 06 ouverture des fichiers sources R/O
+*
 *LANGAGE  - FTN77
 *
 #include "lin128.cdk"
@@ -28,7 +31,7 @@
 *
 *MODULERS
       EXTERNAL      ARGDIMS, OUVRES, OUVRED, COPYSTX, DMPDES, SAUVDEZ,
-     X              LOW2UP,  FSTABT
+     X              LOW2UP,  qqexit
       INTEGER       ARGDIMS, OUVRED, I
       CHARACTER*128 DD
  
@@ -37,11 +40,11 @@
          WRITE(SNOM, LIN128) (TS(I), I=1,ARGDIMS(2)) 
          CALL LOW2UP(SNOM, SNOM)
          IF(INDEX(SNOM,'FTN') .GT. 0) THEN 
-            SNOM = 'STD+SEQ+FTN+OLD' 
+            SNOM = 'STD+SEQ+FTN+OLD+R/O' 
          ELSEIF(INDEX(SNOM,'SEQ').GT.0 .or. INDEX(SNOM,'SQI').GT.0) THEN
-            SNOM = 'STD+SEQ+OLD'
+            SNOM = 'STD+SEQ+OLD+R/O'
          ELSE
-            SNOM = 'STD+RND+OLD'
+            SNOM = 'STD+RND+OLD+R/O'
          ENDIF
       ENDIF
       IF(INPT(1) .NE. -1) THEN
@@ -54,7 +57,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(80)
          ENDIF
       ENDIF
 
@@ -81,7 +84,7 @@
          IF( INTERAC ) THEN
             RETURN
          ELSE
-            CALL FSTABT
+            CALL qqexit(81)
          ENDIF
       ENDIF
 

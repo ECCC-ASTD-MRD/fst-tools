@@ -10,6 +10,7 @@
 *AUTEUR   -   Y. BOURASSA  - AVR 91
 *REVISION 001 "      "     - JAN 92 
 *Revision 002   M. Lepine - mars 98 - extensions pour fstd98
+*Revision 003   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
 *LANGAGE  - FTN77
 *
 *ARGUMENTS
@@ -19,7 +20,7 @@
 *   "     - STRING  - CHAINE DE CARACTHERES A DECODER.
 *   "     - NC      - NOMBRE DE CARACTERES ALLOUE POUR LABEL.
 *
-      EXTERNAL FSTABT
+      EXTERNAL qqexit
       INTEGER  NCW, I, J, K, L, M
       character *12 temp12
       INTEGER  RSHIFT, X, Y
@@ -37,11 +38,11 @@
          I = IAND(255, RSHIFT(LIST(K), 8))
          IF(I .GT. NC) THEN
             WRITE(6,*)' LA VARIABLES LIMITEES A',NC,' CARACTERES'
-            CALL FSTABT
+            CALL qqexit(40)
          ENDIF
          IF(IAND(255, LIST(K)) .NE. 3) THEN
             WRITE(6,*)' ARGUMENT MAL PASSE'
-            CALL FSTABT
+            CALL qqexit(41)
          ENDIF
          J = I/NCW
          IF(J*NCW .LT. I) J = J+1 

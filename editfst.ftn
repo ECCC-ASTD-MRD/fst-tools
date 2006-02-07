@@ -69,6 +69,24 @@
 *         M. Lepine        fichier de sortie R/W obligatoire - Dec 2001 - v5.81
 *         M. Lepine        verification de la limite de 10 elements - Fev 2002 - v5.82
 *         M. Lepine        reload, bug fix fstecr mode reecriture - Mars 2002 - v5.83
+*         M. Lepine        Codification des ip1 en integer*8 (kind,level) - Mai 2002 - v5.84
+*         M. Lepine        Bug fix buftemp dans copystx - Oct 2002 - v5.85
+*         M. Lepine        Bug fix arguments fstcvt dans critsup  - Nov 2002 - v5.86
+*         M. Lepine        Tolerance d'erreur pour les IP1 (ip1equiv)  - Mars 2003 - v5.87
+*         M. Lepine        Correction pour code 5 (hybrid)  - Avril 2003 - v5.88
+*         M. Lepine        Correction ip1equiv cas ipa ipb = 0  - Juin 2003 - v5.89
+*         M. Lepine        Reload a partir de rossby - Avril 2004- v5.90
+*         M. Lepine        Eviter de traiter des fichiers endommages - Mai 2004- v5.91
+*         M. Lepine        Version avec compresseurs et bugfix cmcarc Linux - Jan 2005- v5.92
+*         M. Lepine        Reload avec librmn_x, bug fix requete ip1=0.0 - Fev 2005 - v5.93
+*         M. Lepine        Bug fix reconnaissance des ip1 reel - Mars 2005 - v5.94
+*         M. Lepine        Utilisation optionnelle des fichiers remote - Mars 2005 - v5.95
+*         M. Lepine        Reload pour bugfix datev de excdes, librmnbeta - Mars 2005 v5.96 
+*         M. Lepine        Reload pour bugfix longueur fstecr mode image, librmnbeta - Avril 2005 v5.97
+*         M. Lepine        De 35 fichiers d'entree a 120, Juillet 2005 - v5.98 
+*         M. Lepine        Remplacement de tous les fstabt par qqexit - v5.99
+*         M. Lepine        Reload avec librmn_rc008.a - v6.00
+*         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006 
 *
 *LANGAGE  - FTN77
 *
@@ -196,18 +214,18 @@
       integer junk
       LOGICAL     FASTIO
 
-      DATA KLE /'NNN', 'D.', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
+      DATA KLE /'NNN', 'D:', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
      X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
      X          'DS', 'V', 'N', 'VS', 'E', 'F', 'SF', 'DF',
-     X          'NRECMIN', 35*'S.'/
+     X          'NRECMIN', 120*'S:'/
       DATA DEF1/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
      X          'NON', '$IN', '$OUT', 'FATALE', 'ERRORS', 'FATALE',
      X          '-1',  'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'OUI',
-     X          'NON', 'NON', '-1', 35*' '/
+     X          'NON', 'NON', '-1', 120*' '/
       DATA DEF2/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
      X          'OUI', '$IN', '$OUT', 'ERRORS', 'INFORM', 'ERRORS',
      X          '-1',  'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI',
-     X          'OUI', 'OUI', '-1', 35*' '/
+     X          'OUI', 'OUI', '-1', 120*' '/
       DATA VS, OUVS, OUVD, FIXD, DEBUG, XPRES, SCRI, ESAIS, INTERAC, ZA
      X    /10 * .FALSE./
       DATA JOURS, DESEXC, SATISF,  NS,    ETAT
@@ -216,16 +234,19 @@
      X    /   0,    0,    0,    0,    1,    0,    0/
       DATA NFS, NIS, NJS, NKS, GTYPS, IG1S, IG2S, IG3S, IG4S
      X    /  0,  -1,  -1,  -1,   ' ',   -1,   -1,   -1,   -1/
-      DATA SOURCES /25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-     X              40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,
-     X              55,56,57,58,59/
+*      DATA SOURCES /25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
+*     X              40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,
+*     X              55,56,57,58,59/
 
+      do i = 1,120
+        sources(i) = 24+i
+      enddo
       SAUV = 0
       CALL SAUVDEZ
   
 *     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
       I    = -111  
-      CALL CCARD(KLE, DEF2, DEF1, 59, I)
+      CALL CCARD(KLE, DEF2, DEF1, 144, I)
       READ(DEF1(3), '(I2)') EOF
       READ(DEF1(15),'(I8)') LIMITE
       READ(DEF1(25),'(I8)') NRECMIN
@@ -273,20 +294,16 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V5.83','NON')
+         I = EXDB('EDITFST','V6.01','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V5.83   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.01   ***'
       ENDIF
 
 
       IF( DIAG ) THEN
          I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
-         print *,'Debug MSGLVL a INFORM'
-         I = FSTOPC('MSGLVL', 'INFORM', .true.)
       ELSE
          I = FSTOPC('MSGLVL', DEF1(13), .FALSE.)
-         print *,'Debug MSGLVL a def1(13)',def1(13)
-         I = FSTOPC('MSGLVL', DEF1(13), .true.)
       ENDIF
       IF(DEF1(14) .NE. 'FATALE') THEN
          I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)
@@ -297,7 +314,7 @@
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
 
 *     COMPTEE LES FICHIERS SOURCES
-      DO 10 I=1,35
+      DO 10 I=1,120
          IF(DEF1(I+25) .NE. ' ') NFS = NFS+1
  10   CONTINUE
       IF(NFS .GT. 0) THEN

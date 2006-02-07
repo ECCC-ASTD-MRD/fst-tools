@@ -17,6 +17,8 @@
 *REVISION      001  "      "    AVR 92 ENLEVE APPEL A FSTABT
 *              002  "      "    MAI 92 SI UN DES FICHIERS INEXISTANT
 *                                      FCLOS LES FICHIERS ASSIGNES
+*              003  M. Lepine   Fev 05 Utilisation optionnelle des fichiers remotes
+*
 *LANGUAGE FTN77
 *
 *MODULES
@@ -31,7 +33,7 @@
       ELSE
 *        TEST SI LES FICHIERS EXISTENT
          DO 20 I=1,N
-            IF(FNOM(LISTE(I), NOMS(I), OPTIONS, 0) .NE. 0) THEN
+            IF(FNOM(LISTE(I), NOMS(I), OPTIONS//'+REMOTE', 0) .NE. 0) THEN
                DO 10 J=1,I
                   K = FCLOS ( LISTE(J) )
    10             CONTINUE

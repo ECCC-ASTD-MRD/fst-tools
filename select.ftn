@@ -8,13 +8,16 @@
 *         002   "  "      "    JUL 91 DIRECTIVE ZAP
 *         003   "  "      "    DEC 91 QLXINX (NEC)
 *         004   "  "      "    MAI 91 QLXINX (partout sauf CRAY)
+*         005 Mario Lepine     Juil 2001 ip1 en valeurs reels    
+*         006 Mario Lepine     Mars 2003 correction valeur hybrid
+*         006 Mario Lepine     Nov  2005 remplacement de fstabt par qqexit
 *
 *LANGUAGE FTN77
 *
 *MODULES
       EXTERNAL QLXINX
       EXTERNAL SAUTSEQ, STDCOPI, WEOFILE, SETPER, QLXINS, ZAP,
-     X         EXCLURE, SEQCOPI, REWINDS, DESIRE, FSTABT,
+     X         EXCLURE, SEQCOPI, REWINDS, DESIRE, qqexit,
      X         CRITSUP, SAUTSQI, SQICOPI, READLX
 
       INTEGER  MOIN1, SAUTSEQ, STDCOPI, WEOFILE, SETPER, SAUTSQI, KERR, 
@@ -22,8 +25,9 @@
      X         MOIN3, MOIN4,   CRITSUP, DUMY
 
       DATA     MOIN1, MOIN2, MOIN3, MOIN4/ -1, -2, -3, -4/
-      integer  M1000, M1001, M1002, M1003
-      data     M1000, M1001, M1002, M1003 / -1000, -1001, -1002, -1003 /
+      integer  M1000, M1001, M1002, M1003, M1005
+      data     M1000, M1001, M1002, M1003, M1005 
+     %       / -1000, -1001, -1002, -1003, -1005 /
 *
 *IMPLICITE
 #include "maxprms.cdk"
@@ -73,6 +77,7 @@
       CALL QLXINS(M1001  , 'SIGMA'  , DUMY, 1, 0) 
       CALL QLXINS(M1002  , 'MBAR'   , DUMY, 1, 0) 
       CALL QLXINS(M1003  , 'OTHER'  , DUMY, 1, 0) 
+      CALL QLXINS(M1005  , 'HYBRID' , DUMY, 1, 0) 
       CALL QLXINS(.TRUE. , 'OUI'    , DUMY, 1, 0) 
       CALL QLXINS(.FALSE., 'NON'    , DUMY, 1, 0) 
   
@@ -85,7 +90,7 @@
          WRITE(6,*)'*       ERREUR DANS LES DIRECTIVES       *'
          WRITE(6,*)' *                                      *'
          WRITE(6,*)'  **************************************'
-         CALL FSTABT 
+         CALL qqexit(66) 
       ENDIF
       RETURN
       END 

@@ -8,6 +8,7 @@
 *AUTEUR       AUTEUR YVON BOURASSA . JAN 90
 *                      "      "      OCT 90 VERSION QLXINS
 *Revision 002   M. Lepine - mars 98 - extensions pour fstd98
+*Revision 003   M. Lepine - Nov 2002 - passage du bon type d'arguments pour fstcvt
 *
 *LANGAGE      FTN77 
 *
@@ -55,7 +56,8 @@
     2 IG3S = IG3
     3 IG2S = IG2
     4 IG3S = IG1
-    5 I = FSTCVT(' ',' ',' ', GRID, NV, TV, LBL, GTYPS, .TRUE.)
+*      I = FSTCVT(' ',' ',' ', GRID, NV, TV, LBL, GTYPS, .TRUE.)
+    5 I = FSTCVT(-1, -1, -1, GRID, NV, TV, LBL, GTYPS, .TRUE.)
     6 NKS  = NK
     7 NJS  = NJ
     8 NIS  = NI

@@ -1,6 +1,6 @@
-SUFFIXES:
+.SUFFIXES:
 
-.SUFFIXES : .ftn .f .cdk .o
+.SUFFIXES : .ftn .cdk .o
 
 SHELL = /bin/sh
 
@@ -20,8 +20,8 @@ default: absolu
 .c.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
-.f.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+#.f.o:
+#	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 OBJECTS= \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
@@ -29,7 +29,7 @@ OBJECTS= \
 	 fstnol.o        holacar.o       julhr.o 	 ouvred.o \
 	 ouvres.o        rewinds.o 	 sautsqi.o 	 sauvdez.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
-	 weofile.o       zap.o 
+	 weofile.o       zap.o 	         ip1equiv.o
 
 
 FICHIERS= \
@@ -48,7 +48,7 @@ FTNDECKS= \
 	 fstnol.ftn      holacar.ftn	 julhr.ftn 	 ouvred.ftn \
 	 ouvres.ftn      rewinds.ftn	 sautsqi.ftn 	 sauvdez.ftn \
 	 select.ftn      setper.ftn      sqicopi.ftn 	 stdcopi.ftn \
-	 weofile.ftn     zap.ftn
+	 weofile.ftn     zap.ftn         ip1equiv.ftn
 
 
 COMDECKS= \
@@ -95,12 +95,17 @@ weofile.o:     weofile.ftn     lin128.cdk      maxprms.cdk     logiq.cdk       \
                fiches.cdk      char.cdk   
 zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
                desrs.cdk       char.cdk
+ip1equiv.o:    ip1equiv.ftn
 
 absolu: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
-
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_rc008
+#r.build -o editfst -obj $(OBJECTS) /users/dor/armn/lib/home2/LIB2000/pub/fstd98/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
+
+editfst__: $(OBJECTS)
+	r.build -debug -o editfst__  -obj $(OBJECTS) /users/dor/armn/lib/OBJ/Linux/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
