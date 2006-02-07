@@ -3,16 +3,7 @@ C*DECK FSTCOMP
 *
       PROGRAM  FSTCOMP
       IMPLICIT NONE
-C*IF DEF, NEC64
-C*********************************************
-C*           VERSION 6.3 (NEC64)             *
-C*********************************************
-C*ENDIF
-C*IF DEF, BIT32
-*********************************************
-*           VERSION 6.3 (32 bits)           *
-*********************************************
-C*ENDIF
+*
 *AUTEURS
 *     V1.0 ORIGINALE (COMPSTD)   M. LEPINE   (MARS 87)
 *REVISIONS
@@ -33,7 +24,13 @@ C*ENDIF
 * 013 V6.4 (M. Lepine, avr. 1998) reload avec fstd98 et librmn32stack_LR.a
 * 014 V6.5 (M. Valin,  avr. 1999) certains calculs faits en real*8
 * 015 V6.6 (M. Lepine, Mai  2000) appel a incdatr au lieu de incdat
-* 015 V6.7 (M. Lepine, Oct  2000) reload pour datev (fstd89)
+* 016 V6.7 (M. Lepine, Oct  2000) reload pour datev (fstd89)
+* 017 V6.8 (M. Lepine, Jan  2002) mods pour tenir compte des extensions fstd2000
+* 018 V6.9 (M. Lepine, Fev  2003) appel a convip pour afficher les niveaux
+* 019 V7.0 (M. Lepine, Jan  2004) option reduction32 pour type E64, correction de format
+* 019 V7.1 (M. Lepine, Oct  2004) Ajout datatype compresse (>128) et datatype 6
+* 020 V7.2 (M. Lepine, Fev  2005) Reload avec librmn_x
+* 021 V7.3 (M. Lepine, Mars 2005) Ajout de la fonctionnalite des fichiers remote
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -42,11 +39,14 @@ C*ENDIF
 *MODULES
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, MEMOIRH, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
-     X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP
+     X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip,
+     %         fstopl
 *
-      CHARACTER*1  TYPVAR, GRTYPA, GRTYPB, TYPVAB
-      CHARACTER*2  NOMVAR, NOMVAB
-      CHARACTER*8  CLE(20), ETIKET, ETIKB
+      CHARACTER*1  GRTYPA, GRTYPB
+      CHARACTER*2  TYPVAR, TYPVAB
+      CHARACTER*4  NOMVAR, NOMVAB
+      CHARACTER*8  CLE(20)
+      CHARACTER*12 ETIKET, ETIKB
       CHARACTER*12 NOMA, NOMB, NOMC
       CHARACTER*40  NA, NB
       CHARACTER*128 DEF1(20), DEF2(20), NOMD
@@ -59,14 +59,14 @@ C*ENDIF
      X        UBC, EX1, EX2, EX3, NBITS, DATYPA, IDATE, NBIT2,
      X        DATYPB, FSTRWD, IP1B, IP2B, IP3B,
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
-     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB,
-     X        TABLO(0:5,0:5)
+     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
+     X        TABLO(0:6,0:6)
       integer ier
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
       INTEGER      BUF
-      DATA CLE  /'A.', 'B.', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
+      DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
      X           'N1',  'N2',  'N3',  'NN',  'X'/
 
@@ -83,12 +83,13 @@ C*ENDIF
       DATA        ECRIT/ .FALSE. /
 
 *     VALIDE QUAND LA CLE 'X'.NE.'R'
-      DATA TABLO/ 2, 1, 2, 3, 2, 1,
-     X            1, 1, 3, 3, 3, 1,
-     X            2, 3, 2, 3, 2, 3,
-     X            3, 3, 3, 3, 3, 3,
-     X            2, 3, 2, 3, 2, 3,
-     X            1, 1, 3, 3, 3, 1/
+      DATA TABLO/ 2, 1, 2, 3, 2, 1, 1,
+     X            1, 1, 3, 3, 3, 1, 1,
+     X            2, 3, 2, 3, 2, 3, 3,
+     X            3, 3, 3, 3, 3, 3, 3,
+     X            2, 3, 2, 3, 2, 3, 3,
+     X            1, 1, 3, 3, 3, 1, 1,
+     X            1, 1, 3, 3, 3, 1, 1 /
 *     0=BINAIRE 1=REEL 2=ENTIER 3=CARACTERE 4=ENTIER SANS SIGNE 5=IEEE
 *     NOTE:QUAND LA CLE('X'.EQ.'R') DATA TABLO(0,0)=1
 
@@ -135,8 +136,7 @@ C*ENDIF
             NOMB = 'STD+RND'
          ENDIF
       ENDIF
-
-      I  = FNOM(6, DEF1(3), 'SEQ', 0)
+      I  = FNOM(6, DEF1(3), 'SEQ+FTN', 0)
       TD = DEF1( 9) .EQ. 'NON'
       TE = DEF1(10) .EQ. 'NON'
       TT = DEF1(15) .EQ. 'NON'
@@ -149,11 +149,12 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V6.7  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V7.3  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V6.7', 'NON')
+         L = EXDB('FSTCOMP', 'V7.3', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
+      ier = fstopl('REDUCTION32',.true.,.false.)
 
 *     SI A=RND & B=SEQ CHANGE [A POUR B] & [B POUR A]
       IF((BF.OR.BS) .AND. .NOT.(AF.OR.AS)) THEN
@@ -176,11 +177,11 @@ C*ENDIF
 
 *     OUVRE LE FICHIER 1
       NA = DEF1(1)
-      L  = FNOM  (1, DEF1(1), NOMA//'+OLD+R/O', 0)
+      L  = FNOM  (1, DEF1(1), NOMA//'+OLD+R/O+REMOTE', 0)
       IF (L .LT. 0) STOP
       L  = FSTOUV(1, NOMA)
       N1 = FSTNBR(1)
-      IF(N1 .LT. 0) THEN
+      IF(N1 .Le. 0) THEN
          IF( DI ) WRITE(6,*)' FICHIER SEQUENTIEL ', NA
          IF( .NOT.(AS.OR.AF) ) THEN
             WRITE(6,*)' FICHIER DECLARE RND ', NA
@@ -193,11 +194,11 @@ C*ENDIF
 
 *     OUVRE LE FICHIER 2
       NB = DEF1(2)
-      L  = FNOM  (2, DEF1(2), NOMB//'+OLD+R/O', 0)
+      L  = FNOM  (2, DEF1(2), NOMB//'+OLD+R/O+REMOTE', 0)
       IF (L .LT. 0) STOP
       L  = FSTOUV(2, NOMB)
       N2 = FSTNBR(2)
-      IF(N2 .LT. 0) THEN
+      IF(N2 .Le. 0) THEN
          IF( DI ) WRITE(6,*)' FICHIER SEQUENTIEL ', NB
          IF( .NOT.BS ) THEN
             WRITE(6,*)' FICHIER DECLARE RND ', NB
@@ -289,7 +290,7 @@ C*ENDIF
 *     TOUT EST OK LIT ET COMPARE
       L = FSTLUK(BUF(X1), KA, NI, NJ, NK)
       L = FSTLUK(BUF(X2), KB, NI, NJ, NK)
-      GO TO (40, 50, 30) TABLO(DATYPA,DATYPB)
+      GO TO (40, 50, 30) TABLO(mod(DATYPA,128),mod(DATYPB,128))
   30  WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',DATYPA,
      X                                    ' DATYPB=',DATYPB
       GO TO 60
@@ -329,12 +330,13 @@ C*ENDIF
          L = EXFIN('FSTCOMP', 'NORMAL', 'NON')
       ENDIF
 
-  600 FORMAT('   CLEA  CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
+  600 FORMAT('  NOM    ETIKET        IP1',
+     X       '           IP2 IP3 E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY')
 
 
-  601 FORMAT(' PAS TROUVE ',A2,' ',A1,' IP123=', 3I6, I10,' DANS ',A40)
+  601 FORMAT(' PAS TROUVE ',A4,' ',A2,' IP123=', 3I8, I10,' DANS ',A40)
   602 FORMAT(' ',A40,' GRTYP IG1@4=', A1,1X, 4I4,/
      X       ' ',A40,' GRTYP IG1@4=', A1,1X, 4I4)
   603 FORMAT(2I6,A4,' -LES DIMENSIONS TROUVEES SONT',3I5,
@@ -349,8 +351,8 @@ C*DECK RCMP1D
 
       IMPLICIT NONE
       INTEGER  N, IUN, LIMITE, NUMA, NUMB, IP1, IP2, IP3
-      CHARACTER*8 ETIKET
-      CHARACTER*2 NOMVAR
+      CHARACTER*12 ETIKET
+      CHARACTER*4 NOMVAR
       REAL     A(N), B(N), MAXABS, SUMABS, ERRABS
 *
 *AUTEURS  VERSION ORIGINALE (REALCMP)  M.VALIN DRPN 1987
@@ -367,7 +369,9 @@ C*DECK RCMP1D
 *   "    IP1@3   PARAMETRES DE SELECTION
 *   "    LIMITE  ERREUR MAXIMUM TOLOREE
 **
-      INTEGER   I
+      INTEGER   I, kind
+      CHARACTER*15 Level
+      REAL      rlevel
       REAL*8    SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR,
      X          AA, BB, FN, ERRLIM, VARA, VARB, SAB
 
@@ -387,6 +391,8 @@ C*DECK RCMP1D
          SA     = SA+AA
          SB     = SB+BB
          IF(AA .NE. BB) THEN
+C            write(6,888) 'Debug difference au point I=',i,aa,bb
+ 888        format(a,i8,2x,e24.16,2x,e24.16)
             ERRABS = ABS(AA-BB)
             SUMABS = SUMABS+ERRABS
             MAXABS = MAX(ERRABS,MAXABS)
@@ -423,12 +429,13 @@ C*DECK RCMP1D
       ELSE
          SAB = SQRT(VARA)
       ENDIF
+      CALL convip(ip1,rlevel,kind,-1,level,.true.)
       IF(ERRMAX .LE. ERRLIM) THEN
-         WRITE(IUN,600) NUMA, NUMB, NOMVAR, ETIKET, IP1, IP2, IP3,
+         WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
       ELSE
-         WRITE(IUN,601) NUMA, NUMB, NOMVAR, ETIKET, IP1, IP2, IP3,
+         WRITE(IUN,601) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
 
@@ -437,9 +444,9 @@ C*DECK RCMP1D
 *  600 FORMAT('  CLEA CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
 *     X       '  E-REL-MOY   VAR-A       C-COR         MOY-A',
 *     X       '         BIAIS      E-MAX      E-MOY')
-  600 FORMAT(' ', 2I6, '  ', A2, '  ', A8, I5, 2I4, 4(1X,1PE10.4),
+  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
-  601 FORMAT(' ', 2I6, ' <', A2, '> ', A8, I5, 2I4, 4(1X,1PE10.4),
+  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
 
       RETURN
@@ -452,8 +459,8 @@ C*DECK ICMP1D
 
       IMPLICIT    NONE
       INTEGER     N, A(N), B(N), IUN, NUMA, NUMB, IP1, IP2, IP3
-      CHARACTER*8 ETIKET
-      CHARACTER*2 NOMVAR
+      CHARACTER*12 ETIKET
+      CHARACTER*4 NOMVAR
 *
 *AUTEURS  VERSION ORIGINALE (INTEMP)  M.VALIN DRPN 1987
 *         VERSION (ICMP1D)  Y.BOURASSA DRPN JAN 1990
@@ -468,7 +475,9 @@ C*DECK ICMP1D
 *   "    ETIKET  ETIKET DE L'ENREGISTREMENT
 *   "    IP1@3   PARAMETRES DE SELECTION
 **
-      INTEGER I, J, K, MD, NC
+      INTEGER I, J, K, MD, NC, kind
+      CHARACTER*15 Level
+      REAL      rlevel
 
       MD  = 0
       NC  = 0
@@ -484,15 +493,16 @@ C*DECK ICMP1D
          ENDIF
 10    CONTINUE
 
+      CALL convip(ip1,rlevel,kind,-1,level,.true.)
       IF (MD .EQ. 0) THEN
-         WRITE(IUN,600) NUMA, NUMB, NOMVAR, ETIKET, IP1, IP2, IP3
+         WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3
       ELSE
-         WRITE(IUN,601) NUMA, NUMB, NOMVAR, ETIKET, IP1, IP2, IP3,
+         WRITE(IUN,601) NOMVAR, ETIKET, level, IP2, IP3,
      X                  NC, MD, J
       ENDIF
 
- 600  FORMAT(' ', 2I6, '  ', A2, '  ', A8, I5, 2I4,' SONT EGAUX')
- 601  FORMAT(' ', 2I6, ' <', A2, '> ', A8, I5, 2I4,' ONT',I6,' POINTS ',
+ 600  FORMAT(' ',  '  ', A4, '  ', A12, a15, 2I4,' SONT EGAUX')
+ 601  FORMAT(' ',  ' <', A4, '> ', A12, a15, 2I4,' ONT',I6,' POINTS ',
      X       'INEGAUX, L''ERREUR MAX.=',I10,'  AU POINT',I6)
 
       RETURN
