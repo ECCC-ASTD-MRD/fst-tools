@@ -31,6 +31,7 @@ C*DECK FSTCOMP
 * 019 V7.1 (M. Lepine, Oct  2004) Ajout datatype compresse (>128) et datatype 6
 * 020 V7.2 (M. Lepine, Fev  2005) Reload avec librmn_x
 * 021 V7.3 (M. Lepine, Mars 2005) Ajout de la fonctionnalite des fichiers remote
+* 022 V7.4 (M. Lepine, Fev  2006) Appel a ip1_all 
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -40,7 +41,7 @@ C*DECK FSTCOMP
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, MEMOIRH, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
      X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip,
-     %         fstopl
+     %         fstopl, ip1_all
 *
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
@@ -61,7 +62,9 @@ C*DECK FSTCOMP
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
      X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
      X        TABLO(0:6,0:6)
-      integer ier
+      integer ier, kind, ip1_all
+      real Level
+      character *30 string
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
@@ -149,9 +152,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V7.3  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V7.4  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V7.3', 'NON')
+         L = EXDB('FSTCOMP', 'V7.4', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -249,7 +252,10 @@ C*ENDIF
       IF( TN ) NOMVAB = NOMVAR
 
 *     SI LE IP1 EST A CONSIDERER
-      IF( P1 ) IP1B = IP1
+      IF( P1 ) then
+       call convip(ip1,level,kind,-1,string,.false.)
+       IP1B = IP1_ALL(level,kind)
+      ENDIF
 
 *     SI LE IP2 EST A CONSIDERER
       IF( P2 ) IP2B = IP2
