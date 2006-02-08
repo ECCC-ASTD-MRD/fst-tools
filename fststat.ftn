@@ -11,7 +11,8 @@
 *
 *AUTHOR   Yves Chartier                      July 1993
 * 
-*REVISION
+*REVISION 001  M. Lepine - Mars 2002 - ajout du mode reduction 32 pour IEEE a 64 bits
+*REVISION 002  M. Lepine - Juin 2003 - remplacement de memoirh
 *
 *LANGUAGE:  fortran 77
 *
@@ -26,8 +27,8 @@
 *IMPLICIT     
 *
 *MODULES
-      external fstinf,memoirh,fstprm,fstluk,fstsui
-      integer ier,fstprm,fstinf,fstsui,fstluk
+      external fstinf,memoirh,fstprm,fstluk,fstsui,fstopl
+      integer ier,fstprm,fstinf,fstsui,fstluk,fstopl
       character*1 grtyp
       integer i
       
@@ -40,33 +41,35 @@
 
       equivalence (rtemp,itemp)
 
-      real buf(1)
-      integer ibuf
+      real, allocatable, dimension(:) :: buf
       
-      character*8 etiket2
+      character*12 etiket2
       key = fstinf(iun, ni, nj, nk,  datev, etiket, 
      $     ip1,ip2,ip3,typvar,nomvar)
 
+      ier = fstopl('REDUCTION32',.true.,.false.)
  10   if (key.ge.0) then
-         call memoirh(buf,ibuf,ni*nj*nk)
+*         call memoirh(buf,ibuf,ni*nj*nk)
+         allocate(buf(ni*nj*nk))
          ier = fstprm(key, date0, deet, npas, ni, nj, nk, nbits,
      *        datyp, ip1, ip2, ip3, typvar, nomvar, etiket2, grtyp, 
      *        ig1, ig2, ig3, ig4, swa, lng, dltf, ubc, 
      *        extra1, extra2, extra3)
-         ier = fstluk(buf(ibuf),key,ni,nj,nk)
+         ier = fstluk(buf,key,ni,nj,nk)
 
          if (datyp.eq.2.or.datyp.eq.4) then
             do i=1,ni*nj*nk
-               rtemp = buf(ibuf-1+i)
-               buf(ibuf-1+i)=real(itemp)
+               rtemp = buf(i)
+               buf(i)=real(itemp)
             end do
          endif
 
-         call statfld4(nomvar,typvar,ip1,ip2,ip3,date0,etiket2,buf(ibuf),
+         call statfld4(nomvar,typvar,ip1,ip2,ip3,date0,etiket2,buf,
      $        ni,nj,nk)
 
          key = fstsui(iun,ni,nj,nk)
-         call memoirh(buf,ibuf,0)
+         deallocate(buf)
+*     call memoirh(buf,ibuf,0)
          goto 10
       endif
       
