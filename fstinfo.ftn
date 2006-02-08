@@ -13,8 +13,8 @@ c
       integer pnextra2,pnextra3
 c
       integer fstprm,pnseqout,ilen
-      integer longueur
-      external longueur
+      integer longueur,wkoffit,ikind
+      external longueur,qqexit,ccard,wkoffit
 c
       real*8 prtmp8
 c
@@ -35,7 +35,7 @@ c
      &     ,'fstlist',':','1'/ 
       data pnfstsrc /11/
 c
-      call ccard(ptcle,ptdefvar,ptvar,11,-1)
+      call ccard(ptcle,ptdefvar,ptvar,12,-1)
 c
 c     ------ Liste de champs -----
       if (ptvar(12).eq.'1') then
@@ -70,8 +70,10 @@ c
      $        '27 extra3'
          stop
       endif
-
 c
+      ikind = wkoffit(ptvar(1))
+c      write(*,*) 'IKIND = ',ikind
+      if(ikind .ne. 33 .and. ikind .ne. 1) call qqexit(1)
 c     ------ Initialisation des clefs de recherche -----
 c
       if (ptvar(2) .ne. '-1') then
@@ -87,7 +89,6 @@ c
       else
         pndatev = -1
       endif
-
       read(ptvar(5),*) pnip1
       read(ptvar(6),*) pnip2
       read(ptvar(7),*) pnip3
@@ -102,7 +103,7 @@ c
       pnseqout = 21
       open(pnseqout,FILE=ptvar(10),ACCESS='SEQUENTIAL')
 c
-      pnier =  fnom  (pnfstsrc,ptvar(1),'RND',0)
+      pnier =  fnom  (pnfstsrc,ptvar(1),'RND+STD+R/O',0)
       pnier =  fstouv(pnfstsrc,'RND')
 c
       pnkey=fstinf(pnfstsrc,pnnis,pnnjs,pnnks,pndatev,
@@ -141,9 +142,10 @@ c
       pnier =  fstfrm(pnfstsrc)
       close(pnseqout)
 c
- 1000 format(2(a,a),6(i10,a),1(a,a),2(i8.8,i8.8,a),2(i10,a),1(a,a),12(i10,a),i10)
-
+ 1000 format(2(a,a),6(i10,a),1(a,a),2(i8.8,i8.8,a),2(i10,a),1(a,a)
+     &     ,12(i10,a),i10)
 c
+      call qqexit(0)
       stop
       end
 
