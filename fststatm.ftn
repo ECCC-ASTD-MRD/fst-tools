@@ -6,6 +6,7 @@
 *AUTHOR   Yves Chartier                      July 1993
 * 
 *REVISION
+*REVISION 001  M. Lepine - Mars 2005 - ajout de la fonctionnalite fichier remote
 *
 *LANGUAGE:  fortran 77
 *
@@ -23,12 +24,12 @@
       external ccard,fstlnk      
       
       character*128 cle(40),def(40),val(40)
-      data cle /40*'fst.'/
+      data cle /40*'fst:'/
       data def /40*'scrap'/
       data val /40*'scrap'/
       
 
-      integer fnom,ier,fstouv,fstopi
+      integer fnom,ier,fstouv,fstopi,fstopc
       logical flag
       
       integer date,ip1,ip2,ip3
@@ -47,9 +48,9 @@
       
       call ccard(cle,def,val, 40, ipos)
       
-      level = 10
+      level = 6
       flag = .false.
-      ier = fstopi('MSGLVL', level, flag)
+      ier = fstopc('MSGLVL', 'ERRORS', flag)
 
       nf = 1
  33   if (val(nf).ne.def(nf).and.nf.le.40) then
@@ -59,7 +60,7 @@
       
       nf = nf -1
       do 34 i=1, nf
-         ier = fnom(lnkdiun(i),val(i),'RND+OLD+R/O',0)
+         ier = fnom(lnkdiun(i),val(i),'RND+OLD+R/O+REMOTE',0)
          if (ier.lt. 0) then
             print *, '************************************************'
             print *, ' probleme avec fichier ',val(i),' inexistant - ' 
