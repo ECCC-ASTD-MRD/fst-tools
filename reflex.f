@@ -124,10 +124,13 @@
 *       M. Lepine, avril 1997 - Rechargement avec lirbmnx32stack.a
 *       M. Lepine, avril 1998 - Rechargement avec lirbmnbeta32stack.a
 *       M. Lepine, Oct 1998 - Rechargement avec dernier release de rmnlib (2.4)
+*       M. Lepine, Oct 2001 - Rechargement (bug fix realloc xdfuse) (2.5)
+*       M. Lepine, Jan 2003 - Rechargement avec rmn_x (2.6)
+*       M. Lepine, Mars 2004 - option nsplit pour subdiviser l'output sur plusieurs fichiers
 *
 *MODULES
-      INTEGER EXDB, EXFIN, FNOM
-      EXTERNAL EXDB, EXFIN, FNOM, CCARD
+      INTEGER EXDB, EXFIN, FNOM, longueur
+      EXTERNAL EXDB, EXFIN, FNOM, CCARD, longueur
       INTEGER XDFSTA, XDFCLS, WASIZE
       EXTERNAL XDFSTA, XDFCLS, WASIZE
       INTEGER XDFUSE, XDFIMP, QDFRSTR, QDFDIAG, XDFOPT
@@ -144,26 +147,27 @@
 *
 *     MESSLV  NIVEAU DE TOLERANCE POUR LES MESSAGES
 
-      CHARACTER*8 LISTE(16), PROG, STATUS, VERSION
-      CHARACTER*256 DEF(16), VAL(16)
+      CHARACTER*8 LISTE(17), PROG, STATUS, VERSION
+      CHARACTER*256 DEF(17), VAL(17)
       INTEGER I, IER, IER2, ISTAMP, FICHIN, FICHOUT ,IPOS, N1024,
      % LNGR
+      INTEGER NSPLIT,nf
       INTEGER PRIDEF(2, 100), AUXDEF(2, 100), STAT(12)
-      CHARACTER*4 CVRSN, CAPPL
-      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V2.4'/
+      CHARACTER*4 CVRSN, CAPPL, suffix
+      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V2.7'/
       DATA LISTE /'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.',
      %'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.','OXSRT.','DATE',
-     %'STATS','RSTR','ERRTOLR','MSGLVL'/
+     %'STATS','RSTR','ERRTOLR','MSGLVL','NSPLIT'/
       DATA DEF   /' '   ,' '   ,' '   ,' '   ,' '   ,' ',' '   ,' '
-     %   ,' '   ,' '   ,' ','OPRUN','OUI','OUI','ERROR','ERROR'/
+     %   ,' '   ,' '   ,' ','OPRUN','OUI','OUI','ERROR','ERROR','1'/
       DATA VAL   /' '   ,' '   ,' '   ,' '   ,' '   ,' ',' '   ,' '
-     %   ,' '   ,' '   ,' ','NON','NON','NON','ERROR','ERROR'  /
+     %   ,' '   ,' '   ,' ','NON','NON','NON','ERROR','ERROR','1'  /
 *
 *        RECUPERATION DES PARAMETRES D'APPEL
 *
 
       IPOS = -1
-      CALL CCARD(LISTE,DEF,VAL,16,IPOS)
+      CALL CCARD(LISTE,DEF,VAL,17,IPOS)
 *       DEBUT D'EXECUTION
 
       ISTAMP = EXDB(PROG,VERSION,VAL(12))
@@ -173,13 +177,25 @@
 
       IER = XDFOPT('ERRTOLR',VAL(15),-1)
       IER = XDFOPT('MSGLVL',VAL(16),-1)
+      read(val(17),'(I)') nsplit
+      if (nsplit .gt. 1) ier = XDFOPT('STRIPING',' ',nsplit)
+c      print *,'Debug+ apres appels a XDFOPT'
 *
 *       VERIFIER LA PRESENCE D'UN FICHIER DE SORTIE
 *
 
       IF((VAL(11).NE. ' '))THEN
          FICHOUT = 20
-         IER = FNOM(FICHOUT,VAL(11),'RND',0)
+         if (nsplit .eq. 1) then
+           IER = FNOM(FICHOUT,VAL(11),'RND',0)
+         else
+           do nf = 1,nsplit
+             write(suffix,'(a,i3.3)') '_',nf
+             ier = fnom(fichout+nf-1,
+     %                  VAL(11)(1:longueur(val(11)))//suffix,'RND',0)
+           enddo
+         endif
+c      print *,'Debug+ apres fnom fichier out'
 *
 *           ON RESTAURE LE FICHIER
 *
@@ -190,55 +206,67 @@
             IF((IER.EQ. 0))THEN
                IER2 = XDFSTA(FICHIN,STAT,12,PRIDEF, 100,AUXDEF, 100,
      %         CVRSN,CAPPL)
-            ENDIF 
+            ENDIF
             IF(( IER.EQ. 0 .AND. IER2.EQ. 0))THEN
                IER = QDFRSTR(FICHIN,FICHOUT)
                IF((IER.LT. 0))THEN
                   STATUS = 'ERREUR'
                   GOTO 5555
-               ENDIF 
-            ELSE 
+               ENDIF
+            ELSE
                WRITE(6,5000) VAL(1)
-            ENDIF 
-         ELSE 
+            ENDIF
+         ELSE
 
 *
 *              ON FAIT LA RECUPERATION STANDARD
 *
+c      print *,'Debug+ recuperation standard'
             FICHIN = 10
             DO 23010 I = 1,10
                IF((VAL(I).NE. ' '))THEN
                   IER = FNOM(FICHIN,VAL(I),'RND+R/O',0)
+c      print *,'Debug+ apres fnom fichier in'
                   IF((IER.EQ. 0))THEN
+c      print *,'Debug+ appel a XDFSTA fichier in'
                      IER2 = XDFSTA(FICHIN,STAT,12,PRIDEF, 100,AUXDEF
      %               , 100,CVRSN,CAPPL)
-                  ENDIF 
+c      print *,'Debug+ apres XDFSTA'
+                  ENDIF
                   IF(( IER.EQ. 0 .AND. IER2.EQ. 0))THEN
+c      print *,'Debug+ appel a XDFUSE'
                      IER = XDFUSE(FICHIN,FICHOUT)
+c      print *,'Debug+ apres XDFUSE'
                      IF((IER.LT. 0))THEN
                         STATUS= 'ERREUR'
                         GO TO 5555
-                     ENDIF 
-                  ELSE 
+                     ENDIF
+                  ELSE
                      WRITE(6,5000) VAL(I)
-                  ENDIF 
-               ENDIF 
+                  ENDIF
+               ENDIF
                FICHIN = FICHIN + 1
 
 *               FERMER LE FICHIER DE SORTIE
-23010       CONTINUE 
-            IER = XDFCLS(FICHOUT)
+23010       CONTINUE
+
+            do nf = 1,nsplit
+              ier = xdfcls(fichout+nf-1)
+            enddo
 
 *           ECRIRE LES STATISTIQUES DU FICHIER DE SORTIE
 *
-         ENDIF 
+         ENDIF
          IF(((INDEX(VAL(16),'TRIVIAL').NE. 0).OR.   (INDEX(VAL(16),
      %   'INFORMATIF').NE. 0)))THEN
-            IER = XDFSTA(FICHOUT,STAT,12,PRIDEF, 100,AUXDEF, 100,
-     %      CVRSN,CAPPL)
-            IER = XDFIMP(FICHOUT,STAT,12,PRIDEF,AUXDEF,CVRSN,CAPPL)
-         ENDIF 
-      ELSE 
+            do nf = 1,nsplit
+              IER = XDFSTA(FICHOUT+nf-1,STAT,12,PRIDEF, 100,AUXDEF, 100,
+     %        CVRSN,CAPPL)
+              IER = XDFIMP(FICHOUT+nf-1,STAT,12,PRIDEF,AUXDEF,
+     %        CVRSN,CAPPL)
+            enddo
+         ENDIF
+      ELSE
          IF((VAL(13).EQ. 'OUI'))THEN
 
 *
@@ -250,18 +278,18 @@
                   IER = FNOM(FICHIN,VAL(I),'RND+R/O',0)
                   IF(( IER.EQ. 0))THEN
                      IER = QDFDIAG(FICHIN)
-                  ELSE 
+                  ELSE
                      WRITE(6,5000) VAL(I)
-                  ENDIF 
-               ENDIF 
+                  ENDIF
+               ENDIF
                FICHIN = FICHIN + 1
-23024       CONTINUE 
-         ELSE 
+23024       CONTINUE
+         ELSE
             WRITE(6,*) ' ON DOIT SPECIFIER UN FICHIER DE SORTIE OU '
      %      ,'UTILISER LA CLEF -STATS A L''APPEL'
             STATUS = 'ERREUR'
-         ENDIF 
-      ENDIF 
+         ENDIF
+      ENDIF
 5555  ISTAMP = EXFIN(PROG,STATUS,VAL(12))
 5000  FORMAT(' ON SAUTE FICHIER VIDE OU INEXISTANT: ',A)
       STOP
