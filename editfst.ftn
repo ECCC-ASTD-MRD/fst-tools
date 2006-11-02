@@ -87,6 +87,9 @@
 *         M. Lepine        Remplacement de tous les fstabt par qqexit - v5.99
 *         M. Lepine        Reload avec librmn_rc008.a - v6.00
 *         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006 
+*         M. Lepine        Bug fix longeur fstluk,fstecr datyp=6 mode image - v6.02 - Avril 2006
+*         M. Lepine        Reload avec librmn_008 - v6.03 - Aout 2006
+*         M. Lepine        Reload avec librmnbeta,nouveau compresseurs IEEE - v6.04 - Oct 2006
 *
 *LANGAGE  - FTN77
 *
@@ -294,9 +297,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.01','NON')
+         I = EXDB('EDITFST','V6.04','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.01   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.04   ***'
       ENDIF
 
 

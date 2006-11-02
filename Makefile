@@ -98,8 +98,8 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
 ip1equiv.o:    ip1equiv.ftn
 
 absolu: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_rc008
-#r.build -o editfst -obj $(OBJECTS) /users/dor/armn/lib/home2/LIB2000/pub/fstd98/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+#r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_008
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
