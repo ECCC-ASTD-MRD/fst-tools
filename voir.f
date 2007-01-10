@@ -3,6 +3,7 @@
 *Revision 98.11 - M. Lepine - reload, detection mauvais type de fichier (xdfopn)
 *         98.12 - M. Lepine - utilisation de ccard_arg
 *         98.13 - M. Lepine - flush des buffers de stdout dans exfin
+*         98.14 - M. Lepine - reload librmn_008
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
@@ -51,7 +52,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.13','NON')
+         ier = exdb('VOIR','V98.14','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),
