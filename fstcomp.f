@@ -32,6 +32,8 @@ C*DECK FSTCOMP
 * 020 V7.2 (M. Lepine, Fev  2005) Reload avec librmn_x
 * 021 V7.3 (M. Lepine, Mars 2005) Ajout de la fonctionnalite des fichiers remote
 * 022 V7.4 (M. Lepine, Fev  2006) Appel a ip1_all 
+* 023 V7.5 (M. Lepine, Mai  2006) Reload, bug fix float_packer 
+* 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant 
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -152,9 +154,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V7.4  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V7.6  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V7.4', 'NON')
+         L = EXDB('FSTCOMP', 'V7.6', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
