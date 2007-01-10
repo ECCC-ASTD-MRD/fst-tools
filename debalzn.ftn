@@ -34,7 +34,7 @@
       Integer       ierr,ifrm,iecr,nil
       Integer       ii,jj,kk,NIC,NJC,NKC
 **
-      Character     typvar*1, sqrvar*1,        nomvar*2,
+      Character     typvar*2, sqrvar*1,        nomvar*2,
      +              etiket*(*),                grtyp*1
 
       Integer       dateo,deet,npas,         datex,delt,npax,

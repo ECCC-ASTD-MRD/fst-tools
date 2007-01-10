@@ -18,6 +18,10 @@
 *                                de surface et de profile
 *         007 G.Pellerin (Avr2000) Introduction du common zontab 
 *                                  pour compilation en FORTRAN90
+*         008 B.Dugas    (mar06) Declarations pour FSTD2000, notamment
+*                                dans le traitement de la variable etikex
+*                                De plus, Maxbin 256 --> 999
+*                                et       Maxniv  51 --> 999
 *
 *Language ftn77
 *
@@ -36,8 +40,8 @@
       Integer       inf,iluk,inbr,iprm,nil
       Integer       ii,jj,kk,NIC,NJC,NKC
 **
-      Character     typvar*1,etiket*8,grtyp*1,nomvar*2,
-     +              etikex*8,etik1*4,etik2*4
+      Character     typvar*2,etiket*12,grtyp*1,nomvar*2,
+     +              etikex*12,etik1*4,etik2*4,etik3*4
 
       Integer       dateo,deet,npas,         
      +              ip1,ip2,ip20,ip3,        datyp,nbits,
@@ -55,16 +59,16 @@
 ***    Declarations des variables statiques.
 
       Integer       Maxbin
-      Parameter   ( Maxbin = 256 )
+      Parameter   ( Maxbin = 999 )
 
-      Integer       Maxniv,      MaxVar
-      Parameter   ( Maxniv = 51, MaxVar = 256 )
+      Integer       Maxniv,       MaxVar
+      Parameter   ( Maxniv = 999, MaxVar = 256 )
 
-      Integer       MaxVarP2
-      Parameter   ( MaxVarP2 = MaxVar +2 )
+      Integer       MaxVarP3
+      Parameter   ( MaxVarP3 = MaxVar +3 )
 
       Real          S(Maxniv), SH(Maxniv), Dlat(maxbin)
-      Integer       var(MaxVarP2),NVAR,NSIG
+      Integer       var(MaxVarP3),NVAR,NSIG
 
       Character*4   listvar(MaxVar)
       Integer       propvar(MaxVar), posvar(0:MaxVar)
@@ -266,7 +270,7 @@
             End If
 
 
-***   Lire LISTVAR. NV+2 pour l'etiquette.
+***   Lire LISTVAR. NV+3 pour l'etiquette.
 
               inf  = fstinf( IUN, NIC,NJC,NKC,
      +                            -1,'CONTROLE ',
@@ -285,7 +289,7 @@
              End Do
             Endif
 
-              If (NIC.gt.MaxVarP2 .or.iluk.lt.0)               Then
+              If (NIC.gt.MaxVarP3 .or.iluk.lt.0)               Then
                   Write(6,6002)
                   nil = exfin( 'LITZON','Erreur 2','NON' )
                   Call qqexit( 2 )
@@ -333,7 +337,8 @@
 
              call r4astrg (etik1, var(nvar+1),0,3)
              call r4astrg (etik2, var(nvar+2),0,3)
-             etikex = etik1//etik2
+             call r4astrg (etik3, var(nvar+3),0,3)
+             etikex = etik1//etik2//etik2
             print *,' ETIKEX=      ',etikex
 
 ***   ============================================================
@@ -488,7 +493,7 @@
      +       ' Maximum number exceeded sizes :',3I5)
  6012 Format(' mismatch between expected and real dimensions:',2I3)
  6013 Format(' Unable to read "SH" sigma levels in control file ')
- 6014 Format(' Nomber of hours save on diagnostics file' , I3)
+ 6014 Format(' Nomber of time samples saved on diagnostics file ',I3)
  6015 Format(' User requests closing of I/O unit ',I3,'error')
 
       End

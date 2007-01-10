@@ -7,6 +7,7 @@
       IMPLICIT NONE
 **
 *Auteur: G.Pellerin (AUG93)
+*         001 B.Dugas    (mar06) Declarations pour FSTD2000
 *
 *revision 001 G.PELLERIN -Dec93- Cle Tourne pour rotation de grille
 *                         
@@ -26,8 +27,8 @@
       Integer       ierr,ifrm,iecr,nil
       Integer       NIC,NJC,NKC
 **
-      Character     typvar*1,                nomvar*2,
-     +              etiket*8,                grtyp*1
+      Character     typvar*2,                nomvar*2,
+     +              etiket*12,               grtyp*1
 
       Integer       dateo,deet,npas,         datex,delt,npax,
      +              ip1,ip2,ip20,ip3,        datyp,nbits,npak,

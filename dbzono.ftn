@@ -3,7 +3,8 @@
 *                 
 *AUTEUR  G. PELLERIN - Janvier 93 - deballeur des diagnostics zonaux
 *     
-*REVISION AUCUNE
+*REVISION
+*         001 B.Dugas    (mar06) Declarations pour FSTD2000 (v3.3)
 *
 *LANGUAGE F77
 *
@@ -44,7 +45,7 @@
       IER = FNOM ( 6 , LFN(4) , 'SEQ' , 0 )                     
       ECHOZ = LFN(6).EQ.'OUI'                                  
 *                                                             
-      JUNK = EXDB ( 'DBZONO' , 'V3.2' ,  LFN(5) )            
+      JUNK = EXDB ( 'DBZONO' , 'V3.3' ,  LFN(5) )            
 *                                                           
 *                                                          
 *     INITIALISATION DU COMMON 'CTESCON'                       
