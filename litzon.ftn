@@ -22,6 +22,12 @@
 *                                dans le traitement de la variable etikex
 *                                De plus, Maxbin 256 --> 999
 *                                et       Maxniv  51 --> 999
+*         009 K.Winger   (Nov06) - Read variable names as characters (VC/)
+*                                  if they are not written as r4a (V/)
+*                                - Read first record found (not necessarily ip2=1)
+*                                - Do not write first record twice anymore
+*                                - Pass ip2 to debalzn instead of heusav
+*                                - Allow 4 character variables
 *
 *Language ftn77
 *
@@ -41,7 +47,8 @@
       Integer       ii,jj,kk,NIC,NJC,NKC
 **
       Character     typvar*2,etiket*12,grtyp*1,nomvar*2,
-     +              etikex*12,etik1*4,etik2*4,etik3*4
+     +              etikex*12,etik1*4,etik2*4,etik3*4,
+     +              etiket1*8,etiket2*4
 
       Integer       dateo,deet,npas,         
      +              ip1,ip2,ip20,ip3,        datyp,nbits,
@@ -56,6 +63,10 @@
       Integer       IUN,IDEU
       Logical       Debug,Tourne
 
+**    Variables needed to read variable names as characters
+
+      Logical       varchar
+
 ***    Declarations des variables statiques.
 
       Integer       Maxbin
@@ -64,13 +75,16 @@
       Integer       Maxniv,       MaxVar
       Parameter   ( Maxniv = 999, MaxVar = 256 )
 
+      Integer       MaxVarP2 
+      Parameter   ( MaxVarP2 = MaxVar +2 )
+
       Integer       MaxVarP3
       Parameter   ( MaxVarP3 = MaxVar +3 )
 
       Real          S(Maxniv), SH(Maxniv), Dlat(maxbin)
       Integer       var(MaxVarP3),NVAR,NSIG
 
-      Character*4   listvar(MaxVar)
+      Character*8   listvar(MaxVar)
       Integer       propvar(MaxVar), posvar(0:MaxVar)
 
       save          listvar,propvar,posvar,NVAR,NSIG
@@ -109,359 +123,376 @@
 *=====================================================================
 *---------------------------------------------------------------------
 ***
-***    Verifier que IUN fait reference a un fichier de 
-***                                                type valide. 
+***   Verifier que IUN fait reference a un fichier de type valide. 
 
-           inbr = fstnbr( IUN )
-           If (inbr.le. 0)                                  Then
-                  Write(6,6000)
-                  nil = exfin( 'LITZON','Erreur 0','NON' )
-                  Call qqexit( 0 )
-           End If
+      inbr = fstnbr( IUN )
+      If (inbr.le. 0)                                  Then
+        Write(6,6000)
+        nil = exfin( 'LITZON','Erreur 0','NON' )
+        Call qqexit( 0 )
+      End If
 
-***    Ouvrir le fichier.
+***   Ouvrir le fichier.
 
-              inbr = fstouv( IUN, 'RND' )
+      inbr = fstouv( IUN, 'RND' )
 
-***    Lire l'information de controle se trouvant dans IUN.
+***   Lire l'information de controle se trouvant dans IUN.
 
-              inf  = fstinf( IUN,    NIC,NJC,NKC,
-     +                               -1,'CONTROLE',
-     +                               -1,-1,-1,
-     +                               '+','T/' )
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,'CONTROLE',
+     +               -1,-1,-1,'+','T/' )
 
-              if (inf .ge. 0) then
-                iluk = fstluk( tabctl, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+      if (inf .ge. 0) then
+        iluk = fstluk( tabctl, inf, NIC,NJC,NKC )
+      else
+        iluk = inf
+      endif
                  
-              if (NIC*NJC*NKC .ne. NombreC .or.
-     +            iluk        .lt. 0       )                   Then
-                  Write(6,6001) NIC,NJC,NKC
-                  nil = exfin( 'LITZON','Erreur 1','NON' )
-                  Call qqexit( 1 )
-              End If
+      if (NIC*NJC*NKC .ne. NombreC .or. 
+     +    iluk        .lt. 0       )                   Then
+        Write(6,6001) NIC,NJC,NKC
+        nil = exfin( 'LITZON','Erreur 1','NON' )
+        Call qqexit( 1 )
+      End If
   
-***     Lire tous les parametres du fichier standard de controle.
+***   Lire tous les parametres du fichier standard de controle.
 
-              iprm  = fstprm( inf,
-     +                        dateo,deet,npas, NIC,NJC,NKC,
-     +                        nbits,datyp,    ip1,ip20,ip3,
-     +                        typvar,nomvar,etiket,
-     +                        grtyp,ig1,ig2,ig3,ig4,
-     +                        swa,lng,dltf,ubc,
-     +                        extra1,extra2,extra3)
+      iprm  = fstprm( inf,
+     +                dateo,deet,npas, NIC,NJC,NKC,
+     +                nbits,datyp,    ip1,ip20,ip3,
+     +                typvar,nomvar,etiket,
+     +                grtyp,ig1,ig2,ig3,ig4,
+     +                swa,lng,dltf,ubc,
+     +                extra1,extra2,extra3)
  
 ***   Declarer les variables de controle du fichier source.
-            NDELTAT= tabctl(1) 
-             DELTAT= tabctl(2)
-               MODE= tabctl(3)
-                 NI= tabctl(4)
-                 NJ= tabctl(5)
-                 NK= tabctl(6)
-               NBIN= tabctl(7)
-              SOMNK= tabctl(8)
-             LATMIN= tabctl(10)
-                ROT= tabctl(11)
-*              VIDE= tabctl(12)
+      NDELTAT = tabctl(1) 
+       DELTAT = tabctl(2)
+         MODE = tabctl(3)
+           NI = tabctl(4)
+           NJ = tabctl(5)
+           NK = tabctl(6)
+         NBIN = tabctl(7)
+        SOMNK = tabctl(8)
+       LATMIN = tabctl(10)
+          ROT = tabctl(11)
+*        VIDE = tabctl(12)
 
 ***   Imprimer la table de controle du fichier source.
-            print *,'LITZON - table de controle'
-            print *,'=========================='
-            print *,'NDELTAT=', tabctl(1) 
-            print *,' DELTAT=', tabctl(2)
-            print *,'   MODE=', tabctl(3)
-            print *,'     NI=', tabctl(4)
-            print *,'     NJ=', tabctl(5)
-            print *,'     NK=', tabctl(6)
-            print *,'   NBIN=', tabctl(7)
-            print *,'  SOMNK=', tabctl(8)
-            print *,' LATMIN=', tabctl(10)
-            print *,'    ROT=', tabctl(11)
-*           print *,'   VIDE=', tabctl(12)
-            print *,'=========================='
+      print *,'LITZON - table de controle'
+      print *,'=========================='
+      print *,'NDELTAT=', tabctl(1) 
+      print *,' DELTAT=', tabctl(2)
+      print *,'   MODE=', tabctl(3)
+      print *,'     NI=', tabctl(4)
+      print *,'     NJ=', tabctl(5)
+      print *,'     NK=', tabctl(6)
+      print *,'   NBIN=', tabctl(7)
+      print *,'  SOMNK=', tabctl(8)
+      print *,' LATMIN=', tabctl(10)
+      print *,'    ROT=', tabctl(11)
+*     print *,'   VIDE=', tabctl(12)
+      print *,'=========================='
 
 ***   Lire les angles selon longitudes du modele SEF
 
-           Tourne = .TRUE.
-            Do jj=1,Maxbin
-             Dlat(jj)=0.
-            End DO
+      Tourne = .TRUE.
+      Do jj=1,Maxbin
+        Dlat(jj)=0.
+      End DO
 
-             inf  = fstinf( IUN,    NIC,NJC,NKC,
-     +                               -1,' ',
-     +                               -1,-1,-1,
-     +                               '+','L^'  )
-              if (inf .ge. 0) then
-                iluk = fstluk( Dlat, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,' ',
+     +               -1,-1,-1,'+','L^'  )
+      if (inf .ge. 0) then
+        iluk = fstluk( Dlat, inf, NIC,NJC,NKC )
+      else
+        iluk = inf
+      endif
 
-*      ne sont ecrits que pour le modele sef  
-            If (Debug)                                         Then
-             print *,'theta =',(Dlat(ii),ii=1,NIC)
-            End If
+*     ne sont ecrits que pour le modele sef  
+      If (Debug)                                         Then
+        print *,'theta =',(Dlat(ii),ii=1,NIC)
+      End If
 
-           If(iluk  .ge. 0       )                           Then
-              Tourne = .FALSE.
+      If(iluk  .ge. 0       )                            Then
+        Tourne = .FALSE.
   
-              If (NIC*NJC*NKC .gt. Maxbin  )                 Then
-                  Write(6,6010) NIC,NJC,NKC
-                  nil = exfin( 'LITZON','Erreur 10','NON' )
-                  Call qqexit( 10 )
-              End If
-           End If
+        If (NIC*NJC*NKC .gt. Maxbin  )                   Then
+          Write(6,6010) NIC,NJC,NKC
+          nil = exfin( 'LITZON','Erreur 10','NON' )
+          Call qqexit( 10 )
+        End If
+      End If
      
 ***   Lire les niveaux sigma du modele                       
 
-              inf  = fstinf( IUN,    NIC,NJC,NKC,
-     +                               -1,' ',
-     +                               -1,-1,-1,
-     +                               '+','S^'  )
-              if (inf .ge. 0) then
-                iluk = fstluk( S, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,' ',
+     +               -1,-1,-1, '+','S^'  )
+      if (inf .ge. 0) then
+        iluk = fstluk( S, inf, NIC,NJC,NKC )
+      else
+        iluk = inf
+      endif
 
-              if (NIC*NJC*NKC .gt. Maxniv .or.
-     +            iluk        .lt. 0       )                   Then
-                  Write(6,6011) NIC,NJC,NKC
-                  nil = exfin( 'LITZON','Erreur 11','NON' )
-                  Call qqexit( 11 )
-              End If
+      if (NIC*NJC*NKC .gt. Maxniv .or.
+     +    iluk        .lt. 0         )                   Then
+        Write(6,6011) NIC,NJC,NKC
+        nil = exfin( 'LITZON','Erreur 11','NON' )
+        Call qqexit( 11 )
+      End If
 
 ***   Check si conforme au nombre dans table d'information 
  
-            NSIG  = NIC
-            KA    = NK-1
+      NSIG  = NIC
+      KA    = NK-1
 
-              if (NSIG .ne. NK)                                Then 
-                  Write(6,6012) NSIG,NK
-                  nil = exfin( 'LITZON','Erreur 12','NON' )
-                  Call qqexit( 12 )
-              End If
+      if (NSIG .ne. NK)                                  Then 
+        Write(6,6012) NSIG,NK
+        nil = exfin( 'LITZON','Erreur 12','NON' )
+        Call qqexit( 12 )
+      End If
 
 ***   Lire  les niveaux intermediaires sinon les calcules
 
-              inf  = fstinf( IUN,    NIC,NJC,NKC,
-     +                               -1,' ',
-     +                               -1,-1,-1,
-     +                               '+','SH' )
-              If ( inf.lt. 0)                                  Then
-                  CALL SETUVD0 (SH, .TRUE., S, NSIG, KA)
-                  Write(6,6013)
-              Else
-                  iluk = fstluk( SH, inf, NIC,NJC,NKC )
-              End If
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,' ',
+     +               -1,-1,-1, '+','SH' )
+      If ( inf.lt. 0)                                    Then
+        CALL SETUVD0 (SH, .TRUE., S, NSIG, KA)
+        Write(6,6013)
+      Else
+        iluk = fstluk( SH, inf, NIC,NJC,NKC )
+      End If
 
-            If (Debug)                                         Then
-             print *,'sigma =',(SH(ii),ii=1,NSIG)
-            End If
+      If (Debug)                                         Then
+        print *,'sigma =',(SH(ii),ii=1,NSIG)
+      End If
 
 ***   Triller par ordre decroissant ...modele coord sigma
 
-        CALL BSORT(S,NSIG)
+      CALL BSORT(S,NSIG)
             
-            If (Debug)                                         Then
-             print *,'sigma =',(S(ii),ii=1,NSIG)
-            End If
+      If (Debug)                                         Then
+        print *,'sigma =',(S(ii),ii=1,NSIG)
+      End If
 
 
 ***   Lire LISTVAR. NV+3 pour l'etiquette.
 
-              inf  = fstinf( IUN, NIC,NJC,NKC,
-     +                            -1,'CONTROLE ',
-     +                            ip1,ip20,ip3,
-     +                            '+','V/' )
-              if (inf .ge. 0) then
-                iluk = fstluk( var, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+      varchar = .false.
 
-            If (Debug)                                         Then
-             nic=nic/4
-             Do kk=1,NIC 
-             print *,'var = ',var(kk)
-             End Do
-            Endif
+***   Read variable names as characters (datyp = 7)
 
-              If (NIC.gt.MaxVarP3 .or.iluk.lt.0)               Then
-                  Write(6,6002)
-                  nil = exfin( 'LITZON','Erreur 2','NON' )
-                  Call qqexit( 2 )
-              End If
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,'CONTROLE ',
+     +               ip1,ip20,ip3, '+','VC/' )
+        
+      if (inf .ge. 0) then
+
+         iluk = fstluk( listvar, inf, NIC,NJC,NKC )
+         NVAR = (NIC/8)-2
+
+         varchar = .true.
+
+      else
+
+***     Read variable names as r4a format (datyp = 3)
+
+        inf  = fstinf( IUN, NIC,NJC,NKC, -1,'CONTROLE ',
+     +                 ip1,ip20,ip3, '+','V/' )
+
+        if (inf .ge. 0) then
+           iluk = fstluk( var, inf, NIC,NJC,NKC )
+           NVAR  = NIC/4 - 3
+        else
+           iluk = inf
+        endif
+
+      endif
+
+      If (Debug)                                         Then
+        nic=nic/4
+        Do kk=1,NIC 
+          print *,'var = ',var(kk)
+        End Do
+      Endif
+
+      If (NIC.gt.MaxVarP3 .or.iluk.lt.0)               Then
+        Write(6,6002)
+        nil = exfin( 'LITZON','Erreur 2','NON' )
+        Call qqexit( 2 )
+      End If
 
 ***   Lire POSVAR. NV+1 est contenu dans NIC.
 
-              inf  = fstinf( IUN, NIC,NJC,NKC,
-     +                            -1,'CONTROLE ',
-     +                            ip1,ip20,ip3,
-     +                            '+','P/' )
-              if (inf .ge. 0) then
-                iluk = fstluk( posvar, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+      inf  = fstinf( IUN, NIC,NJC,NKC, -1,'CONTROLE ',
+     +               ip1,ip20,ip3, '+','P/' )
+
+      if (inf .ge. 0) then
+        iluk = fstluk( posvar, inf, NIC,NJC,NKC )
+      else
+        iluk = inf
+      endif
 
 
-              If (NIC .gt. MaxVar .or. iluk.lt.0)              Then
-                  Write(6,6003)
-                  nil = exfin( 'LITZON','Erreur 3','NON' )
-                  Call qqexit( 3 )
-              End If
+      If (NIC .gt. MaxVar .or. iluk.lt.0)              Then
+        Write(6,6003)
+        nil = exfin( 'LITZON','Erreur 3','NON' )
+        Call qqexit( 3 )
+      End If
 
 ***   Imprime la liste des variables extraites dans modele.
 
-            NVAR  = NIC -1
-             print *,'NVAR= ',NVAR
+      print *,'NVAR= ',NVAR
 
-            posvar(0) = 1
+      posvar(0) = 1
 
-          print *,'LITZON - Liste de variables '
-          print *,'============================'
-          Do II=1,NVAR
-**           print *,'var = ',var(ii)
-             call r4astrg (listvar(II),var(II),0,3)
-             propvar(ii) = 0
-             if(listvar(ii)(1:1) .eq. '.') propvar(ii) = 1
-            print *,listvar(II),propvar(II),posvar(II)
-          End Do
-          print *,'============================='
+      print *,'LITZON - Liste de variables '
+      print *,'============================'
+      Do II=1,NVAR
+        if (.not.varchar) call r4astrg (listvar(II),var(II),0,3)
+        propvar(ii) = 0
+        if(listvar(ii)(1:1) .eq. '.') propvar(ii) = 1
+        print *,listvar(II),propvar(II),posvar(II)
+      End Do
+      print *,'============================='
 
 *  conversion d'entier a characteres pour la tikette
 *  remplacer write(etikex,'(a4,a4)')tabctl(11),tabctl(12)
 
-             call r4astrg (etik1, var(nvar+1),0,3)
-             call r4astrg (etik2, var(nvar+2),0,3)
-             call r4astrg (etik3, var(nvar+3),0,3)
-             etikex = etik1//etik2//etik2
-            print *,' ETIKEX=      ',etikex
+      if (varchar) then
+        etiket1 = listvar(nvar+1)
+        etiket2 = listvar(nvar+2)
+        etikex = etiket1//etiket2
+      else  
+        call r4astrg (etik1, var(nvar+1),0,3)
+        call r4astrg (etik2, var(nvar+2),0,3)
+        call r4astrg (etik3, var(nvar+3),0,3)
+        etikex = etik1//etik2//etik3
+      endif
+      print *,' ETIKEX=      ',etikex
 
 ***   ============================================================
 ***        de l'information a stoker  pour le graphisme
 ***   ============================================================
 
-        CALL WRITLZN(IDEU,S,SH,NSIG,tabctl,NombreC,
-     +                   dateo,deet,npas,etikex,
-     +                   Dlat,NBIN,Tourne )
+      CALL WRITLZN(IDEU,S,SH,NSIG,tabctl,NombreC,
+     +             dateo,deet,npas,etikex,
+     +             Dlat,NBIN,Tourne )
 
 ***   Allocation dynamique Somx et Somx2 (nbin,somnk)
 
 
-              If (mod(MODE,2).eq.1)
-     +        Call hpalloc( psomx,    SOMNK*NBIN,    errcod,1 )
+      If (mod(MODE,2).eq.1)
+     +  Call hpalloc( psomx,    SOMNK*NBIN,    errcod,1 )
 
-              If (MODE.ge.2)
-     +        Call hpalloc( psomx2,   SOMNK*NBIN,    errcod,1 )
+      If (MODE.ge.2)
+     +  Call hpalloc( psomx2,   SOMNK*NBIN,    errcod,1 )
 
-              Call hpalloc( ptemp,    SOMNK*NBIN,    errcod,1 )
+        Call hpalloc( ptemp,    SOMNK*NBIN,    errcod,1 )
             
 ***   ===============================================================
 ***     Boucle sur les periodes sauvegardees
 ***   ===============================================================
 
-       heusav = 0
-       ip2    = 1
+      heusav = 0
+      ip2    = -1
 *                    ip2=1 comme si 0 heure (sauve au pas 1)
 *                 si ip2=0 alors on doit sauver au pas 0 dans mzonxst      
-100    CONTINUE
+100   CONTINUE
 
 ***   Lire Somx et Somx2 (nbin,somnk)
 
-           If (mod(MODE,2).eq.1)                        Then
+      If (mod(MODE,2).eq.1)                               Then
 
-              inf  = fstinf( IUN, NIC,NJC,NKC,
-     +                            -1,'MZONXST ',
-     +                            ip1,ip2,ip3,
-     +                            '+','1/' )
+        inf  = fstinf( IUN, NIC,NJC,NKC, -1,'MZONXST ',
+     +                 ip1,ip2,ip3, '+','1/' )
 
-           If ( inf .lt. 0  ) GoTo 200
+        If ( inf .lt. 0  ) GoTo 200
 
 ***   Lire tous les parametres du fichier standard de controle.
 
-              iprm  = fstprm( inf,
-     +                        dateo,deet,npas, NIC,NJC,NKC,
-     +                        nbits,datyp,    ip1,ip20,ip3,
-     +                        typvar,nomvar,etiket,
-     +                        grtyp,ig1,ig2,ig3,ig4,
-     +                        swa,lng,dltf,ubc,
-     +                        extra1,extra2,extra3)
+        iprm  = fstprm( inf,
+     +                  dateo,deet,npas, NIC,NJC,NKC,
+     +                  nbits,datyp,    ip1,ip20,ip3,
+     +                  typvar,nomvar,etiket,
+     +                  grtyp,ig1,ig2,ig3,ig4,
+     +                  swa,lng,dltf,ubc,
+     +                  extra1,extra2,extra3)
 
-            print *,'litzon - apres lecture SOMX - ip2 = ',ip20
+        print *,'litzon - apres lecture SOMX - ip2 = ',ip20
+        ip2 = ip20
 
-      If (Debug)                                         Then
+        If (Debug)                                         Then
           print *,'nic,njc,nkc            = ',nic,njc,nkc
           print *,'nbits,datyp            = ',nbits,datyp
           print *,'ip1,ip20,ip3           = ',ip1,ip20,ip3
           print *,'typvar,nomvar,etiket   = ',typvar,nomvar,etiket
-      Endif  
+        Endif  
 
-              if (inf .ge. 0) then
-                iluk = fstluk( somx, inf, NIC,NJC,NKC )
-              else
-                iluk = inf
-              endif
+        if (inf .ge. 0) then
+          iluk = fstluk( somx, inf, NIC,NJC,NKC )
+        else
+          iluk = inf
+        endif
 
-              If( iluk .lt. 0  .and. heusav .eq. 0 )           Then
-                  Write(6,6008) NIC,NJC,NKC
-                  nil = exfin( 'LITZON','Erreur 8','NON' )
-                  Call qqexit( 8 )
-              End If
+        If ( iluk .lt. 0  .and. heusav .eq. 0 )            Then
+          Write(6,6008) NIC,NJC,NKC
+          nil = exfin( 'LITZON','Erreur 8','NON' )
+          Call qqexit( 8 )
+        End If
 
+      End If
 
-           End If
+      If (MODE.ge.2)                                       Then
 
-           If (MODE.ge.2)                               Then
+        inf  = fstinf( IUN, NIC,NJC,NKC, -1,'MZONXST ',
+     +                 ip1,ip2,ip3, '+','2/' )
 
-              inf  = fstinf( IUN, NIC,NJC,NKC,
-     +                            -1,'MZONXST ',
-     +                            ip1,ip2,ip3,
-     +                            '+','2/' )
+        If ( inf .lt. 0  ) GoTo 200
 
-           If ( inf .lt. 0  ) GoTo 200
+        iluk = fstluk( somx2, inf, NIC,NJC,NKC )
 
-              iluk = fstluk( somx2, inf, NIC,NJC,NKC )
-
-              If( iluk .lt. 0  .and. heusav .eq. 0 )           Then
-                  Write(6,6009) NIC,NJC,NKC
-                  nil = exfin( 'LITZON','Erreur 9','NON' )
-                  Call qqexit( 9 )
-              End If
+        If ( iluk .lt. 0  .and. heusav .eq. 0 )            Then
+          Write(6,6009) NIC,NJC,NKC
+          nil = exfin( 'LITZON','Erreur 9','NON' )
+          Call qqexit( 9 )
+        End If
 
 
-           End If
+      End If
 
 ***   ============================================================
 ***       deballage de l'information stoker 
 ***   ============================================================
 
 
-        CALL DEBALZN (SH,S,listvar,propvar,posvar,NombreC,
-     +                KA,NSIG,NVAR,somx,somx2,temp,NBIN,SOMNK,Dlat, 
-     +                dateo,deet,npas,etikex,heusav,Tourne,Debug )
+      heusav= heusav + 1
 
-          heusav= heusav + 1
-          ip2 = heusav*NDELTAT
-          goto 100
+      CALL DEBALZN (SH,S,listvar,propvar,posvar,NombreC,
+     +              KA,NSIG,NVAR,somx,somx2,temp,NBIN,SOMNK,Dlat, 
+     +              dateo,deet,npas,etikex,ip2,Tourne,Debug )
+
+
+      if (ip2 .eq. 1 .and. NDELTAT .ne. 1 ) then
+        ip2 = ip2 + NDELTAT - 1
+      else
+        ip2 = ip2 + NDELTAT
+      endif
+
+      goto 100
 **        
 200   CONTINUE
 
-          Write(6,6014) heusav
-          ierr = heusav
+      Write(6,6014) heusav
+      ierr = heusav
 
 ***   Fermer le fichier IUN
 
-           inbr = fstfrm(IUN)
+      inbr = fstfrm(IUN)
 
-           If (inbr.lt. 0)                                  Then
-                  Write(6,6015)
-                  nil = exfin( 'LITZON','Erreur 15','NON' )
-                  Call qqexit( 15 )
-           End If
+      If (inbr.lt. 0)                                      Then
+        Write(6,6015)
+        nil = exfin( 'LITZON','Erreur 15','NON' )
+        Call qqexit( 15 )
+      End If
 
       Return
 
@@ -474,7 +505,7 @@
  6000 Format(' File xxxxxx is empty according to fstnbr.')
  6001 Format(' Unable to read "T/" control table or',
      +       ' Incorrect control table sizes :',3I5)
- 6002 Format(' Unable to read "V/" variable list or',
+ 6002 Format(' Unable to read "V/" resp. "VC/" variable list or',
      +       ' mismatch between expected and real dimensions.')
  6003 Format(' Unable to read "P/" variable list or',
      +       ' mismatch between expected and real dimensions.')

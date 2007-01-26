@@ -18,6 +18,8 @@
 *         006 G.PELLERIN -Jan95- Enlever routine zonfin (phys3.11)
 *         007 G.PELLERIN -Jan95- Traitement du carre des variables 
 *         008 G.PELLERIN -Avril(2000) Common zontab pour tabctl     
+*         009 K.WINGER   -Nov06- NDELTAT*heusav -> heusav
+*                              - Allow 4 character variables
 * 
 *Language ftn77
 *
@@ -34,7 +36,7 @@
       Integer       ierr,ifrm,iecr,nil
       Integer       ii,jj,kk,NIC,NJC,NKC
 **
-      Character     typvar*2, sqrvar*1,        nomvar*2,
+      Character     typvar*2, sqrvar*1,        nomvar*4,
      +              etiket*(*),                grtyp*1
 
       Integer       dateo,deet,npas,         datex,delt,npax,
@@ -66,7 +68,7 @@
       Real          S(NSIG),SH(NSIG)
       Real          theta(NBANDE)   
 
-      Character*4   listvar(NVAR)
+      Character*8   listvar(NVAR)
       Integer       propvar(NVAR), posvar(0:NVAR)
 
       Integer       NombreC 
@@ -113,7 +115,18 @@
 ***   ========================================
       posvar(0) = 1
       Do II=1,NVAR
-                 nomvar = listvar(II)(2:3) 
+          nomvar = listvar(II)(2:3) 
+          if ((listvar(II)(4:4) .ge. '0' .and. listvar(II)(4:4) .le. '9' ) .or.
+     +        (listvar(II)(4:4) .ge. 'A' .and. listvar(II)(4:4) .le. 'Z' ) .or.
+     +        (listvar(II)(4:4) .ge. 'a' .and. listvar(II)(4:4) .le. 'z' )) then
+            nomvar(3:3) = listvar(II)(4:4)
+            if ((listvar(II)(5:5) .ge. '0' .and. listvar(II)(5:5) .le. '9' ) .or.
+     +          (listvar(II)(5:5) .ge. 'A' .and. listvar(II)(5:5) .le. 'Z' ) .or.
+     +          (listvar(II)(5:5) .ge. 'a' .and. listvar(II)(5:5) .le. 'z' )) then
+              nomvar(4:4) = listvar(II)(5:5)
+            endif
+          endif
+
                    if(Debug) then
                    print *,'nom= ',nomvar
                    Endif
@@ -127,11 +140,11 @@
 
                  ip1  = 0 
                    if(Lon.gt.1)  ip1 = 1
-                 ip2  = NDELTAT*heusav/(3600/DELTAT)
-                 ip3  = NDELTAT*heusav
+                 ip2  = heusav/(3600/DELTAT)
+                 ip3  = heusav
 
                IG1  = NINT(DLAT*100)
-               ig2  = max(NDELTAT*heusav-NDELTAT,0) 
+               ig2  = max(heusav-NDELTAT,0) 
                     if(propvar(ii).eq.1) ig2 = 0 
                ig3  = (90.+ LATMIN)*100
                IG3  = NINT((90.+LATMIN+0.5*DLAT)*100)

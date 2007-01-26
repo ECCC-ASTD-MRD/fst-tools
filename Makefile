@@ -50,7 +50,7 @@ setuvd0.o: setuvd0.ftn
 writlzn.o: writlzn.ftn 
 
 absolu: $(OBJECTS) 
-	r.build -o dbzono -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -librmn rmn_rc008
+	r.build -o dbzono -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

@@ -5,6 +5,7 @@
 *     
 *REVISION
 *         001 B.Dugas    (mar06) Declarations pour FSTD2000 (v3.3)
+*         002 K.Winger   (nov06) Support de variables *4    (v3.4)
 *
 *LANGUAGE F77
 *
@@ -45,7 +46,7 @@
       IER = FNOM ( 6 , LFN(4) , 'SEQ' , 0 )                     
       ECHOZ = LFN(6).EQ.'OUI'                                  
 *                                                             
-      JUNK = EXDB ( 'DBZONO' , 'V3.3' ,  LFN(5) )            
+      JUNK = EXDB ( 'DBZONO' , 'V3.4' ,  LFN(5) )            
 *                                                           
 *                                                          
 *     INITIALISATION DU COMMON 'CTESCON'                       
