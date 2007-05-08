@@ -33,7 +33,8 @@ C*DECK FSTCOMP
 * 021 V7.3 (M. Lepine, Mars 2005) Ajout de la fonctionnalite des fichiers remote
 * 022 V7.4 (M. Lepine, Fev  2006) Appel a ip1_all 
 * 023 V7.5 (M. Lepine, Mai  2006) Reload, bug fix float_packer 
-* 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant 
+* 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant
+* 025 V7.7 (M. Lepine, Fev. 2007) Comparaison avec l'erreur du a l'algorithme de compaction 
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -48,11 +49,11 @@ C*DECK FSTCOMP
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
       CHARACTER*4  NOMVAR, NOMVAB
-      CHARACTER*8  CLE(20)
+      CHARACTER*8  CLE(21)
       CHARACTER*12 ETIKET, ETIKB
       CHARACTER*12 NOMA, NOMB, NOMC
       CHARACTER*40  NA, NB
-      CHARACTER*128 DEF1(20), DEF2(20), NOMD
+      CHARACTER*128 DEF1(21), DEF2(21), NOMD
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT,
      X        P1, P2, P3, TN ,T
@@ -64,7 +65,7 @@ C*DECK FSTCOMP
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
      X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
      X        TABLO(0:6,0:6)
-      integer ier, kind, ip1_all
+      integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2
       real Level
       character *30 string
       REAL *8 NHOURS
@@ -73,15 +74,15 @@ C*DECK FSTCOMP
       INTEGER      BUF
       DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
-     X           'N1',  'N2',  'N3',  'NN',  'X'/
+     X           'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR' /
 
       DATA DEF1 /'A', 'B', '$OUT', 'NON', 'NON', 'NON', 'NON', '-7',
      X           'NON', 'NON', 'WARNIN', 'NON', 'NON', 'NON', 'NON',
-     X           'NON', 'NON', 'NON', 'NON', 'X'/
+     X           'NON', 'NON', 'NON', 'NON', 'X', '0'/
 
       DATA DEF2 /'A', 'B', '$OUT', 'SQI', 'SQI', 'FTN', 'FTN', '-7',
      X           'OUI', 'OUI', 'INFORM', 'OUI', 'VA',  'VB',  'OUI',
-     X           'OUI', 'OUI', 'OUI', 'OUI', 'X'/
+     X           'OUI', 'OUI', 'OUI', 'OUI', 'X', '1'/
 
       DATA       N, NOMVAB, TYPVAB, ETIKB, IDATE, IP1B, IP2B, IP3B
      X         / 0, ' ',    ' ',    ' ',   4*-1/
@@ -105,12 +106,13 @@ C*ENDIF
 *     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
 
       I = -1
-      CALL CCARD(CLE, DEF2, DEF1, 20, I)
+      CALL CCARD(CLE, DEF2, DEF1, 21, I)
       DO 1 I=4,11
          CALL LOW2UP(DEF1(I), DEF1(I))
     1    CONTINUE
       READ(DEF1(8), '(I8)') LIMITE
-
+      READ(DEF1(21),'(I8)') PACK_ERR 
+      
       VA = DEF1(13) .NE. 'NON'
       IF(VA .AND. (DEF1(13).NE.'VA')) DEF1(1) = DEF1(13)
       VB = DEF1(14) .NE. 'NON'
@@ -154,9 +156,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V7.6  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V7.7  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V7.6', 'NON')
+         L = EXDB('FSTCOMP', 'V7.7', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -214,7 +216,12 @@ C*ENDIF
          IF(N2 .EQ. 0) GOTO 80
       ENDIF
 
-      WRITE(6,600)
+*     ECRIRE L'ENTETE DE PAGE
+      IF (PACK_ERR .eq. 0) THEN      
+         WRITE(6,600)
+      ELSE
+         WRITE(6,700)
+      ENDIF
 *     RESERVE LA MEMOIRE
       IF(AS .OR. AF) THEN
          L  = FSTRWD(1)
@@ -298,12 +305,18 @@ C*ENDIF
 *     TOUT EST OK LIT ET COMPARE
       L = FSTLUK(BUF(X1), KA, NI, NJ, NK)
       L = FSTLUK(BUF(X2), KB, NI, NJ, NK)
+      IF ((mod(DATYPA,128) .ne. 1) .and. (mod(DATYPA,128) .ne. 6)) THEN
+        PACK_ERR2 = 0
+      ELSE
+        PACK_ERR2 = PACK_ERR
+      ENDIF
+      IF ((mod(DATYPA,128) .gt. 6).or.(mod(DATYPB,128) .gt. 6)) goto 30
       GO TO (40, 50, 30) TABLO(mod(DATYPA,128),mod(DATYPB,128))
   30  WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',DATYPA,
      X                                    ' DATYPB=',DATYPB
       GO TO 60
   40  CALL RCMP1D(BUF(X1), BUF(X2), N, 6, KA, KB, NOMVAR, ETIKB,
-     X            IP1, IP2, IP3, LIMITE)
+     X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2)
       GO TO 60
   50  CALL ICMP1D(BUF(X1), BUF(X2), N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3)
@@ -349,16 +362,24 @@ C*ENDIF
      X       ' ',A40,' GRTYP IG1@4=', A1,1X, 4I4)
   603 FORMAT(2I6,A4,' -LES DIMENSIONS TROUVEES SONT',3I5,
      %       ' CHERCHE',3I5)
+     
+  700 FORMAT('  NOM    ETIKET        IP1',
+     X       '           IP2 IP3 E-REL-MAX',
+     X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
+     X       '        BIAIS      E-MAX      E-MOY     TOLERANCE')
+
+     
       STOP
       END
 C*DECK RCMP1D
 ***S/P RCMP1D  COMPARAISON DE DEUX CHAMPS REELS DE UNE DIMENSION
 *
       SUBROUTINE RCMP1D(A, B, N, IUN, NUMA, NUMB, NOMVAR, ETIKET, IP1,
-     X                  IP2, IP3, LIMITE)
+     X                  IP2, IP3, LIMITE, NBITS, PACK_ERR)
 
       IMPLICIT NONE
-      INTEGER  N, IUN, LIMITE, NUMA, NUMB, IP1, IP2, IP3
+      INTEGER  N, IUN, LIMITE, NUMA, NUMB, IP1, IP2, IP3, NBITS
+      INTEGER  PACK_ERR
       CHARACTER*12 ETIKET
       CHARACTER*4 NOMVAR
       REAL     A(N), B(N), MAXABS, SUMABS, ERRABS
@@ -376,14 +397,20 @@ C*DECK RCMP1D
 *   "    ETIKET  ETIKET DU CHAMP A COMPARER
 *   "    IP1@3   PARAMETRES DE SELECTION
 *   "    LIMITE  ERREUR MAXIMUM TOLOREE
+*   "    NBITS   NOMBRE DE BITS UTILISE POUR LE PACKING
+*   "    PACK_ERR NOMBRE D'UNITE D'ERREUR DU A L'ALGORITHME DE PACKING
+*                 A UTILISER POUR DETERMINER SI "A" COMPARE A "B"
 **
-      INTEGER   I, kind
+      INTEGER   I, kind, irange
       CHARACTER*15 Level
       REAL      rlevel
       REAL*8    SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR,
      X          AA, BB, FN, ERRLIM, VARA, VARB, SAB
+      REAL MIN_A, MAX_A, MIN_B, MAX_B, RANGE_A, RANGE_B, DEUX_EXP_NB
+      REAL ERR_UNIT
 
       ERRLIM = 10.**LIMITE
+      DEUX_EXP_NB = 2.0 ** NBITS
       SA     = 0.
       SB     = 0.
       SAB    = 0.
@@ -393,9 +420,17 @@ C*DECK RCMP1D
       ERR    = 0.
       SUMABS = 0.
       MAXABS = 0.
+      MIN_A = A(1)
+      MAX_A = A(1)
+      MIN_B = B(1)
+      MAX_B = B(1)
       DO 10 I=1,N
          AA     = A(I)
          BB     = B(I)
+         MIN_A = MIN(MIN_A,A(I))
+         MAX_A = MAX(MAX_A,A(I))
+         MIN_B = MIN(MIN_B,B(I))
+         MAX_B = MAX(MAX_B,B(I))
          SA     = SA+AA
          SB     = SB+BB
          IF(AA .NE. BB) THEN
@@ -415,6 +450,11 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
          ENDIF
    10    CONTINUE
 
+      RANGE_A = MAX_A - MIN_A
+      RANGE_B = MAX_B - MIN_B
+      irange = TRANSFER(RANGE_A,1)
+      irange = ISHFT(ISHFT(irange,-23) +1,23)
+      RANGE_A = TRANSFER(irange,1.0)
       FN   = FLOAT(N)
       ERR  = ERR/FN
       ABAR = SA/FN
@@ -428,6 +468,7 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
       SUMABS = SUMABS/FN
       VARA   = SA2/FN
       VARB   = SB2/FN
+      print *,'sab avant=',sab
       IF(SA2*SB2 .NE. 0.) THEN
          SAB    = SAB/SQRT(SA2*SB2)
       ELSEIF(SA2.EQ.0. .AND. SB2.EQ.0.) THEN
@@ -437,16 +478,28 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
       ELSE
          SAB = SQRT(VARA)
       ENDIF
+      print *,'Debug+ sa2, sb2, sab=',sa2,sb2,sab
       CALL convip(ip1,rlevel,kind,-1,level,.true.)
-      IF(ERRMAX .LE. ERRLIM) THEN
+      ERR_UNIT = RANGE_A / DEUX_EXP_NB
+      
+      IF ((ERRMAX .LE. ERRLIM) .and. (PACK_ERR .eq.0)) THEN
          WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
+      ELSE IF (PACK_ERR .gt. 0) THEN
+         IF (MAXABS .le. (PACK_ERR*ERR_UNIT*1.001)) THEN
+           WRITE(IUN,602) NOMVAR, ETIKET, level, IP2, IP3,
+     X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
+     X                  MAXABS, SUMABS, PACK_ERR*ERR_UNIT
+         ELSE       
+            WRITE(IUN,603) NOMVAR, ETIKET, level, IP2, IP3,
+     X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
+     X                  MAXABS, SUMABS, PACK_ERR*ERR_UNIT
+         ENDIF
       ELSE
          WRITE(IUN,601) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
-
       ENDIF
 
 *  600 FORMAT('  CLEA CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
@@ -456,6 +509,10 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
   601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
+  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
+     X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
+  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 4(1X,1PE10.4),
+     X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
 
       RETURN
       END
