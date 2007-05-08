@@ -11,6 +11,7 @@ FFLAGS =
 CFLAGS =
 
 OPTIMIZ = -O 2
+#OPTIMIZ = -debug
 
 default: absolu
 
@@ -98,14 +99,13 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
 ip1equiv.o:    ip1equiv.ftn
 
 absolu: $(OBJECTS)
-#r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_008
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_rc009
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
 
-editfst__: $(OBJECTS)
-	r.build -debug -o editfst__  -obj $(OBJECTS) /users/dor/armn/lib/OBJ/Linux/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+editfst+: $(OBJECTS)
+	r.build -o editfst+ -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
