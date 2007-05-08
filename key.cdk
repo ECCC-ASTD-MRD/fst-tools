@@ -1,4 +1,5 @@
-      COMMON /KEY/   KLE(145), DEF1(145), DEF2(145), PRINTR
-      CHARACTER*8    KLE
-      CHARACTER*128           DEF1,     DEF2,     PRINTR
+      COMMON /KEY/   KLE, DEF1, DEF2, PRINTR
+      CHARACTER*4096 ,dimension(:), pointer:: DEF1,     DEF2
+      CHARACTER*4096 PRINTR
+      character *8 def1b(145), def2b(145), kle(145)
 

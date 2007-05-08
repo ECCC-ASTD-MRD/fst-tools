@@ -90,6 +90,8 @@
 *         M. Lepine        Bug fix longeur fstluk,fstecr datyp=6 mode image - v6.02 - Avril 2006
 *         M. Lepine        Reload avec librmn_008 - v6.03 - Aout 2006
 *         M. Lepine        Reload avec librmnbeta,nouveau compresseurs IEEE - v6.04 - Oct 2006
+*         M. Lepine        Reload avec librmnbeta,bug fix valid record length = 0 - v6.05 - Fev 2007
+*         M. Lepine        Taille des noms de fichiers augemntee a 1024 car. - v6.06 - Mars 2007
 *
 *LANGAGE  - FTN77
 *
@@ -221,11 +223,11 @@
      X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
      X          'DS', 'V', 'N', 'VS', 'E', 'F', 'SF', 'DF',
      X          'NRECMIN', 120*'S:'/
-      DATA DEF1/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
+      DATA DEF1b/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
      X          'NON', '$IN', '$OUT', 'FATALE', 'ERRORS', 'FATALE',
      X          '-1',  'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'OUI',
      X          'NON', 'NON', '-1', 120*' '/
-      DATA DEF2/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
+      DATA DEF2b/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
      X          'OUI', '$IN', '$OUT', 'ERRORS', 'INFORM', 'ERRORS',
      X          '-1',  'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI',
      X          'OUI', 'OUI', '-1', 120*' '/
@@ -240,6 +242,10 @@
 *      DATA SOURCES /25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
 *     X              40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,
 *     X              55,56,57,58,59/
+
+      allocate(def1(145),def2(145))
+      def1 = def1b
+      def2 = def2b
 
       do i = 1,120
         sources(i) = 24+i
@@ -297,9 +303,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.04','NON')
+         I = EXDB('EDITFST','V6.06','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.04   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.06   ***'
       ENDIF
 
 
