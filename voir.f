@@ -4,6 +4,7 @@
 *         98.12 - M. Lepine - utilisation de ccard_arg
 *         98.13 - M. Lepine - flush des buffers de stdout dans exfin
 *         98.14 - M. Lepine - reload librmn_008
+*         98.15 - M. Lepine - reload librmnbeta, correction impression dans convip
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
