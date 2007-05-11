@@ -2,7 +2,7 @@
 
 .SUFFIXES : 
 
-.SUFFIXES : .f90 .c .o 
+.SUFFIXES : .ftn .c .o 
 
 SHELL = /bin/sh
 
@@ -22,6 +22,9 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 default: obj
 
+.ftn.o:
+	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+
 .f90.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
@@ -30,7 +33,7 @@ default: obj
 
 FTNDECKS=  fststat.ftn fststatm.ftn statfld4.ftn
 
-OBJECTS= fststat.o
+OBJECTS= fststat.o fststatm.o statfld4.o
 OBJSUP= /users/dor/armn/lib/OBJ/*.o
 
 
@@ -38,10 +41,10 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 fststat: $(OBJECTS)
-	r.compile -src  $@.ftn90 -o $@ -librmn rmn_rc008
+	r.build  -obj $(OBJECTS) -o $@ -librmn rmn_rc009
 
-fststat__: $(OBJECTS)
-	r.build -obj $(OBJECTS) -o fststat__ -librmn rmnbeta
+fststat+: $(OBJECTS)
+	r.build -obj $(OBJECTS) -o $@ -librmn rmnbeta
 
 clean:
 	/bin/rm -f *.f *.o fststat
