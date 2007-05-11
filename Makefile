@@ -48,3 +48,5 @@ fst2xml: fst2xml.o
 xml2fst: xml2fst.o 
 	r.build -o xml2fst -bidon c -main xml2fst_ -obj xml2fst.o -librmn rmnbeta 
 
+clean:
+	rm -f *.o

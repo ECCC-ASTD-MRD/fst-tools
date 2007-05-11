@@ -273,3 +273,5 @@ void nettoyer(char chaine[])
   }
 }
 
+
+static product_id_tag="$Id$";
