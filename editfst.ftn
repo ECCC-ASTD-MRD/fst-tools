@@ -385,3 +385,8 @@
       IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)
       STOP
       END 
+      
+      character *128 function product_id_tag()
+      product_id_tag='$Id$'
+      return
+      end
