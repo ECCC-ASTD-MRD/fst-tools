@@ -69,3 +69,8 @@ c     %   trim(ccard_arg(cles(1)))
       endif
       stop
       end
+      
+      character *128 function product_id_tag()
+      product_id_tag='$Id$'
+      return
+      end
