@@ -294,3 +294,8 @@ c      print *,'Debug+ apres XDFUSE'
 5000  FORMAT(' ON SAUTE FICHIER VIDE OU INEXISTANT: ',A)
       STOP
       END
+      
+      character *128 function product_id_tag()
+      product_id_tag='$Id$'
+      return
+      end
