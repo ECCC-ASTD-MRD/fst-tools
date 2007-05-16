@@ -7,14 +7,11 @@
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
 *
-*AUTEUR P. SARRAZIN  AOUT 82 DRPN DORVAL P.Q. CANADA
+*AUTEUR Y. CHARTIER
 *
-*LANGAGE RATFOR
+*LANGAGE FORTRAN 77
 *
 *OBJET(COMME)
-*         LIRE UN CHAMP SUR FICHIER 1 OU 2 ET SAUVE DANS UN ACCUMULATEUR
-*         POUR ETRE UTILISER PAR LES DIRECTIVES PLUSE-PLUSS 
-*         MOINSE-MOINSS-PFOIS-MOYENE-RACINE-MODUL2E-MODUL2S 
 *
 *LIBRAIRIES
 *         -SOURCE  ARMNSRC,DRPN
@@ -60,7 +57,7 @@
       character *4 cbidon
       integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa 
-      integer iopc, bidon
+      integer iopc, bidon,i
 
       integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
       external  ezqkdef, ezgxprm, gdll, argdims
@@ -74,6 +71,7 @@
       cetiqet = '            '
       cigtyp  = ' '
 
+                                                                                                                                           
       letiket(1) = etiqet(1)
       letiket(2) = blancs
       letiket(3) = blancs
@@ -86,6 +84,13 @@
 
  100  ier = fstcvt(    nom,   type, letiket,    bidon,
      $             cnomvar,ctypvar,cetiqet,cbidon,.true.)
+      
+      if (etiqet(1) .ne. -1) then
+         write(cetiqet,'(3A4)') (etiqet(i), i=1,argdims(9))
+      else
+         cetiqet = '            '
+      endif
+      
       if (cnomvar.eq.'    '.and.ctypvar.eq.'  '.and.cetiqet.eq.'            '.
      $     and.niv.eq.-1.and.ihr.eq.-1.and.
      $     ip3.eq.-1.and.idat.eq.-1) then
@@ -99,7 +104,7 @@
      $     ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)
-     $        'RECORD N EXISTE PAS SUR FICHIER (FSTINF LIREE-LIRES)'
+     $        'RECORD N EXISTE PAS (routine COMME)'
          call pgsmabt
       endif
 *     

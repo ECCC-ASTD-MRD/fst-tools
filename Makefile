@@ -24,7 +24,7 @@ MYLIB =  $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
 default: obj
 
 .ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
+	r.compile_021 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
 
 .c.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
@@ -70,14 +70,23 @@ genlib: $(OBJET)
 pgsmflib: 
 	r.build -o pgsm -libpath $(PGSM) -libappl pgsm -librmn rmnbeta -bidon -main pgsm
 
+pgsm_007: 
+	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
+
+pgsm2007: 
+	r.build -o $@ -obj *.o  $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
+
+pgsm2006: 
+	r.build -o $@ -obj *.o  $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmnbeta
+
 pgsm2002: 
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -bidon -main pgsm -librmn rmn_x
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -bidon -libappl dies -main pgsm -librmn rmn_rc008
 
 pgsm2000: 
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_006
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_007
 
 pgsm89: 
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_006 -fstd89
+	r.build -o $@ -obj *.o -libappl dies -librmn rmn_007 -fstd89
 
 pgsmnew: c_pgsm.o
 	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
@@ -92,7 +101,7 @@ pgsm-exp:
 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-debug:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005
+	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-debug89:
 	r.build -o pgsm89 -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
@@ -107,7 +116,7 @@ pgsm6.9.8_89:
 	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
 
 pgsm-src:
-	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_006
+	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_007
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

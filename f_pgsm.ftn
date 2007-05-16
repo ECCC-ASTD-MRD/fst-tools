@@ -183,7 +183,7 @@
       lip1 = ip1(1)
       if (argdims(4) > 1) then
          p = transfer(ip1(1), p)
-         call convip(lip1, p, ip1(2), ip1style, string, .false.)
+         call convip(lip1, p, -1*ip1(2)-1000, 2, string, .false.)
       endif
 
       ier = fstcvt(      nom,    type,  letiket,  igtyp, 
@@ -269,17 +269,28 @@
 *
       iun=2
       if (mode.eq.1) then
+         if (compression_level.eq.0) then
+            cdatyp = 1
+         else
+            if (npac <= -16) then 
+            cdatyp = 134
+            else if (npac == -32) then
+              cdatyp = 133
+            else
+              cdatyp = 1
+            endif
+!          call armn_compress_setlevel(compression_level)
+        endif
+         
          if (iwrit.eq.+1) then
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
             rewrit = .true.
-            cdatyp = 1
 *
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
      $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
      $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
          else
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-            cdatyp = 1      
             rewrit = .false.
 *     
             ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
@@ -503,6 +514,11 @@
       if (argdims(4) > 1) then
          p = transfer(niv(1), p)
          call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
+          print *, lniv, p, -1*niv(2)-1000, ip1style, string
+          p = 1.0
+         call convip(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
+          print *, lniv, p, -1*niv(2)-1000, ip1style, string
+*         call convip(champpr(i), p, -1*kinds(i)-1000, ip1style, string, .false.)
       endif
 
       ier = fstcvt(    nom,   type, letiket,    -1,
@@ -1260,12 +1276,25 @@ c     ***************************************************************
       iun=2
       if (mode.eq.1) then
 *     IWRIT=+1  SORTI(STD,500,R)
+         if (compression_level.eq.0) then
+            cdatyp = 1
+         else
+            if (npac <= -16) then 
+             cdatyp = 134
+            else if (npac == -32) then
+               cdatyp = 133
+            else
+               cdatyp = 1
+            endif
+!          call armn_compress_setlevel(compression_level)
+         endif
+
+         
          if (iwrit.eq.+1) then
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
             rewrit = .true.
-            cdatyp = 1 
 *     
             ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,
      $           ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,
@@ -1274,7 +1303,6 @@ c     ***************************************************************
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
-            cdatyp = 1      
             rewrit = .false.
             ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,
      $           ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,
@@ -1317,6 +1345,23 @@ c     ***************************************************************
             call incdatr(idatv,idat,delta_t)
 
             gdout = ezgetgdout()
+            if (gdout .lt.0) gdout = 0
+            if (cnomvar(1:2).ne.'LA') then
+              if (associated(tmplat)) then
+                deallocate(tmplat)
+                nullify(tmplat)
+                allocate(tmplat(ni*nj*nk))
+              endif
+            endif
+                        
+            if (cnomvar(1:2).ne.'LO') then
+              if (associated(tmplon)) then
+                deallocate(tmplon)
+                nullify(tmplon)
+                allocate(tmplon(ni*nj*nk))
+              endif
+            endif
+            
             ier = gdll(gdout, tmplat,tmplon)
             call pgsmwr(2,champ,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,
      $           idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
@@ -1437,6 +1482,7 @@ c     ***************************************************************
             li = nix
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
+            cgrtyp = 'Z'
          else
             ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
             irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
@@ -1507,19 +1553,17 @@ c     ***************************************************************
             call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvary,nomvary,etikety,cgtypxy,ig1la,ig2la,ig3la,ig4la)
+            lg1 = ip1x
+            lg2 = ip2x
+            lg3 = ip3x
+            lg4 = 0
          endif
       else
 *         ier = gdgaxes(gdout, tmplon, tmplat)
           ier = gdll(gdout, tmplon, tmplat)
       endif
 
-      ier = ezgxprm(gdout,li,lj,cgrtyp,
-     $     lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-*     
-*      lg1 = ip1
-*      lg2 = ip2
-*      lg3 = ip3
-*      lg4 = 0
+     
       if (printen)  call imprime(nomvary,tmplat,niy,njy)
       if (printen)  call imprime(nomvarx,tmplon,nix,njx)
 
@@ -1527,7 +1571,8 @@ c     ***************************************************************
 *     CALCUL LATITUDES LONGITUDES  DU TYPE "Z" OU "Y"
 *     
       if (cgrtyp.eq.'Z') then
-         ier = gdll(gdout,tmplat,tmplon)
+          ier = ezgxprm(gdout,li,lj,cgrtyp,lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
+*         ier = gdll(gdout,tmplat,tmplon)
       endif
       
       if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'
@@ -1640,7 +1685,6 @@ c     ***************************************************************
       return 
       end
       
-
 ***s/p scalair  interpolation horizontale d un champ
 *               defini par l usager
 *     
@@ -1652,7 +1696,7 @@ c     ***************************************************************
       external cvtr2i
       external liraxez
       integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
-      integer diesinf, dieslir,diesisincache,res
+!      integer diesinf, dieslir,diesisincache,res
       integer ezgdef_fmem, ezqkdef, ezsint, ezdefset
       logical skip
 *     
@@ -1722,7 +1766,7 @@ c     ***************************************************************
       
       integer nniv,dat,i,nunv,itrouve,key,ii
       integer niveaux(nniv),deet,ig1,ig2,ig3,ig4,iheur
-      integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk
+      integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk,total_keys,nrecs
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       logical sym,symetri
       real fbidon
@@ -1730,13 +1774,16 @@ c     ***************************************************************
 
       real, dimension(:), pointer :: tmpout
 *
-      integer liste(24000),nrecs
+      integer, dimension(:), allocatable :: liste
       nunv=0 
 *
 *
 
 
       iunit=1
+      call pgsm_get_nfstkeys(total_keys) 
+*     print *, 'scalair: total_keys', total_keys
+      allocate(liste(total_keys))     
       cnomx = cnom
       if (cnom.eq.cnomqr) cnom=cnomqq
       
@@ -1764,7 +1811,7 @@ c     ***************************************************************
         if (cnom.eq.cnommt) then
           if (.not.mtdone) then
             irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,'  ',cnom,
-     $           liste,nrecs,24000) 
+     $           liste,nrecs,total_keys) 
             if (nrecs .eq. 0) then
               if (message) then
                 write(6,*)
@@ -1794,15 +1841,9 @@ c     ***************************************************************
          endif
 
           irec=fstinl(iunit,ni,nj,nk,date,cetiket,niveaux(iprs),iheur,
-     $         ip3ent,ctypvar,cnom, liste, nrecs, 24000)
+     $         ip3ent,ctypvar,cnom, liste, nrecs, total_keys)
           
-          if (nrecs .eq. 24000) then
-            print *, 
-     $           'LA LIMITE DE 24000 ENREGISTREMENTS A ETE ATTEINTE'
-            print 
-     $           *, 'CONSULTER LE RESPONSABLE DU PROGRAMME'
-          endif
-          
+         
           if (nrecs .eq. 0) then
             if (message) then
               write(6,*)
@@ -1859,21 +1900,21 @@ C faite
           
           skip = .false.
           
-          if (cigtyp.eq.'#'.and.diese.eq.1) then
-	     res = diesisincache(irec)
-	     if (res.lt.0) then
-                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
-                allocate(tmpif1(ni*nj))
-                allocate(ax(ni))
-                allocate(ay(nj))
-                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
-             else
-                skip = .true.
-             endif
-          else
-             allocate(tmpif1(ni*nj))
-             key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
-          endif
+*          if (cigtyp.eq.'#'.and.diese.eq.1) then
+*	     res = diesisincache(irec)
+*	     if (res.lt.0) then
+*                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
+*                allocate(tmpif1(ni*nj))
+*                allocate(ax(ni))
+*                allocate(ay(nj))
+*                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+*             else
+*                skip = .true.
+*             endif
+*          else
+              allocate(tmpif1(ni*nj))
+              key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
+*          endif
           
 *     
           if (cdatyp .eq. 2 .or. cdatyp .eq. 4) then
@@ -1895,11 +1936,11 @@ C faite
 *     
                 allocate(tmpif2(li*lj))
                 
-                if (cigtyp.eq.'#'.and.diese.eq.0) then
-                   gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
-                else
+*                if (cigtyp.eq.'#'.and.diese.eq.0) then
+*                   gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
+*                else
                    gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-                endif
+*                endif
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
                 tmpout => tmpif2
@@ -1943,6 +1984,7 @@ C faite
  669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
 *     
       endif
+      deallocate(liste)
       return 
       end
       
@@ -1958,7 +2000,6 @@ C faite
             rfld(i,j) = real(ifld(i,j))
          enddo
       enddo
-      
       return
       end 
       
@@ -3139,8 +3180,7 @@ C faite
       integer lcl_ip1tab(40)
       integer num1,num2,num3,nloop,dat1,dat2,deet1,deet2,npas1,npas2 
       integer datsrt,deetsrt,npassrt,i,j,k,ii,jj,kk,iloop,n
-      integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,
-     $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
+      integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
       integer iunit, chkenrpos
@@ -3187,27 +3227,6 @@ C faite
          return
       endif
 *
-*     verifier si il ,y a plus d'une liste 
-*     
-      if (num1.gt.1.and.num2.gt.1) then
-         write(6,*)' IP1 ET IP2 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-  
-      if (num1.gt.1.and.num3.gt.1) then
-         write(6,*)' IP1 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-
-      if (num2.gt.1.and.num3.gt.1) then
-         write(6,*)' IP2 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-
-*
 *     Ajustement pour IP1s reels
 
       
@@ -3230,6 +3249,27 @@ C faite
          enddo
       endif
       
+*
+*     verifier si il ,y a plus d'une liste 
+*     
+      if (num1.gt.1.and.num2.gt.1) then
+         write(6,*)' IP1 ET IP2 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+  
+      if (num1.gt.1.and.num3.gt.1) then
+         write(6,*)' IP1 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+
+      if (num2.gt.1.and.num3.gt.1) then
+         write(6,*)' IP2 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+
 *     execution de chaque paire dans la liste
 *     
 
@@ -3290,10 +3330,8 @@ C faite
          endif
          
          
-         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),
-     $        ip3tab(k),ctypvar,cnoment)
-         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),
-     $        ip3tab(kk),ctypvar,cnoment)
+         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),ip3tab(k),ctypvar,cnoment)
+         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),ip3tab(kk),ctypvar,cnoment)
          if (irec2 .lt. 0 .or.irec1 .lt. 0) then
           write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (CHMPDIF)'
           write(6,*)' VERIFIER NOM,IP1,IP2,IP3 SUR DIRECTIVE CHMPDIF'
@@ -3373,11 +3411,11 @@ C faite
 *     si les deux variables identiques on la transferre 
 *     dans le fichier sorti
 *     
-         datsrt=dat1
+         datsrt=dat2
 *         if (dat1.eq.dat2) datsrt=dat1
-         deetsrt=deet1
+         deetsrt=deet2
 *         if (deet1.eq.deet2) deetsrt=deet1
-         npassrt=npas1
+         npassrt=npas2
 *         if (npas1.eq.npas2) npassrt=npas1
 *     
 *     lire champ 2
@@ -4163,7 +4201,7 @@ C faite
 
 
       external fnom,memoir,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
-      external fstabt, fstlnk, exfin, pgsmof
+      external fstabt, fstlnk, exfin, pgsmof, fstnbr
       integer  fnom,fstnbr,fsteof,fstouv,fstvoi,fstapp,exfin,pgsmof
 *
 *AUTEUR P. SARRAZIN DEC 81 DRPN DORVAL P.Q. CANADA
@@ -4255,11 +4293,11 @@ C faite
 *     
       if (mode.eq.1)  then
          if (noenrg.eq.1) then
-            ier=fnom(2,lfn(41),'STD+SEQ+FTN',0)
+            ier=fnom(2,lfn(129),'STD+SEQ+FTN',0)
          else if (noenrg.eq.0) then
-            ier=fnom(2,lfn(41),'STD+SEQ',0)
+            ier=fnom(2,lfn(129),'STD+SEQ+REMOTE',0)
          else
-            ier = fnom(2,lfn(41),'STD+RND',0)
+            ier = fnom(2,lfn(129),'STD+RND+REMOTE',0)
 
             if (nsort.eq.2) then
                iwrit=+1 
@@ -4277,7 +4315,7 @@ C faite
          write(6,*)         ' VERSION DE PGSM'
          call pgsmabt 
       else if (mode.eq.3.or.mode.eq.4) then
-         ier = fnom(2,lfn(41),'SEQ+FTN+UNF',0)
+         ier = fnom(2,lfn(129),'SEQ+FTN+UNF',0)
          
          if (nsort.ne.1)  then
             write(6,*)'MAUVAIS APPEL A SORTIE FICHIER SEQ'
@@ -4285,11 +4323,11 @@ C faite
          endif
       else if (mode.eq.5) then
          if (jwrit.eq.-1) then
-            ier = pgsmof(2,lfn(41))
+            ier = pgsmof(2,lfn(129))
 *            ier = fnom(2,lfn(41),'SEQ+FMT+APPEND',0)
          else
-            ier = pgsmof(2,lfn(41))
-            ier = fnom(2,lfn(41),'SEQ+FMT+R/W',0)
+            ier = pgsmof(2,lfn(129))
+            ier = fnom(2,lfn(129),'SEQ+FMT+R/W',0)
          endif
       else  
          if (message) write(6,*)'TYPE DE FICHIER INCONNU'
@@ -4325,8 +4363,11 @@ C faite
       if (inputmod.eq.SEQUENTIEL) then
          ier = fstouv(lnkdiun(1), 'SEQ')
       else
+      ntotal_keys = 0
       do i=1,niun
          ier = fstouv(lnkdiun(i), 'RND+R/O+OLD')
+         ntotal_keys = ntotal_keys + fstnbr(lnkdiun(i))
+*         print *, 'ntotal_keys : ', ntotal_keys
          if (ier .lt. 0) then
             print *, '************************************************'
             print *, 
@@ -4350,6 +4391,16 @@ C faite
 *
       return 
       end
+
+      subroutine pgsm_get_nfstkeys(nkeys)
+      implicit none
+#include "lnkflds.cdk"
+      integer nkeys
+      
+      nkeys = ntotal_keys
+      
+      return 
+      end
 *
 ***S/P   COMME   LIRE UN CHAMP DANS ACCUMULATEUR
 *
@@ -4359,14 +4410,11 @@ C faite
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt 
 *
-*AUTEUR P. SARRAZIN  AOUT 82 DRPN DORVAL P.Q. CANADA
+*AUTEUR Y. CHARTIER
 *
-*LANGAGE RATFOR
+*LANGAGE FORTRAN 77
 *
 *OBJET(COMME)
-*         LIRE UN CHAMP SUR FICHIER 1 OU 2 ET SAUVE DANS UN ACCUMULATEUR
-*         POUR ETRE UTILISER PAR LES DIRECTIVES PLUSE-PLUSS 
-*         MOINSE-MOINSS-PFOIS-MOYENE-RACINE-MODUL2E-MODUL2S 
 *
 *LIBRAIRIES
 *         -SOURCE  ARMNSRC,DRPN
@@ -4412,7 +4460,7 @@ C faite
       character *4 cbidon
       integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa 
-      integer iopc, bidon
+      integer iopc, bidon,i
 
       integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
       external  ezqkdef, ezgxprm, gdll, argdims
@@ -4426,6 +4474,7 @@ C faite
       cetiqet = '            '
       cigtyp  = ' '
 
+                                                                                                                                           
       letiket(1) = etiqet(1)
       letiket(2) = blancs
       letiket(3) = blancs
@@ -4438,6 +4487,13 @@ C faite
 
  100  ier = fstcvt(    nom,   type, letiket,    bidon,
      $             cnomvar,ctypvar,cetiqet,cbidon,.true.)
+      
+      if (etiqet(1) .ne. -1) then
+         write(cetiqet,'(3A4)') (etiqet(i), i=1,argdims(9))
+      else
+         cetiqet = '            '
+      endif
+      
       if (cnomvar.eq.'    '.and.ctypvar.eq.'  '.and.cetiqet.eq.'            '.
      $     and.niv.eq.-1.and.ihr.eq.-1.and.
      $     ip3.eq.-1.and.idat.eq.-1) then
@@ -4451,7 +4507,7 @@ C faite
      $     ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)
-     $        'RECORD N EXISTE PAS SUR FICHIER (FSTINF LIREE-LIRES)'
+     $        'RECORD N EXISTE PAS (routine COMME)'
          call pgsmabt
       endif
 *     
@@ -5557,6 +5613,18 @@ c     ***************************************************************
              tmpif0(i)= (sqrt(tmpif0(i))*fact)
           enddo
        endif
+
+       if (it.eq.5) then
+          do i=1,itot 
+             tmpif0(i)= (abs(tmpif0(i))*fact)
+          enddo
+       endif
+
+       if (it.eq.6) then
+          do i=1,itot 
+             tmpif0(i)= (tmpif0(i)*(tmpif0(i))*fact)
+          enddo
+       endif
        
        return
 *     
@@ -5601,6 +5669,14 @@ c     ***************************************************************
 *     
        entry racine(fact)
        it=4
+       go to 1000
+ 
+      entry carre(fact)
+       it=6
+       go to 1000
+ 
+      entry absolu(fact)
+       it=5
        go to 1000
        end
       
@@ -5737,10 +5813,11 @@ c     ***************************************************************
       
       integer i
       integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
-      integer itabuv(npar) ,listniv(24000),deet,ig1,ig2,ig3,ig4
+      integer, dimension(:), allocatable :: listniv
+      integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
       integer iheur,ilop,iprs,irecu,irecv,iopc
       integer numu,numv,infon,dat,datdv
-      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
+      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
       integer nom2
       integer ig1zz, ig2zz, ig3zz, ig4zz
       real    d60dum, pidum, pjdum
@@ -5754,6 +5831,10 @@ c     ***************************************************************
       real, dimension(:), pointer :: uuout,vvout
       iunit = 1
       nk = 1
+      
+      call pgsm_get_nfstkeys(total_keys) 
+      allocate(listniv(total_keys))     
+ 
 *     
 *
       do 23000 iprs = 1,npar 
@@ -5785,7 +5866,7 @@ c     ***************************************************************
          
          
          ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),
-     $        iheur,ip3ent,ctypvar,cnom1,listniv,infon,24000)
+     $        iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
          if (ier .lt. 0 .or. infon.eq.0) then
             write(6,610) cnom1
  610        format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
@@ -5866,7 +5947,7 @@ c     ***************************************************************
           
           gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
           ier = ezdefset(gdout, gdin)
-          
+           
           if (vvent) then
              ssw=.false. 
              if (wdvent) then
@@ -5965,6 +6046,7 @@ c     ***************************************************************
       vvent=.false. 
 *     
 *     
+      deallocate(listniv)
       return 
       end
       
@@ -7385,47 +7467,56 @@ c     ***************************************************************
 #include "champseq.cdk"
 #include "styles.cdk"
 	
-	character *8 qlxcon(120),qlxlcon(4)
-	integer      qlxval(120)     
+	character *8 qlxcon(122),qlxlcon(4)
+	integer      qlxval(122)     
 	integer      qlxlval(4)
 
 	integer ezsetopt
 	external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
 	external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
 	external moinse, moinss, ecrits,moyene, operat, modul2e, modul2s
-	external expon, racine,alogn, outlalo, foise, foiss, divisee, divises, pgcoupe
+	external expon, racine,alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
 	external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
 	external qqqform,qqqident,coord,qqqfilt
 *       
 	external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi
 	external fstnbr,fstunl,fstouv
-	external fclos,exfin,lrsmde,lrsmds,fstopc,qlxopt
+	external fclos,exfin,lrsmde,lrsmds,fstopc,fstopl,qlxopt
 *
-	integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstouv
+	integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
 	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
 	real dum
 
 *
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	data listl/40*'IMENT.','OZSRT.','ISLL.','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
-	data defo /40*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
-	data lfn  /40*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
+	data listl/128*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
+	data defo /128*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
+	data lfn  /128*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
 
-	data lnkdiun / 1, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-     $                20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-     $                30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-     $                40, 41, 42, 43, 44, 45, 46, 47, 48, 49 /
-   
-	data form/'(A8)'/
+	data lnkdiun / 1,  11,  12,  13,  14,  15,  16,  17,  18,  19,
+     $                20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
+     $                30,  31,  32,  33,  34,  35,  36,  37,  38,  39,
+     $                40,  41,  42,  43,  44,  45,  46,  47,  48,  49, 
+     $                50,  51,  52,  53,  54,  55,  56,  57,  58,  59, 
+     $                60,  61,  62,  63,  64,  65,  66,  67,  68,  69, 
+     $                70,  71,  72,  73,  74,  75,  76,  77,  78,  79, 
+     $                80,  81,  82,  83,  84,  85,  86,  87,  88,  89, 
+     $                90,  91,  92,  93,  94,  95,  96,  97,  98,  99, 
+     $               100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 
+     $               110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
+     $               120, 121, 122, 123, 124, 125, 126, 127, 128, 129,
+     $               130, 131, 132, 133, 134, 135, 136, 137 /
+     	
+        data form/'(A8)'/
 *
 	data nheure,  heures, nnoms,  npack,  nhur, nomb, ichck 
      $       /0,  MXHEURE*-2, 0,      -16,    1,    0,    0/
 *
-	data nomss /40*'  '/
+	data nomss /137*'  '/
   
 	data ecarts,     facts,     pose,     ixlat, ixlon  
-     $    /40*0.0,     40*1.0,   .false.,   0,     0 /
+     $    /137*0.0,     137*1.0,   .false.,   0,     0 /
 *
    	data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo 
      $       /  1,    0,     0,        1,      0,     0 /
@@ -7590,6 +7681,8 @@ c     ***************************************************************
 	data qlxcon(118)/'STAMP'   /  qlxval(118)/ 0 /	
 	data qlxcon(119)/'YMDHMS'  /  qlxval(119)/ 1 /	
 	data qlxcon(120)/'ISO8601' /  qlxval(120)/ 2 /
+       data qlxcon(121)/'FAST'    /  qlxval(121)/ 1 /
+       data qlxcon(122)/'BEST'    /  qlxval(122)/ 2 /
 
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
@@ -7606,14 +7699,14 @@ c     ***************************************************************
 *
 *
 	nequiv=-1
-	call ccard(listl,defo,lfn,49,nequiv)
-	ier = fnom(5,lfn(43),'SEQ',0)
+	call ccard(listl,defo,lfn,137,nequiv)
+	ier = fnom(5,lfn(131),'SEQ',0)
 *	ier = fnom(6,lfn(44),'SEQ',0)
 	
 *
 *          imprime boite debut du programme
 *
-	jdate= exdb(' PGSM  ',' V6.13.0',  lfn(45)) 
+	jdate= exdb(' PGSM  ',' V6.19.6',  lfn(133)) 
 
 *
 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -7622,7 +7715,7 @@ c     ***************************************************************
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
 
-	if (lfn(1).ne.'SCRAP'.and.lfn(47).ne.'SCRAP') then
+	if (lfn(1).ne.'SCRAP'.and.lfn(135).ne.'SCRAP') then
 	  print *,'***************************************************'
 	  print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
 	  print *,'* SEQUENTIELS ET RANDOM                           *'
@@ -7631,18 +7724,18 @@ c     ***************************************************************
 	  call qqexit(13)
 	endif	
 	
-	if (lfn(47).ne.'SCRAP') then
+	if (lfn(135).ne.'SCRAP') then
 	  inputmod = SEQUENTIEL
 	else
 	  inputmod = RANDOM
 	endif
 	
-	if (lfn(48).ne.'SCRAP') then
-	  ier = fnom(3,lfn(48),'RND+OLD+R/O',0)
+	if (lfn(136).ne.'SCRAP') then
+	  ier = fnom(3,lfn(136),'RND+OLD+R/O',0)
 	  ier = fstouv(3,'RND')
 	endif
 	
-	if (lfn(49).ne.'NON') then
+	if (lfn(137).ne.'NON') then
 	  ier = ezsetopt('verbose', 'yes')
 	endif
 	
@@ -7663,7 +7756,7 @@ c     ***************************************************************
 	    call qqexit(13)
 	  endif	
 	  do i=1, niun
-	    ier = fnom(lnkdiun(i),lfn(i),'RND+OLD+R/O',0)
+	    ier = fnom(lnkdiun(i),lfn(i),'STD+RND+OLD+R/O+REMOTE',0)
 	    if (ier .lt. 0) then	         
 	      print *,'************************************************'
 	      print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(i)
@@ -7674,10 +7767,10 @@ c     ***************************************************************
 	  enddo
 	else
 	  niun = 1
-	  ier = fnom(lnkdiun(1),lfn(47),'STD+SEQ+OLD+R/O',0)
+	  ier = fnom(lnkdiun(1),lfn(135),'STD+SEQ+OLD+R/O+REMOTE',0)
 	  if (ier .lt. 0) then	         
 	    print *,'************************************************'
-	    print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(47)
+	    print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(135)
 	    print *,'************************************************'
 	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
 	    call qqexit(13)
@@ -7887,6 +7980,8 @@ c     ***************************************************************
    	call qlxinx (operat, 'PFOIS', npfo, 0303,2) 
    	call qlxinx (expon, 'EXPON', npex, 0101,2) 
    	call qlxinx (alogn, 'ALOGN', npex, 0101,2)
+   	call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
+   	call qlxinx (carre, 'CARRE', npex, 0101,2)
 *
 	call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
 	call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
@@ -7917,8 +8012,9 @@ c     ***************************************************************
 	call qlxins (diese,  'DIESE',dum,1,1)
 	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
+       call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 		
-	do i=1,120
+	do i=1,122
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo      
 	
@@ -7950,6 +8046,7 @@ c     ***************************************************************
 	etiksrt(3) = -1 
 	
 	typesrt= -1
+        compression_level = 0
 *
 *
 *    initialiser avec .true. champ symetrique
@@ -7977,7 +8074,9 @@ c     ***************************************************************
 	call initid
 
 	
-	iopc= fstopc('MSGLVL',lfn(46),.false.)
+	iopc= fstopc('MSGLVL',lfn(134),.false.)
+	ier = fstopl('REDUCTION32',.true.,.false.)
+
 	ipose= 0
 	call readlx(5,kend,ipose)
 *
@@ -7986,7 +8085,9 @@ c     ***************************************************************
 	if (associated(tmplat)) deallocate(tmplat)
 	if (associated(tmplon)) deallocate(tmplon)
 	
-	call chk_hy(1,2)
+	if (mode.eq.1) then
+          call chk_hy(1,2)
+        endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
 	   ier = fstfrm(lnkdiun(i))

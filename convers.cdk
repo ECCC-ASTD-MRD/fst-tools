@@ -1,8 +1,8 @@
       integer ncon,nomb
       real ecarts,facts,bass,hauts
-      common/tabls/ncon,nomb,ecarts(40),facts(40),bass(40),hauts(40)
+      common/tabls/ncon,nomb,ecarts(137),facts(137),bass(137),hauts(137)
       
-      character*2 nomss(40)
+      character*4 nomss(137)
       common /ctabls/ nomss
 *     
 *

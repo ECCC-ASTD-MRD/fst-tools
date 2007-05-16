@@ -128,6 +128,18 @@
              tmpif0(i)= (sqrt(tmpif0(i))*fact)
           enddo
        endif
+
+       if (it.eq.5) then
+          do i=1,itot 
+             tmpif0(i)= (abs(tmpif0(i))*fact)
+          enddo
+       endif
+
+       if (it.eq.6) then
+          do i=1,itot 
+             tmpif0(i)= (tmpif0(i)*(tmpif0(i))*fact)
+          enddo
+       endif
        
        return
 *     
@@ -172,6 +184,14 @@
 *     
        entry racine(fact)
        it=4
+       go to 1000
+ 
+      entry carre(fact)
+       it=6
+       go to 1000
+ 
+      entry absolu(fact)
+       it=5
        go to 1000
        end
       

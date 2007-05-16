@@ -1,4 +1,3 @@
-
 ***s/p scalair  interpolation horizontale d un champ
 *               defini par l usager
 *     
@@ -10,7 +9,7 @@
       external cvtr2i
       external liraxez
       integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
-      integer diesinf, dieslir,diesisincache,res
+!      integer diesinf, dieslir,diesisincache,res
       integer ezgdef_fmem, ezqkdef, ezsint, ezdefset
       logical skip
 *     
@@ -80,7 +79,7 @@
       
       integer nniv,dat,i,nunv,itrouve,key,ii
       integer niveaux(nniv),deet,ig1,ig2,ig3,ig4,iheur
-      integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk
+      integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk,total_keys,nrecs
       integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       logical sym,symetri
       real fbidon
@@ -88,13 +87,16 @@
 
       real, dimension(:), pointer :: tmpout
 *
-      integer liste(24000),nrecs
+      integer, dimension(:), allocatable :: liste
       nunv=0 
 *
 *
 
 
       iunit=1
+      call pgsm_get_nfstkeys(total_keys) 
+*     print *, 'scalair: total_keys', total_keys
+      allocate(liste(total_keys))     
       cnomx = cnom
       if (cnom.eq.cnomqr) cnom=cnomqq
       
@@ -122,7 +124,7 @@
         if (cnom.eq.cnommt) then
           if (.not.mtdone) then
             irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,'  ',cnom,
-     $           liste,nrecs,24000) 
+     $           liste,nrecs,total_keys) 
             if (nrecs .eq. 0) then
               if (message) then
                 write(6,*)
@@ -152,15 +154,9 @@
          endif
 
           irec=fstinl(iunit,ni,nj,nk,date,cetiket,niveaux(iprs),iheur,
-     $         ip3ent,ctypvar,cnom, liste, nrecs, 24000)
+     $         ip3ent,ctypvar,cnom, liste, nrecs, total_keys)
           
-          if (nrecs .eq. 24000) then
-            print *, 
-     $           'LA LIMITE DE 24000 ENREGISTREMENTS A ETE ATTEINTE'
-            print 
-     $           *, 'CONSULTER LE RESPONSABLE DU PROGRAMME'
-          endif
-          
+         
           if (nrecs .eq. 0) then
             if (message) then
               write(6,*)
@@ -217,21 +213,21 @@ C faite
           
           skip = .false.
           
-          if (cigtyp.eq.'#'.and.diese.eq.1) then
-	     res = diesisincache(irec)
-	     if (res.lt.0) then
-                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
-                allocate(tmpif1(ni*nj))
-                allocate(ax(ni))
-                allocate(ay(nj))
-                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
-             else
-                skip = .true.
-             endif
-          else
-             allocate(tmpif1(ni*nj))
-             key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
-          endif
+*          if (cigtyp.eq.'#'.and.diese.eq.1) then
+*	     res = diesisincache(irec)
+*	     if (res.lt.0) then
+*                ier = diesinf(irec, iunit, ni, nj, nk, date, cetiket, jp1, jp2, jp3, ig1, ig2, ctypvar, cnomvar)
+*                allocate(tmpif1(ni*nj))
+*                allocate(ax(ni))
+*                allocate(ay(nj))
+*                ier = dieslir(iunit, irec, tmpif1, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+*             else
+*                skip = .true.
+*             endif
+*          else
+              allocate(tmpif1(ni*nj))
+              key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
+*          endif
           
 *     
           if (cdatyp .eq. 2 .or. cdatyp .eq. 4) then
@@ -253,11 +249,11 @@ C faite
 *     
                 allocate(tmpif2(li*lj))
                 
-                if (cigtyp.eq.'#'.and.diese.eq.0) then
-                   gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
-                else
+*                if (cigtyp.eq.'#'.and.diese.eq.0) then
+*                   gdin = ezgdef_fmem(ni, nj, 'Z', grref, ig1ref, ig2ref, ig3ref, ig4ref, ax, ay)
+*                else
                    gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-                endif
+*                endif
                 ier = ezdefset(gdout, gdin)
                 ier = ezsint(tmpif2, tmpif1)
                 tmpout => tmpif2
@@ -301,6 +297,7 @@ C faite
  669     format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
 *     
       endif
+      deallocate(liste)
       return 
       end
       
@@ -316,7 +313,6 @@ C faite
             rfld(i,j) = real(ifld(i,j))
          enddo
       enddo
-      
       return
       end 
       

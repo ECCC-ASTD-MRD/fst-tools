@@ -1,6 +1,6 @@
-      integer      lnkdiun(40),niun,inputmod
-      integer      sequentiel,random
+      integer      lnkdiun(128),niun,inputmod
+      integer      sequentiel,random, ntotal_keys
 
       parameter (sequentiel=1,random=2)
       
-      common /lnkflds/ lnkdiun, niun,inputmod
+      common /lnkflds/ lnkdiun, niun,inputmod, ntotal_keys

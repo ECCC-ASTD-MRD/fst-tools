@@ -73,10 +73,11 @@
       
       integer i
       integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
-      integer itabuv(npar) ,listniv(24000),deet,ig1,ig2,ig3,ig4
+      integer, dimension(:), allocatable :: listniv
+      integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
       integer iheur,ilop,iprs,irecu,irecv,iopc
       integer numu,numv,infon,dat,datdv
-      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
+      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
       integer nom2
       integer ig1zz, ig2zz, ig3zz, ig4zz
       real    d60dum, pidum, pjdum
@@ -90,6 +91,10 @@
       real, dimension(:), pointer :: uuout,vvout
       iunit = 1
       nk = 1
+      
+      call pgsm_get_nfstkeys(total_keys) 
+      allocate(listniv(total_keys))     
+ 
 *     
 *
       do 23000 iprs = 1,npar 
@@ -121,7 +126,7 @@
          
          
          ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),
-     $        iheur,ip3ent,ctypvar,cnom1,listniv,infon,24000)
+     $        iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
          if (ier .lt. 0 .or. infon.eq.0) then
             write(6,610) cnom1
  610        format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
@@ -202,7 +207,7 @@
           
           gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
           ier = ezdefset(gdout, gdin)
-          
+           
           if (vvent) then
              ssw=.false. 
              if (wdvent) then
@@ -301,6 +306,7 @@
       vvent=.false. 
 *     
 *     
+      deallocate(listniv)
       return 
       end
       

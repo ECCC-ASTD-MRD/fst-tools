@@ -92,8 +92,7 @@
       integer lcl_ip1tab(40)
       integer num1,num2,num3,nloop,dat1,dat2,deet1,deet2,npas1,npas2 
       integer datsrt,deetsrt,npassrt,i,j,k,ii,jj,kk,iloop,n
-      integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,
-     $     cswa, clng, cdltf, cubc, extra1, extra2, extra3
+      integer ni1,ni2,nj1,nj2,nk1,nk2,cnbits,cdatyp,cswa, clng, cdltf, cubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym
       integer iunit, chkenrpos
@@ -140,27 +139,6 @@
          return
       endif
 *
-*     verifier si il ,y a plus d'une liste 
-*     
-      if (num1.gt.1.and.num2.gt.1) then
-         write(6,*)' IP1 ET IP2 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-  
-      if (num1.gt.1.and.num3.gt.1) then
-         write(6,*)' IP1 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-
-      if (num2.gt.1.and.num3.gt.1) then
-         write(6,*)' IP2 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
-         return
-      endif
-
-*
 *     Ajustement pour IP1s reels
 
       
@@ -183,6 +161,27 @@
          enddo
       endif
       
+*
+*     verifier si il ,y a plus d'une liste 
+*     
+      if (num1.gt.1.and.num2.gt.1) then
+         write(6,*)' IP1 ET IP2 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+  
+      if (num1.gt.1.and.num3.gt.1) then
+         write(6,*)' IP1 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+
+      if (num2.gt.1.and.num3.gt.1) then
+         write(6,*)' IP2 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
+         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         return
+      endif
+
 *     execution de chaque paire dans la liste
 *     
 
@@ -243,10 +242,8 @@
          endif
          
          
-         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),
-     $        ip3tab(k),ctypvar,cnoment)
-         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),
-     $        ip3tab(kk),ctypvar,cnoment)
+         irec1=fstinf(1,ni1,nj1,nk1,date,cetiket,lcl_ip1tab(i),ip2tab(j),ip3tab(k),ctypvar,cnoment)
+         irec2=fstinf(1,ni2,nj2,nk2,date,cetiket,lcl_ip1tab(ii),ip2tab(jj),ip3tab(kk),ctypvar,cnoment)
          if (irec2 .lt. 0 .or.irec1 .lt. 0) then
           write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (CHMPDIF)'
           write(6,*)' VERIFIER NOM,IP1,IP2,IP3 SUR DIRECTIVE CHMPDIF'
@@ -326,11 +323,11 @@
 *     si les deux variables identiques on la transferre 
 *     dans le fichier sorti
 *     
-         datsrt=dat1
+         datsrt=dat2
 *         if (dat1.eq.dat2) datsrt=dat1
-         deetsrt=deet1
+         deetsrt=deet2
 *         if (deet1.eq.deet2) deetsrt=deet1
-         npassrt=npas1
+         npassrt=npas2
 *         if (npas1.eq.npas2) npassrt=npas1
 *     
 *     lire champ 2

@@ -130,7 +130,7 @@ int f77name(pgsmcf)(int *iun)
 
 int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format,int *position,int *idents,char *separateur,
              char *nomvar,char *typvar,char *etiket,int *dateo,int *datev,int *dateform, int *ip1,int *ip2,int *ip3,
-             float *lat,float *lon)
+             float *lat,float *lon, int len_format, int len_separateur, int len_nomvar, int len_typvar, int len_etiket)
 {
    int i,j;
    char c_etiket[16],c_typvar[4],c_nomvar[8], c_separateur[2];

@@ -1,6 +1,6 @@
-      character *128 defo(49)
-      character *128 listl(49), form
-      character *128 lfn(49)
+      character *128 defo(137)
+      character *128 listl(137), form
+      character *128 lfn(137)
       
       common/carac/defo,listl,form,lfn
       

@@ -98,6 +98,7 @@
             li = nix
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
+            cgrtyp = 'Z'
          else
             ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
             irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
@@ -168,19 +169,17 @@
             call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk,
      $           ip1x,ip2x,ip3x,
      $           typvary,nomvary,etikety,cgtypxy,ig1la,ig2la,ig3la,ig4la)
+            lg1 = ip1x
+            lg2 = ip2x
+            lg3 = ip3x
+            lg4 = 0
          endif
       else
 *         ier = gdgaxes(gdout, tmplon, tmplat)
           ier = gdll(gdout, tmplon, tmplat)
       endif
 
-      ier = ezgxprm(gdout,li,lj,cgrtyp,
-     $     lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-*     
-*      lg1 = ip1
-*      lg2 = ip2
-*      lg3 = ip3
-*      lg4 = 0
+     
       if (printen)  call imprime(nomvary,tmplat,niy,njy)
       if (printen)  call imprime(nomvarx,tmplon,nix,njx)
 
@@ -188,7 +187,8 @@
 *     CALCUL LATITUDES LONGITUDES  DU TYPE "Z" OU "Y"
 *     
       if (cgrtyp.eq.'Z') then
-         ier = gdll(gdout,tmplat,tmplon)
+          ier = ezgxprm(gdout,li,lj,cgrtyp,lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
+*         ier = gdll(gdout,tmplat,tmplon)
       endif
       
       if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'
