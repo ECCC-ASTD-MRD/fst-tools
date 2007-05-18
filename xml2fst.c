@@ -1195,4 +1195,4 @@ static void trimright(char *string)
 }
 
 
-static product_id_tag="$Id$";
+char * product_id_tag="$Id$";
