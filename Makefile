@@ -41,7 +41,7 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 fststat: $(OBJECTS)
-	r.build  -obj $(OBJECTS) -o $@ -librmn rmn_rc009
+	r.build  -obj $(OBJECTS) -o $@ -librmn rmn_009
 
 fststat+: $(OBJECTS)
 	r.build -obj $(OBJECTS) -o $@ -librmn rmnbeta

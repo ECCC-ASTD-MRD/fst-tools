@@ -104,7 +104,7 @@ C      write(6,10) nomvar,typvar,level,ip1,ip2,ip3,date,etiket,
      $     imax,jmax+(kmax-1)*nj,rmax
 C 10   format (' ',a4,1x,a2,1x,a15,' (',i9,') ',i4,1x,i3,1x,i9,1x,a12,1x,
  10   format (' ',a4,1x,a2,1x,a15,1x,i4,1x,i3,1x,i9,1x,a12,1x,
-     $     ' Mean:',e12.6,'  Var:',e12.6,
+     $     ' Mean:',e12.6,' StDev:',e12.6,
      $     '  Min:[(',i3,',',i3,'):',
      $     e10.4,']',' Max:[(',i3,',',i3,'):',
      $     e10.4,']')
