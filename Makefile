@@ -30,7 +30,8 @@ OBJET= fstcomp.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	r.build -o fstcomp -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_008
+	r.build -o fstcomp -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_009
+
 fstcomp+: $(OBJET)
 	r.build -o fstcomp+ -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
 

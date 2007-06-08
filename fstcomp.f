@@ -35,6 +35,7 @@ C*DECK FSTCOMP
 * 023 V7.5 (M. Lepine, Mai  2006) Reload, bug fix float_packer 
 * 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant
 * 025 V7.7 (M. Lepine, Fev. 2007) Comparaison avec l'erreur du a l'algorithme de compaction 
+* 026 V7.8 (M. Lepine, Juin 2007) Reload avec librmn_009
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -156,9 +157,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V7.7  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V7.8  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V7.7', 'NON')
+         L = EXDB('FSTCOMP', 'V7.8', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
