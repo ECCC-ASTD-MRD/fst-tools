@@ -31,7 +31,7 @@ OBJSUP=/users/dor/armn/lib/OBJ/*.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	r.build -o voir -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_008
+	r.build -o voir -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_009
         
 voirca: $(OBJET)
 	r.build -o voirca -obj $(OBJET) /users/dor/armn/lib/home2/LIB2000/pub/fstd98/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta

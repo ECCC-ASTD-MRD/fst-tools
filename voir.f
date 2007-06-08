@@ -5,6 +5,7 @@
 *         98.13 - M. Lepine - flush des buffers de stdout dans exfin
 *         98.14 - M. Lepine - reload librmn_008
 *         98.15 - M. Lepine - reload librmnbeta, correction impression dans convip
+*         98.16 - M. Lepine - reload librmn_009
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
@@ -53,7 +54,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.14','NON')
+         ier = exdb('VOIR','V98.16','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),
