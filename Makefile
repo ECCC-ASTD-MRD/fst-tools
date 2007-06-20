@@ -41,7 +41,7 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 bemol: $(OBJECTS)
-	r.build -o bemol -obj $(OBJECTS) -librmn rmn_rc009
+	r.build -o bemol -obj $(OBJECTS) -librmn rmn_009
 
 bemol+: $(OBJECTS)
 	r.build -o bemol+ -obj $(OBJECTS) -librmn rmnbeta

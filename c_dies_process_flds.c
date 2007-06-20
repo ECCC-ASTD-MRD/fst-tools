@@ -277,7 +277,6 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
                       &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
                       user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,  
                       8,4,16,2);
-            free(buffer);
             }
 
           if (ucore != -1)
@@ -293,7 +292,6 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
                                 &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
                                 user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3core, &ig4,
                                 grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 8,4,16,2,2);
-            free(buffer);
             }
 
           if (ucoarse != -1)
@@ -310,8 +308,8 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
                                 &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
                                 user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3coarse, &ig4,
                                 grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), &avg, 8,4,16,2,2);
-            free(buffer);
             }
+        free(buffer);
         break;
 
         default:

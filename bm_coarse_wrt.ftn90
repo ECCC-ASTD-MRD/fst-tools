@@ -23,6 +23,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   integer fstinf, fstecr, jstart, jend
   integer nbits, ip1, ip2, ip3
   integer i, j, nix, njx, nkx, imid, jmid
+  integer lcl_avg
 
   real dxcore, dycore, dxcoarse, dycoarse
   real total_area, xtile_min, ytile_min, xtile_max, ytile_max, xfrac, yfrac, area
@@ -32,19 +33,20 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
 
   imid = nig / 2
   jmid = njg / 2
+  lcl_avg = avg
 
   dxcore = ax(imid) - ax(imid-1)
   dycore = ay(jmid) - ay(jmid-1)
-  if (avg == -1) then
+  if (lcl_avg == -1) then
      dxcoarse = ax(2) - ax(1)
      dycoarse = ay(2) - ay(1)
-     avg = nint(dxcoarse/dxcore)
+     lcl_avg = nint(dxcoarse/dxcore)
   else
-     dxcoarse = avg * dxcore
-     dycoarse = avg * dycore
+     dxcoarse = lcl_avg * dxcore
+     dycoarse = lcl_avg * dycore
   endif
 
-  if (avg == 1) then
+  if (lcl_avg == 1) then
      nicoarse = nig
      njcoarse = njg
   else
@@ -53,7 +55,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   endif
 
   if (ig3 == -1) then
-    ig3 = avg
+    ig3 = lcl_avg
   endif
     
   dxcoarse = (ax(nig)-ax(1))/(1.0*(nicoarse-1))
