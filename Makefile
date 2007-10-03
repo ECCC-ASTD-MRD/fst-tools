@@ -70,6 +70,9 @@ genlib: $(OBJET)
 pgsmflib: 
 	r.build -o pgsm -libpath $(PGSM) -libappl pgsm -librmn rmnbeta -bidon -main pgsm
 
+pgsm: 
+	r.build -o $@ -obj *.o -bidon -main pgsm -librmn rmn_009
+
 pgsm_007: 
 	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
 
@@ -120,7 +123,7 @@ pgsm-src:
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
-	rm -f *.o f_pgsm.f pgsm2000 pgsm89
+	rm -f *.o f_pgsm.f pgsm pgsm2000 pgsm89
 
 fastclean:
 	rm *.o pgsm.f	

@@ -1467,7 +1467,8 @@ c     ***************************************************************
             if (ier.lt.0) then
                print *, '<gritp12> enregistrements positionnels absents!'
                print *, '          impossible de continuer...'
-               call exit(13)
+!               call exit(13)
+               call pgsmabt
             endif
          endif
          
