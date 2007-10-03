@@ -27,7 +27,7 @@ subroutine bm_std_wrt(udst, champ, nistart, njstart, niend, njend, &
     
   nkg = 1
 
-  if (nomvar.eq.'HY'.or.nomvar.eq.'HT') then
+  if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+'.or.nomvar.eq.'HT') then
     rewrite_flag = .true.
   else
     rewrite_flag = .false.

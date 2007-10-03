@@ -76,7 +76,7 @@ Program bemol
   
 !--init program variables ---------------------------------------------
 
-  ier =exdb('BEMOL','v1.37','NON')
+  ier =exdb('BEMOL','v1.38','NON')
 
   call init_bemol_options
   call ccard(cle,def,val, nparams, ipos)
@@ -364,7 +364,7 @@ Program bemol
   call bm_closefiles(lnkdiun, nbfiles, udst, ucore, ucoarse)
 
   !------------------------------------------------------------------------------------------------
-  ier = exfin('BEMOL','v1.37','OUI')
+  ier = exfin('BEMOL','v1.38','OUI')
 end program bemol
 
 

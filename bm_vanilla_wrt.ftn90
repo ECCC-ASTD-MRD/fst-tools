@@ -20,7 +20,7 @@ subroutine bm_vanilla_wrt(udst, champ, nig, njg, &
 
   nkg = 1
   
-  if (nomvar.eq.'HY') then
+  if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+') then
      rewrite_flag = .true.
   else
      rewrite_flag = .false.
@@ -51,8 +51,14 @@ subroutine bm_vanilla_wrt(udst, champ, nig, njg, &
     endif
   endif
 
-  ier = FSTECR(champ, champ, -nbits, udst, dateo, deet, npas, nig, njg, &
-       nkg, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, &
-       ig1, ig2, 0, 0, usr_datyp, rewrite_flag)
+  if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+') then
+    ier = FSTECR(champ, champ, -nbits, udst, dateo, deet, npas, nig, njg, &
+         nkg, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, &
+         ig1, ig2, ig3, ig4, usr_datyp, rewrite_flag)
+  else
+    ier = FSTECR(champ, champ, -nbits, udst, dateo, deet, npas, nig, njg, &
+         nkg, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, &
+         ig1, ig2, 0, 0, usr_datyp, rewrite_flag)
+  endif
   return
 end subroutine bm_vanilla_wrt
