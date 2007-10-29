@@ -24,10 +24,13 @@ MYLIB =  $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
 default: obj
 
 .ftn.o:
-	r.compile_021 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
+	r.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
+
+.f.o:
+	r.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.f
 
 .c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	r.compile $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 OBJET = f_pgsm.o c_pgsm.o
 
