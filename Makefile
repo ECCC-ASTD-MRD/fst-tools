@@ -17,13 +17,13 @@ FFLAGS =
 default: obj
 
 .ftn90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .f90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .c.o:
 	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<

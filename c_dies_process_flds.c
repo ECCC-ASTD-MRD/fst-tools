@@ -13,16 +13,16 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
   int i, j, found, ier, res, ind_tuile;
   _Fld fstrec;
   int swa, lng, dltf, ubc, extra1, extra2, extra3;
-  int nig,njg,n,nit,njt,nkt,startx, starty, nistart, njstart, niend, njend;
+  int nig,njg,nit,njt,nkt,startx, starty, nistart, njstart, niend, njend;
   float *buffer, *tuile;
   char nomvar[8], typvar[4], etiket[16], user_grtyp[2];
-  int fill_mode;
+  int fill_mode, n, duplicate;
   int ig3, ig4, ig3core, ig3coarse, avg, user_nbits, lcl_nbits;
   int usrc, udst, ucoarse, ucore;
   int iun_outs[3];
   static int missing_tiles = 0;
   int un = 1;
-  
+
   bemol_get_fill_mode(&fill_mode);
   bemol_get_iun_dst(&udst);
   bemol_get_iun_core(&ucore);
@@ -31,11 +31,11 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
   bemol_get_nbits(&user_nbits);
   bemol_get_ig3core(&ig3core);
   bemol_get_ig3coarse(&ig3coarse);
-  
+
   iun_outs[0] = udst;
   iun_outs[1] = ucore;
   iun_outs[2] = ucoarse;
-  
+
   flist = (_Fldlst *)malloc(*nkeys * sizeof(_Fldlst));
   memset (grd, NULL , 256 * sizeof(_Diese));
   for (i=0; i < *nkeys; i++)
@@ -43,7 +43,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
     flist[i].tuiles = (_Tuile *)malloc(sizeof(_Tuile) * 128);
     flist[i].nb_tuiles = 0;
     }
-    
+
   lng_flist = 0;
   for (i=0; i < *nkeys; i++)
     {
@@ -71,27 +71,43 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
         found = 1;
         if (fstrec.grtyp[0] == '#')
           {
-          fstrec.key = keys[i];
-          ind_tuile = flist[j].nb_tuiles;
-          flist[j].tuiles[ind_tuile].key      = keys[i];
-          flist[j].tuiles[ind_tuile].ni       = fstrec.ni;
-          flist[j].tuiles[ind_tuile].nj       = fstrec.nj;
-          flist[j].tuiles[ind_tuile].nk       = fstrec.nk;
-          flist[j].tuiles[ind_tuile].ig1ref   = fstrec.ig1;
-          flist[j].tuiles[ind_tuile].ig2ref   = fstrec.ig2;
-          flist[j].tuiles[ind_tuile].ni_start = fstrec.ig3;
-          flist[j].tuiles[ind_tuile].nj_start = fstrec.ig4;
-          flist[j].tuiles[ind_tuile].ni_end   = flist[j].tuiles[ind_tuile].ni_start + flist[j].tuiles[ind_tuile].ni - 1;
-          flist[j].tuiles[ind_tuile].nj_end   = flist[j].tuiles[ind_tuile].nj_start + flist[j].tuiles[ind_tuile].nj - 1;
-          flist[j].nb_tuiles++;
-          if (0 == flist[j].nb_tuiles % 128)
+          duplicate = 0;
+          n = 0;
+          while (n < flist[j].nb_tuiles && !duplicate)
             {
-            flist[j].tuiles = realloc(flist[j].tuiles, sizeof(_Tuile) * ((flist[j].nb_tuiles) + 128));
+            if (fstrec.ig3 == flist[j].tuiles[n].ni_start &&
+                fstrec.ig4 == flist[j].tuiles[n].nj_start &&
+                fstrec.ni == flist[j].tuiles[n].ni &&
+                fstrec.nj == flist[j].tuiles[n].nj)
+               {
+               duplicate = 1;
+               }
+            n++;
+            }
+          if (!duplicate)
+            {
+             fstrec.key = keys[i];
+             ind_tuile = flist[j].nb_tuiles;
+             flist[j].tuiles[ind_tuile].key      = keys[i];
+             flist[j].tuiles[ind_tuile].ni       = fstrec.ni;
+             flist[j].tuiles[ind_tuile].nj       = fstrec.nj;
+             flist[j].tuiles[ind_tuile].nk       = fstrec.nk;
+             flist[j].tuiles[ind_tuile].ig1ref   = fstrec.ig1;
+             flist[j].tuiles[ind_tuile].ig2ref   = fstrec.ig2;
+             flist[j].tuiles[ind_tuile].ni_start = fstrec.ig3;
+             flist[j].tuiles[ind_tuile].nj_start = fstrec.ig4;
+             flist[j].tuiles[ind_tuile].ni_end   = flist[j].tuiles[ind_tuile].ni_start + flist[j].tuiles[ind_tuile].ni - 1;
+             flist[j].tuiles[ind_tuile].nj_end   = flist[j].tuiles[ind_tuile].nj_start + flist[j].tuiles[ind_tuile].nj - 1;
+             flist[j].nb_tuiles++;
+             if (0 == flist[j].nb_tuiles % 128)
+               {
+               flist[j].tuiles = realloc(flist[j].tuiles, sizeof(_Tuile) * ((flist[j].nb_tuiles) + 128));
+               }
             }
           }
         }
       }
-    
+
     if (found == 0)
       {
       flist[j].tuiles = malloc(sizeof(_Tuile) * 128);
@@ -110,14 +126,14 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
       lng_flist++;
       }
     }
-    
+
   /*
   for (i=0; i < lng_flist; i++)
     {
     fprintf(stderr, "%d %s %d\n", i, flist[i].fldinfo.nomvar, flist[i].nb_tuiles);
     }
     */
-  
+
 
 /* On procede maintenant a l'inventaire de chacune des tuiles pour determiner si des tuiles sont manquantes. */
 
@@ -143,32 +159,32 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
       igrd = c_diesFindGrid(flist[i].fldinfo.ip1, flist[i].fldinfo.ip2);
       }
     }
-    
+
 /* On ecrit les enregistrements sur disque. */
-  
+
   for (i=0; i < ndiese; i++)
     {
     if (udst != -1)
       {
       igrd = i;
-      f77name(bm_wrt_axay)(&udst, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx, 
-      &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits), 
+      f77name(bm_wrt_axay)(&udst, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx,
+      &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits),
       grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 4,16,2);
       }
-      
+
     }
-  
+
 /* On traite tous les enregistrements...  */
-  
+
 /* Assemblage des morceaux ...  */
-  
+
   for (i=0; i < lng_flist; i++)
   {
     if (0 != strncmp(flist[i].fldinfo.nomvar, ">>", 2) && 0 != strncmp(flist[i].fldinfo.nomvar, "^^", 2))
       {
 /* Determination de la taille des champs recomposes ...  */
-      
-      switch(flist[i].fldinfo.grtyp[0]) 
+
+      switch(flist[i].fldinfo.grtyp[0])
         {
         case '#':
         igrd = c_diesFindGrid(flist[i].fldinfo.ig1, flist[i].fldinfo.ig2);
@@ -188,7 +204,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
           strcpy(user_grtyp, "#");
           }
         break;
-        
+
         case 'Y':
         case 'Z':
         igrd = c_diesFindGrid(flist[i].fldinfo.ig1, flist[i].fldinfo.ig2);
@@ -198,15 +214,15 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
         njend   = grd[igrd].njy;
         strcpy(user_grtyp, "Z");
         break;
-        
+
         default:
         nistart = 1;
         njstart = 1;
         niend   = flist[i].fldinfo.ni;
         njend   = flist[i].fldinfo.nj;
-        break;        
+        break;
         }
-      
+
       switch(flist[i].fldinfo.grtyp[0])
         {
         case '#':
@@ -219,7 +235,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
           nkt = 1;
           tuile = (float *) malloc(nit*njt*sizeof(float));
           ier = c_fstluk(tuile, flist[i].tuiles[n].key, &nit, &njt, &nkt);
-          
+
           startx = flist[i].tuiles[n].ni_start;
           starty = flist[i].tuiles[n].nj_start;
           f77name(fillgrid)(buffer,tuile,&nistart,&njstart,&niend,&njend,&nit,&njt,&startx,&starty);
@@ -238,7 +254,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
 
         default:
         buffer = calloc(flist[i].fldinfo.ni*flist[i].fldinfo.nj,sizeof(float));
-        ier = c_fstluk(buffer, flist[i].tuiles[0].key, &nit, &njt, &nkt);      
+        ier = c_fstluk(buffer, flist[i].tuiles[0].key, &nit, &njt, &nkt);
         break;
         }
 
@@ -250,10 +266,10 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
         {
         lcl_nbits = user_nbits;
         }
-        
-      
+
+
 /* Ecriture des champs...  */
-      
+
       switch(flist[i].fldinfo.grtyp[0])
         {
         case '#':
@@ -270,12 +286,12 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
               ig3 = 0;
               ig4 = 0;
               }
-  
-            f77name(bm_std_wrt)(&udst, buffer, &nistart, &njstart, &niend, &njend,  
-                      flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket, 
-                      &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet), 
-                      &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
-                      user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,  
+
+            f77name(bm_std_wrt)(&udst, buffer, &nistart, &njstart, &niend, &njend,
+                      flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket,
+                      &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
+                      &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
+                      user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,
                       8,4,16,2);
             }
 
@@ -289,7 +305,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
             f77name(bm_core_wrt)(&ucore, buffer, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy),
                                 flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket,
                                 &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
-                                &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
+                                &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                                 user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3core, &ig4,
                                 grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 8,4,16,2,2);
             }
@@ -305,7 +321,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
             f77name(bm_coarse_wrt)(&ucoarse, buffer, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy),
                                 flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket,
                                 &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
-                                &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
+                                &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                                 user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3coarse, &ig4,
                                 grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), &avg, 8,4,16,2,2);
             }
@@ -317,11 +333,11 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
           {
           if (iun_outs[n] != -1)
             {
-            f77name(bm_vanilla_wrt)(&iun_outs[n], buffer, &(flist[i].fldinfo.ni), &(flist[i].fldinfo.nj),  
-                    flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket, 
-                    &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet), 
-                    &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits, 
-                    flist[i].fldinfo.grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &(flist[i].fldinfo.ig3), &(flist[i].fldinfo.ig4), 
+            f77name(bm_vanilla_wrt)(&iun_outs[n], buffer, &(flist[i].fldinfo.ni), &(flist[i].fldinfo.nj),
+                    flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket,
+                    &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
+                    &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
+                    flist[i].fldinfo.grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &(flist[i].fldinfo.ig3), &(flist[i].fldinfo.ig4),
                     8,4,16,2);
             }
           }
@@ -341,17 +357,17 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
   int i,j,k,found;
   int tileIndex;
   float lmin, lmax, gmin, gmax,fill_val;
-  
+
   theTiles = malloc(grd[igrd].ntuiles_x * grd[igrd].ntuiles_y * sizeof(int));
   tx = grd[igrd].ntuiles_x;
   ty = grd[igrd].ntuiles_y;
   nt = tx * ty;
-  
+
   flist.masque = malloc(sizeof(int)*nt);
   memset(flist.masque, NULL, nt*sizeof(int));
   flist.tuilesPresentes = malloc(sizeof(int)*nt);
   flist.tuilesAbsentes = malloc(sizeof(int)*nt);
-  
+
   for (i=0; i < nt; i++)
     {
     tileIndex = diesGetTileIndex(igrd, flist.tuiles[i].ni_start, flist.tuiles[i].nj_start, flist.tuiles[i].ni, flist.tuiles[i].nj);
@@ -360,7 +376,7 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
       flist.masque[tileIndex] = 1;
       }
     }
-    
+
   flist.nbTuilesPresentes = 0;
   flist.nbTuilesAbsentes = 0;
   for (i=0; i < nt; i++)
@@ -371,14 +387,14 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
       flist.tuilesAbsentes[flist.nbTuilesAbsentes] = i;
       flist.nbTuilesAbsentes++;
       break;
-      
+
       case 1:
       flist.tuilesPresentes[flist.nbTuilesPresentes] = i;
       flist.nbTuilesPresentes++;
       break;
       }
     }
-  
+
   tileIndex = flist.tuilesPresentes[0];
   k = FTN2C(grd[igrd].tuiles[tileIndex].ni_start,grd[igrd].tuiles[tileIndex].nj_start,*gni);
   gmin = fld[k];
@@ -388,12 +404,12 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
     tileIndex = flist.tuilesPresentes[i];
     f77name(findmin)(&gmin,fld,ni_start,nj_start,ni_end,nj_end,
             &(grd[igrd].tuiles[tileIndex].ni),&(grd[igrd].tuiles[tileIndex].nj),
-            &(grd[igrd].tuiles[tileIndex].ni_start),&(grd[igrd].tuiles[tileIndex].nj_start));     
+            &(grd[igrd].tuiles[tileIndex].ni_start),&(grd[igrd].tuiles[tileIndex].nj_start));
     f77name(findmax)(&gmax,fld,ni_start,nj_start,ni_end,nj_end,
       &(grd[igrd].tuiles[tileIndex].ni),&(grd[igrd].tuiles[tileIndex].nj),
-      &(grd[igrd].tuiles[tileIndex].ni_start),&(grd[igrd].tuiles[tileIndex].nj_start));     
+      &(grd[igrd].tuiles[tileIndex].ni_start),&(grd[igrd].tuiles[tileIndex].nj_start));
     }
-  
+
   if (fill_mode == MINIMUM)
     {
     fill_val = gmin - 0.1 * (gmax - gmin);
@@ -402,15 +418,15 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
     {
     fill_val = gmax+ 0.1 * (gmax - gmin);
     }
-      
+
     for (i=0; i < flist.nbTuilesAbsentes; i++)
       {
       tileIndex = flist.tuilesAbsentes[i];
       f77name(fillval)(&fill_val,fld,ni_start,nj_start,ni_end,nj_end,
         &(grd[igrd].tuiles[tileIndex].ni),&(grd[igrd].tuiles[tileIndex].nj),
-        &(grd[igrd].tuiles[tileIndex].ni_start), &(grd[igrd].tuiles[tileIndex].nj_start));     
+        &(grd[igrd].tuiles[tileIndex].ni_start), &(grd[igrd].tuiles[tileIndex].nj_start));
       }
-    
+
     if (grd[igrd].tuiles[tileIndex].ni_start == 1 && (*gni == (1 + grd[igrd].tuiles[tileIndex].ni)))
       {
       f77name(fill_lastcol2)(fld,ni_start,nj_start,ni_end,nj_end);
@@ -418,4 +434,4 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
     }
 
 
-  
+
