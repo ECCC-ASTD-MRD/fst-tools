@@ -93,6 +93,9 @@
 *         M. Lepine        Reload avec librmnbeta,bug fix valid record length = 0 - v6.05 - Fev 2007
 *         M. Lepine        Taille des noms de fichiers augemntee a 1024 car. - v6.06 - Mars 2007
 *         M. Lepine        Reload avec librmn_009 - v6.07 - Juin 2007
+*         M. Lepine        Reload avec librmnbeta, correction fichiers > 2G - v6.08 - Sept 2007
+*         M. Lepine        Reload avec librmnbeta, correction fichiers > 2G - v6.09 - Mars 2008
+*         M. Lepine        Reload avec librmnbeta, correction lng mode image pour datyp=6 - v6.10 - Juillet 2008
 *
 *LANGAGE  - FTN77
 *
@@ -304,9 +307,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.07','NON')
+         I = EXDB('EDITFST','V6.10','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.07   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.10   ***'
       ENDIF
 
 
