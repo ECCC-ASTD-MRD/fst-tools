@@ -10,6 +10,7 @@
       logical rewrite_flag
       external fstinf,fstprm,fstecr,ccard,fstinl,fstouv,fnom,fstluk,fstsui
       integer armn_compress_getlevel
+      integer real_or_double
       external armn_compress_getlevel
 
       real, allocatable, dimension(:) :: buf
@@ -26,12 +27,12 @@
       data def /'void',    'void', 'env', '-1' /
       data val /'void',    'void', 'env', '-1' /
 
-      ier = exdb('FSTCOMPRESS','3.00',  'NON') 
+      ier = exdb('FSTCOMPRESS','3.02',  'NON')
 
       rewrite_flag = .false.
       ipos = 0
       call ccard(cle,def,val, 4, ipos)
-      
+
       iun_in = 10
       iun_out = 11
       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
@@ -62,7 +63,7 @@
 !       ier = fnom(iun_out, val(2), 'STD+RND+R/W+REMOTE', 0)
 !       ier = fstouv(iun_in,'RND')
 !       ier = fstouv(iun_out,'RND')
-      
+
       if (val(3)(1:3).eq.'env') then
         compression_level = armn_compress_getlevel()
         if (compression_level == -1) then
@@ -88,24 +89,30 @@
         endif
         call armn_compress_setlevel(compression_level)
       endif
-      
+
       read(val(4), *) custom_nbits
-      
+
       key1 = fstinf (iun_in,ni1,nj1,nk1,-1,' ',-1,-1,-1,' ',' ')
-      
+
       do while (key1 >= 0)
         ier = fstprm(key1,DATEO,DEET, NPAS, NI, NJ, NK, NBITS, DATYP, IP1,&
                      IP2, IP3, TYPVAR, NOMVAR, ETIKET, GRTYP, IG1, IG2, IG3,&
                      IG4, SWA, LNG, DLTF, UBC, DATEV, EXTRA2, EXTRA3)
+         if (nbits > 32) then
+            real_or_double = 2
+         else
+            real_or_double = 1
+         endif
+
         if (ier < 0) then
           print *,'Debug fstprm errno',ier
           exit
         endif
         if (datyp.eq.2.or.datyp.eq.4.or.datyp.eq.130.or.datyp.eq.132) then
-         allocate(iibuf(ni*nj*nk))
+         allocate(iibuf(ni*nj*nk*real_or_double))
          ier = fstluk(iibuf,key1,ni,nj,nk)
         else
-         allocate(buf(ni*nj*nk))
+         allocate(buf(ni*nj*nk*real_or_double))
          ier = fstluk(buf,key1,ni,nj,nk)
         endif
         if (ier < 0) then
@@ -113,7 +120,7 @@
           exit
         endif
 
-        
+
         if (nomvar == '^^' .or. nomvar == '>>' .or. nomvar == 'HY') then
           ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
                         nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
@@ -129,7 +136,7 @@
             else if (datyp.eq.129.or.datyp.eq.134) then
                ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
                             nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
-                            ig3, ig4, 134, rewrite_flag)           
+                            ig3, ig4, 134, rewrite_flag)
             else if (datyp.eq.2.or.datyp.eq.4) then
                ier = FSTECR(iibuf, iibuf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
                             nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
@@ -138,20 +145,25 @@
                ier = FSTECR(iibuf, iibuf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
                             nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
                             ig3, ig4, datyp, rewrite_flag)
-            endif        
+            endif
          else if (datyp.eq.5) then
             if (custom_nbits .ne. -1) then
               nbits = custom_nbits
+            else if (nbits > 32) then
+               ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
+                            nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
+                            ig3, ig4, datyp, rewrite_flag)
+            else
+               ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
+                            nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
+                            ig3, ig4, 133, rewrite_flag)
             endif
-            ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
-                         nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
-                         ig3, ig4, 133, rewrite_flag)
          else
             ier = FSTECR(buf, buf, -nbits, iun_out, dateo, deet, npas, ni, nj,&
                          nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2,&
                          ig3, ig4, datyp, rewrite_flag)
-         
-         endif       
+
+         endif
         if (ier < 0) then
           print *,'Debug fstecr errno',ier
           exit
@@ -165,11 +177,6 @@
       ier = fstfrm(iun_in)
       ier = fstfrm(iun_out)
 
-      ier= exfin('FSTCOMPRESS',' V3.00',  'NON') 
+      ier= exfin('FSTCOMPRESS',' V3.02',  'NON')
       stop
-      end
-      
-      character *128 function product_id_tag()
-      product_id_tag='$Id$'
-      return
       end

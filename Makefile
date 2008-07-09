@@ -26,13 +26,13 @@ OPTIMIZ = -O 2
 OBJET =
 
 fstcompress: fstcompress.o $(OBJET)
-	r.build -o fstcompress -obj fstcompress.o $(OBJET) -librmn rmn_rc009
+	r.build -o fstcompress -obj fstcompress.o $(OBJET) -librmn rmn_009
 
 fstcompress+: fstcompress.o $(OBJET)
 	r.build -o fstcompress+ -obj fstcompress.o $(OBJET) -librmn rmnbeta
 
 fstuncompress: fstuncompress.o $(OBJET) 
-	r.build -o fstuncompress -obj fstuncompress.o $(OBJET) -librmn rmn_rc009
+	r.build -o fstuncompress -obj fstuncompress.o $(OBJET) -librmn rmn_009
 
 fstuncompress+: fstuncompress.o $(OBJET) 
 	r.build -o fstuncompress+ -obj fstuncompress.o $(OBJET) -librmn rmnbeta
