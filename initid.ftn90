@@ -1,6 +1,6 @@
       subroutine initid
-#include "impnone.cdk"
-#include "idents.cdk"
+#include "impnone.cdk90"
+#include "idents.cdk90"
 
       integer i
 

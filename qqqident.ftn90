@@ -1,21 +1,21 @@
-#include "defin.cdk"
+#include "defin.cdk90"
       subroutine qqqident(position, separateur, items)
-#include "impnone.cdk"
+#include "impnone.cdk90"
 
       integer position, separateur, items(16)
 
       integer argdims
       external argdims
 
-#include "champs.cdk"
-#include "idents.cdk"
+#include "champs.cdk90"
+#include "idents.cdk90"
 
       integer i
 
-c      print *, 'qqqident', position, separateur
-c      do i=1,16
-c        print *, i, items(i)
-c      enddo
+!      print *, 'qqqident', position, separateur
+!      do i=1,16
+!        print *, i, items(i)
+!      enddo
 
       qposition = position
       if (qposition.eq.5) then

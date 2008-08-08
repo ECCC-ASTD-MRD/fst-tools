@@ -15,12 +15,8 @@
       ier = fnom(iun,'bofseq','SEQ+FTN+UNF',0)
 
       rewind(iun)
- 10   read (iun,err=13) npac,idat, ideet, npas, ni, nj, nk, 
-     $              ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,
-     $              chaine
-      print *,  npac,idat, deet, npas, ni, nj, nk, 
-     $              ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,
-     $              chaine
+ 10   read (iun,err=13) npac,idat, ideet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,               chaine
+      print *,  npac,idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,               chaine
       read (iun) champ
       print *, champ
       goto 10

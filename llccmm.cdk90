@@ -1,19 +1,19 @@
-      real, dimension(:), pointer :: tmpif0, tmpif1, tmpif2, tmpif3, tmpif4
-      real, dimension(:), pointer :: tmpift, tmplat, tmplon
-      real, dimension(:), pointer :: tmplatg, tmplong, tmproot
-      
-      common /llccmm/ tmpif0,tmpif1,tmpif2,tmpif3,tmpif4,
-     $                tmpift,tmproot,tmplat,tmplon,
-     $                tmplatg,tmplong
+   real, dimension(:,:), pointer :: tmpif0, tmpif1, tmpif2, tmpif3, tmpif4
+   real, dimension(:,:), pointer :: tmpift, tmplat, tmplon
+   real, dimension(:,:), pointer :: tmplatg, tmplong
+   real, dimension(:), pointer :: tmproot
 
-*
-*
+   common /llccmm/ tmpif0,tmpif1,tmpif2,tmpif3,tmpif4, tmpift,tmproot,&
+      tmplat,tmplon, tmplatg,tmplong
+
+!
+!
 #if defined (doc)
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*         - bloc /lcm    /  bufl(1)
-*             - bufl - champ dont la longueur varie selon les
-*                      ressources demandees par l'usager
-*
-*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /lcm    /  bufl(1)
+!             - bufl - champ dont la longueur varie selon les
+!                      ressources demandees par l'usager
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #endif
-*
+!

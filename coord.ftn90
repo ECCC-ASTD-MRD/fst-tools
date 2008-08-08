@@ -1,9 +1,9 @@
       subroutine coord(lescoords,mode)
-#include "impnone.cdk"
+#include "impnone.cdk90"
       real lescoords(*)
       integer mode
 
-#include "grilles.cdk"
+#include "grilles.cdk90"
 
       external argdims
       integer argdims

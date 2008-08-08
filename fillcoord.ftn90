@@ -1,5 +1,5 @@
       subroutine fillcoord(lat,lon,coord,ncoords)
-#include "impnone.cdk"
+#include "impnone.cdk90"
       real lat(*),lon(*),coord(512,2)
       integer ncoords
       

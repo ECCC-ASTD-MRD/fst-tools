@@ -1,5 +1,5 @@
       subroutine qqqecho(chaine)
-#include "impnone.cdk"
+#include "impnone.cdk90"
 
       external argdims
       integer argdims

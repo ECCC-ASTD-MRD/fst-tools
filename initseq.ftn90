@@ -1,10 +1,10 @@
       subroutine initseq
-#include "impnone.cdk"
-#include "champseq.cdk"
+#include "impnone.cdk90"
+#include "champseq.cdk90"
       
-*     
-*     Initialisation des listes utilisees par champ_seq
-*     
+!     
+!     Initialisation des listes utilisees par champ_seq
+!     
       integer  i,j 
 
       do i=1,nmaxlist1

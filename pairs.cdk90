@@ -1,15 +1,15 @@
-      INTEGER NPAIR,npairmx,NPAIRUV
-      COMMON/PAIR/NPAIR,npairmx,NPAIRUV
-      
-      CHARACTER*24 PAIRE
-      COMMON/CPAIR/PAIRE(NPAIRMX)
-*
-*
-#if defined (DOC)
-*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*            - BLOC /PAIR/ NPAIR,PAIRE(5,NPAIRMX) 
-*                    INTEGER NPAIR,PAIRE
-*
-*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      integer npair,npairuv
+      common/pair/npair,npairuv
+
+      character*24 paire(npairmx)
+      common/cpair/paire
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!            - bloc /pair/ npair,paire(5,npairmx)
+!                    integer npair,paire
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #endif
-*
+!

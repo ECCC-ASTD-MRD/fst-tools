@@ -1,13 +1,13 @@
-      INTEGER NPACK
-      COMMON/PACKIN/NPACK
-*
-*
-#if defined (DOC)
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*         - BLOC /PACKIN /NPACK
-*           NPACK  -COMPACTION DU DATA SUR FICHIER DE SORTIE
-*                   UTILISER PAR PUTFLD 
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*
+      integer npack
+      common/packin/npack
+!
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /packin /npack
+!           npack  -compaction du data sur fichier de sortie
+!                   utiliser par putfld
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!
 #endif
-*
+!

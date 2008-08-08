@@ -1,8 +1,8 @@
       subroutine qqqform(theform)
-#include "impnone.cdk"
+#include "impnone.cdk90"
 
       integer theform(4)
-#include "idents.cdk"
+#include "idents.cdk90"
       external argdims
       integer argdims
 

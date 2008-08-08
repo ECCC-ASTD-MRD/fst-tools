@@ -1,9 +1,9 @@
-***S/P PGSMLUK 
-*     
+!**S/P PGSMLUK
+!
       integer function pgsmluk(fld,key,ni,nj,nk,nomvar,grtyp)
-#include "impnone.cdk"
+#include "impnone.cdk90"
       integer key,ni,nj,nk
-      real fld(ni,nj,nk)
+      real, dimension(ni,nj) :: fld
       character*4 nomvar
       character*1 grtyp
       external fstluk
@@ -11,7 +11,7 @@
 
 
       integer ier,i
-      
+
       ier = fstluk(fld,key,ni,nj,nk)
 
       if (ier.lt.0) then
@@ -21,6 +21,6 @@
 
       call prefiltre(fld,ni,nj,nomvar,grtyp)
       pgsmluk=ier
-      return 
+      return
       end
-      
+

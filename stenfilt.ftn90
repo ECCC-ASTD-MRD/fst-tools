@@ -1,17 +1,17 @@
-c     ***************************************************************
-c     *                        F I L T R E                          *
-c     * Object :                                                    *
-c     *         To filter data.                                     *
-c     *                                                             *
-c     * Arguments :                                                 *
-c     *            IN /  ni    : x dimension of data                *
-c     *            IN /  nj    : y dimension of data                *
-c     *            IN /  Npass : nombre de passes pour le filtrage  * 
-c     *            IN /  list  : list des nombres de filtre        *
-c     *            IN /  L     : dimension de la list              *
-c     *         IN/OUT/  slab  : les donnees a filtrer              *
-c     *                                                             *
-c     ***************************************************************
+!     ***************************************************************
+!     *                        F I L T R E                          *
+!     * Object :                                                    *
+!     *         To filter data.                                     *
+!     *                                                             *
+!     * Arguments :                                                 *
+!     *            IN /  ni    : x dimension of data                *
+!     *            IN /  nj    : y dimension of data                *
+!     *            IN /  Npass : nombre de passes pour le filtrage  * 
+!     *            IN /  list  : list des nombres de filtre        *
+!     *            IN /  L     : dimension de la list              *
+!     *         IN/OUT/  slab  : les donnees a filtrer              *
+!     *                                                             *
+!     ***************************************************************
       subroutine filtre (slab, NI, NJ, nrows, Npass, list, L)
       implicit none
       
@@ -54,8 +54,7 @@ c     ***************************************************************
                temp = 0
                nb_elm = min(I-1,NI-I,L/2)
                do k = -nb_elm, nb_elm
-                  temp = temp + slab(I+k,J) *
-     %                 facteur(k,(L/2+1)-nb_elm)
+                  temp = temp + slab(I+k,J) *                  facteur(k,(L/2+1)-nb_elm)
                enddo
                result1(I) = temp
             enddo
@@ -69,8 +68,7 @@ c     ***************************************************************
                temp=0
                nb_elm = min(J-1,NJ-J,L/2)
                do k = -nb_elm, nb_elm
-                  temp = temp + slab(I,J+k) * 
-     %                 facteur(k,(L/2+1)-nb_elm)
+                  temp = temp + slab(I,J+k) *                   facteur(k,(L/2+1)-nb_elm)
                enddo
                result2(J) = temp
             enddo

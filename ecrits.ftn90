@@ -1,65 +1,64 @@
-*
-***S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL 
-*
-      subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,
-     $     etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt) 
+!
+!**S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL 
+!
+      subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,      etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt) 
       implicit none
       external conver,fstecr,fclos,memoir,pgsmabt,imprims,fstopc,messags,fstcvt,putfld
       integer fstecr,fstopc,fstcvt,iopc
-*
-*AUTEUR  P.SARRAZIN  AOUT 82  DRPN DORVAL P.Q. CANADA
-*
-*LANGAGE RATFOR
-*
-*OBJET(ECRITS)
-*          ECRIRE SUR FICHIER STANDARD AVEC ROUTINE ECRIRE
-*          ECRIRE SUR FICHIER MS AVEC PUTFLD
-*          ECRIRE SUR FICHIER SEQUENTIEL AVEC PUTFLD
-*
-*
-*LIBRAIRIES
-*         -SOURCE  ARMNSRC,DRPN
-*         -OBJET   PGSMLIB,ID=ARMNPJS.
-*
-*ARGUMENTS
-*   IN    NOM     NOM DU CHAMP 2 CARACTERES
-*   IN    NPAC    COMPACTION DU DATA DANS CHAMP
-*   IN    IDAT    DATE DU CHAMP (CMC STAMP)
-*   IN    IP1     NORMALEMENT NIVEAU DU CHAMP
-*   IN    IP2     HEURE DU CHAMP
-*   IN    IP3     LIBRE
-*   IN    TYPV    TYPE DU CHAMP 1 CARACTERE
-*   IN    ETIK    ETIQUETTE 1 MOT CDC (USAGER)
-*   IN    IGTYP   TYPE DE GRILLE 1 CARACTERE
-*   IN    IMPRIM   IMPRIMME LES ELEMENTS DES FICHIERS
-*                  D'ENTRE OU DE SORTI
-*
-*IMPLICITES
-*MESSAGES 
-*          MAUVAISE DIRECTIVE NUMERO=0 FICHIER MS 
-*          FICHIER INCONNU ROUTINE ECRITUR
-*          FIN DU FICHIER CA DEBORDE
-*
-*MODULES  FSTECR,PUTFLD
-*
-*APPEL   VIA DIRECTIVE
-*        ECRITS(NOM,NPACK,IDAT,IP1,IP2,IP3,TYPE ETIQET,IGTYP,IMPRIM)
-*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*
-*
-#include "lires.cdk"
-#include "voir.cdk"
-#include "dummys.cdk"
-#include "ecrires.cdk"
-#include "chck.cdk"
-#include "convers.cdk"
-#include "accum.cdk"
-#include "indptr.cdk"
-#include "enrege.cdk"
-#include "dates.cdk"
-#include "llccmm.cdk"
-#include "blancs.cdk"
-#include "styles.cdk"
+!
+!AUTEUR  P.SARRAZIN  AOUT 82  DRPN DORVAL P.Q. CANADA
+!
+!LANGAGE RATFOR
+!
+!OBJET(ECRITS)
+!          ECRIRE SUR FICHIER STANDARD AVEC ROUTINE ECRIRE
+!          ECRIRE SUR FICHIER MS AVEC PUTFLD
+!          ECRIRE SUR FICHIER SEQUENTIEL AVEC PUTFLD
+!
+!
+!LIBRAIRIES
+!         -SOURCE  ARMNSRC,DRPN
+!         -OBJET   PGSMLIB,ID=ARMNPJS.
+!
+!ARGUMENTS
+!   IN    NOM     NOM DU CHAMP 2 CARACTERES
+!   IN    NPAC    COMPACTION DU DATA DANS CHAMP
+!   IN    IDAT    DATE DU CHAMP (CMC STAMP)
+!   IN    IP1     NORMALEMENT NIVEAU DU CHAMP
+!   IN    IP2     HEURE DU CHAMP
+!   IN    IP3     LIBRE
+!   IN    TYPV    TYPE DU CHAMP 1 CARACTERE
+!   IN    ETIK    ETIQUETTE 1 MOT CDC (USAGER)
+!   IN    IGTYP   TYPE DE GRILLE 1 CARACTERE
+!   IN    IMPRIM   IMPRIMME LES ELEMENTS DES FICHIERS
+!                  D'ENTRE OU DE SORTI
+!
+!IMPLICITES
+!MESSAGES 
+!          MAUVAISE DIRECTIVE NUMERO=0 FICHIER MS 
+!          FICHIER INCONNU ROUTINE ECRITUR
+!          FIN DU FICHIER CA DEBORDE
+!
+!MODULES  FSTECR,PUTFLD
+!
+!APPEL   VIA DIRECTIVE
+!        ECRITS(NOM,NPACK,IDAT,IP1,IP2,IP3,TYPE ETIQET,IGTYP,IMPRIM)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!
+!
+#include "lires.cdk90"
+#include "voir.cdk90"
+#include "dummys.cdk90"
+#include "ecrires.cdk90"
+#include "chck.cdk90"
+#include "convers.cdk90"
+#include "accum.cdk90"
+#include "indptr.cdk90"
+#include "enrege.cdk90"
+#include "dates.cdk90"
+#include "llccmm.cdk90"
+#include "blancs.cdk90"
+#include "styles.cdk90"
 
       character *12 cetiqet
       character *4 cnomvar
@@ -79,8 +78,8 @@
       real p
       character*8 string
 
-*-----------------------------------------------------------------
-*
+!-----------------------------------------------------------------
+!
       cnomvar = '    '
       ctypvar = '  '
       cetiqet = '            '
@@ -101,8 +100,7 @@
          call convip(lip1, p, -1*ip1(2)-1000, 2, string, .false.)
       endif
 
-      ier = fstcvt(      nom,    type,  letiket,  igtyp, 
-     $     cnomvar, ctypvar, cetiqet, cigtyp, .true.)
+      ier = fstcvt(      nom,    type,  letiket,  igtyp,       cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
       print *, cnomvar, '--', ctypvar, '--' , cetiqet, '--', cigtyp
       
@@ -119,7 +117,7 @@
       if (ip3.eq.-1)  ip3=jpp3
       if (ip3.eq.   4095)  ip3=icnt  
       
-*     
+!     
       if (necrt.lt.11) then
          ig4s=igg4
          ig3s=igg3
@@ -154,34 +152,31 @@
          ig2s=ig2srt
          ig1s=ig1srt
       endif
-*     
+!     
       if (necrt.gt.9) then
          write(6,660) cnumv,idatt,jpp1,jpp2,jpp3,ctypv,cetik,cigty
- 660     format('*   ENTRE     ',a2,2x,i10,3x,i5,3x,i2,
-     $        3x,i3,4x,a1,4x,a10,3x,a1)
+ 660     format('*   ENTRE     ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
          write(6,670) cnomvar,idat,lip1,ip2,ip3,ctypvar,cetiqet,cigtyp
- 670     format('*   SORTIE    ',a2,2x,i10,3x,i5,3x,i2,
-     $        3x,i3,4x,a1,4x,a10,3x,a1)
-*
+ 670     format('*   SORTIE    ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
+!
       endif
-*
+!
       if (ichck.eq.0)  then
-         write(6,*)
-     $        'DIRECTIVE LIREN OU LIRSR DOIT-ETRE APPELE AVANT ECRITS'
+         write(6,*)         'DIRECTIVE LIREN OU LIRSR DOIT-ETRE APPELE AVANT ECRITS'
          call pgsmabt
       endif
-*
-*     SI LE NOM EXISTE DANS LA TABLE BATIE PAR L USAGER ALORS
-*     LE CHAMP EST MODIFIE
-*     EX: ACUMULA(NNI,NNJ)= AMAX1(BAS,AMIN1(HAUT,(ACUMULA(NNI,NNJ) +
-*     ECART)*FACT))
-*     
+!
+!     SI LE NOM EXISTE DANS LA TABLE BATIE PAR L USAGER ALORS
+!     LE CHAMP EST MODIFIE
+!     EX: ACUMULA(NNI,NNJ)= AMAX1(BAS,AMIN1(HAUT,(ACUMULA(NNI,NNJ) +
+!     ECART)*FACT))
+!     
       call conver(tmpif0, nni, nnj, cnomvar)
-*     
+!     
       if (printsr) then
          call imprims(cnomvar,tmpif0,nni,nnj)
       endif
-*
+!
       iun=2
       if (mode.eq.1) then
          if (compression_level.eq.0) then
@@ -200,17 +195,13 @@
          if (iwrit.eq.+1) then
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
             rewrit = .true.
-*
-            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
-     $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
+!
+            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,            nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,            ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
          else
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
             rewrit = .false.
-*     
-            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,
-     $           nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,
-     $           ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
+!     
+            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,            nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,            ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
          endif
 #if defined (SGI) || defined (NEC)
       else if (mode.eq.2) then
@@ -220,15 +211,14 @@
 #if defined (CRAY)
       else if (mode.eq.2)  then
          if (numero.le.0) 
-         write(6,*)
-     $        'MAUVAISE DIRECTIVE NUMERO.LE.0  FICHIER MS (ECRITS)'
+         write(6,*)         'MAUVAISE DIRECTIVE NUMERO.LE.0  FICHIER MS (ECRITS)'
          if (numero.ge.(iset-indxs))  then
-*            call closms(2)
+!            call closms(2)
             call fclos(2)
             write(6,*)'FIN DU FICHIER CA DEBORDE (ECRITS)'
             call pgsmabt
          endif
-*     
+!     
          if (valid)  then
             istamp=idat 
          else 
@@ -236,16 +226,14 @@
          endif
          
          
-         call putfld(tmpif0,tmpif0,iun,numero,iwrit,nni,nnj, 
-     $        nbrow,npkc,istamp)
+         call putfld(tmpif0,tmpif0,iun,numero,iwrit,nni,nnj,          nbrow,npkc,istamp)
          if (message)then
-            write(6,600)ctypvar,cnomvar,lip1,ip2,
-     $           ip3,nni,nnj,iun,numero
+            write(6,600)ctypvar,cnomvar,lip1,ip2,            ip3,nni,nnj,iun,numero
          endif
          numero = numero + numdel
-*
+!
 #endif
-*     
+!     
       else if (mode.eq.3) then
          
          if (valid) then
@@ -253,8 +241,7 @@
          else 
             istamp=0 
          endif
-         call putfld(tmpif0,tmpif0,iun,0,iwrit,nni,nnj,
-     $        nbrow,npkc,istamp)
+         call putfld(tmpif0,tmpif0,iun,0,iwrit,nni,nnj,         nbrow,npkc,istamp)
          if (message) then
             write(6,610)ctypvar,cnomvar,lip1,ip2,ip3,nni,nnj,iun
          endif
@@ -263,15 +250,12 @@
             write(6,*)'FICHIER INCONNU ROUTINE ECRITS'
          endif
       endif
-*
-*
+!
+!
       deallocate(tmpif0)
-*
- 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),
-     $     'TAILLE ',2(i5,'- '),
-     $     'FICHIER MS ',i4,'   REC=',i4)
- 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),'TAILLE ',
-     $     2(i5,'- '), 'FICHIER SEQUENTIEL',i4)
-*     
+!
+ 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),      'FICHIER MS ',i4,'   REC=',i4)
+ 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),'TAILLE ',      2(i5,'- '), 'FICHIER SEQUENTIEL',i4)
+!     
       return 
       end

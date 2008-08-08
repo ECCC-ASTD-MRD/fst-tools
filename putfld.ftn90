@@ -1,5 +1,4 @@
-      subroutine putfld(fld, buf, iun,ibidon,iwrit,
-     $     ni,nj,nbrow,npkc,istamp)
+      subroutine putfld(fld, buf, iun,ibidon,iwrit,      ni,nj,nbrow,npkc,istamp)
       integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
       real fld(ni, nj)
       real buf(ni, nj)

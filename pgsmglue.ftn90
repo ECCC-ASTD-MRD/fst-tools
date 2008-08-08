@@ -1,7 +1,7 @@
       subroutine pgsmsetiset
-#include "impnone.cdk"
+#include "impnone.cdk90"
 
-#include "indptr.cdk"
+#include "indptr.cdk90"
 
       iset = 0
 
@@ -9,9 +9,9 @@
       end
 
       subroutine pgsmsetngr(newngr)
-#include "impnone.cdk"
+#include "impnone.cdk90"
       integer newngr
-#include "grilles.cdk"
+#include "grilles.cdk90"
 
       ngr = newngr
 
@@ -20,7 +20,7 @@
 
       subroutine pgsminitptr
 
-#include "llccmm.cdk"
+#include "llccmm.cdk90"
 
       nullify(tmpif0)
       nullify(tmpif1)

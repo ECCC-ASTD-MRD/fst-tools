@@ -1,31 +1,29 @@
       subroutine setxtrap(val)
-#include "impnone.cdk"
+#include "impnone.cdk90"
 
       integer val
-      
-      integer voisin, oui, abort, valeur, maximum, minimum
+
+      integer voisin, abort, valeur, maximum, minimum
       parameter (voisin  =   100)
-      parameter (oui     =   1)
       parameter (maximum =   4)
       parameter (minimum =   5)
       parameter (valeur  =   6)
       parameter (abort   =  13)
-      
+
       integer n, i, j
       integer ival
       real    rval
       integer ier, ezsetval, ezsetopt
-      
+
       character*8 op,v
-      
+
       equivalence (ival, rval)
-      
+
       ival = val
-      
+
       op = 'EXTRAP'
-    
-      if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum 
-     $     .and. val .ne. abort .and. val .ne. oui) then
+
+      if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum       .and. val .ne. abort .and. val .ne. oui) then
          v = 'VALEUR'
          ier = ezsetval('extrap_value', rval)
          ier = ezsetopt('extrap_degree', 'value')
@@ -45,13 +43,13 @@
          else if (val .eq. maximum) then
             v = 'MAXIMUM'
             ier =  ezsetopt('extrap_degree', v)
-         else 
+         else
             v = 'ABORT'
             ier =  ezsetopt('extrap_degree', v)
          endif
       endif
-      
-      
+
+
       return
       end
 

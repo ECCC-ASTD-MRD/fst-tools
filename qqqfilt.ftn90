@@ -1,7 +1,7 @@
       subroutine qqqfilt(inout,weightlst,ntimes,verbose)
       integer inout,weightlst(*),ntimes,verbose
       
-#include "qqqfilt.cdk"
+#include "qqqfilt.cdk90"
 
       integer i,j,l,sum
       integer nb_elem,lng_liste,istart, iend

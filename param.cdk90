@@ -1,9 +1,9 @@
-      INTEGER DAT,DEET
-*
-#if defined (DOC)
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-*        - BLOC /PARAM/  INTEGER DAT,DEET
-*          DEFINIR VARIABLES COMME ENTIER
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      integer dat,deet
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!        - bloc /param/  integer dat,deet
+!          definir variables comme entier
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #endif
-*
+!

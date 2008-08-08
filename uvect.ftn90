@@ -1,77 +1,75 @@
-*
-***s/p uvectur interpolation des vecteurs u-v (horizontalement)
-*
+!
+!**s/p uvectur interpolation des vecteurs u-v (horizontalement)
+!
       subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
-#include "impnone.cdk"
-      external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir,
-     $     fstcvt,fstprm,pgsmabt,imprime,vdauv,
-     $     incdat,fstopc,messags
+#include "impnone.cdk90"
+      external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir,      fstcvt,fstprm,pgsmabt,imprime,vdauv,      incdat,fstopc,messags
       external liraxez,  cxgaig
       integer fstinf,fstinl,pgsmlir,fstprm,fstopc,fstcvt,pgsmlic
       integer ezqkdef, ezwdint, ezuvint, ezdefset
       real fbidon
-#include "defin.cdk"
-*     
-*auteur  p.sarrazin fevrier 82 drpn  dorval p.q. canada
-*revision 4.0.2
-*   conversion des variables hollerith en caracteres
-*   y. chartier -aout 90- drpn dorval quebec
-*
-*langage ratfor
-*
-*objet(uvectur)
-*         interpolation des vecteurs u et v
-*
-*librairies
-*         -source  armnsrc,drpn
-*         -objet   pgsmlib,id=armnpjs.
-*
-*arguments
-*  in    nom1   nom du premier vecteur  ex:"uu","us"...
-*  in    nom2   nom du deuxieme vecteur ex:"vv","vs"...
-*  in    nom3   nom du champ a ecrire apres interpolation du vent ex:"uv"
-*  in    iheur   heure de la variable
-*  in    npar    nombre de locations dnas itabuv
-*  in    itabuv table contenant les noms (niveau) 
-*
-*appel
-*         -via routine champ
-*         call uvectur(iheur, npar, itabuv)
-*
-*
-*modules  fstinf,pgsmabt,memoir,fstprm,pgsmlir,cuvint,cigaxg,cspauv,ecritur
-*
-*messages 
-*         mauvaise directive champ (uvectur)
-*         record n'existe pas sur fichier d'entre (u,v) (uvectur)
-*         aucune interpolation horizontale u v
-*
-*----------------------------------------------------------------------
-*
-#include "llccmm.cdk"
-#include "accum.cdk"
-#include "lires.cdk"
-#include "pairs.cdk"
-#include "dummys.cdk"
-#include "ecrires.cdk"
-#include "indptr.cdk"
-#include "dates.cdk"
-#include "grilles.cdk"
-#include "voir.cdk"
-#include "enrege.cdk"
-#include "packin.cdk"
-#include "chck.cdk"
-#include "gdz.cdk"
-#include "tp12ig.cdk"
-*
-*---------------------------------------------------------------
+#include "defin.cdk90"
+!
+!auteur  p.sarrazin fevrier 82 drpn  dorval p.q. canada
+!revision 4.0.2
+!   conversion des variables hollerith en caracteres
+!   y. chartier -aout 90- drpn dorval quebec
+!
+!langage ratfor
+!
+!objet(uvectur)
+!         interpolation des vecteurs u et v
+!
+!librairies
+!         -source  armnsrc,drpn
+!         -objet   pgsmlib,id=armnpjs.
+!
+!arguments
+!  in    nom1   nom du premier vecteur  ex:"uu","us"...
+!  in    nom2   nom du deuxieme vecteur ex:"vv","vs"...
+!  in    nom3   nom du champ a ecrire apres interpolation du vent ex:"uv"
+!  in    iheur   heure de la variable
+!  in    npar    nombre de locations dnas itabuv
+!  in    itabuv table contenant les noms (niveau)
+!
+!appel
+!         -via routine champ
+!         call uvectur(iheur, npar, itabuv)
+!
+!
+!modules  fstinf,pgsmabt,memoir,fstprm,pgsmlir,cuvint,cigaxg,cspauv,ecritur
+!
+!messages
+!         mauvaise directive champ (uvectur)
+!         record n'existe pas sur fichier d'entre (u,v) (uvectur)
+!         aucune interpolation horizontale u v
+!
+!----------------------------------------------------------------------
+!
+#include "llccmm.cdk90"
+#include "accum.cdk90"
+#include "lires.cdk90"
+#include "pairs.cdk90"
+#include "dummys.cdk90"
+#include "ecrires.cdk90"
+#include "indptr.cdk90"
+#include "dates.cdk90"
+#include "grilles.cdk90"
+#include "voir.cdk90"
+#include "enrege.cdk90"
+#include "packin.cdk90"
+#include "chck.cdk90"
+#include "gdz.cdk90"
+#include "tp12ig.cdk90"
+!
+!---------------------------------------------------------------
 
-      character*12 cetiket,cetike 
+      character*12 cetiket,cetike
       character*4 cnomvar,cnom1,cnom2, cnom3
       character*1 cigtyp
       character*2 ctypvar
-      
-      integer i
+
+      integer i,j
       integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
       integer, dimension(:), allocatable :: listniv
       integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
@@ -87,20 +85,20 @@
       logical ssw
 
       real*8 delta_t
-      
-      real, dimension(:), pointer :: uuout,vvout
+
+      real, dimension(:,:), pointer :: uuout,vvout
       iunit = 1
       nk = 1
-      
-      call pgsm_get_nfstkeys(total_keys) 
-      allocate(listniv(total_keys))     
- 
-*     
-*
-      do 23000 iprs = 1,npar 
-*     
-*     trouver record pour u,v  ou us,vs .....
-*     
+
+      call pgsm_get_nfstkeys(total_keys)
+      allocate(listniv(total_keys))
+
+!
+!
+      do 23000 iprs = 1,npar
+!
+!     trouver record pour u,v  ou us,vs .....
+!
          if (date .eq. 1) then
             if (date3.eq.-1) then
                date=date2
@@ -109,30 +107,29 @@
             endif
          endif
 
-*     
-*     modification de hollerith a caractere
-*     
+!
+!     modification de hollerith a caractere
+!
          if (etikent(1) .ne. -1) then
             write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
-         else 
+         else
             cetiket = '            '
          endif
-         
+
          if (typeent .ne. -1) then
             write(ctypvar, '(A2)') typeent
-         else 
-            ctypvar = '  ' 
+         else
+            ctypvar = '  '
          endif
-         
-         
-         ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),
-     $        iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
+
+
+         ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),         iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
          if (ier .lt. 0 .or. infon.eq.0) then
             write(6,610) cnom1
  610        format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
             goto 23000
          endif
-         
+
          if (nk.gt.1) then
             write(6,*)'***********************************************'
             write(6,*)'         PGSM N ACCEPTE PAS UN          '
@@ -140,40 +137,36 @@
             write(6,*)'***********************************************'
             call pgsmabt
          endif
-*     
-*     
+!
+!
          do ilop=1,infon
-*     
+!
             irecu=listniv(ilop)
-*     
-*     identifier parametres champ nom1
-*     
+!
+!     identifier parametres champ nom1
+!
             cetike = '            '
-            ier = fstprm( irecu, dat,deet,npas,ni, nj, nk, 
-     $           cnbits,cdatyp,jp1,jp2, jp3,ctypvar,
-     $           cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,
-     $           cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+            ier = fstprm( irecu, dat,deet,npas,ni, nj, nk,             cnbits,cdatyp,jp1,jp2, jp3,ctypvar,            cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,            cswa, clng, cdltf, cubc, extra1, extra2, extra3)
             if (ier .lt. 0) then
                write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
             endif
-*     
-*     verifier si grille gaussienne ni doit etre pair
-*     
+!
+!     verifier si grille gaussienne ni doit etre pair
+!
  675        format(' ITYP=',a1,'   CIGTYP DE FSTPRM= ',a1)
-            
+
             if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
-*     
-*     calcul la date pour le record de la variable nom2
-*     
+!
+!     calcul la date pour le record de la variable nom2
+!
             delta_t = deet*npas/3600.0
             call incdatr(datdv,dat,delta_t)
-            irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,
-     $           ctypvar,cnom2)
+            irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,            ctypvar,cnom2)
             if (irecv .lt. 0) then
-               write(6,610) nom2 
+               write(6,610) nom2
                call pgsmabt
             endif
-            
+
             if (nk.gt.1) then
              write(6,*)'********************************************'
              write(6,*)'         PGSM N ACCEPTE PAS UN          '
@@ -181,87 +174,81 @@
              write(6,*)'********************************************'
              call pgsmabt
           endif
-          
-*     allouer memoire
-          
-          allocate(tmpif1(ni*nj))
-          allocate(tmpif2(ni*nj))
-          allocate(tmpif3(li*lj))
-          allocate(tmpif4(li*lj))
-*     
-*     lire champ nom1
-*     
+
+!     allouer memoire
+
+          allocate(tmpif1(ni,nj))
+          allocate(tmpif2(ni,nj))
+          allocate(tmpif3(li,lj))
+          allocate(tmpif4(li,lj))
+!
+!     lire champ nom1
+!
           if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,
-     $         ctypvar,cnom1,cigtyp)
-          
+          numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,          ctypvar,cnom1,cigtyp)
+
           if (printen)  call imprime(cnom1,tmpif1,ni,nj)
           if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3, 
-     $         ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
+          numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,           ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
           if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
-*     
+!
           if (printen)  call imprime(cnom2,tmpif2,ni,nj)
-*****************************************************************
-*     si vvent=.true. on calcule la vitesse du vent
-          
+!****************************************************************
+!     si vvent=.true. on calcule la vitesse du vent
+
           gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
           ier = ezdefset(gdout, gdin)
-           
+
           if (vvent) then
-             ssw=.false. 
+             ssw=.false.
              if (wdvent) then
                 ssw = .true.
              endif
-             
+
              ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
 	     uuout => tmpif3
-             
-             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
-     $            jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,
-     $            lg1,lg2,lg3,lg4)
-             
+
+             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,             jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,             lg1,lg2,lg3,lg4)
+
              if (wdvent) then
-                do i=1,li*lj
-                   if (tmpif4(i).lt.0.0) then
-                      tmpif4(i) = tmpif4(i) + 360.0
+                do j=1,lj
+                do i=1,li
+                   if (tmpif4(i,j).lt.0.0) then
+                      tmpif4(i,j) = tmpif4(i,j) + 360.0
                    endif
                 enddo
+                enddo
                 vvout => tmpif4
-                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
-     $               jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,
-     $               lg1,lg2,lg3,lg4)
+                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,                jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,                lg1,lg2,lg3,lg4)
              endif
-             
-*     
-*****************************************************************
-*     
-          else 
-*     
-*     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
-*     ig3=lg3  ig4=lg4
-*     
-             if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.
-     $            ig3.ne.lg3.or.ig4.ne.lg4.or.
-     $            li.ne.ni.or.lj.ne.nj) then
-*     
-*     interpolation u,v vecteur a vitesse et direction du vent
-*     
-*     si ssw = vrai interpoler vitesse et direction
-*     faux interpoler seulement vitesse
-*     
+
+!
+!****************************************************************
+!
+          else
+!
+!     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
+!     ig3=lg3  ig4=lg4
+!
+             if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.             ig3.ne.lg3.or.ig4.ne.lg4.or.             li.ne.ni.or.lj.ne.nj) then
+!
+!     interpolation u,v vecteur a vitesse et direction du vent
+!
+!     si ssw = vrai interpoler vitesse et direction
+!     faux interpoler seulement vitesse
+!
                 ssw = .true.
-*     
+!
                 ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
                 uuout => tmpif3
                 vvout => tmpif4
-*     
-*     apres interpolation horizontale passer de vitesse et direction
-*     aux composantes u et v
-*     
-*     si type de grille "x",    u-v interpolation n\s - e\o
-*     
-                
+!
+!     apres interpolation horizontale passer de vitesse et direction
+!     aux composantes u et v
+!
+!     si type de grille "x",    u-v interpolation n\s - e\o
+!
+
              else
                 deallocate(tmpif3)
                 deallocate(tmpif4)
@@ -271,43 +258,39 @@
                   write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
                endif
             endif
-*     
-*     ecrire vecteur u
-*     
-            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,
-     $           jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,
-     $           lg1,lg2,lg3,lg4)
-*     
-*     
-*     ecrire vecteur v
-*     
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,
-     $           jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,
-     $           lg1,lg2,lg3,lg4)
-*     
-*     fin du calcul des composantes
-*     
-*     
+!
+!     ecrire vecteur u
+!
+            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+!
+!
+!     ecrire vecteur v
+!
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+!
+!     fin du calcul des composantes
+!
+!
          endif
-         
+
          if (associated(tmpif3)) deallocate(tmpif3)
          if (associated(tmpif4)) deallocate(tmpif4)
-*         if (.not.associated(tmpif3)) deallocate(tmpif3)
-*         if (.not.associated(tmpif4)) deallocate(tmpif4)
+!         if (.not.associated(tmpif3)) deallocate(tmpif3)
+!         if (.not.associated(tmpif4)) deallocate(tmpif4)
          deallocate(tmpif1)
          deallocate(tmpif2)
-         
+
       enddo
-*     
-*     
-*     reinitialiser clef de controle
-*     
+!
+!
+!     reinitialiser clef de controle
+!
 23000 enddo
-      vvent=.false. 
-*     
-*     
+      vvent=.false.
+!
+!
       deallocate(listniv)
-      return 
+      return
       end
-      
-      
+
+
