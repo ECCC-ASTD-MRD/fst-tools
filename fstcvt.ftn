@@ -44,7 +44,7 @@
       
       carmot = 4
 *     
-      FSTCVT = 0
+      FSTCVT2 = 0
       IF (HOLACAR) then
 *     
 *     TRANSFER STRING D'UNE LOCATION HOLLERITH EN CARACTERE

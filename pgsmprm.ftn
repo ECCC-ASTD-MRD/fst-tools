@@ -2,8 +2,9 @@
      $     ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3,
      $     ig4, swa, lng, dltf, ubc, extra1, extra2, extra3)
 
-      integer key, dateo, deet, npas, ni, nj, nk, nbits, datyp, 
-      integer ip1, ip2, ip3, ig1, ig2, ig3, ig4
+      implicit none
+      integer key, dateo, deet, npas, ni, nj, nk, nbits, datyp 
+      integer ip1, ip2, ip3, ig1, ig2, ig3, ig4, ier
       integer swa, lng, dltf, ubc, extra1, extra2, extra3
 
       character *1  grtyp
@@ -11,7 +12,6 @@
       character *2  typvar
       character *12 etiket
       
-      implicit none
 #include "lires.cdk"
       integer fstprm
       external fstprm
