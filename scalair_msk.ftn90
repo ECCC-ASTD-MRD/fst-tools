@@ -1,0 +1,203 @@
+!**s/p scalair  interpolation horizontale d un champ
+!               defini par l usager
+      subroutine scalair_msk(key, done_liste, len_liste)
+#include "impnone.cdk90"
+      integer :: key,len_liste
+      logical, dimension(len_liste) done_liste
+#include "defin.cdk90"
+      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
+         fstsel,symetri,imprime,itrouve,messags,pgsmabt
+      external cvtr2i
+      external liraxez
+      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
+
+      integer ezgdef_fmem, ezqkdef, ezsint, ezdefset, fst_get_mask_key, irec_mask
+      logical skip
+
+!
+#include "accum.cdk90"
+#include "dates.cdk90"
+#include "defin.cdk90"
+#include "dummys.cdk90"
+#include "ecrires.cdk90"
+#include "gdz.cdk90"
+#include "grilles.cdk90"
+#include "indptr.cdk90"
+#include "lires.cdk90"
+#include "llccmm.cdk90"
+#include "packin.cdk90"
+#include "pairs.cdk90"
+#include "voir.cdk90"
+
+
+   character *12 cetiket
+   character *4 cnom,cnomvar,cnomx
+   character *2 ctypvar
+   character *1 cigtyp
+
+   integer nniv,dat,i,nunv,itrouve,key,ii
+   integer niveaux(nniv),deet,ig1,ig2,ig3,ig4,iheur
+   integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk,total_keys,nrecs
+   integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
+   logical sym,symetri
+   real fbidon
+   real, dimension(:), allocatable :: ax, ay
+
+   real, dimension(:), pointer :: tmpout
+
+   integer, dimension(:), allocatable :: liste
+   nunv=0
+   iunit=1
+
+   return
+   end
+
+!    ier=fstprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
+! call pgsm_get_nfstkeys(total_keys)
+! !     print *, 'scalair: total_keys', total_keys
+!    allocate(liste(total_keys))
+!    cnomx = cnom
+!    if (cnom == cnomqr) cnom=cnomqq
+!
+!    nivs: do iprs = 1,nniv
+!       if (etikent(1)  /=  -1) then
+!          write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
+!       else
+!          cetiket = '            '
+!       endif
+!
+!       if (typeent  /=  -1) then
+!          write(ctypvar, '(A2)') typeent
+!       else
+!          ctypvar = '  '
+!       endif
+!       if (cnom  ==  cnommt) then
+!          if (.not.mtdone) then
+!             irec = fstinl(iunit,ni,nj,nk,-1,'            ',-1,-1,-1,'  ',cnom,liste,nrecs,total_keys)
+!             if (nrecs  ==  0) then
+!                if (message) then
+!                   write(6,*) 'RECORD FICHIER DE MONTAGNE PAS LA (SCALAIR)'
+!                endif
+!             else
+!                if (nk > 1) then
+!                   write(6,*)'******************************************'
+!                   write(6,*)'       PGSM N ACCEPTE PAS UN          '
+!                   write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (MT DANS SCALAIR)'
+!                   write(6,*)'*****************************************'
+!                   call pgsmabt
+!                endif
+!             endif
+!             mtdone=.true.
+!          endif
+!       else
+!          if (date  ==  1) then
+!             if (date3  ==  -1) then
+!                date=date2
+!             else
+!                call newdate(date, date2, date3, 3)
+!             endif
+!          endif
+!
+!          irec=fstinl(iunit,ni,nj,nk,date,cetiket,niveaux(iprs),iheur, ip3ent,ctypvar,cnom, liste, nrecs, total_keys)
+!
+!          if (nrecs  ==  0) then
+!             if (message) then
+!                write(6,*) 'RECORD N EXISTE PAS SUR FICHIER D ENTRE (SCALAIR)'
+!             endif
+!             cycle nivs
+!          endif
+!
+!          if (nk > 1) then
+!             write(6,*) '************************************************'
+!             write(6,*)'         PGSM N ACCEPTE PAS UN          '
+!             write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (CHAMP SCALAIR)'
+!             write(6,*)'************************************************'
+!             call pgsmabt
+!          endif
+!       endif
+!
+!       records: do ii=1,nrecs
+!
+! !     identifier parametres
+!          irec = liste(ii)
+!          ier=fstprm(irec, dat,deet,npas,ni, nj, nk, &
+!             cnbits,cdatyp,jp1,jp2,jp3,ctypvar,cnomvar,cetiket, &
+!             cigtyp,ig1,ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+!          if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR SCALAIR'
+!
+!          if (cnomvar(1:2) == '>>'.or.cnomvar(1:2) == '^^'.or.cnomvar(1:2) == 'HY') then
+!             cycle records
+!          endif
+!
+!
+! !   si la directive de champ emploie tout  champ(tout,tout) on doit faire
+! !     attention pour les vecteurs u-v car l'interpolation serait scalaire
+! !     on verifie et les interpolations pour les vecteurs ne sont pas faites
+!
+!          do i=1,npair
+!             if (cnom == '    ') then
+!                if ((paire(i)(9:10) == cnomvar(1:2)).or.(paire(i)(13:14) == cnomvar(1:2)))  then
+!                   nunv=nunv + 1
+!                   cycle
+!                endif
+!             endif
+!          enddo
+!
+! !     lire champ
+!
+!          skip = .false.
+!          allocate(tmpif1(ni*nj))
+!          ier = fst_get_mask_key(irec_mask, irec, 0, iunit)
+!          key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
+! !          endif
+!
+!          if (cdatyp  ==  2 .or. cdatyp  ==  4) then
+!             call cvtr2i(tmpif1, tmpif1, ni, nj)
+!          endif
+!
+!          if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+!          if (ig1 /= 0) sym = symetri(cnomvar)
+! !
+! !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
+! !     ig3=lg3  ig4=lg4
+! !
+!          if (.not.skip) then
+!             if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
+!                allocate(tmpif2(li*lj))
+!                gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+!                ier = ezdefset(gdout, gdin)
+!                ier = ezsint(tmpif2, tmpif1)
+!                tmpout => tmpif2
+!             else
+!                tmpout => tmpif1
+!                if (message) write(6,660) cnom
+!  660           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
+!             endif
+! !     ecrire sur fichier approprie(std,ms,seq)
+!             if (cnomx == cnomqr) then
+!                call qaaqr(tmpif2,li,lj,tmplat)
+!                cnomvar=cnomqr
+!             endif
+!             call ecritur(tmpout,npack,dat,deet,npas,li,lj,nk,jp1,jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+!             if (associated(tmpif2)) then
+!                deallocate(tmpif2)
+!             endif
+!             deallocate(tmpif1)
+!           endif
+!           if (unefois) exit
+!        enddo records
+!      enddo nivs
+!
+! !
+!    if (nunv > 0) then
+!       write(6,666)
+!  666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
+!       write(6,668)
+!  668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
+!       write(6,669)
+!  669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
+! !
+!    endif
+!    deallocate(liste)
+   return
+   end

@@ -6,11 +6,11 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
+RMNLIB = $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmnbeta.a
 
-FFLAGS = 
+FFLAGS =
 
-CFLAGS = 
+CFLAGS =
 
 OPTIMIZ = -O 2
 OPTIMIZ =  -debug -O 0
@@ -34,64 +34,67 @@ default: obj
 
 OBJET = f_pgsm.o c_pgsm.o
 
-FICHIERS_CDK = \
-accum.cdk     chck.cdk     ecrires.cdk  idents.cdk   lnkflds.cdk  qqqfilt.cdk\
-cfldinf.cdk   convers.cdk  enrege.cdk   impnone.cdk  nivos.cdk    symnom.cdk\
-champs.cdk    dates.cdk    gdz.cdk      indptr.cdk   packin.cdk   tp12ig.cdk\
-champseq.cdk  defin.cdk    grilles.cdk  lires.cdk    pairs.cdk   voir.cdk\
-charac.cdk    dummys.cdk   heures.cdk   llccmm.cdk   param.cdk
+FICHIERS_CDK90 = \
+accum.cdk90     chck.cdk90     ecrires.cdk90  idents.cdk90   lnkflds.cdk90  qqqfilt.cdk90\
+cfldinf.cdk90   convers.cdk90  enrege.cdk90   impnone.cdk90  nivos.cdk90    symnom.cdk90\
+champs.cdk90    dates.cdk90    gdz.cdk90      indptr.cdk90   packin.cdk90   tp12ig.cdk90\
+champseq.cdk90  defin.cdk90    grilles.cdk90  lires.cdk90    pairs.cdk90   voir.cdk90\
+charac.cdk90    dummys.cdk90   heures.cdk90   llccmm.cdk90   param.cdk90
 
-FICHIERS_FTN = \
-calcul.ftn     ecrits.ftn     gristdb.ftn      liren.ftn    routines.ftn\
-champ.ftn      ecritur.ftn    gritp12.ftn      lopascm.ftn  pgsmlic.ftn    scalair.ftn\
-champ_seq.ftn  epais.ftn      loupmir.ftn  pgsmlir.ftn    setintx.ftn\
-chkenrpos.ftn  chk_hy.ftn     fillcoord.ftn  grlalon.ftn      lrsmdes.ftn  pgsmluk.ftn    setxtrap.ftn\
-chmpdif.ftn    heure.ftn      macpcp.ftn   plmnmod.ftn    sorti.ftn\
-comme.ftn      grigaus.ftn    imprime.ftn      messags.ftn  prefiltre.ftn  symetri.ftn\
-conlalo.ftn    grigef.ftn     initid.ftn       metsym.ftn   putfld.ftn     stenfilt.ftn testseq.ftn\
-conver.ftn     grigrib.ftn    initseq.ftn      operat.ftn   qaaqr.ftn      uvect.ftn\
-convs.ftn      grille2.ftn    itrouve.ftn      outlalo.ftn  qqqecho.ftn    vdauv.ftn\
-coord.ftn      grillps.ftn    gristereo.ftn    lastcol.ftn      pairvct.ftn  qqqfilt.ftn    verlalo.ftn\
-coupe.ftn      grilstd.ftn    legvar.ftn       pgsm2.ftn      qqqform.ftn\
-coupzm.ftn     griltp4.ftn    liraxez.ftn      pgsmabt.ftn  qqqident.ftn
+FICHIERS_FTN90 = \
+calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chkenrpos.ftn90 chmpdif.ftn90 comme.ftn90 \
+conlalo.ftn90 conver.ftn90 convs.ftn90 coord.ftn90 coupe.ftn90 coupzm.ftn90 ecrits.ftn90 \
+ecritur.ftn90 epais.ftn90 fst_get_mask_key.ftn90 fillcoord.ftn90 grigaus.ftn90 grigef.ftn90 grigrib.ftn90 grille2.ftn90 \
+grillps.ftn90 grilstd.ftn90 griltp4.ftn90 gristdb.ftn90 gristereo.ftn90 gritp12.ftn90 grlalon.ftn90 \
+heure.ftn90 imprime.ftn90 initid.ftn90 initseq.ftn90 itrouve.ftn90 lastcol.ftn90 legvar.ftn90 \
+liraxez.ftn90 liren.ftn90 lopascm.ftn90 loupmir.ftn90 lrsmdes.ftn90 macpcp.ftn90 messags.ftn90 \
+metsym.ftn90 operat.ftn90 outlalo.ftn90 pairvct.ftn90 pgsm2.ftn90 pgsmabt.ftn90 pgsmlic.ftn90 \
+pgsmlir.ftn90 pgsmluk.ftn90 plmnmod.ftn90 prefiltre.ftn90 putfld.ftn90 qaaqr.ftn90 qqqecho.ftn90 \
+qqqfilt.ftn90 qqqform.ftn90 qqqident.ftn90 routines.ftn90 scalair.ftn90 \
+setintx.ftn90 setxtrap.ftn90 sorti.ftn90 stenfilt.ftn90 symetri.ftn90 testseq.ftn90 \
+uvect.ftn90 vdauv.ftn90 verlalo.ftn90
+
 
 FICHIERS_C = \
 c_pgsm.c
 
-FICHIERS = $(FICHIERS_FTN) $(FICHIERS_C) 
+FICHIERS = $(FICHIERS_FTN90) $(FICHIERS_C)
 
-f_pgsm.ftn: $(FICHIERS_FTN) $(FICHIERS_CDK)
-	cat $(FICHIERS_FTN) > f_pgsm.ftn
+f_pgsm.ftn90: $(FICHIERS_FTN90) $(FICHIERS_CDK90)
+	cat $(FICHIERS_FTN90) > f_pgsm.ftn90
 
 obj: $(OBJET)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 genlib: $(OBJET)
-#Creer ou mettre a jour la programmatheque 
+#Creer ou mettre a jour la programmatheque
 	$(AR) rcv $(MYLIB) $(OBJET)
 
-pgsmflib: 
+pgsmflib:
 	r.build -o pgsm -libpath $(PGSM) -libappl pgsm -librmn rmnbeta -bidon -main pgsm
 
-pgsm: 
+pgsm:
 	r.build -o $@ -obj *.o -bidon -main pgsm -librmn rmn_009
 
-pgsm_007: 
+pgsm_007:
 	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
 
-pgsm2007: 
+pgsm2008:
+	r.compile -o $@ -src $(FICHIERS_FTN90) c_pgsm.c -obj $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
+
+pgsm2007:
 	r.build -o $@ -obj *.o  $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
 
-pgsm2006: 
+pgsm2006:
 	r.build -o $@ -obj *.o  $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmnbeta
 
-pgsm2002: 
+pgsm2002:
 	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -bidon -libappl dies -main pgsm -librmn rmn_rc008
 
-pgsm2000: 
+pgsm2000:
 	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_007
 
-pgsm89: 
+pgsm89:
 	r.build -o $@ -obj *.o -libappl dies -librmn rmn_007 -fstd89
 
 pgsmnew: c_pgsm.o
@@ -100,7 +103,7 @@ pgsmnew: c_pgsm.o
 # 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 
-pgsm-stereo: 
+pgsm-stereo:
 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-exp:
@@ -124,10 +127,13 @@ pgsm6.9.8_89:
 pgsm-src:
 	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_007
 
+pgsm-src90:	f_pgsm.ftn90
+	r.compile -src f_pgsm.ftn90 c_pgsm.c -O 2 -obj $(HOME)/src/isi4/*.o -bidon -main pgsm -o pgsm-src -librmn rmnbeta
+
 clean:
-#Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
-	rm -f *.o f_pgsm.f pgsm pgsm2000 pgsm89
+#Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
+	rm -f *.o *~ *.f *.f90 pgsm pgsm2000 pgsm89
 
 fastclean:
-	rm *.o pgsm.f	
+	rm *.o pgsm.f
 
