@@ -293,7 +293,7 @@
    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
    data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
    data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
-   data qlxcon(126)/'RESV126' /  qlxval(126)/ 0 /
+   data qlxcon(126)/'MASQUE' /   qlxval(126)/ 0 /
    data qlxcon(127)/'RESV127' /  qlxval(127)/ 0 /
    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
@@ -319,7 +319,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.0.2',  lfn(133))
+	jdate= exdb(' PGSM  ',' V7.0.3',  lfn(133))
 
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -627,7 +627,7 @@
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
        call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
-	do i=1,125
+	do i=1,126
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo
 

@@ -50,7 +50,7 @@ heure.ftn90 imprime.ftn90 initid.ftn90 initseq.ftn90 itrouve.ftn90 lastcol.ftn90
 liraxez.ftn90 liren.ftn90 lopascm.ftn90 loupmir.ftn90 lrsmdes.ftn90 macpcp.ftn90 messags.ftn90 \
 metsym.ftn90 operat.ftn90 outlalo.ftn90 pairvct.ftn90 pgsm2.ftn90 pgsmabt.ftn90 pgsmlic.ftn90 \
 pgsmlir.ftn90 pgsmluk.ftn90 plmnmod.ftn90 prefiltre.ftn90 putfld.ftn90 qaaqr.ftn90 qqqecho.ftn90 \
-qqqfilt.ftn90 qqqform.ftn90 qqqident.ftn90 routines.ftn90 scalair.ftn90 \
+qqqfilt.ftn90 qqqform.ftn90 qqqident.ftn90 routines.ftn90 scalair.ftn90 scalair_msk.ftn90 \
 setintx.ftn90 setxtrap.ftn90 sorti.ftn90 stenfilt.ftn90 symetri.ftn90 testseq.ftn90 \
 uvect.ftn90 vdauv.ftn90 verlalo.ftn90
 
@@ -80,7 +80,7 @@ pgsm_007:
 	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
 
 pgsm2009: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnalpha
+	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-594
 
 pgsm2008: f_pgsm.ftn90 c_pgsm.c
 	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -obj $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmn_rc010
