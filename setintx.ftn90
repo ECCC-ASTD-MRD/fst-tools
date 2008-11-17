@@ -23,6 +23,8 @@ integer ezsetopt
       ier = ezsetopt('interp_degree', 'cubic')
    case (4)
       ier = ezsetopt('interp_degree', 'average')
+   case (5)
+      ier = ezsetopt('interp_degree', 'sph_average')
    case default
       print *,  ' <QQQINTX>: MAUVAISE VALEUR - VALEUR DEVRAIT ETRE 0, 1 OU 3'
       print *,  ' <QQQINTX>: ORDRE D''INTERPOLATION INITIALISE A 3'

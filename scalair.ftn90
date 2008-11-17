@@ -217,7 +217,9 @@
          endif
 
          if (printen)  call imprime(cnomvar, tmpif1, ni, nj)
-         if (ig1 /= 0) sym = symetri(cnomvar)
+         if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
+            if (ig1 /= 0) sym = symetri(cnomvar)
+         endif
 !
 !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !     ig3=lg3  ig4=lg4

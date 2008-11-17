@@ -619,20 +619,20 @@
       end
       integer function chkenrpos(luin, luout, ip1, ip2, ip3)
       implicit none
-      
+
 #include "indptr.cdk90"
 
       real, dimension (:), allocatable :: ax, ay
 
       integer luin, luout, ip1, ip2, ip3
       integer lip1, lip2, lip3
-      
+
       integer fstinf, fstluk, fstecr, fstprm
       external fstinf, fstluk, fstecr, fstprm
-      
+
       integer ni1, nj1, nk1, ni2, nj2, nk2
       integer ier,ier1, ier2
-      
+
       character*2 typvarx, typvary, grtyp, grref
       character*12 etikx, etiky
       character*4 nomx, nomy
@@ -640,43 +640,48 @@
       integer  cdatyp
       integer dateo, deet, npas, nbits,datyp, ig1, ig2, ig3,      ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3, npak
 
-      
+
       if (mode.eq.1) then
          ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
          ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-         
+
          if (ier1.ge.0.and.ier2.ge.0) then
             chkenrpos = 0
             return
          endif
-         
+
       endif
-      
+
+      if (mode.eq.5) then
+         chkenrpos = 0
+         return
+      endif
+
       ier1 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
       ier2 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-      
+
       if (ier1.lt.0.or.ier2.lt.0) then
          chkenrpos = -1
          return
       endif
-      
+
       ier = fstprm(ier1, dateo, deet, npas, ni1, nj1, nk1, nbits,      datyp, lip1, lip2, lip3, typvarx, nomx, etikx,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
-      
+
       ier = fstprm(ier2, dateo, deet, npas, ni2, nj2, nk2, nbits,      datyp, lip1, lip2, lip3, typvary, nomy, etiky,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
-      
+
       allocate(ax(ni1*nj1*nk1))
       allocate(ay(ni2*nj2*nk2))
-      
+
       ier = fstluk(ax, ier1, ni1, nj1, nk1)
       ier = fstluk(ay, ier2, ni2, nj2, nk2)
-      
+
       call ecritur(ax,-nbits,dateo,deet,npas,ni1,nj1,nk1,      lip1,lip2,lip3,       typvarx,nomx,etikx,grref,ig1ref,ig2ref,ig3ref,ig4ref)
-      
+
       call ecritur(ay,-nbits,dateo,deet,npas,ni2,nj2,nk2,      lip1,lip2,lip3,       typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
-      
+
       deallocate(ax)
       deallocate(ay)
-      
+
       chkenrpos = 0
 
       return
@@ -1484,18 +1489,18 @@
       end
 !
 !**   s/p convs, batir une table avec noms,ecart,facteur,bas,haut
-!     
+!
       subroutine convs(nom,  ecart,  facteur, bas, haut)
 #include "impnone.cdk90"
-!     
+!
 !auteur p. sarrazin mai 82 drpn dorval quebec canada
-!     
+!
 !     langage ratfor
-!     
+!
 !     objet(convs)
 !     la directive convs assigne a chaque table la valeur appropriee
 !     les tables augmentent a chaque appel convs
-!     
+!
 !arguments
 !     in    nom    nom du champ que l on veut modifier
 !     in    ecart  valeur plmnmodr au champ
@@ -1503,12 +1508,12 @@
 !     champ(i,j)=(champ(i,j) + ecart)*facteur
 !     in    bas    valeur < bas auront la valeur de bas
 !     in    haut   valeur du champ > haut auront la valeur de haut
-!     
+!
 !implicites
 !     appel   via directive
 !     conv(nom,ecart,facteur,bas,haut)
-!     
-!     messages 
+!
+!     messages
 !     plus de 40 changements d'echelle routine convs
 !
 !   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1520,27 +1525,27 @@
 !     trouver si le nom existe
 !     oui- remplacer
 !     non- plmnmodr
-!     
+!
       external fstcvt
       integer  nom,i,ier, fstcvt
       character*4 cnom, cnoma
       real bas,ecart,facteur,haut
-!     
-      write(cnom,'(A4)') nom	
-      
-      cnoma = cnom 
+!
+      write(cnom,'(A4)') nom
+
+      cnoma = cnom
       i = 1
  10   if (i.le.nomb) then
          if (cnoma.ne.nomss(i)) then
-            i = i + 1 
+            i = i + 1
             goto 10
          endif
       endif
-!     
+!
 !     definir nomb danger si plus grand que 40
-!     
+!
       nomb = max0(nomb,i)
-      if (nomb.lt.40) then
+      if (nomb.lt.256) then
          hauts(i)=1.e+30
          bass(i)= -hauts(i)
          ecarts(i) = ecart
@@ -1550,12 +1555,12 @@
          if (ncon.eq.5) hauts(i)=haut
       else
          if (message) then
-            write(6,*)'PLUS DE 40 DIRECTIVES "CONVS" --- RESTE IGNORE'
+            write(6,*)'PLUS DE 256 DIRECTIVES "CONVS" --- RESTE IGNORE'
          endif
       endif
       return
       end
-      
+
       subroutine coord(lescoords,mode)
 #include "impnone.cdk90"
       real lescoords(*)
@@ -2770,7 +2775,9 @@
 !
 !     interpolation horizontale
 !
-      if (ig1.ne.0) sym=symetri(cnomvar)
+      if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
+         if (ig1 /= 0) sym = symetri(cnomvar)
+      endif
 
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)
@@ -4940,9 +4947,9 @@
 !
       subroutine macpcp(cnom,npar,itime)
 #include "impnone.cdk90"
-!     
+!
 !auteur  p.sarrazin fevrier 82  drpn dorval p.q. canada
-!     
+!
 !revision 4.0.2
 !     conversion variables type hollerith -> type caractere
 !   y. chartier -aout 90- drpn dorval quebec
@@ -4973,7 +4980,7 @@
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
-!messages 
+!messages
 !          'mauvais appel a champ il devrait y avoir 3 arguments'
 !           record n'existe pas sur fichier d'entre (macpcp)
 !
@@ -4982,7 +4989,7 @@
       external loupneg,loupsou,fstopc,pgsmabt,imprime,messags,fstcvt
       external liraxez
       integer fstprm,fstinf,pgsmlir,fstopc,fstcvt
-!     
+!
 !appel     via champ
 !         call macpcp(nom,npar,itime)
 !
@@ -5000,17 +5007,17 @@
 #include "dates.cdk90"
 #include "packin.cdk90"
 #include "gdz.cdk90"
-!     
+!
       character *12 cetike,cetiket
-      character *4 cnomvar, cnom 
+      character *4 cnomvar, cnom
       character *1 cigtyp
       character *2 ctypvar
-      
+
       real valeur
       real fbidon
 
       real, dimension(:), allocatable :: lclif1, lclif2
-      
+
       integer i, itime(2),ig1,ig2,ig3,ig4,ip1,irec1,irec2
       integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc
       integer cdatyp,cnbits
@@ -5018,21 +5025,21 @@
       integer ezqkdef, ezdefset, ezsint, chkenrpos
       integer iunit
       logical symetri,sym
-      
+
       iunit = 1
       nk = 1
-!     
+!
       if (npar.ne.2) then
          if (message) then
             write(6,*)'MAUVAIS APPEL DOIT AVOIR 3 ARGUMENTS  (MACPCP)'
          endif
          return
       endif
-!     
+!
 !     identifier le numero de chaque record avec fstinf
-!     
+!
 !     # doit etre egal a zero dans fichier d'ENTRE
-      ip1=0  
+      ip1=0
          if (date .eq. 1) then
             if (date3.eq.-1) then
                date=date2
@@ -5041,33 +5048,33 @@
             endif
          endif
 
-!     
+!
 !     modification de hollerith a caractere
-!     
+!
       cnomvar = cnom
       if (etikent(1) .ne. -1) then
          write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
-      else 
+      else
          cetiket = '            '
       endif
-      
+
       if (typeent .ne. -1) then
          write(ctypvar, '(A2)') typeent
-      else 
+      else
          ctypvar = '  '
       endif
-      
-      
+
+
       irec1=fstinf(1,ni,nj,nk,date,cetiket,ip1,      itime(1),ip3ent,ctypvar,cnomvar)
       irec2=fstinf(1,ni,nj,nk,date,cetiket,ip1,      itime(2),ip3ent,ctypvar,cnomvar)
-      
+
 !     #  record n'EXISTE PAS
       if (irec2 .lt. 0 .or.irec1 .lt. 0) then
          write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (MACPCP)'
          write(6,*)' VERIFIER IP2-IP3ENT  IP1=0 SUR FICHIER D ENTRE'
          return
       endif
-      
+
       if (nk.gt.1) then
          write(6,*)'************************************************'
          write(6,*)'         PGSM N ACCEPTE PAS UN          '
@@ -5075,95 +5082,97 @@
          write(6,*)'************************************************'
          call pgsmabt
       endif
-!     
-!     
+!
+!
 !     identifier parametres pour champ 1
-!     
+!
       ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,       ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
-!     
+!
 !     verifier si grille gaussienne ni doit etre pair
-!     
+!
       if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
-!     
-!     
+!
+!
 !     lire champ no 1
-!     
+!
       allocate(lclif1(ni*nj))
-      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       if (date .eq. 0 .or. date .eq. 1) date=date2
-      
+
       num1 = pgsmlir(lclif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
-      
+
       if (printen)  call imprime(cnomvar,lclif1,ni,nj)
-!     
+!
 !     identifier parametres pour champ 2
-!     
+!
       ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,      ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
-!     
+!
 !     verifier si grille gaussienne ni doit etre pair
-!     
+!
       if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
-!     
+!
 !     lire champ 2
-!     
+!
       allocate(lclif2(max0(li*lj,ni*nj)))
-      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       if (date .eq. 0 .or. date .eq. 1) date=date2
       num2 = pgsmlir(lclif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
       if (printen)  call imprime(cnomvar,lclif2,ni,nj)
-!     
+!
 !     difference entre les deux champs
-!     
+!
       nn = ni*nj
-      call loupsou(lclif1,lclif2,nn) 
-!     
-!     
+      call loupsou(lclif1,lclif2,nn)
+!
+!
 !     interpolation horizontale
-!     
+!
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)
       else
-!     #  variable symetrique oui=.true. 
-         if (ig1.ne.0) sym = symetri(cnomvar) 
+!     #  variable symetrique oui=.true.
+         if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
+            if (ig1 /= 0) sym = symetri(cnomvar)
+         endif
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
          ier = ezsint(lclif2, lclif1)
       endif
-!     
+!
 !     #   jp1 - contient heure du premier champ
 !     #   jp2 - contient heure du deuxieme champ
-      jp1 = itime(1)   
+      jp1 = itime(1)
       jp2 = itime(2)
       jp3 = 0
-!     
+!
 !     deet et npas contiennent les dernieres valeurs lues dans le dernier record
-!     
+!
 !     eliminer toutes les valeurs du champ negative precip
 !     et acumulateur d'ajustement ne peuvent etre negatif
-!     
+!
       lilj=li*lj
       valeur=0.0
       call loupneg(lclif2,valeur,1,lilj,1)
-!     
+!
 !     ecrire sur fichier standard,ms,sequentiel
-!     
+!
       if (cgrtyp.eq.'*') then
          call ecritur(lclif1,npack,dat,deet,npas,ni,nj,nk,jp1,jp2,jp3,         ctypvar,cnomvar,cetike,cigtyp,ig1,ig2,ig3,ig4)
       else
          call ecritur(lclif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,         ctypvar,cnomvar,cetike,cgrtyp,lg1,lg2,lg3,lg4)
       endif
-!     
+!
 !     remetre espace des champs de travail
-!     
+!
       deallocate(lclif2)
       deallocate(lclif1)
-!     
+!
       return
       end
-      
-      
+
+
 !
 !**S/P MESSAGS  IMPRIME MESSAGE SUR UNE PAGE COMPLETE
       subroutine messags(ni) 
@@ -5922,9 +5931,9 @@
 !
 	data nheure,  heures, nnoms,  npack,  nhur, nomb, ichck         /0,  MXHEURE*-2, 0,      -16,    1,    0,    0/
 !
-	data nomss /137*'  '/
+	data nomss /256*'  '/
 
-	data ecarts,     facts,     pose,     ixlat, ixlon       /137*0.0,     137*1.0,   .false.,   0,     0 /
+	data ecarts,     facts,     pose,     ixlat, ixlon       /256*0.0, 256*1.0, .false., 0, 0 /
 !
    	data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
 !
@@ -6089,8 +6098,8 @@
    data qlxcon(121)/'FAST'    /  qlxval(121)/ 1 /
    data qlxcon(122)/'BEST'    /  qlxval(122)/ 2 /
    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
-   data qlxcon(124)/'RESV124' /  qlxval(124)/ 0 /
-   data qlxcon(125)/'RESV125' /  qlxval(125)/ 0 /
+   data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
+   data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
    data qlxcon(126)/'RESV126' /  qlxval(126)/ 0 /
    data qlxcon(127)/'RESV127' /  qlxval(127)/ 0 /
    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
@@ -6117,7 +6126,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.0.0',  lfn(133))
+	jdate= exdb(' PGSM  ',' V7.0.2',  lfn(133))
 
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6425,7 +6434,7 @@
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
        call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
-	do i=1,123
+	do i=1,125
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo
 
@@ -7606,7 +7615,9 @@
          endif
 
          if (printen)  call imprime(cnomvar, tmpif1, ni, nj)
-         if (ig1 /= 0) sym = symetri(cnomvar)
+         if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
+            if (ig1 /= 0) sym = symetri(cnomvar)
+         endif
 !
 !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !     ig3=lg3  ig4=lg4
@@ -7705,6 +7716,8 @@ integer ezsetopt
       ier = ezsetopt('interp_degree', 'cubic')
    case (4)
       ier = ezsetopt('interp_degree', 'average')
+   case (5)
+      ier = ezsetopt('interp_degree', 'sph_average')
    case default
       print *,  ' <QQQINTX>: MAUVAISE VALEUR - VALEUR DEVRAIT ETRE 0, 1 OU 3'
       print *,  ' <QQQINTX>: ORDRE D''INTERPOLATION INITIALISE A 3'
@@ -7788,36 +7801,37 @@ integer ezsetopt
 !OBJET(SORTI)
 !          VERIFIER LA VALEUR DE MODX  RESERVER MEMOIRE, OUVRIR FICHIER
 !            MODX=1 FICHIER STANDARD
-!                 2 FICHIER ACCES DIRECT (READMS) 
+!                 2 FICHIER ACCES DIRECT (READMS)
 !                 3 FICHIER SEQUENTIEL
 !                 4 FICHIER SEQUENTIEL AVEC PARAMETRES DE FSTECR
+!                 5 Fichier sequentiel ascii (sortie(formatee))
 !
 !LIBRAIRIES
 !         -SOURCE  ARMNSRC,DRPN
 !         -OBJET   PGSMLIB,ID=ARMNPJS.
 !
 !ARGUMENTS
-!  IN      MODX      1=FICHIER STANDARD 
+!  IN      MODX      1=FICHIER STANDARD
 !                    2=FICHIER DIRECT (READMS)
 !                    3=FICHIER SEQUENTIEL
 !
 !  IN     NOENRG     NOMBRE D'ENREGISTREMENT DANS FICHIER
 !  IN      JWRIT     -1=REECRIRE SUR FICHIER OU ECRIRE A LA FIN(MS) SORTI(MS,500,A)
-!                    -1=ECRIRE SUR FICHIER UN RECORD SANS DETRUIRE UN 
+!                    -1=ECRIRE SUR FICHIER UN RECORD SANS DETRUIRE UN
 !                       RECORD PAREIL   SORTI(STD,500,A)
 !                    +1=REECRIRE SUR FICHIER FATAL SI RECORD PAS LA.   SORTI(MS,500,R)
 !                    +1=REMPLACE UN RECORD SI DEJA EXISTANT DETRUIT   SORTI(STD,500,R)
 !
 !IMPLICITES
 !
-!MESSAGES 
-!         DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE 
+!MESSAGES
+!         DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE
 !         MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD
 !         MAUVAISE DIRECTIVE (SORTIE) FICHIER MS
 !         DIRECTIVE ENREG=0, INITIALISER A 1
 !         MAUVAIS APPEL A SORTIE FICHIER SEQ
 !         TYPE DE FICHIER INCONNU
-!         MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ) 
+!         MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)
 !
 !
 !----------------------------------------------------------------------
@@ -7836,14 +7850,14 @@ integer ezsetopt
       common/relu/dejalue
       logical dejalue
       data dejalue/.false./
-!     
+!
 !   DATE DE LA RUN OPERATIONNELLE UTILISEE PAR L'USAGER DIRECTIVE OPDAT=OUI
-!     
+!
       if (lfn(6).ne. 'NON') then
          if (seldat) date = jdate
          if (seldat) write(6,*)' DATE ORIGINE = DATE VALIDE DATE=',date
       endif
-!     
+!
       if (dejalue)  then
          if (message) then
             write(6,*)            'DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE'
@@ -7851,22 +7865,22 @@ integer ezsetopt
          endif
       endif
       dejalue=.true.
-!     
+!
       mode = modx
       noenrg = norecs
-!     
+!
 !     NBR1 = MAX0(2,FSTNBR(1))
-!     
+!
 !      ier = fstnbr(1)
 !      if (ier .lt. 0) call fstabt
 !
 !   LE FICHIER D ENTRE NE PEUT ETRE  FICHIER STANDARD SEQUENTIEL
 !
-      iset = 0  
+      iset = 0
 !
-!  RESERVER MEMOIR POUR FICHIER D ENTRE 
+!  RESERVER MEMOIR POUR FICHIER D ENTRE
 !
-!     
+!
       if (mode.eq.1)  then
          if (noenrg.eq.1) then
             ier=fnom(2,lfn(129),'STD+SEQ+FTN',0)
@@ -7876,10 +7890,10 @@ integer ezsetopt
             ier = fnom(2,lfn(129),'STD+RND+REMOTE',0)
 
             if (nsort.eq.2) then
-               iwrit=+1 
+               iwrit=+1
             else if (nsort.eq.3) then
                iwrit=jwrit
-            else 
+            else
                write(6,*)               'MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD'
                call pgsmabt
             endif
@@ -7887,10 +7901,10 @@ integer ezsetopt
       else if (mode.eq.2) then
          write(6,*)         ' LES FICHIERS "MS" NE SONT PAS SUPPORTES DANS CETTE'
          write(6,*)         ' VERSION DE PGSM'
-         call pgsmabt 
+         call pgsmabt
       else if (mode.eq.3.or.mode.eq.4) then
          ier = fnom(2,lfn(129),'SEQ+FTN+UNF',0)
-         
+
          if (nsort.ne.1)  then
             write(6,*)'MAUVAIS APPEL A SORTIE FICHIER SEQ'
             call pgsmabt
@@ -7903,12 +7917,12 @@ integer ezsetopt
             ier = pgsmof(2,lfn(129))
             ier = fnom(2,lfn(129),'SEQ+FMT+R/W',0)
          endif
-      else  
+      else
          if (message) write(6,*)'TYPE DE FICHIER INCONNU'
          if (message) write(6,*)         ' MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)'
          return
       endif
-!     
+!
 !
       if (mode.eq.2) then
          write(6,*)   'LES FICHIERS "MS" NE SONT PLUS SUPPORTES SUR LES CYBER-910-920'
@@ -7926,7 +7940,7 @@ integer ezsetopt
                print *, 'fsteof retourne', ier
             endif
          else
-            ier = fstouv(2, 'RND') 
+            ier = fstouv(2, 'RND')
          endif
       endif
 !
@@ -7948,7 +7962,7 @@ integer ezsetopt
             call qqexit(13)
          endif
       enddo
-      
+
       call fstlnk(lnkdiun,niun)
       endif
 
@@ -7960,17 +7974,17 @@ integer ezsetopt
          endif
       endif
 !
-      return 
+      return
       end
 
       subroutine pgsm_get_nfstkeys(nkeys)
       implicit none
 #include "lnkflds.cdk90"
       integer nkeys
-      
+
       nkeys = ntotal_keys
-      
-      return 
+
+      return
       end
 !     ***************************************************************
 !     *                        F I L T R E                          *

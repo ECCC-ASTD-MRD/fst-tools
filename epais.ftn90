@@ -193,7 +193,9 @@
 !
 !     interpolation horizontale
 !
-      if (ig1.ne.0) sym=symetri(cnomvar)
+      if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
+         if (ig1 /= 0) sym = symetri(cnomvar)
+      endif
 
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)

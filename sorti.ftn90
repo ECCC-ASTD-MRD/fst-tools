@@ -18,36 +18,37 @@
 !OBJET(SORTI)
 !          VERIFIER LA VALEUR DE MODX  RESERVER MEMOIRE, OUVRIR FICHIER
 !            MODX=1 FICHIER STANDARD
-!                 2 FICHIER ACCES DIRECT (READMS) 
+!                 2 FICHIER ACCES DIRECT (READMS)
 !                 3 FICHIER SEQUENTIEL
 !                 4 FICHIER SEQUENTIEL AVEC PARAMETRES DE FSTECR
+!                 5 Fichier sequentiel ascii (sortie(formatee))
 !
 !LIBRAIRIES
 !         -SOURCE  ARMNSRC,DRPN
 !         -OBJET   PGSMLIB,ID=ARMNPJS.
 !
 !ARGUMENTS
-!  IN      MODX      1=FICHIER STANDARD 
+!  IN      MODX      1=FICHIER STANDARD
 !                    2=FICHIER DIRECT (READMS)
 !                    3=FICHIER SEQUENTIEL
 !
 !  IN     NOENRG     NOMBRE D'ENREGISTREMENT DANS FICHIER
 !  IN      JWRIT     -1=REECRIRE SUR FICHIER OU ECRIRE A LA FIN(MS) SORTI(MS,500,A)
-!                    -1=ECRIRE SUR FICHIER UN RECORD SANS DETRUIRE UN 
+!                    -1=ECRIRE SUR FICHIER UN RECORD SANS DETRUIRE UN
 !                       RECORD PAREIL   SORTI(STD,500,A)
 !                    +1=REECRIRE SUR FICHIER FATAL SI RECORD PAS LA.   SORTI(MS,500,R)
 !                    +1=REMPLACE UN RECORD SI DEJA EXISTANT DETRUIT   SORTI(STD,500,R)
 !
 !IMPLICITES
 !
-!MESSAGES 
-!         DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE 
+!MESSAGES
+!         DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE
 !         MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD
 !         MAUVAISE DIRECTIVE (SORTIE) FICHIER MS
 !         DIRECTIVE ENREG=0, INITIALISER A 1
 !         MAUVAIS APPEL A SORTIE FICHIER SEQ
 !         TYPE DE FICHIER INCONNU
-!         MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ) 
+!         MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)
 !
 !
 !----------------------------------------------------------------------
@@ -66,14 +67,14 @@
       common/relu/dejalue
       logical dejalue
       data dejalue/.false./
-!     
+!
 !   DATE DE LA RUN OPERATIONNELLE UTILISEE PAR L'USAGER DIRECTIVE OPDAT=OUI
-!     
+!
       if (lfn(6).ne. 'NON') then
          if (seldat) date = jdate
          if (seldat) write(6,*)' DATE ORIGINE = DATE VALIDE DATE=',date
       endif
-!     
+!
       if (dejalue)  then
          if (message) then
             write(6,*)            'DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE'
@@ -81,22 +82,22 @@
          endif
       endif
       dejalue=.true.
-!     
+!
       mode = modx
       noenrg = norecs
-!     
+!
 !     NBR1 = MAX0(2,FSTNBR(1))
-!     
+!
 !      ier = fstnbr(1)
 !      if (ier .lt. 0) call fstabt
 !
 !   LE FICHIER D ENTRE NE PEUT ETRE  FICHIER STANDARD SEQUENTIEL
 !
-      iset = 0  
+      iset = 0
 !
-!  RESERVER MEMOIR POUR FICHIER D ENTRE 
+!  RESERVER MEMOIR POUR FICHIER D ENTRE
 !
-!     
+!
       if (mode.eq.1)  then
          if (noenrg.eq.1) then
             ier=fnom(2,lfn(129),'STD+SEQ+FTN',0)
@@ -106,10 +107,10 @@
             ier = fnom(2,lfn(129),'STD+RND+REMOTE',0)
 
             if (nsort.eq.2) then
-               iwrit=+1 
+               iwrit=+1
             else if (nsort.eq.3) then
                iwrit=jwrit
-            else 
+            else
                write(6,*)               'MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD'
                call pgsmabt
             endif
@@ -117,10 +118,10 @@
       else if (mode.eq.2) then
          write(6,*)         ' LES FICHIERS "MS" NE SONT PAS SUPPORTES DANS CETTE'
          write(6,*)         ' VERSION DE PGSM'
-         call pgsmabt 
+         call pgsmabt
       else if (mode.eq.3.or.mode.eq.4) then
          ier = fnom(2,lfn(129),'SEQ+FTN+UNF',0)
-         
+
          if (nsort.ne.1)  then
             write(6,*)'MAUVAIS APPEL A SORTIE FICHIER SEQ'
             call pgsmabt
@@ -133,12 +134,12 @@
             ier = pgsmof(2,lfn(129))
             ier = fnom(2,lfn(129),'SEQ+FMT+R/W',0)
          endif
-      else  
+      else
          if (message) write(6,*)'TYPE DE FICHIER INCONNU'
          if (message) write(6,*)         ' MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)'
          return
       endif
-!     
+!
 !
       if (mode.eq.2) then
          write(6,*)   'LES FICHIERS "MS" NE SONT PLUS SUPPORTES SUR LES CYBER-910-920'
@@ -156,7 +157,7 @@
                print *, 'fsteof retourne', ier
             endif
          else
-            ier = fstouv(2, 'RND') 
+            ier = fstouv(2, 'RND')
          endif
       endif
 !
@@ -178,7 +179,7 @@
             call qqexit(13)
          endif
       enddo
-      
+
       call fstlnk(lnkdiun,niun)
       endif
 
@@ -190,15 +191,15 @@
          endif
       endif
 !
-      return 
+      return
       end
 
       subroutine pgsm_get_nfstkeys(nkeys)
       implicit none
 #include "lnkflds.cdk90"
       integer nkeys
-      
+
       nkeys = ntotal_keys
-      
-      return 
+
+      return
       end

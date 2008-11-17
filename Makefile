@@ -79,8 +79,11 @@ pgsm:
 pgsm_007:
 	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
 
-pgsm2008:
-	r.compile -o $@ -src $(FICHIERS_FTN90) c_pgsm.c -obj $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
+pgsm2009: f_pgsm.ftn90 c_pgsm.c
+	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnalpha
+
+pgsm2008: f_pgsm.ftn90 c_pgsm.c
+	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -obj $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmn_rc010
 
 pgsm2007:
 	r.build -o $@ -obj *.o  $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
