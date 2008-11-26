@@ -1,3 +1,5 @@
+.SUFFIXES :
+
 .SUFFIXES : .ftn .f .c .o
 
 SHELL = /bin/sh
@@ -14,14 +16,7 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 default: absolu
 
-.ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
-.c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
-
-.f.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
 FDECKS= voir.f
 
@@ -31,10 +26,13 @@ OBJSUP=/users/dor/armn/lib/OBJ/*.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	r.build -o voir -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_009
+	r.build -o voir -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_rc010
+        
+voir+: $(OBJET)
+	r.build -o voir+ -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
         
 voirca: $(OBJET)
-	r.build -o voirca -obj $(OBJET) /users/dor/armn/lib/home2/LIB2000/pub/fstd98/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+	r.build -o voirca -debug -obj $(OBJET) /home/dormrb02/RMNLIB_working_copy/trunk/primitives/*.o -arch $(ARCH) -abi $(ABI) -librmn rmn_rc010
 
 voir__: $(OBJET)
 	r.build -o voir__ -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
