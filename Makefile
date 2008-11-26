@@ -1,3 +1,5 @@
+.SUFFIXES :
+
 .SUFFIXES : .ftn .f .c .o
 
 SHELL = /bin/sh
@@ -14,14 +16,7 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 default: absolu
 
-.ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
-.c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
-
-.f.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
 FDECKS= fstcomp.f
 
