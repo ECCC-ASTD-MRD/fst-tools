@@ -2310,7 +2310,7 @@
       end
 !**S/P ECRITUR   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 !
-      subroutine ecritur(champ,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+      subroutine ecritur(fld,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
 #include "impnone.cdk90"
       external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
       integer fstopc,fstcvt,fstecr
@@ -2336,19 +2336,19 @@
 !         -OBJET   PGSMLIB,ID=ARMNPJS.
 !
 !ARGUMENTS
-!   IN    CHAMP   CHAMP(NI,NJ,NK) A ECRIRE
-!   IN    NPAC    COMPACTION DU DATA DANS CHAMP
-!   IN    IDAT    DATE DU CHAMP (CMC STAMP)
+!   IN    fld   fld(NI,NJ,NK) A ECRIRE
+!   IN    NPAC    COMPACTION DU DATA DANS fld
+!   IN    IDAT    DATE DU fld (CMC STAMP)
 !   IN    DEET    PAS DE TEMPS ENTIER SECONDES
 !   IN    NPAS    NUMERO DU PAS DE TEMPS
-!   IN    NI      1 ER DIMENSION DU CHAMP
-!   IN    NJ      2 IEM DIMENSION DU CHAMP
-!   IN    NK      3 IEME DIMENSION DU CHAMP
-!   IN    IP1     NORMALEMENT NIVEAU DU CHAMP
-!   IN    IP2     HEURE DU CHAMP
+!   IN    NI      1 ER DIMENSION DU fld
+!   IN    NJ      2 IEM DIMENSION DU fld
+!   IN    NK      3 IEME DIMENSION DU fld
+!   IN    IP1     NORMALEMENT NIVEAU DU fld
+!   IN    IP2     HEURE DU fld
 !   IN    IP3ENT     LIBRE
-!   IN    TYPEENT   TYPE DU CHAMP 1 CARACTERE
-!   IN    NOM     NOM DU CHAMP 2 CARACTERES
+!   IN    TYPEENT   TYPE DU fld 1 CARACTERE
+!   IN    NOM     NOM DU fld 2 CARACTERES
 !   IN    ETIKE   ETIQUETTE 1 MOT CDC (USAGER)
 !   IN    GRTYPE  TYPE DE GRILLE 1 CARACTERE
 !   IN    LLG1    DESCRIPTEUR DE GRILLE
@@ -2372,7 +2372,7 @@
 !MODULES  FSTECR,PUTFLD
 !
 !APPEL
-!         CALL ECRITUR(CHAMP,NPAC,IDAT,DEET,NPAS,NI,NJ,NK,IP1,IP2,IP3,
+!         CALL ECRITUR(fld,NPAC,IDAT,DEET,NPAS,NI,NJ,NK,IP1,IP2,IP3,
 !                      TYPEV,NOM,ETIKE,GRTYPE,LLG1,LLG2,LLG3,LLG4)
 !
 !- -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2406,7 +2406,7 @@
       character*72 form1,form2
 
       integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
-      real champ(ni,nj,nk)
+      real fld(ni,nj,nk)
       real dummy(2)
       integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
       integer cdatyp,iopc,ier,gdout
@@ -2451,23 +2451,23 @@
 !
 !
 !     SI LE NOM EXISTE DANS LA TABLE BATIT PAR L USAGER ALORS
-!     LE CHAMP EST MODIFIE  EX: CHAMP(NI,NJ) = (CHAMP(NI,NJ)+ECART)*FACTEUR
+!     LE fld EST MODIFIE  EX: fld(NI,NJ) = (fld(NI,NJ)+ECART)*FACTEUR
 !
-      call conver(champ, ni, nj, cnomvar)
+      call conver(fld, ni, nj, cnomvar)
 !
 !
-!     filtrage du champ de sortie si le champ n'est pas un stream latlon
+!     filtrage du fld de sortie si le fld n'est pas un stream latlon
 !
 
       if (fltoggle(2)) then
         if (cgtyp.eq.'Y') then
-          write (6, *) '(ECRITUR) Impossible de filtrer des champs sur grille Y'
+          write (6, *) '(ECRITUR) Impossible de filtrer des flds sur grille Y'
         else
-          write (6, *) ' CHAMP FILTRE A L''ECRITURE'
-!          call statfld4 (champ,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
+          write (6, *) ' fld FILTRE A L''ECRITURE'
+!          call statfld4 (fld,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 !     &         ,0)
-          call filtre (champ, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
-!          call statfld4 (champ,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
+          call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
+!          call statfld4 (fld,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 !     &         ,0)
         endif
       endif
@@ -2478,7 +2478,7 @@
 
 
       if (printsr)  then
-         call imprims(cnomvar,champ,ni,nj)
+         call imprims(cnomvar,fld,ni,nj)
       endif
 !
       iun=2
@@ -2504,13 +2504,13 @@
             endif
             rewrit = .true.
 !
-            ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          else
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
             rewrit = .false.
-            ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          endif
 !
       else
@@ -2527,7 +2527,7 @@
                write (iun) npac, idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, cdatyp,               chaine
             endif
 
-            write(iun) champ
+            write(iun) fld
             if (message) then
                write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
             endif
@@ -2564,7 +2564,7 @@
             endif
 
             ier = gdll(gdout, tmplat,tmplon)
-            call pgsmwr(2,champ,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,            idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
+            call pgsmwr(2,fld,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,            idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
 
 !
          else
@@ -2580,6 +2580,150 @@
       return
       end
 
+      subroutine iecritur(fld,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+#include "impnone.cdk90"
+      external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
+      integer fstopc,fstcvt,fstecr
+#include "lires.cdk90"
+#include "voir.cdk90"
+#include "ecrires.cdk90"
+#include "llccmm.cdk90"
+#include "indptr.cdk90"
+#include "enrege.cdk90"
+#include "dates.cdk90"
+#include "dummys.cdk90"
+#include "idents.cdk90"
+#include "qqqfilt.cdk90"
+#include "styles.cdk90"
+!
+!-----------------------------------------------------------------
+!
+      character *24 chaine
+      character *12 cetiket, cetksrt
+      character *4 cnomvar
+      character *2 ctypvar
+      character *1 cgtyp
+
+
+      character*12 letiksrt
+      character*4 lnomvar
+      character*2 ltypsrt
+
+      character*72 form1,form2
+
+      integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
+      integer fld(ni,nj,nk)
+      real dummy(2)
+      integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
+      integer cdatyp,iopc,ier,gdout
+      logical rewrit
+
+      integer gdll,ezgetgdout
+      external gdll,ezgetgdout
+
+      real*8 delta_t
+
+      if (etiksrt(1) .eq. -1) then
+         cetksrt = cetiket
+      else
+         write(cetksrt,'(3A4)') (etiksrt(i), i=1,nwetiks)
+      endif
+
+      if (typesrt .eq. -1) then
+         ltypsrt = ctypvar
+      else
+         write(ltypsrt, '(A2)') typesrt
+      endif
+
+!
+      if (ip3srt.ne.-1) then
+         ip3o=ip3srt
+      else
+         ip3o=ip3
+      endif
+!
+      if (ip2srt.ne.-1) then
+         ip2o=ip2srt
+      else
+         ip2o=ip2
+      endif
+
+!      ltypsrt = ctypsrt
+      lnomvar = cnomvar
+      letiksrt = cetksrt
+
+!
+      iun=2
+      if (mode.eq.1) then
+!     IWRIT=+1  SORTI(STD,500,R)
+         if (compression_level.eq.0) then
+            cdatyp = 2
+         else
+            if (npac <= -16) then
+               cdatyp = 130
+            else
+               cdatyp = 2
+            endif
+         endif
+
+
+         if (iwrit.eq.+1) then
+            if (.not.message) then
+               iopc= fstopc('TOLRNC','DEBUGS',.true.)
+            endif
+            rewrit = .true.
+!
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+         else
+            if (.not.message) then
+               iopc= fstopc('TOLRNC','DEBUGS',.true.)
+            endif
+            rewrit = .false.
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas, &
+               ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+         endif
+!
+      else
+         if (mode.eq.2) then
+            write(6,*)            'LES FICHIERS DE TYPE "MS" NE SONT PLUS SUPPORTES'
+         else if (mode.eq.3.or.mode.eq.4) then
+            if (mode.eq.4) then
+               cdatyp = 1
+               write (chaine, 10) ltypsrt,lnomvar,letiksrt,cgtyp
+ 10            format(a2,2x,a4,a12,a1,3x)
+               write (iun) npac, idat, deet, npas, ni, nj, nk,  ip1, ip2o, ip3o, &
+                  llg1, llg2, llg3, llg4, cdatyp, chaine
+            endif
+
+            write(iun) fld
+            if (message) then
+               write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
+            endif
+         else if (mode.eq.5) then
+            if (valid) then
+               if (date .ne. -1) then
+                  istamp = date
+               else
+                  istamp = idat
+               endif
+            else
+               istamp=0
+            endif
+
+            delta_t = deet*npas/3600.0
+            call incdatr(idatv,idat,delta_t)
+         else
+            if (message) then
+               write(6,*)'FICHIER INCONNU ROUTINE ECRITUR'
+            endif
+         endif
+      endif
+!
+!
+ 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER MS ',i4,'   REC=',i4)
+ 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER SEQUENTIEL',i4)
+      return
+      end
 !
 !**s/p epaisur  difference entre 2 champs de hauteur
 !
@@ -2863,6 +3007,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4) then
@@ -2877,6 +3025,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4) then
@@ -2891,6 +3043,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then
@@ -2905,6 +3061,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then
@@ -6126,7 +6286,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.0.2',  lfn(133))
+	jdate= exdb(' PGSM  ',' V7.1.0',  lfn(133))
 
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6422,6 +6582,7 @@
 	call qlxins (printen,'PRINTEN', dum,7, 1)
 	call qlxins (printsr,'PRINTSR', dum,7, 1)
 	call qlxins (etikent,'ETIKENT', nwetike, 3, 1)
+   call qlxins (masque, 'MASQUE',  dum, 1, 1)
 	call qlxins (etiksrt,'ETIKSRT', nwetiks, 3, 1)
 	call qlxins (numero, 'ENREG',   dum, 1, 1)
 	call qlxins (ip2srt, 'IP2SRT',  dum, 1, 1)
@@ -6434,7 +6595,7 @@
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
        call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
-	do i=1,125
+	do i=1,126
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
 	enddo
 
@@ -6466,7 +6627,8 @@
 	etiksrt(3) = -1
 
 	typesrt= -1
-        compression_level = 0
+   compression_level = 0
+   masque = 0
 !
 !
 !    initialiser avec .true. champ symetrique
@@ -7492,10 +7654,10 @@
    nunv=0
    iunit=1
    call pgsm_get_nfstkeys(total_keys)
-!     print *, 'scalair: total_keys', total_keys
+   print *, 'scalair: total_keys', total_keys
    allocate(liste(total_keys))
-!   allocate(done_fields(total_keys))
-!    done_fields = .false.
+   allocate(done_fields(total_keys))
+   done_fields = .false.
    cnomx = cnom
    if (cnom.eq.cnomqr) cnom=cnomqq
 
@@ -7571,33 +7733,35 @@
 !
       do ii=1, nrecs
 !
-!     identifier parametres
          irec = liste(ii)
 
 !  On verifie d'abord que le champ n'a pas ete traite, car les masques associes sont traites ailleurs.
 
-!         if (done_fields(ii)) cycle
-         ier=fstprm(irec, dat, deet, npas, ni, nj, nk, cnbits, cdatyp, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         if (done_fields(ii)) cycle
+         ier=fstprm(irec, dat, deet, npas, ni, nj, nk, cnbits, cdatyp, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp, &
+            ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then
-            goto 99999
+            cycle
          endif
 
-!          if (ctypvar(2:2).eq.'@') then
-!               call scalair_msk(irec, done_fields,total_keys)
-!             return
-!          endif
+         if (ctypvar(2:2).eq.'@'.and.masque == 1) then
+            if (ctypvar(1:1) /= '@') then
+              call scalair_msk(irec, liste, done_fields,total_keys)
+            endif
+            cycle
+         endif
 !
 !   si la directive de champ emploi tout  champ(tout, tout) on doit faire
-!     attention pour les vecteurs u-v car l'interpolation serait scalair
+!     attention pour les vecteurs u-v car l'interpolation serait scalaire
 !     on verifie et les interpolations pour les vecteurs ne sont pas faites
 !
          do i=1, npair
             if (cnom.eq.'    ') then
                if ((paire(i)(9:10).eq.cnomvar(1:2)).or.(paire(i)(13:14).eq.cnomvar(1:2)))  then
                   nunv=nunv + 1
-                  go to 99999
+                  cycle
                endif
             endif
          enddo
@@ -7655,7 +7819,6 @@
             endif
             deallocate(tmpif1)
          endif
-99999    continue
 !
          if (unefois) goto 23000
 !
@@ -7691,7 +7854,196 @@
    end
 
 
-!**s/p qqqintx  choisir le degre de l'interpolation
+!**s/p scalair  interpolation horizontale d un champ
+!               defini par l usager
+      subroutine scalair_msk(key, liste, done_liste, len_liste)
+#include "impnone.cdk90"
+      integer :: key,len_liste
+      integer, dimension(len_liste) :: liste
+      logical, dimension(len_liste) :: done_liste
+#include "defin.cdk90"
+      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
+         fstsel,symetri,imprime,itrouve,messags,pgsmabt
+      external cvtr2i
+      external liraxez
+      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
+
+      integer ezgdef_fmem, ezqkdef, ezsint, ezsint_mdm, ezdefset, fst_get_mask_key, key_masq
+      logical skip
+
+!
+#include "accum.cdk90"
+#include "dates.cdk90"
+#include "defin.cdk90"
+#include "dummys.cdk90"
+#include "ecrires.cdk90"
+#include "gdz.cdk90"
+#include "grilles.cdk90"
+#include "indptr.cdk90"
+#include "lires.cdk90"
+#include "llccmm.cdk90"
+#include "packin.cdk90"
+#include "pairs.cdk90"
+#include "voir.cdk90"
+
+
+   character *12 cetiket
+   character *4 cnom,cnomvar,cnomx
+   character *2 ctypvar
+   character *1 cigtyp
+
+   integer nniv, i, nunv, itrouve, ii
+   integer niveaux(512), deet, ig1, ig2, ig3, ig4, iheur
+   integer dateo, datev, nbits, datyp, ip1, ip2, ip3
+   integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
+   integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
+   logical, save :: unefoys = .true.
+
+   integer dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq
+   integer nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq
+   integer ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, cdltf_masq, cubc_masq
+   integer datev_masq, extra2_masq, extra3_masq
+   logical sym, symetri
+
+   character(len=4)  :: cnomvar_masq
+   character(len=2)  :: ctypvar_masq
+   character(len=12) :: cetiket_masq
+   character(len=1)  :: cigtyp_masq
+
+   real fbidon
+   real, dimension(:,:), allocatable, target ::  fld, fld_out
+   integer, dimension(:,:), allocatable, target :: masq, masq_out, masq_zones
+
+   real, dimension(:,:), pointer :: tmpout
+   integer, dimension(:,:), pointer :: tmpmsk
+
+   logical masque_present, masque_done
+
+   nunv=0
+   iunit=1
+   masque_present = .false.
+   masque_done = .false.
+   ctypvar_masq = '@@'
+
+   ier = fstprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, &
+            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
+   allocate(fld(ni,nj), fld_out(li,lj))
+
+   ier = fst_get_mask_key(key_masq, key, 0, iunit)
+
+   if (key_masq >= 0) then
+      masque_present = .true.
+      allocate(masq(ni,nj), masq_out(li,lj))
+   else
+      masque_present = .false.
+   endif
+
+   key = pgsmluk(fld, key, ni,nj,nk,cnomvar,cigtyp)
+
+   if (cdatyp  ==  2 .or. cdatyp  ==  4) then
+      call cvtr2i(fld, fld, ni, nj)
+   endif
+
+   if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
+   if (ig1 /= 0) sym = symetri(cnomvar)
+!
+!  on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
+!  ig3=lg3  ig4=lg4
+!
+   if (.not.masque_present) then
+      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = ezsint(fld_out, fld)
+         tmpout => fld_out
+      else
+         tmpout => fld
+         if (message) write(6,660) cnom
+ 660           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
+      endif
+!     ecrire sur fichier approprie(std,ms,seq)
+      if (cnomx == cnomqr) then
+         call qaaqr(tmpif2,li,lj,tmplat)
+         cnomvar=cnomqr
+      endif
+      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk,ip1,ip2, ip3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+      deallocate(fld_out)
+   else
+      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = fstprm(key_masq, dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq, &
+                  nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq, &
+                  ctypvar_masq, cnomvar_masq, cetiket_masq, &
+                  cigtyp_masq, ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, &
+                  cdltf_masq, cubc_masq, datev_masq, extra2_masq, extra3_masq)
+         ier = fstluk(masq, key_masq, ni,nj,nk)
+         ier = ezsint_mdm(fld_out, masq_out, fld, masq)
+         tmpout => fld_out
+         tmpmsk => masq_out
+      else
+         tmpout => fld
+         tmpmsk => masq
+         if (message) write(6,662) cnom
+ 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
+      endif
+!     ecrire sur fichier approprie(std,ms,seq)
+      if (cnomx == cnomqr) then
+         call qaaqr(tmpif2,li,lj,tmplat)
+         cnomvar=cnomqr
+      endif
+      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
+         ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+         masque_done = .false.
+         do i=1,len_liste
+            if (liste(i) == key_masq) then
+               if (done_liste(i)) then
+                  masque_done = .true.
+               endif
+               exit
+            endif
+         enddo
+      if (masque_present.and..not.masque_done) then
+         if (unefoys) then
+            allocate(masq_zones(li,lj))
+            call ezget_mask_zones(masq_zones, masq)
+            nk = 1
+            call iecritur(masq_zones,-16,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
+               ip1_masq,ip2_masq, ip3_masq, '@Z', cnomvar_masq, cetiket_masq, &
+               cgrtyp, lg1, lg2, lg3, lg4)
+            unefoys = .false.
+            deallocate(masq_zones)
+         endif
+         call iecritur(tmpmsk,-nbits_masq,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
+            ip1_masq,ip2_masq, ip3_masq, ctypvar_masq, cnomvar_masq, cetiket_masq, &
+            cgrtyp, lg1, lg2, lg3, lg4)
+         do i=1,len_liste
+            if (liste(i) == key_masq) then
+               done_liste(i) = .true.
+               exit
+            endif
+         enddo
+         if (allocated(masq_out)) then
+            deallocate(masq_out)
+         endif
+      endif
+      deallocate(fld_out)
+
+   endif
+   deallocate(fld)
+
+!
+   if (nunv > 0) then
+      write(6,666)
+ 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
+      write(6,668)
+ 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
+      write(6,669)
+ 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
+!
+   endif
+   return
+   end!**s/p qqqintx  choisir le degre de l'interpolation
    subroutine qqqintx(ordre)
    integer ordre
 !
@@ -8075,7 +8427,7 @@ integer ezsetopt
 !
       logical function symetri(cnom)
 #include "impnone.cdk90"
-      external cmetsym  
+      external cmetsym
 #include "defin.cdk90"
 !
 !AUTEUR  P.SARRAZIN  FEVRIER  DRPN  DORVAL  P.Q.  CANADA
@@ -8103,7 +8455,7 @@ integer ezsetopt
 !APPEL    VIA MACPCP,EPAISUR
 !         SYMETRI(NOMBRE)
 !
-!MESSAGES 
+!MESSAGES
 !         LA SYMETRIE DE LA VARIABLE  EST INCONNUE
 !         ON LA SUPPOSE SYMETRIQUE
 !
@@ -8112,30 +8464,34 @@ integer ezsetopt
 ! - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -*
 !
 #include "voir.cdk90"
-!
-!
 #include "symnom.cdk90"
+#include "grilles.cdk90"
 !
 !
       integer  i
       character*4 cnom
-!     
+!
       symetri = .true.
-!     
-      
+!
+
       do i = 1,nnoms
          if (cnom.eq.noms(i)) then
-            symetri = ssym(i) 
+            symetri = ssym(i)
             return
          endif
       enddo
 !
-      if (message) write(6,101)cnom
+      if (message) then
+         if (cgrtyp == 'A'.or.cgrtyp == 'B'.or.cgrtyp =='G') then
+            write(6,101) cnom
+         endif
+      endif
+
  101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ',       a4,' - EST INCONNUE',      ' ON LA SUPPOSE SYMETRIQUE *****'//)
 !
       call cmetsym(cnom, .true.)
       return
-      end 
+      end
       subroutine testseq
 
       integer nigem, njgem, nigauss, njgauss
@@ -8165,13 +8521,13 @@ integer ezsetopt
 !
 !**s/p uvectur interpolation des vecteurs u-v (horizontalement)
 !
-      subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
+   subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
 #include "impnone.cdk90"
-      external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir,      fstcvt,fstprm,pgsmabt,imprime,vdauv,      incdat,fstopc,messags
-      external liraxez,  cxgaig
-      integer fstinf,fstinl,pgsmlir,fstprm,fstopc,fstcvt,pgsmlic
-      integer ezqkdef, ezwdint, ezuvint, ezdefset
-      real fbidon
+   external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir, fstcvt,fstprm,pgsmabt,imprime,vdauv, incdat,fstopc,messags
+   external liraxez,  cxgaig
+   integer fstinf,fstinl,pgsmlir,fstprm,fstopc,fstcvt,pgsmlic
+   integer ezqkdef, ezwdint, ezuvint, ezdefset
+   real fbidon
 #include "defin.cdk90"
 !
 !auteur  p.sarrazin fevrier 82 drpn  dorval p.q. canada
@@ -8228,184 +8584,194 @@ integer ezsetopt
 !
 !---------------------------------------------------------------
 
-      character*12 cetiket,cetike
-      character*4 cnomvar,cnom1,cnom2, cnom3
-      character*1 cigtyp
-      character*2 ctypvar
+   character*12 cetiket,cetike
+   character*4 cnomvar,cnom1,cnom2, cnom3
+   character*1 cigtyp
+   character*2 ctypvar
 
-      integer i,j
-      integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
-      integer, dimension(:), allocatable :: listniv
-      integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
-      integer iheur,ilop,iprs,irecu,irecv,iopc
-      integer numu,numv,infon,dat,datdv
-      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
-      integer nom2
-      integer ig1zz, ig2zz, ig3zz, ig4zz
-      real    d60dum, pidum, pjdum
-      real xlat1,xlon1,xlat2,xlon2
-      real dgtord,dumfld,xg1,xg2,xg3,xg4
-      integer iunit
-      logical ssw
+   integer i,j
+   integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
+   integer, dimension(:), allocatable :: listniv
+   integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
+   integer iheur,ilop,iprs,irec_uu,irec_vv,iopc
+   integer numu,numv,infon,dat,datdv
+   integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
+   integer nom2
+   integer ig1zz, ig2zz, ig3zz, ig4zz
+   real    d60dum, pidum, pjdum
+   real xlat1,xlon1,xlat2,xlon2
+   real dgtord,dumfld,xg1,xg2,xg3,xg4
+   integer iunit
+   logical ssw
 
-      real*8 delta_t
+   real*8 delta_t
 
-      real, dimension(:,:), pointer :: uuout,vvout
-      iunit = 1
-      nk = 1
+   real, dimension(:,:), pointer :: uuout,vvout
+   iunit = 1
+   nk = 1
 
-      call pgsm_get_nfstkeys(total_keys)
-      allocate(listniv(total_keys))
+   call pgsm_get_nfstkeys(total_keys)
+   allocate(listniv(total_keys))
 
 !
 !
-      do 23000 iprs = 1,npar
+   do iprs = 1,npar
 !
 !     trouver record pour u,v  ou us,vs .....
 !
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
+      if (date .eq. 1) then
+         if (date3.eq.-1) then
+            date=date2
+         else
+            call newdate(date, date2, date3, 3)
          endif
+      endif
 
 !
 !     modification de hollerith a caractere
 !
-         if (etikent(1) .ne. -1) then
-            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
-         else
-            cetiket = '            '
-         endif
+      if (etikent(1) .ne. -1) then
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
+      else
+         cetiket = '            '
+      endif
 
-         if (typeent .ne. -1) then
-            write(ctypvar, '(A2)') typeent
-         else
-            ctypvar = '  '
-         endif
+      if (typeent .ne. -1) then
+         write(ctypvar, '(A2)') typeent
+      else
+         ctypvar = '  '
+      endif
 
 
-         ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),         iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
-         if (ier .lt. 0 .or. infon.eq.0) then
-            write(6,610) cnom1
- 610        format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
-            goto 23000
-         endif
+      ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
+      if (ier .lt. 0 .or. infon.eq.0) then
+         write(6,610) cnom1
+ 610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
+         exit
+      endif
 
-         if (nk.gt.1) then
-            write(6,*)'***********************************************'
-            write(6,*)'         PGSM N ACCEPTE PAS UN          '
-            write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-            write(6,*)'***********************************************'
-            call pgsmabt
-         endif
+      if (nk.gt.1) then
+         write(6,*)'***********************************************'
+         write(6,*)'         PGSM N ACCEPTE PAS UN          '
+         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
+         write(6,*)'***********************************************'
+         call pgsmabt
+      endif
 !
 !
-         do ilop=1,infon
+      do ilop=1,infon
 !
-            irecu=listniv(ilop)
+         irec_uu=listniv(ilop)
 !
 !     identifier parametres champ nom1
 !
-            cetike = '            '
-            ier = fstprm( irecu, dat,deet,npas,ni, nj, nk,             cnbits,cdatyp,jp1,jp2, jp3,ctypvar,            cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,            cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-            if (ier .lt. 0) then
-               write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
-            endif
+         cetike = '            '
+         ier = fstprm( irec_uu, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,jp1,jp2, jp3,ctypvar, cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         if (ier .lt. 0) then
+            write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
+         endif
 !
 !     verifier si grille gaussienne ni doit etre pair
 !
- 675        format(' ITYP=',a1,'   CIGTYP DE FSTPRM= ',a1)
+ 675     format(' ITYP=',a1,'   CIGTYP DE FSTPRM= ',a1)
 
-            if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+         if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
 !
 !     calcul la date pour le record de la variable nom2
 !
-            delta_t = deet*npas/3600.0
-            call incdatr(datdv,dat,delta_t)
-            irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,            ctypvar,cnom2)
-            if (irecv .lt. 0) then
-               write(6,610) nom2
-               call pgsmabt
-            endif
+         delta_t = deet*npas/3600.0
+         call incdatr(datdv,dat,delta_t)
+         irec_vv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2)
+         if (irec_vv .lt. 0) then
+            write(6,610) nom2
+            call pgsmabt
+         endif
 
-            if (nk.gt.1) then
-             write(6,*)'********************************************'
-             write(6,*)'         PGSM N ACCEPTE PAS UN          '
-             write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-             write(6,*)'********************************************'
-             call pgsmabt
-          endif
+         if (nk.gt.1) then
+          write(6,*)'********************************************'
+          write(6,*)'         PGSM N ACCEPTE PAS UN          '
+          write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
+          write(6,*)'********************************************'
+          call pgsmabt
+       endif
+
+!  Switch pour champs masques
+      if (masque == 1) then
+         if (ctypvar(1:1) == '@') then
+            cycle ! Les masques sont traites dans uvecteur_masque
+         else if (ctypvar(2:2) == '@') then
+            call uvecteur_masque(irec_uu, irec_vv)
+            cycle
+         endif
+      endif
 
 !     allouer memoire
 
-          allocate(tmpif1(ni,nj))
-          allocate(tmpif2(ni,nj))
-          allocate(tmpif3(li,lj))
-          allocate(tmpif4(li,lj))
+      allocate(tmpif1(ni,nj))
+      allocate(tmpif2(ni,nj))
+      allocate(tmpif3(li,lj))
+      allocate(tmpif4(li,lj))
 !
 !     lire champ nom1
 !
-          if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,          ctypvar,cnom1,cigtyp)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
+      numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
 
-          if (printen)  call imprime(cnom1,tmpif1,ni,nj)
-          if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,           ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
-          if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+      if (printen)  call imprime(cnom1,tmpif1,ni,nj)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
+      numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
 !
-          if (printen)  call imprime(cnom2,tmpif2,ni,nj)
+      if (printen)  call imprime(cnom2,tmpif2,ni,nj)
 !****************************************************************
 !     si vvent=.true. on calcule la vitesse du vent
 
-          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-          ier = ezdefset(gdout, gdin)
+      gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+      ier = ezdefset(gdout, gdin)
 
-          if (vvent) then
-             ssw=.false.
-             if (wdvent) then
-                ssw = .true.
-             endif
+      if (vvent) then
+         ssw=.false.
+         if (wdvent) then
+            ssw = .true.
+         endif
 
-             ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
-	     uuout => tmpif3
+         ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
+	      uuout => tmpif3
 
-             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,             jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,             lg1,lg2,lg3,lg4)
+         call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 
-             if (wdvent) then
-                do j=1,lj
-                do i=1,li
-                   if (tmpif4(i,j).lt.0.0) then
-                      tmpif4(i,j) = tmpif4(i,j) + 360.0
-                   endif
-                enddo
-                enddo
-                vvout => tmpif4
-                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,                jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,                lg1,lg2,lg3,lg4)
-             endif
+         if (wdvent) then
+            do j=1,lj
+            do i=1,li
+               if (tmpif4(i,j).lt.0.0) then
+                  tmpif4(i,j) = tmpif4(i,j) + 360.0
+               endif
+            enddo
+            enddo
+            vvout => tmpif4
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
+         endif
 
 !
 !****************************************************************
 !
-          else
+         else
 !
 !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !     ig3=lg3  ig4=lg4
 !
-             if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.             ig3.ne.lg3.or.ig4.ne.lg4.or.             li.ne.ni.or.lj.ne.nj) then
+            if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.ig3.ne.lg3.or.ig4.ne.lg4.or.li.ne.ni.or.lj.ne.nj) then
 !
 !     interpolation u,v vecteur a vitesse et direction du vent
 !
 !     si ssw = vrai interpoler vitesse et direction
 !     faux interpoler seulement vitesse
 !
-                ssw = .true.
+               ssw = .true.
 !
-                ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
-                uuout => tmpif3
-                vvout => tmpif4
+               ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
+               uuout => tmpif3
+               vvout => tmpif4
 !
 !     apres interpolation horizontale passer de vitesse et direction
 !     aux composantes u et v
@@ -8413,24 +8779,24 @@ integer ezsetopt
 !     si type de grille "x",    u-v interpolation n\s - e\o
 !
 
-             else
-                deallocate(tmpif3)
-                deallocate(tmpif4)
-                uuout => tmpif1
-                vvout => tmpif2
-                if (message) then
-                  write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
-               endif
-            endif
+            else
+               deallocate(tmpif3)
+               deallocate(tmpif4)
+               uuout => tmpif1
+               vvout => tmpif2
+               if (message) then
+                 write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
+              endif
+           endif
 !
 !     ecrire vecteur u
 !
-            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+           call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 !
 !
 !     ecrire vecteur v
 !
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+           call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 !
 !     fin du calcul des composantes
 !
@@ -8441,15 +8807,15 @@ integer ezsetopt
          if (associated(tmpif4)) deallocate(tmpif4)
 !         if (.not.associated(tmpif3)) deallocate(tmpif3)
 !         if (.not.associated(tmpif4)) deallocate(tmpif4)
-         deallocate(tmpif1)
-         deallocate(tmpif2)
+         if (associated(tmpif1)) deallocate(tmpif1)
+         if (associated(tmpif2)) deallocate(tmpif2)
 
       enddo
 !
 !
 !     reinitialiser clef de controle
 !
-23000 enddo
+   enddo    ! fin boucle iprs
       vvent=.false.
 !
 !
@@ -8457,6 +8823,209 @@ integer ezsetopt
       return
       end
 
+
+!
+!**s/p uvectur interpolation des vecteurs u-v (horizontalement)
+      subroutine uvecteur_masque(key_uu, key_vv)
+#include "impnone.cdk90"
+      integer :: key_uu, key_vv
+#include "defin.cdk90"
+      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
+         fstsel,symetri,imprime,itrouve,messags,pgsmabt
+      external cvtr2i
+      external liraxez
+      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
+
+      integer ezgdef_fmem, ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, fst_get_mask_key, key_mask
+      logical skip
+
+!
+#include "accum.cdk90"
+#include "dates.cdk90"
+#include "defin.cdk90"
+#include "dummys.cdk90"
+#include "ecrires.cdk90"
+#include "gdz.cdk90"
+#include "grilles.cdk90"
+#include "indptr.cdk90"
+#include "lires.cdk90"
+#include "llccmm.cdk90"
+#include "packin.cdk90"
+#include "pairs.cdk90"
+#include "voir.cdk90"
+
+
+   character(len=12):: cetiket
+   character(len=4) :: cnom_uu, cnom_vv
+   character(len=2) :: ctypvar
+   character(len=1) :: cigtyp
+
+   integer i, j, nunv, itrouve, ii, key_mask_out, lk
+   integer deet, ig1, ig2, ig3, ig4, iheur
+   integer dateo, datev, nbits, datyp, ip1, ip2, ip3, iun_out
+   integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
+   integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
+
+   integer dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask
+   integer nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask
+   integer ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, cdltf_mask, cubc_mask
+   integer datev_mask, extra2_mask, extra3_mask
+   logical sym, symetri
+
+   character(len=4)  :: cnomvar_mask
+   character(len=2)  :: ctypvar_mask
+   character(len=12) :: cetiket_mask
+   character(len=1)  :: cigtyp_mask
+
+   real fbidon
+   real, dimension(:,:), allocatable, target :: tmp_uuin, tmp_uuout, tmp_vvin, tmp_vvout
+   integer, dimension(:,:), allocatable, target :: masque_in, masque_out
+
+   real, dimension(:,:), pointer :: uu_in, vv_in, uu_out, vv_out
+   integer, dimension(:,:), pointer :: tmpmsk
+
+
+   logical masque_present, masque_done, write_masque, ssw
+
+   nunv=0
+   iunit=1
+   masque_present = .false.
+   masque_done = .false.
+   ctypvar_mask = '@@'
+
+   ier = fstprm(key_uu, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_uu, cetiket, &
+            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
+   ier = fstprm(key_vv, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_vv, cetiket, &
+            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
+   allocate(tmp_uuin(ni,nj), tmp_vvin(ni,nj), tmp_uuout(li,lj), tmp_vvout(li,lj))
+
+   ier = fst_get_mask_key(key_mask, key_uu, 0, iunit)
+
+   if (key_mask >= 0) then
+      masque_present = .true.
+      allocate(masque_in(ni,nj), masque_out(li,lj))
+   else
+      masque_present = .false.
+   endif
+
+   ier = pgsmluk(tmp_uuin, key_uu, ni,nj,nk,cnom_uu,cigtyp)
+   ier = pgsmluk(tmp_vvin, key_vv, ni,nj,nk,cnom_vv,cigtyp)
+
+
+   if (printen)  call imprime(cnom_uu,tmp_uuin,ni,nj)
+   if (ig1 /= 0) sym = symetri(cnom_uu)
+
+!  interpolation ordinaire sans masque
+
+   if (.not.masque_present) then
+!     si vvent=.true. on calcule la vitesse du vent
+
+      gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+      ier = ezdefset(gdout, gdin)
+
+      if (vvent) then
+         ssw=.false.
+         if (wdvent) then
+            ssw = .true.
+         endif
+
+         ier = ezwdint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
+         uu_out => tmp_uuout
+
+         call  ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,'UV  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+
+         if (wdvent) then
+            do j=1,lj
+               do i=1,li
+                  if (tmp_vvout(i,j).lt.0.0) then
+                     tmp_vvout(i,j) = tmp_vvout(i,j) + 360.0
+                  endif
+               enddo
+            enddo
+            vv_out => tmp_vvout
+            call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,'WD  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+         endif
+      else
+         if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.ig3.ne.lg3.or.ig4.ne.lg4.or.li.ne.ni.or.lj.ne.nj) then
+            ssw = .true.
+            ier = ezuvint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
+            uu_out => tmp_uuout
+            vv_out => tmp_vvout
+         else
+            deallocate(tmp_uuout)
+            deallocate(tmp_vvout)
+            uu_out => tmp_uuin
+            vv_out => tmp_vvout
+            if (message) then
+              write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
+            endif
+         endif
+         call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,cnom_uu,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+         call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,cnom_vv,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+      endif
+   else  !!! Masque present
+!
+      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = fstprm(key_mask, dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask, &
+                  nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask, &
+                  ctypvar_mask, cnomvar_mask, cetiket_mask, &
+                  cigtyp_mask, ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, &
+                  cdltf_mask, cubc_mask, datev_mask, extra2_mask, extra3_mask)
+         ier = fstluk(masque_in, key_mask, ni,nj,nk)
+         ier = ezuvint_mdm(tmp_uuout, tmp_vvout, masque_out, tmp_uuin, tmp_vvin, masque_in)
+         uu_out => tmp_uuout
+         vv_out => tmp_vvout
+         tmpmsk => masque_out
+      else
+         uu_out => tmp_uuin
+         vv_out => tmp_vvin
+         tmpmsk => masque_in
+         if (message) write(6,662) cnom_uu
+ 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a4)
+      endif
+
+      call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
+         ctypvar, cnom_uu, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+      call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
+         ctypvar, cnom_vv, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+
+      ! On regarde si le masque existe dans le fichier de sortie
+
+      iun_out = 2
+      key_mask_out = fstinf(iun_out, ni_mask, nj_mask, nk_mask, datev_mask, cetiket_mask, ip1_mask, ip2_mask, ip3_mask, &
+         ctypvar_mask, cnomvar_mask)
+
+      write_masque = .true.
+      if (key_mask_out >= 0) then
+         write_masque = .false.
+      endif
+
+      if (masque_present.and.write_masque) then
+         call iecritur(tmpmsk,-nbits_mask,dateo_mask,deet_mask,npas_mask,li,lj, nk,&
+            ip1_mask,ip2_mask, ip3_mask, ctypvar_mask, cnomvar_mask, cetiket_mask, &
+            cgrtyp, lg1, lg2, lg3, lg4)
+         if (allocated(masque_out)) then
+            deallocate(masque_out, masque_in)
+         endif
+      endif
+      deallocate(tmp_uuout, tmp_uuin, tmp_vvout, tmp_vvin)
+
+   endif
+
+!
+   if (nunv > 0) then
+      write(6,666)
+ 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
+      write(6,668)
+ 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
+      write(6,669)
+ 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
+!
+   endif
+   return
+   end
 
 !
 !**S/P VDAUV  U ET V DE DIRECTION ET VITESSE DU VENT

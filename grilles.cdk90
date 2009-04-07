@@ -1,6 +1,6 @@
    integer li,lj,lg1,lg2,lg3,lg4,ixlat,ixlon,ixlatg,ixlong,ngr,ncoords
    real clatmin,clatmax,clonmin,clonmax,dgrwxy,coordll(512,2)
-   integer gdin, gdout
+   integer gdin, gdout, masque
 
    integer gr_a, gr_b, gr_g, gr_ps, gr_tape4, gr_latlon, gr_tape1, gr_tape2, gr_xylis, gr_xydir, gr_lldir, gr_lllist, &
       gr_grib, gr_stereo, gr_comme, gr_stations, gr_gem, gr_gef
@@ -25,7 +25,7 @@
    parameter (gr_gef      = 15)
 
    common /grilles / li, lj, lg1, lg2, lg3, lg4, gdin, gdout, ixlat, ixlon,ngr, clatmin,clatmax,clonmin,clonmax, &
-      dgrwxy,ixlatg,ixlong,ncoords,coordll
+      dgrwxy,ixlatg,ixlong,ncoords,coordll, masque
 
    character*1 cgrtyp, cgtypxy
    common /cgrille/ cgrtyp, cgtypxy

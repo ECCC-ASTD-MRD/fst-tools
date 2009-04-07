@@ -186,13 +186,15 @@
             cycle
          endif
 
-         if (ctypvar(2:2).eq.'@') then
-              call scalair_msk(irec, done_fields,total_keys)
+         if (ctypvar(2:2).eq.'@'.and.masque == 1) then
+            if (ctypvar(1:1) /= '@') then
+              call scalair_msk(irec, liste, done_fields,total_keys)
+            endif
             cycle
          endif
 !
 !   si la directive de champ emploi tout  champ(tout, tout) on doit faire
-!     attention pour les vecteurs u-v car l'interpolation serait scalair
+!     attention pour les vecteurs u-v car l'interpolation serait scalaire
 !     on verifie et les interpolations pour les vecteurs ne sont pas faites
 !
          do i=1, npair

@@ -3,7 +3,7 @@
 !
       logical function symetri(cnom)
 #include "impnone.cdk90"
-      external cmetsym  
+      external cmetsym
 #include "defin.cdk90"
 !
 !AUTEUR  P.SARRAZIN  FEVRIER  DRPN  DORVAL  P.Q.  CANADA
@@ -31,7 +31,7 @@
 !APPEL    VIA MACPCP,EPAISUR
 !         SYMETRI(NOMBRE)
 !
-!MESSAGES 
+!MESSAGES
 !         LA SYMETRIE DE LA VARIABLE  EST INCONNUE
 !         ON LA SUPPOSE SYMETRIQUE
 !
@@ -40,27 +40,31 @@
 ! - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -*
 !
 #include "voir.cdk90"
-!
-!
 #include "symnom.cdk90"
+#include "grilles.cdk90"
 !
 !
       integer  i
       character*4 cnom
-!     
+!
       symetri = .true.
-!     
-      
+!
+
       do i = 1,nnoms
          if (cnom.eq.noms(i)) then
-            symetri = ssym(i) 
+            symetri = ssym(i)
             return
          endif
       enddo
 !
-      if (message) write(6,101)cnom
+      if (message) then
+         if (cgrtyp == 'A'.or.cgrtyp == 'B'.or.cgrtyp =='G') then
+            write(6,101) cnom
+         endif
+      endif
+
  101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ',       a4,' - EST INCONNUE',      ' ON LA SUPPOSE SYMETRIQUE *****'//)
 !
       call cmetsym(cnom, .true.)
       return
-      end 
+      end

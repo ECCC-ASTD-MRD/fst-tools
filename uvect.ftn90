@@ -1,13 +1,13 @@
 !
 !**s/p uvectur interpolation des vecteurs u-v (horizontalement)
 !
-      subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
+   subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
 #include "impnone.cdk90"
-      external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir,      fstcvt,fstprm,pgsmabt,imprime,vdauv,      incdat,fstopc,messags
-      external liraxez,  cxgaig
-      integer fstinf,fstinl,pgsmlir,fstprm,fstopc,fstcvt,pgsmlic
-      integer ezqkdef, ezwdint, ezuvint, ezdefset
-      real fbidon
+   external ecritur,cigaxg,fstinf,fstinl,pgsmlic,pgsmlir,memoir, fstcvt,fstprm,pgsmabt,imprime,vdauv, incdat,fstopc,messags
+   external liraxez,  cxgaig
+   integer fstinf,fstinl,pgsmlir,fstprm,fstopc,fstcvt,pgsmlic
+   integer ezqkdef, ezwdint, ezuvint, ezdefset
+   real fbidon
 #include "defin.cdk90"
 !
 !auteur  p.sarrazin fevrier 82 drpn  dorval p.q. canada
@@ -64,184 +64,194 @@
 !
 !---------------------------------------------------------------
 
-      character*12 cetiket,cetike
-      character*4 cnomvar,cnom1,cnom2, cnom3
-      character*1 cigtyp
-      character*2 ctypvar
+   character*12 cetiket,cetike
+   character*4 cnomvar,cnom1,cnom2, cnom3
+   character*1 cigtyp
+   character*2 ctypvar
 
-      integer i,j
-      integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
-      integer, dimension(:), allocatable :: listniv
-      integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
-      integer iheur,ilop,iprs,irecu,irecv,iopc
-      integer numu,numv,infon,dat,datdv
-      integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
-      integer nom2
-      integer ig1zz, ig2zz, ig3zz, ig4zz
-      real    d60dum, pidum, pjdum
-      real xlat1,xlon1,xlat2,xlon2
-      real dgtord,dumfld,xg1,xg2,xg3,xg4
-      integer iunit
-      logical ssw
+   integer i,j
+   integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
+   integer, dimension(:), allocatable :: listniv
+   integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
+   integer iheur,ilop,iprs,irec_uu,irec_vv,iopc
+   integer numu,numv,infon,dat,datdv
+   integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
+   integer nom2
+   integer ig1zz, ig2zz, ig3zz, ig4zz
+   real    d60dum, pidum, pjdum
+   real xlat1,xlon1,xlat2,xlon2
+   real dgtord,dumfld,xg1,xg2,xg3,xg4
+   integer iunit
+   logical ssw
 
-      real*8 delta_t
+   real*8 delta_t
 
-      real, dimension(:,:), pointer :: uuout,vvout
-      iunit = 1
-      nk = 1
+   real, dimension(:,:), pointer :: uuout,vvout
+   iunit = 1
+   nk = 1
 
-      call pgsm_get_nfstkeys(total_keys)
-      allocate(listniv(total_keys))
+   call pgsm_get_nfstkeys(total_keys)
+   allocate(listniv(total_keys))
 
 !
 !
-      do 23000 iprs = 1,npar
+   do iprs = 1,npar
 !
 !     trouver record pour u,v  ou us,vs .....
 !
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
+      if (date .eq. 1) then
+         if (date3.eq.-1) then
+            date=date2
+         else
+            call newdate(date, date2, date3, 3)
          endif
+      endif
 
 !
 !     modification de hollerith a caractere
 !
-         if (etikent(1) .ne. -1) then
-            write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
-         else
-            cetiket = '            '
-         endif
+      if (etikent(1) .ne. -1) then
+         write(cetiket,'(3A4)') (etikent(i), i=1,nwetike)
+      else
+         cetiket = '            '
+      endif
 
-         if (typeent .ne. -1) then
-            write(ctypvar, '(A2)') typeent
-         else
-            ctypvar = '  '
-         endif
+      if (typeent .ne. -1) then
+         write(ctypvar, '(A2)') typeent
+      else
+         ctypvar = '  '
+      endif
 
 
-         ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),         iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
-         if (ier .lt. 0 .or. infon.eq.0) then
-            write(6,610) cnom1
- 610        format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
-            goto 23000
-         endif
+      ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
+      if (ier .lt. 0 .or. infon.eq.0) then
+         write(6,610) cnom1
+ 610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
+         exit
+      endif
 
-         if (nk.gt.1) then
-            write(6,*)'***********************************************'
-            write(6,*)'         PGSM N ACCEPTE PAS UN          '
-            write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-            write(6,*)'***********************************************'
-            call pgsmabt
-         endif
+      if (nk.gt.1) then
+         write(6,*)'***********************************************'
+         write(6,*)'         PGSM N ACCEPTE PAS UN          '
+         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
+         write(6,*)'***********************************************'
+         call pgsmabt
+      endif
 !
 !
-         do ilop=1,infon
+      do ilop=1,infon
 !
-            irecu=listniv(ilop)
+         irec_uu=listniv(ilop)
 !
 !     identifier parametres champ nom1
 !
-            cetike = '            '
-            ier = fstprm( irecu, dat,deet,npas,ni, nj, nk,             cnbits,cdatyp,jp1,jp2, jp3,ctypvar,            cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4,            cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-            if (ier .lt. 0) then
-               write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
-            endif
+         cetike = '            '
+         ier = fstprm( irec_uu, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,jp1,jp2, jp3,ctypvar, cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         if (ier .lt. 0) then
+            write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
+         endif
 !
 !     verifier si grille gaussienne ni doit etre pair
 !
- 675        format(' ITYP=',a1,'   CIGTYP DE FSTPRM= ',a1)
+ 675     format(' ITYP=',a1,'   CIGTYP DE FSTPRM= ',a1)
 
-            if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+         if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
 !
 !     calcul la date pour le record de la variable nom2
 !
-            delta_t = deet*npas/3600.0
-            call incdatr(datdv,dat,delta_t)
-            irecv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,            ctypvar,cnom2)
-            if (irecv .lt. 0) then
-               write(6,610) nom2
-               call pgsmabt
-            endif
+         delta_t = deet*npas/3600.0
+         call incdatr(datdv,dat,delta_t)
+         irec_vv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2)
+         if (irec_vv .lt. 0) then
+            write(6,610) nom2
+            call pgsmabt
+         endif
 
-            if (nk.gt.1) then
-             write(6,*)'********************************************'
-             write(6,*)'         PGSM N ACCEPTE PAS UN          '
-             write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-             write(6,*)'********************************************'
-             call pgsmabt
-          endif
+         if (nk.gt.1) then
+          write(6,*)'********************************************'
+          write(6,*)'         PGSM N ACCEPTE PAS UN          '
+          write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
+          write(6,*)'********************************************'
+          call pgsmabt
+       endif
+
+!  Switch pour champs masques
+      if (masque == 1) then
+         if (ctypvar(1:1) == '@') then
+            cycle ! Les masques sont traites dans uvecteur_masque
+         else if (ctypvar(2:2) == '@') then
+            call uvecteur_masque(irec_uu, irec_vv)
+            cycle
+         endif
+      endif
 
 !     allouer memoire
 
-          allocate(tmpif1(ni,nj))
-          allocate(tmpif2(ni,nj))
-          allocate(tmpif3(li,lj))
-          allocate(tmpif4(li,lj))
+      allocate(tmpif1(ni,nj))
+      allocate(tmpif2(ni,nj))
+      allocate(tmpif3(li,lj))
+      allocate(tmpif4(li,lj))
 !
 !     lire champ nom1
 !
-          if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,          ctypvar,cnom1,cigtyp)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
+      numu =pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
 
-          if (printen)  call imprime(cnom1,tmpif1,ni,nj)
-          if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-          numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,           ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
-          if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
+      if (printen)  call imprime(cnom1,tmpif1,ni,nj)
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
+      numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
+      if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
 !
-          if (printen)  call imprime(cnom2,tmpif2,ni,nj)
+      if (printen)  call imprime(cnom2,tmpif2,ni,nj)
 !****************************************************************
 !     si vvent=.true. on calcule la vitesse du vent
 
-          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-          ier = ezdefset(gdout, gdin)
+      gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+      ier = ezdefset(gdout, gdin)
 
-          if (vvent) then
-             ssw=.false.
-             if (wdvent) then
-                ssw = .true.
-             endif
+      if (vvent) then
+         ssw=.false.
+         if (wdvent) then
+            ssw = .true.
+         endif
 
-             ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
-	     uuout => tmpif3
+         ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
+	      uuout => tmpif3
 
-             call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,             jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,             lg1,lg2,lg3,lg4)
+         call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 
-             if (wdvent) then
-                do j=1,lj
-                do i=1,li
-                   if (tmpif4(i,j).lt.0.0) then
-                      tmpif4(i,j) = tmpif4(i,j) + 360.0
-                   endif
-                enddo
-                enddo
-                vvout => tmpif4
-                call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,                jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,                lg1,lg2,lg3,lg4)
-             endif
+         if (wdvent) then
+            do j=1,lj
+            do i=1,li
+               if (tmpif4(i,j).lt.0.0) then
+                  tmpif4(i,j) = tmpif4(i,j) + 360.0
+               endif
+            enddo
+            enddo
+            vvout => tmpif4
+            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
+         endif
 
 !
 !****************************************************************
 !
-          else
+         else
 !
 !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !     ig3=lg3  ig4=lg4
 !
-             if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.             ig3.ne.lg3.or.ig4.ne.lg4.or.             li.ne.ni.or.lj.ne.nj) then
+            if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.ig3.ne.lg3.or.ig4.ne.lg4.or.li.ne.ni.or.lj.ne.nj) then
 !
 !     interpolation u,v vecteur a vitesse et direction du vent
 !
 !     si ssw = vrai interpoler vitesse et direction
 !     faux interpoler seulement vitesse
 !
-                ssw = .true.
+               ssw = .true.
 !
-                ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
-                uuout => tmpif3
-                vvout => tmpif4
+               ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
+               uuout => tmpif3
+               vvout => tmpif4
 !
 !     apres interpolation horizontale passer de vitesse et direction
 !     aux composantes u et v
@@ -249,24 +259,24 @@
 !     si type de grille "x",    u-v interpolation n\s - e\o
 !
 
-             else
-                deallocate(tmpif3)
-                deallocate(tmpif4)
-                uuout => tmpif1
-                vvout => tmpif2
-                if (message) then
-                  write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
-               endif
-            endif
+            else
+               deallocate(tmpif3)
+               deallocate(tmpif4)
+               uuout => tmpif1
+               vvout => tmpif2
+               if (message) then
+                 write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
+              endif
+           endif
 !
 !     ecrire vecteur u
 !
-            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+           call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 !
 !
 !     ecrire vecteur v
 !
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,            jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,            lg1,lg2,lg3,lg4)
+           call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,lg1,lg2,lg3,lg4)
 !
 !     fin du calcul des composantes
 !
@@ -277,15 +287,15 @@
          if (associated(tmpif4)) deallocate(tmpif4)
 !         if (.not.associated(tmpif3)) deallocate(tmpif3)
 !         if (.not.associated(tmpif4)) deallocate(tmpif4)
-         deallocate(tmpif1)
-         deallocate(tmpif2)
+         if (associated(tmpif1)) deallocate(tmpif1)
+         if (associated(tmpif2)) deallocate(tmpif2)
 
       enddo
 !
 !
 !     reinitialiser clef de controle
 !
-23000 enddo
+   enddo    ! fin boucle iprs
       vvent=.false.
 !
 !

@@ -293,7 +293,7 @@
    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
    data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
    data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
-   data qlxcon(126)/'MASQUE' /   qlxval(126)/ 0 /
+   data qlxcon(126)/'RESV126' /  qlxval(126)/ 0 /
    data qlxcon(127)/'RESV127' /  qlxval(127)/ 0 /
    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
@@ -319,7 +319,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.0.3',  lfn(133))
+	jdate= exdb(' PGSM  ',' V7.1.0',  lfn(133))
 
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -615,6 +615,7 @@
 	call qlxins (printen,'PRINTEN', dum,7, 1)
 	call qlxins (printsr,'PRINTSR', dum,7, 1)
 	call qlxins (etikent,'ETIKENT', nwetike, 3, 1)
+   call qlxins (masque, 'MASQUE',  dum, 1, 1)
 	call qlxins (etiksrt,'ETIKSRT', nwetiks, 3, 1)
 	call qlxins (numero, 'ENREG',   dum, 1, 1)
 	call qlxins (ip2srt, 'IP2SRT',  dum, 1, 1)
@@ -659,7 +660,8 @@
 	etiksrt(3) = -1
 
 	typesrt= -1
-        compression_level = 0
+   compression_level = 0
+   masque = 0
 !
 !
 !    initialiser avec .true. champ symetrique

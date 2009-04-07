@@ -57,6 +57,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4) then
@@ -71,6 +75,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4) then
@@ -85,6 +93,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then
@@ -99,6 +111,10 @@
       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
 
    if (mask_key >= 0) then
+      ier = fstprm(mask_key, mask_dateo, mask_deet, mask_npas, mask_ni, mask_nj, mask_nk, &
+               mask_nbits, mask_datyp, mask_ip1, mask_ip2, mask_ip3, mask_typvar, mask_nomvar, mask_etiket, &
+               mask_grtyp, mask_ig1, mask_ig2, mask_ig3, mask_ig4, mask_swa, mask_lng, mask_dltf, mask_ubc, &
+               mask_datev, mask_extra2, mask_extra3)
       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then

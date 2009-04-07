@@ -1,6 +1,6 @@
 !**S/P ECRITUR   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 !
-      subroutine ecritur(champ,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+      subroutine ecritur(fld,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
 #include "impnone.cdk90"
       external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
       integer fstopc,fstcvt,fstecr
@@ -26,19 +26,19 @@
 !         -OBJET   PGSMLIB,ID=ARMNPJS.
 !
 !ARGUMENTS
-!   IN    CHAMP   CHAMP(NI,NJ,NK) A ECRIRE
-!   IN    NPAC    COMPACTION DU DATA DANS CHAMP
-!   IN    IDAT    DATE DU CHAMP (CMC STAMP)
+!   IN    fld   fld(NI,NJ,NK) A ECRIRE
+!   IN    NPAC    COMPACTION DU DATA DANS fld
+!   IN    IDAT    DATE DU fld (CMC STAMP)
 !   IN    DEET    PAS DE TEMPS ENTIER SECONDES
 !   IN    NPAS    NUMERO DU PAS DE TEMPS
-!   IN    NI      1 ER DIMENSION DU CHAMP
-!   IN    NJ      2 IEM DIMENSION DU CHAMP
-!   IN    NK      3 IEME DIMENSION DU CHAMP
-!   IN    IP1     NORMALEMENT NIVEAU DU CHAMP
-!   IN    IP2     HEURE DU CHAMP
+!   IN    NI      1 ER DIMENSION DU fld
+!   IN    NJ      2 IEM DIMENSION DU fld
+!   IN    NK      3 IEME DIMENSION DU fld
+!   IN    IP1     NORMALEMENT NIVEAU DU fld
+!   IN    IP2     HEURE DU fld
 !   IN    IP3ENT     LIBRE
-!   IN    TYPEENT   TYPE DU CHAMP 1 CARACTERE
-!   IN    NOM     NOM DU CHAMP 2 CARACTERES
+!   IN    TYPEENT   TYPE DU fld 1 CARACTERE
+!   IN    NOM     NOM DU fld 2 CARACTERES
 !   IN    ETIKE   ETIQUETTE 1 MOT CDC (USAGER)
 !   IN    GRTYPE  TYPE DE GRILLE 1 CARACTERE
 !   IN    LLG1    DESCRIPTEUR DE GRILLE
@@ -62,7 +62,7 @@
 !MODULES  FSTECR,PUTFLD
 !
 !APPEL
-!         CALL ECRITUR(CHAMP,NPAC,IDAT,DEET,NPAS,NI,NJ,NK,IP1,IP2,IP3,
+!         CALL ECRITUR(fld,NPAC,IDAT,DEET,NPAS,NI,NJ,NK,IP1,IP2,IP3,
 !                      TYPEV,NOM,ETIKE,GRTYPE,LLG1,LLG2,LLG3,LLG4)
 !
 !- -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -96,7 +96,7 @@
       character*72 form1,form2
 
       integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
-      real champ(ni,nj,nk)
+      real fld(ni,nj,nk)
       real dummy(2)
       integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
       integer cdatyp,iopc,ier,gdout
@@ -141,23 +141,23 @@
 !
 !
 !     SI LE NOM EXISTE DANS LA TABLE BATIT PAR L USAGER ALORS
-!     LE CHAMP EST MODIFIE  EX: CHAMP(NI,NJ) = (CHAMP(NI,NJ)+ECART)*FACTEUR
+!     LE fld EST MODIFIE  EX: fld(NI,NJ) = (fld(NI,NJ)+ECART)*FACTEUR
 !
-      call conver(champ, ni, nj, cnomvar)
+      call conver(fld, ni, nj, cnomvar)
 !
 !
-!     filtrage du champ de sortie si le champ n'est pas un stream latlon
+!     filtrage du fld de sortie si le fld n'est pas un stream latlon
 !
 
       if (fltoggle(2)) then
         if (cgtyp.eq.'Y') then
-          write (6, *) '(ECRITUR) Impossible de filtrer des champs sur grille Y'
+          write (6, *) '(ECRITUR) Impossible de filtrer des flds sur grille Y'
         else
-          write (6, *) ' CHAMP FILTRE A L''ECRITURE'
-!          call statfld4 (champ,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
+          write (6, *) ' fld FILTRE A L''ECRITURE'
+!          call statfld4 (fld,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 !     &         ,0)
-          call filtre (champ, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
-!          call statfld4 (champ,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
+          call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
+!          call statfld4 (fld,cnomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0
 !     &         ,0)
         endif
       endif
@@ -168,7 +168,7 @@
 
 
       if (printsr)  then
-         call imprims(cnomvar,champ,ni,nj)
+         call imprims(cnomvar,fld,ni,nj)
       endif
 !
       iun=2
@@ -194,13 +194,13 @@
             endif
             rewrit = .true.
 !
-            ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          else
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
             rewrit = .false.
-            ier = fstecr(champ,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          endif
 !
       else
@@ -217,7 +217,7 @@
                write (iun) npac, idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, cdatyp,               chaine
             endif
 
-            write(iun) champ
+            write(iun) fld
             if (message) then
                write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
             endif
@@ -254,7 +254,7 @@
             endif
 
             ier = gdll(gdout, tmplat,tmplon)
-            call pgsmwr(2,champ,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,            idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
+            call pgsmwr(2,fld,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,            idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
 
 !
          else
@@ -270,3 +270,147 @@
       return
       end
 
+      subroutine iecritur(fld,npac,idat,deet,npas,ni,nj,nk,      ip1,ip2,ip3,       ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+#include "impnone.cdk90"
+      external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
+      integer fstopc,fstcvt,fstecr
+#include "lires.cdk90"
+#include "voir.cdk90"
+#include "ecrires.cdk90"
+#include "llccmm.cdk90"
+#include "indptr.cdk90"
+#include "enrege.cdk90"
+#include "dates.cdk90"
+#include "dummys.cdk90"
+#include "idents.cdk90"
+#include "qqqfilt.cdk90"
+#include "styles.cdk90"
+!
+!-----------------------------------------------------------------
+!
+      character *24 chaine
+      character *12 cetiket, cetksrt
+      character *4 cnomvar
+      character *2 ctypvar
+      character *1 cgtyp
+
+
+      character*12 letiksrt
+      character*4 lnomvar
+      character*2 ltypsrt
+
+      character*72 form1,form2
+
+      integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
+      integer fld(ni,nj,nk)
+      real dummy(2)
+      integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
+      integer cdatyp,iopc,ier,gdout
+      logical rewrit
+
+      integer gdll,ezgetgdout
+      external gdll,ezgetgdout
+
+      real*8 delta_t
+
+      if (etiksrt(1) .eq. -1) then
+         cetksrt = cetiket
+      else
+         write(cetksrt,'(3A4)') (etiksrt(i), i=1,nwetiks)
+      endif
+
+      if (typesrt .eq. -1) then
+         ltypsrt = ctypvar
+      else
+         write(ltypsrt, '(A2)') typesrt
+      endif
+
+!
+      if (ip3srt.ne.-1) then
+         ip3o=ip3srt
+      else
+         ip3o=ip3
+      endif
+!
+      if (ip2srt.ne.-1) then
+         ip2o=ip2srt
+      else
+         ip2o=ip2
+      endif
+
+!      ltypsrt = ctypsrt
+      lnomvar = cnomvar
+      letiksrt = cetksrt
+
+!
+      iun=2
+      if (mode.eq.1) then
+!     IWRIT=+1  SORTI(STD,500,R)
+         if (compression_level.eq.0) then
+            cdatyp = 2
+         else
+            if (npac <= -16) then
+               cdatyp = 130
+            else
+               cdatyp = 2
+            endif
+         endif
+
+
+         if (iwrit.eq.+1) then
+            if (.not.message) then
+               iopc= fstopc('TOLRNC','DEBUGS',.true.)
+            endif
+            rewrit = .true.
+!
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+         else
+            if (.not.message) then
+               iopc= fstopc('TOLRNC','DEBUGS',.true.)
+            endif
+            rewrit = .false.
+            ier = fstecr(fld,dummy,npac,iun,idat,deet,npas, &
+               ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+         endif
+!
+      else
+         if (mode.eq.2) then
+            write(6,*)            'LES FICHIERS DE TYPE "MS" NE SONT PLUS SUPPORTES'
+         else if (mode.eq.3.or.mode.eq.4) then
+            if (mode.eq.4) then
+               cdatyp = 1
+               write (chaine, 10) ltypsrt,lnomvar,letiksrt,cgtyp
+ 10            format(a2,2x,a4,a12,a1,3x)
+               write (iun) npac, idat, deet, npas, ni, nj, nk,  ip1, ip2o, ip3o, &
+                  llg1, llg2, llg3, llg4, cdatyp, chaine
+            endif
+
+            write(iun) fld
+            if (message) then
+               write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
+            endif
+         else if (mode.eq.5) then
+            if (valid) then
+               if (date .ne. -1) then
+                  istamp = date
+               else
+                  istamp = idat
+               endif
+            else
+               istamp=0
+            endif
+
+            delta_t = deet*npas/3600.0
+            call incdatr(idatv,idat,delta_t)
+         else
+            if (message) then
+               write(6,*)'FICHIER INCONNU ROUTINE ECRITUR'
+            endif
+         endif
+      endif
+!
+!
+ 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER MS ',i4,'   REC=',i4)
+ 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER SEQUENTIEL',i4)
+      return
+      end

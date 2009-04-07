@@ -1,17 +1,18 @@
 !**s/p scalair  interpolation horizontale d un champ
 !               defini par l usager
-      subroutine scalair_msk(key, done_liste, len_liste)
+      subroutine scalair_msk(key, liste, done_liste, len_liste)
 #include "impnone.cdk90"
       integer :: key,len_liste
+      integer, dimension(len_liste) :: liste
       logical, dimension(len_liste) :: done_liste
 #include "defin.cdk90"
       external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
          fstsel,symetri,imprime,itrouve,messags,pgsmabt
       external cvtr2i
       external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
+      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
 
-      integer ezgdef_fmem, ezqkdef, ezsint, ezdefset, fst_get_mask_key, irec_mask
+      integer ezgdef_fmem, ezqkdef, ezsint, ezsint_mdm, ezdefset, fst_get_mask_key, key_masq
       logical skip
 
 !
@@ -35,29 +36,56 @@
    character *2 ctypvar
    character *1 cigtyp
 
-   integer nniv,dat,i,nunv,itrouve,ii
-   integer niveaux(nniv),deet,ig1,ig2,ig3,ig4,iheur
-   integer iprs,irec,iunit,jp1,jp2,jp3,ne,ni,nj,nk,total_keys,nrecs
-   integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
-   logical sym,symetri
+   integer nniv, i, nunv, itrouve, ii
+   integer niveaux(512), deet, ig1, ig2, ig3, ig4, iheur
+   integer dateo, datev, nbits, datyp, ip1, ip2, ip3
+   integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
+   integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
+   logical, save :: unefoys = .true.
+
+   integer dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq
+   integer nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq
+   integer ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, cdltf_masq, cubc_masq
+   integer datev_masq, extra2_masq, extra3_masq
+   logical sym, symetri
+
+   character(len=4)  :: cnomvar_masq
+   character(len=2)  :: ctypvar_masq
+   character(len=12) :: cetiket_masq
+   character(len=1)  :: cigtyp_masq
+
    real fbidon
-   real, dimension(:), allocatable :: ax, ay
+   real, dimension(:,:), allocatable, target ::  fld, fld_out
+   integer, dimension(:,:), allocatable, target :: masq, masq_out, masq_zones
 
-   real, dimension(:), pointer :: tmpout
+   real, dimension(:,:), pointer :: tmpout
+   integer, dimension(:,:), pointer :: tmpmsk
 
-   integer, dimension(:), allocatable :: liste
+   logical masque_present, masque_done
+
    nunv=0
    iunit=1
+   masque_present = .false.
+   masque_done = .false.
+   ctypvar_masq = '@@'
 
    ier = fstprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, &
             cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-   skip = .false.
-   ier = fst_get_mask_key(irec_mask, irec, 0, iunit)
-   allocate(tmpif1(ni*nj))
-   key = pgsmluk(tmpif1, irec, ni,nj,nk,cnomvar,cigtyp)
+   allocate(fld(ni,nj), fld_out(li,lj))
+
+   ier = fst_get_mask_key(key_masq, key, 0, iunit)
+
+   if (key_masq >= 0) then
+      masque_present = .true.
+      allocate(masq(ni,nj), masq_out(li,lj))
+   else
+      masque_present = .false.
+   endif
+
+   key = pgsmluk(fld, key, ni,nj,nk,cnomvar,cigtyp)
 
    if (cdatyp  ==  2 .or. cdatyp  ==  4) then
-      call cvtr2i(tmpif1, tmpif1, ni, nj)
+      call cvtr2i(fld, fld, ni, nj)
    endif
 
    if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
@@ -66,15 +94,14 @@
 !  on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !  ig3=lg3  ig4=lg4
 !
-   if (.not.skip) then
+   if (.not.masque_present) then
       if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
-         allocate(tmpif2(li*lj))
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
-         ier = ezsint(tmpif2, tmpif1)
-         tmpout => tmpif2
+         ier = ezsint(fld_out, fld)
+         tmpout => fld_out
       else
-         tmpout => tmpif1
+         tmpout => fld
          if (message) write(6,660) cnom
  660           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
       endif
@@ -83,11 +110,71 @@
          call qaaqr(tmpif2,li,lj,tmplat)
          cnomvar=cnomqr
       endif
-      call ecritur(tmpout,npack,dat,deet,npas,li,lj,nk,jp1,jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-      if (associated(tmpif2)) then
-         deallocate(tmpif2)
+      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk,ip1,ip2, ip3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+      deallocate(fld_out)
+   else
+      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
+         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+         ier = ezdefset(gdout, gdin)
+         ier = fstprm(key_masq, dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq, &
+                  nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq, &
+                  ctypvar_masq, cnomvar_masq, cetiket_masq, &
+                  cigtyp_masq, ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, &
+                  cdltf_masq, cubc_masq, datev_masq, extra2_masq, extra3_masq)
+         ier = fstluk(masq, key_masq, ni,nj,nk)
+         ier = ezsint_mdm(fld_out, masq_out, fld, masq)
+         tmpout => fld_out
+         tmpmsk => masq_out
+      else
+         tmpout => fld
+         tmpmsk => masq
+         if (message) write(6,662) cnom
+ 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
       endif
-      deallocate(tmpif1)
+!     ecrire sur fichier approprie(std,ms,seq)
+      if (cnomx == cnomqr) then
+         call qaaqr(tmpif2,li,lj,tmplat)
+         cnomvar=cnomqr
+      endif
+      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
+         ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+         masque_done = .false.
+         do i=1,len_liste
+            if (liste(i) == key_masq) then
+               if (done_liste(i)) then
+                  masque_done = .true.
+               endif
+               exit
+            endif
+         enddo
+      if (masque_present.and..not.masque_done) then
+         if (unefoys) then
+            allocate(masq_zones(li,lj))
+            call ezget_mask_zones(masq_zones, masq)
+            nk = 1
+            call iecritur(masq_zones,-16,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
+               ip1_masq,ip2_masq, ip3_masq, '@Z', cnomvar_masq, cetiket_masq, &
+               cgrtyp, lg1, lg2, lg3, lg4)
+            unefoys = .false.
+            deallocate(masq_zones)
+         endif
+         call iecritur(tmpmsk,-nbits_masq,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
+            ip1_masq,ip2_masq, ip3_masq, ctypvar_masq, cnomvar_masq, cetiket_masq, &
+            cgrtyp, lg1, lg2, lg3, lg4)
+         do i=1,len_liste
+            if (liste(i) == key_masq) then
+               done_liste(i) = .true.
+               exit
+            endif
+         enddo
+         if (allocated(masq_out)) then
+            deallocate(masq_out)
+         endif
+      endif
+      deallocate(fld_out)
+
+   endif
+   deallocate(fld)
 
 !
    if (nunv > 0) then
