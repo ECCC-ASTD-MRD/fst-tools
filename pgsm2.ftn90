@@ -7,7 +7,7 @@
 !               interpolation des 3 niveaux de nuages
 !               interpolation horizontale de variables scalaires
 !
-!auteur    - p.sarrazin octobre 1981 drpn dorval p.q.  canada
+!auteur    - p.sarrazin octobre 1980 drpn dorval p.q.  canada
 !
 !revision
 !        4.0.1  - conversion au fichier standard 89  p. sarrazin
@@ -111,14 +111,13 @@
 	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
 	real dum
 
+
 !
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	data listl/128*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
-	data defo /128*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
-	data lfn  /128*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
-
-	data lnkdiun / 1,  11,  12,  13,  14,  15,  16,  17,  18,  19,                 20,  21,  22,  23,  24,  25,  26,  27,  28,  29,                 30,  31,  32,  33,  34,  35,  36,  37,  38,  39,                 40,  41,  42,  43,  44,  45,  46,  47,  48,  49,                  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,                  60,  61,  62,  63,  64,  65,  66,  67,  68,  69,                  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,                  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,                  90,  91,  92,  93,  94,  95,  96,  97,  98,  99,                 100, 101, 102, 103, 104, 105, 106, 107, 108, 109,                 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,                120, 121, 122, 123, 124, 125, 126, 127, 128, 129,                130, 131, 132, 133, 134, 135, 136, 137 /
+	data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
+	data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
+	data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
 
         data form/'(A8)'/
 !
@@ -149,11 +148,11 @@
 !
  	data nis,njs,nif,njf,ninc,njnc,if9/1,1,1000,1000,10,10,0/
 !
-   	data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
+  	data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
 !
-   	data if7,if8,npairuv,npair/0,0,4,6/
+  	data if7,if8,npairuv,npair/0,0,4,6/
 !
-   	data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
+  	data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
 
 	data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
 	data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -300,7 +299,9 @@
 	data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
 	data(qlxlval(i),i=1,2)/1,0/
 
-
+!        integer idx_ozsrt, idx_isll, idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v
+   data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
+   data idx_msglvl /987/  idx_isent /988/  idx_impos  /989/ idx_v /990/
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
 !           listl=position  iment(tape1 standard),isll(tape4 sequentiel)
@@ -312,14 +313,18 @@
 !
 !
 	nequiv=-1
-	call ccard(listl,defo,lfn,137,nequiv)
-	ier = fnom(5,lfn(131),'SEQ',0)
-!	ier = fnom(6,lfn(44),'SEQ',0)
+	lnkdiun = 0
+        lnkdiun(1) = 1
+        lnkdiun(idx_ozsrt) = 2
+	call ccard(listl,defo,lfn,990,nequiv)
+	ier = fnom(5,lfn(idx_i),'SEQ',0)
+	ier = fnom(6,lfn(idx_l),'SEQ',0)
 
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.1.0',  lfn(133))
+	jdate= exdb(' PGSM  ',' V7.2.0',  lfn(idx_date))
+ !       print *, jdate
 
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -328,7 +333,7 @@
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
 
-	if (lfn(1).ne.'SCRAP'.and.lfn(135).ne.'SCRAP') then
+	if (lfn(1).ne.'SCRAP'.and.lfn(idx_isent).ne.'SCRAP') then
 	  print *,'***************************************************'
 	  print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
 	  print *,'* SEQUENTIELS ET RANDOM                           *'
@@ -337,18 +342,18 @@
 	  call qqexit(13)
 	endif
 
-	if (lfn(135).ne.'SCRAP') then
+	if (lfn(idx_isent).ne.'SCRAP') then
 	  inputmod = SEQUENTIEL
 	else
 	  inputmod = RANDOM
 	endif
 
-	if (lfn(136).ne.'SCRAP') then
-	  ier = fnom(3,lfn(136),'RND+OLD+R/O',0)
-	  ier = fstouv(3,'RND')
+	if (lfn(idx_impos).ne.'SCRAP') then
+	  ier = fnom(lnkdiun(idx_impos),lfn(idx_impos),'RND+OLD+R/O',0)
+	  ier = fstouv(lnkdiun(idx_impos),'RND')
 	endif
 
-	if (lfn(137).ne.'NON') then
+	if (lfn(idx_v).ne.'NON') then
 	  ier = ezsetopt('verbose', 'yes')
 	endif
 
@@ -380,10 +385,10 @@
 	  enddo
 	else
 	  niun = 1
-	  ier = fnom(lnkdiun(1),lfn(135),'STD+SEQ+OLD+R/O+REMOTE',0)
+	  ier = fnom(lnkdiun(1),lfn(idx_isent),'STD+SEQ+OLD+R/O+REMOTE',0)
 	  if (ier .lt. 0) then
 	    print *,'************************************************'
-	    print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(135)
+	    print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(idx_isent)
 	    print *,'************************************************'
 	    jdate= exfin('  PGSM  ', 'ABORT', 'NON')
 	    call qqexit(13)
@@ -610,7 +615,7 @@
 	call qlxins ( voire, 'VOIRENT', dum, 1, 1)
 	call qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
         call qlxINS ( pose,  'PAUSE',   dum, 1, 1)
-	call qlxins ( date,  'DATE',    dum, 3, 1)
+	call qlxins ( userdate,  'DATE',    dum, 3, 1)
 	call qlxins (seldat, 'OPDAT',   dum, 1, 1)
 	call qlxins (printen,'PRINTEN', dum,7, 1)
 	call qlxins (printsr,'PRINTSR', dum,7, 1)
@@ -643,7 +648,7 @@
 	etikent(2) = -1
 
 	ip3ent = -1
-	date  = -1
+	userdate  = -1
 	date2 = -1
 	date3 = -1
 
@@ -689,7 +694,7 @@
 	call initid
 
 
-	iopc= fstopc('MSGLVL',lfn(134),.false.)
+	iopc= fstopc('MSGLVL',lfn(idx_msglvl),.false.)
 	ier = fstopl('REDUCTION32',.true.,.false.)
 
 	ipose= 0
@@ -701,7 +706,7 @@
 	if (associated(tmplon)) deallocate(tmplon)
 
 	if (mode.eq.1) then
-          call chk_hy(1,2)
+          call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
         endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
@@ -713,15 +718,15 @@
 	if (mode.eq.1) then
 	   if (voirs)  then
 	      if (message) then
-	         ier = fstvoi(2, 'RND')
+	         ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
 	      endif
 	   endif
 
 
 
 
-	   ier = fstfrm(2)
-	   call fclos(2)
+	   ier = fstfrm(lnkdiun(idx_ozsrt))
+	   call fclos(lnkdiun(idx_ozsrt))
 	else
 #if defined (unix)
          if (mode.eq.2) then
@@ -733,11 +738,11 @@
 !    fermer fichier sequentiel
 !
      	   if (mode.eq.3)  then
-	      call fclos(2)
+	      call fclos(lnkdiun(idx_ozsrt))
 	   endif
 
      	   if (mode.eq.4)  then
-	      call pgsmcf(2)
+	      call pgsmcf(lnkdiun(idx_ozsrt))
 	   endif
 	endif
 !

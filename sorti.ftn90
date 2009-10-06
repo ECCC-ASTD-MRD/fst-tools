@@ -70,9 +70,9 @@
 !
 !   DATE DE LA RUN OPERATIONNELLE UTILISEE PAR L'USAGER DIRECTIVE OPDAT=OUI
 !
-      if (lfn(6).ne. 'NON') then
-         if (seldat) date = jdate
-         if (seldat) write(6,*)' DATE ORIGINE = DATE VALIDE DATE=',date
+      if (lfn(idx_date).ne. 'NON') then
+         if (seldat) userdate = jdate
+         if (seldat) write(6,*)' DATE ORIGINE = DATE VALIDE DATE=',userdate
       endif
 !
       if (dejalue)  then
@@ -100,11 +100,11 @@
 !
       if (mode.eq.1)  then
          if (noenrg.eq.1) then
-            ier=fnom(2,lfn(129),'STD+SEQ+FTN',0)
+            ier=fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'STD+SEQ+FTN',0)
          else if (noenrg.eq.0) then
-            ier=fnom(2,lfn(129),'STD+SEQ+REMOTE',0)
+            ier=fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'STD+SEQ+REMOTE',0)
          else
-            ier = fnom(2,lfn(129),'STD+RND+REMOTE',0)
+            ier = fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'STD+RND+REMOTE',0)
 
             if (nsort.eq.2) then
                iwrit=+1
@@ -120,7 +120,7 @@
          write(6,*)         ' VERSION DE PGSM'
          call pgsmabt
       else if (mode.eq.3.or.mode.eq.4) then
-         ier = fnom(2,lfn(129),'SEQ+FTN+UNF',0)
+         ier = fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'SEQ+FTN+UNF',0)
 
          if (nsort.ne.1)  then
             write(6,*)'MAUVAIS APPEL A SORTIE FICHIER SEQ'
@@ -128,11 +128,11 @@
          endif
       else if (mode.eq.5) then
          if (jwrit.eq.-1) then
-            ier = pgsmof(2,lfn(129))
+            ier = pgsmof(lnkdiun(idx_ozsrt),lfn(idx_ozsrt))
 !            ier = fnom(2,lfn(41),'SEQ+FMT+APPEND',0)
          else
-            ier = pgsmof(2,lfn(129))
-            ier = fnom(2,lfn(129),'SEQ+FMT+R/W',0)
+            ier = pgsmof(lnkdiun(idx_ozsrt),lfn(idx_ozsrt))
+            ier = fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'SEQ+FMT+R/W',0)
          endif
       else
          if (message) write(6,*)'TYPE DE FICHIER INCONNU'
@@ -148,16 +148,16 @@
 
       if (mode.eq.1)  then
          if (noenrg.eq.1)  then
-            ier = fstouv(2, 'SEQ+FTN')
+            ier = fstouv(lnkdiun(idx_ozsrt), 'SEQ+FTN')
          else if (noenrg.eq.0) then
-            ier = fstouv(2, 'SEQ')
+            ier = fstouv(lnkdiun(idx_ozsrt), 'SEQ')
             if (jwrit.eq.-1) then
-               ier = fstapp(2,' ')
-               ier = fsteof(2)
+               ier = fstapp(lnkdiun(idx_ozsrt),' ')
+               ier = fsteof(lnkdiun(idx_ozsrt))
                print *, 'fsteof retourne', ier
             endif
          else
-            ier = fstouv(2, 'RND')
+            ier = fstouv(lnkdiun(idx_ozsrt), 'RND')
          endif
       endif
 !

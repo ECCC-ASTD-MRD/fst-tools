@@ -78,7 +78,7 @@
       integer jp1,jp2,jp3,lilj,ni,nj,nk,nn,npar,num1,num2,iopc
       integer cdatyp,cnbits
       integer cswa, clng, cdltf, cubc, extra1, extra2, extra3
-      integer ezqkdef, ezdefset, ezsint, chkenrpos
+      integer ezqkdef, ezdefset, ezsint, chkenrpos, datev
       integer iunit
       logical symetri,sym
 
@@ -96,14 +96,7 @@
 !
 !     # doit etre egal a zero dans fichier d'ENTRE
       ip1=0
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
-         endif
-
+      call chk_userdate(datev)
 !
 !     modification de hollerith a caractere
 !
@@ -121,8 +114,8 @@
       endif
 
 
-      irec1=fstinf(1,ni,nj,nk,date,cetiket,ip1,      itime(1),ip3ent,ctypvar,cnomvar)
-      irec2=fstinf(1,ni,nj,nk,date,cetiket,ip1,      itime(2),ip3ent,ctypvar,cnomvar)
+      irec1=fstinf(1,ni,nj,nk,datev,cetiket,ip1,      itime(1),ip3ent,ctypvar,cnomvar)
+      irec2=fstinf(1,ni,nj,nk,datev,cetiket,ip1,      itime(2),ip3ent,ctypvar,cnomvar)
 
 !     #  record n'EXISTE PAS
       if (irec2 .lt. 0 .or.irec1 .lt. 0) then
@@ -154,9 +147,9 @@
 !
       allocate(lclif1(ni*nj))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-      if (date .eq. 0 .or. date .eq. 1) date=date2
+!      if (userdate .eq. oui .or. userdate .eq. non) date=date2
 
-      num1 = pgsmlir(lclif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
+      num1 = pgsmlir(lclif1,1,ni,nj,nk,datev,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
 
       if (printen)  call imprime(cnomvar,lclif1,ni,nj)
 !
@@ -173,8 +166,8 @@
 !
       allocate(lclif2(max0(li*lj,ni*nj)))
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-      if (date .eq. 0 .or. date .eq. 1) date=date2
-      num2 = pgsmlir(lclif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
+!      if (date .eq. 0 .or. date .eq. 1) date=date2
+      num2 = pgsmlir(lclif2,1,ni,nj,nk,datev,cetiket,jp1,jp2,jp3,      ctypvar,cnomvar,cigtyp)
       if (printen)  call imprime(cnomvar,lclif2,ni,nj)
 !
 !     difference entre les deux champs

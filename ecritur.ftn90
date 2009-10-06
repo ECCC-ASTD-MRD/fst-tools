@@ -79,6 +79,7 @@
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 #include "styles.cdk90"
+#include "lnkflds.cdk90"
 !
 !-----------------------------------------------------------------
 !
@@ -99,7 +100,7 @@
       real fld(ni,nj,nk)
       real dummy(2)
       integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
-      integer cdatyp,iopc,ier,gdout
+      integer cdatyp,iopc,ier,gdout, datev
       logical rewrit
 
       integer gdll,ezgetgdout
@@ -171,7 +172,7 @@
          call imprims(cnomvar,fld,ni,nj)
       endif
 !
-      iun=2
+      iun=lnkdiun(idx_ozsrt)
       if (mode.eq.1) then
 !     IWRIT=+1  SORTI(STD,500,R)
          if (compression_level.eq.0) then
@@ -223,8 +224,9 @@
             endif
          else if (mode.eq.5) then
             if (valid) then
-               if (date .ne. -1) then
-                  istamp = date
+               call chk_userdate(datev)
+               if (datev .ne. -1) then
+                  istamp = datev
                else
                   istamp = idat
                endif
@@ -285,6 +287,7 @@
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 #include "styles.cdk90"
+#include "lnkflds.cdk90"
 !
 !-----------------------------------------------------------------
 !
@@ -301,7 +304,7 @@
 
       character*72 form1,form2
 
-      integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
+      integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet, datev
       integer fld(ni,nj,nk)
       real dummy(2)
       integer llg1,llg2,llg3,llg4,iun,istamp,ip3o,ip2o
@@ -343,7 +346,7 @@
       letiksrt = cetksrt
 
 !
-      iun=2
+      iun=lnkdiun(idx_ozsrt)
       if (mode.eq.1) then
 !     IWRIT=+1  SORTI(STD,500,R)
          if (compression_level.eq.0) then
@@ -391,8 +394,9 @@
             endif
          else if (mode.eq.5) then
             if (valid) then
-               if (date .ne. -1) then
-                  istamp = date
+               call chk_userdate(datev)
+               if (datev .ne. -1) then
+                  istamp = datev
                else
                   istamp = idat
                endif

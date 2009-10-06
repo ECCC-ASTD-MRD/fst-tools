@@ -62,7 +62,7 @@
 
       integer ig1,ig2,ig3,ig4,irec,iunit
       integer num1,num2,num3,nloop,deet
-      integer ip1,ip2,ip3,i,j,k
+      integer ip1,ip2,ip3,i,j,k, date
       integer ni,nj,nk,nbits,datyp,swa, lng, dltf, ubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym,heureok,ip3ok,processed

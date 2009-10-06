@@ -52,16 +52,18 @@
 #include "packin.cdk90"
 #include "gdz.cdk90"
 !
-      character *12 cetiket
-      character *4 cnomvar
-      character *2 ctypvar
-      character*1 cigtyp
+   character *12 cetiket
+   character *4 cnomvar
+   character *2 ctypvar
+   character*1 cigtyp
 
-      real fbidon
-      integer iunit
+   real fbidon
+   integer iunit
 
-      integer i, niveau(2),iheur,npar,ni,nj,nk,jp1,jp2,jp3,ig1,iopc,      ig2,ig3,ig4,irec1,irec2,num1,num2,nn,cnbits,cdatyp,cswa,clng,      cdltf,cubc,extra1,extra2,extra3
-      integer chkenrpos
+   integer i, niveau(2), iheur, npar, ni, nj, nk, jp1, jp2, jp3, ig1, iopc
+   integer ig2,ig3,ig4,irec1,irec2,num1,num2,nn,cnbits,cdatyp,cswa,clng
+   integer cdltf,cubc,extra1,extra2,extra3, datev
+   integer chkenrpos
 
 
       logical sym,symetri
@@ -76,14 +78,7 @@
 !
 !  identifier le numero de chaque record avec fstinf
 !
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
-         endif
-
+      call chk_userdate(datev)
 
 !
 !  modification de hollerith a caractere
@@ -104,8 +99,8 @@
       cigtyp = ' '
 
 !
-      irec1=fstinf(1,ni,nj,nk,date,cetiket,niveau(1),iheur,ip3ent,      ctypvar,'GZ  ')
-      irec2=fstinf(1,ni,nj,nk,date,cetiket,niveau(2),iheur,ip3ent,      ctypvar,'GZ  ')
+      irec1=fstinf(1,ni,nj,nk,datev,cetiket,niveau(1),iheur,ip3ent,      ctypvar,'GZ  ')
+      irec2=fstinf(1,ni,nj,nk,datev,cetiket,niveau(2),iheur,ip3ent,      ctypvar,'GZ  ')
       if (irec2 .lt. 0 .or. irec1 .lt. 0) then
          write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (EPAISEUR)'
          return
@@ -141,15 +136,9 @@
          iopc= fstopc('TOLRNC','DEBUGS',.true.)
       endif
 
-      if (date .eq. 1) then
-         if (date3.eq.-1) then
-            date=date2
-         else
-            call newdate(date, date2, date3, 3)
-         endif
-      endif
+      call chk_userdate(datev)
 !
-      num1 = pgsmlir(tmpif1,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,ctypvar, 'GZ  ', cigtyp)
+      num1 = pgsmlir(tmpif1,1,ni,nj,nk,datev,cetiket,jp1,jp2,jp3,ctypvar, 'GZ  ', cigtyp)
 !
       if (printen) then
          call imprime(cnomvar,tmpif1,ni,nj)
@@ -175,15 +164,9 @@
          iopc= fstopc('TOLRNC','DEBUGS',.true.)
       endif
 
-      if (date .eq. 1) then
-         if (date3.eq.-1) then
-            date=date2
-         else
-            call newdate(date, date2, date3, 3)
-         endif
-      endif
+      call chk_userdate(datev)
 
-      num2 = pgsmlir(tmpif2,1,ni,nj,nk,date,cetiket,jp1,jp2,jp3,  ctypvar, 'GZ  ', cigtyp)
+      num2 = pgsmlir(tmpif2,1,ni,nj,nk,datev,cetiket,jp1,jp2,jp3,  ctypvar, 'GZ  ', cigtyp)
       if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
 !
 !  difference entre les deux champs

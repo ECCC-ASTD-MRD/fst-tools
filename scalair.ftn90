@@ -68,6 +68,7 @@
 #include "indptr.cdk90"
 #include "lires.cdk90"
 #include "llccmm.cdk90"
+#include "lnkflds.cdk90"
 #include "packin.cdk90"
 #include "pairs.cdk90"
 #include "voir.cdk90"
@@ -78,7 +79,7 @@
    character *2 ctypvar
    character *1 cigtyp
 
-   integer nniv, dat, i, nunv, itrouve, key, ii
+   integer nniv, dateo, datev, i, nunv, itrouve, key, ii
    integer niveaux(nniv), deet, ig1, ig2, ig3, ig4, iheur
    integer iprs, irec, iunit, jp1, jp2, jp3, ne, ni, nj, nk, total_keys, nrecs
    integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
@@ -92,9 +93,9 @@
    logical, dimension(:), allocatable :: done_fields
 
    nunv=0
-   iunit=1
+   iunit=lnkdiun(1)
    call pgsm_get_nfstkeys(total_keys)
-   print *, 'scalair: total_keys', total_keys
+!   print *, 'scalair: total_keys', total_keys
    allocate(liste(total_keys))
    allocate(done_fields(total_keys))
    done_fields = .false.
@@ -143,15 +144,9 @@
  5000       mtdone=.true.
          endif
       else
-         if (date .eq. oui) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
-         endif
+         call chk_userdate(datev)
 
-         irec=fstinl(iunit, ni, nj, nk, date, cetiket, niveaux(iprs), iheur, ip3ent, ctypvar, cnom, liste, nrecs, total_keys)
+         irec=fstinl(iunit, ni, nj, nk, datev, cetiket, niveaux(iprs), iheur, ip3ent, ctypvar, cnom, liste, nrecs, total_keys)
 
 
          if (nrecs .eq. 0) then
@@ -178,7 +173,7 @@
 !  On verifie d'abord que le champ n'a pas ete traite, car les masques associes sont traites ailleurs.
 
          if (done_fields(ii)) cycle
-         ier=fstprm(irec, dat, deet, npas, ni, nj, nk, cnbits, cdatyp, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp, &
+         ier=fstprm(irec, dateo, deet, npas, ni, nj, nk, cnbits, cdatyp, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp, &
             ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
@@ -253,7 +248,7 @@
                cnomvar=cnomqr
             endif
 
-            call ecritur(tmpout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
             if (associated(tmpif2)) then
                deallocate(tmpif2)
             endif

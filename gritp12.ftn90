@@ -40,6 +40,7 @@
 #include "lires.cdk90"
 #include "voir.cdk90"
 #include "tp12ig.cdk90"
+#include "lnkflds.cdk90"
 
       character *12 etikx
       character *4 nomx
@@ -68,9 +69,9 @@
 !
 !
       if (it.eq.gr_tape2) then
-         iunit=2
+         iunit=lnkdiun(idx_ozsrt)
       else
-         iunit=1
+         iunit=lnkdiun(1)
       endif
 !
 !  VERIFICATION DES PARAMETRES DES 2 RECORDS
@@ -79,7 +80,7 @@
 
       if (it.ne.gr_stations) then
          if (it.ne.gr_tape2) then
-            ier = chkenrpos(1,2,ip1,ip2,ip3)
+            ier = chkenrpos(lnkdiun(1),lnkdiun(idx_ozsrt),ip1,ip2,ip3)
             if (ier.lt.0) then
                print *, '<gritp12> enregistrements positionnels absents!'
                print *, '          impossible de continuer...'

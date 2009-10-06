@@ -51,6 +51,7 @@
 #include "lires.cdk90"
 #include "pairs.cdk90"
 #include "dummys.cdk90"
+#include "lnkflds.cdk90"
 #include "ecrires.cdk90"
 #include "indptr.cdk90"
 #include "dates.cdk90"
@@ -72,41 +73,35 @@
    integer i,j
    integer jp1,jp2,jp3,liljt,ni,nj,nk,npar
    integer, dimension(:), allocatable :: listniv
+   real, allocatable, dimension(:,:) :: latgdin, longdin
    integer itabuv(npar) ,deet,ig1,ig2,ig3,ig4
    integer iheur,ilop,iprs,irec_uu,irec_vv,iopc
    integer numu,numv,infon,dat,datdv
    integer cnbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3,total_keys
    integer nom2
-   integer ig1zz, ig2zz, ig3zz, ig4zz
+   integer ig1zz, ig2zz, ig3zz, ig4zz, ezsetgdout, gdwdfuv, gdll, npts
    real    d60dum, pidum, pjdum
    real xlat1,xlon1,xlat2,xlon2
-   real dgtord,dumfld,xg1,xg2,xg3,xg4
+   real dgtord,dumfld,xg1,xg2,xg3,xg4,datev
    integer iunit
    logical ssw
 
    real*8 delta_t
 
    real, dimension(:,:), pointer :: uuout,vvout
-   iunit = 1
+   iunit = lnkdiun(1)
    nk = 1
 
    call pgsm_get_nfstkeys(total_keys)
    allocate(listniv(total_keys))
 
+   call chk_userdate(datev)
 !
 !
    do iprs = 1,npar
 !
 !     trouver record pour u,v  ou us,vs .....
 !
-      if (date .eq. 1) then
-         if (date3.eq.-1) then
-            date=date2
-         else
-            call newdate(date, date2, date3, 3)
-         endif
-      endif
-
 !
 !     modification de hollerith a caractere
 !
@@ -123,7 +118,7 @@
       endif
 
 
-      ier = fstinl(1,ni,nj,nk,date,cetiket,itabuv(iprs),iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
+      ier = fstinl(iunit,ni,nj,nk,datev,cetiket,itabuv(iprs),iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
       if (ier .lt. 0 .or. infon.eq.0) then
          write(6,610) cnom1
  610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
@@ -161,7 +156,7 @@
 !
          delta_t = deet*npas/3600.0
          call incdatr(datdv,dat,delta_t)
-         irec_vv = fstinf(1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2)
+         irec_vv = fstinf(iunit,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2)
          if (irec_vv .lt. 0) then
             write(6,610) nom2
             call pgsmabt
@@ -207,35 +202,56 @@
 !     si vvent=.true. on calcule la vitesse du vent
 
       gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-      ier = ezdefset(gdout, gdin)
 
       if (vvent) then
          ssw=.false.
-         if (wdvent) then
-            ssw = .true.
-         endif
-
-         ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
-	      uuout => tmpif3
-
-         call  ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom3,cetike,cgrtyp,lg1,lg2,lg3,lg4)
-
-         if (wdvent) then
-            do j=1,lj
-            do i=1,li
-               if (tmpif4(i,j).lt.0.0) then
-                  tmpif4(i,j) = tmpif4(i,j) + 360.0
-               endif
-            enddo
-            enddo
+         if (gdout == gdin) then
+            if (wdvent) then
+               ssw = .true.
+               allocate(latgdin(ni,nj),longdin(ni,nj))
+               ier = gdll(gdin, latgdin, longdin)
+               npts = ni * nj
+               ier = gdwdfuv(gdin, tmpif3, tmpif4, tmpif1, tmpif2, latgdin, longdin, npts)
+               cgrtyp = cigtyp
+               lg1 = ig1
+               lg2 = ig2
+               lg3 = ig3
+               lg4 = ig4
+               uuout => tmpif3
+               vvout => tmpif4
+            else
+               uuout => tmpif1
+               vvout => tmpif2
+               uuout = sqrt(uuout*uuout+vvout*vvout)
+            endif
+         else
+            ier = ezdefset(gdout, gdin)
+            ier = ezwdint(tmpif3, tmpif4, tmpif1, tmpif2)
+            uuout => tmpif3
             vvout => tmpif4
-            call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
          endif
+
+      call  ecritur(uuout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
+          ctypvar, cnom3, cetike, cgrtyp, lg1, lg2, lg3, lg4)
+
+      if (wdvent) then
+         do j=1,lj
+         do i=1,li
+            if (tmpif4(i,j).lt.0.0) then
+               tmpif4(i,j) = tmpif4(i,j) + 360.0
+            endif
+         enddo
+         enddo
+         vvout => tmpif4
+         call ecritur(vvout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3,&
+              ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
+      endif
+
 
 !
 !****************************************************************
 !
-         else
+   else
 !
 !     on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
 !     ig3=lg3  ig4=lg4
@@ -249,6 +265,7 @@
 !
                ssw = .true.
 !
+               ier = ezdefset(gdout, gdin)
                ier = ezuvint(tmpif3, tmpif4, tmpif1, tmpif2)
                uuout => tmpif3
                vvout => tmpif4
@@ -289,6 +306,8 @@
 !         if (.not.associated(tmpif4)) deallocate(tmpif4)
          if (associated(tmpif1)) deallocate(tmpif1)
          if (associated(tmpif2)) deallocate(tmpif2)
+         if (allocated(latgdin)) deallocate(latgdin)
+         if (allocated(longdin)) deallocate(longdin)
 
       enddo
 !

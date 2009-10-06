@@ -1,6 +1,4 @@
-include /usr/local/env/armnlib/include/$(ARCH)$(ABI)/Makefile_addons
 
-.SUFFIXES : .ftn .f .c .o
 
 SHELL = /bin/sh
 
@@ -12,8 +10,8 @@ FFLAGS =
 
 CFLAGS =
 
-OPTIMIZ = -O 3
-#OPTIMIZ =  -debug -O 0
+#OPTIMIZ = -O 3
+OPTIMIZ =  -debug -O 0
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
@@ -21,16 +19,8 @@ MYLIB =  $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
 
 .PRECIOUS: $(RMNLIB) $(MALIB)
 
+include $(ARMNLIB)/include/makefile_suffix_rules.inc
 default: obj
-
-.ftn.o:
-	r.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.ftn
-
-.f.o:
-	r.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.f
-
-.c.o:
-	r.compile $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 OBJET = f_pgsm.o c_pgsm.o
 
@@ -42,7 +32,7 @@ champseq.cdk90  defin.cdk90    grilles.cdk90  lires.cdk90    pairs.cdk90   voir.
 charac.cdk90    dummys.cdk90   heures.cdk90   llccmm.cdk90   param.cdk90
 
 FICHIERS_FTN90 = \
-calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chkenrpos.ftn90 chmpdif.ftn90 comme.ftn90 \
+calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chkenrpos.ftn90 chk_userdate.ftn90 chmpdif.ftn90 comme.ftn90 \
 conlalo.ftn90 conver.ftn90 convs.ftn90 coord.ftn90 coupe.ftn90 coupzm.ftn90 ecrits.ftn90 \
 ecritur.ftn90 epais.ftn90 fst_get_mask_key.ftn90 fillcoord.ftn90 grigaus.ftn90 grigef.ftn90 grigrib.ftn90 grille2.ftn90 \
 grillps.ftn90 grilstd.ftn90 griltp4.ftn90 gristdb.ftn90 gristereo.ftn90 gritp12.ftn90 grlalon.ftn90 \
@@ -60,10 +50,12 @@ c_pgsm.c
 
 FICHIERS = $(FICHIERS_FTN90) $(FICHIERS_C)
 
+f_pgsm.o: f_pgsm.ftn90
+
+obj: $(OBJET)
 f_pgsm.ftn90: $(FICHIERS_FTN90) $(FICHIERS_CDK90)
 	cat $(FICHIERS_FTN90) > f_pgsm.ftn90
 
-obj: $(OBJET)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 genlib: $(OBJET)
@@ -83,10 +75,13 @@ pgsm2009: f_pgsm.ftn90 c_pgsm.c
 	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-594
 
 pgsm2009-dev: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -obj $(HOME)/src/interp/*.o
+	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmn_009 -obj $(HOME)/src/interp/*.o -codebeta iopdatm
 
 pgsm2010-dev: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-606
+	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-606 
+
+pgsm2011-dev: f_pgsm.ftn90 c_pgsm.c
+	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -obj iopdatm.o
 
 pgsm2008: f_pgsm.ftn90 c_pgsm.c
 	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -obj $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmn_rc010

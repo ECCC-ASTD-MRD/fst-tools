@@ -91,7 +91,7 @@
 !
       character cnom*3, cjcoup*8
       real coa(500),w(500),sia(500),rad(500),poids(500),sinm2(500),      sinm1(500),sin2(500),champ(1000)
-      integer i, iunit
+      integer i, iunit, datev
       integer ihr,iheur,iprs,npres,irec,ni,nj,nk
       integer jp1,jp2,jp3,ig1,ig2,ig3,ig4
       integer num,ilath,j,cnbits,cdatyp,iopc,      cswa, clng, cdltf, cubc, extra1, extra2, extra3
@@ -114,14 +114,7 @@
 !
 !     identifier numero du record
 !
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
-         endif
-
+         call chk_userdate(datev)
 !
 !     modification de hollerith a caractere
 !
@@ -139,7 +132,7 @@
          endif
 
          cigtyp = ' '
-         irec = fstinf(iunit,ni,nj,nk,date,cetiket,nivospr(iprs),          iheur,ip3ent,ctypvar,cnomvar)
+         irec = fstinf(iunit,ni,nj,nk,datev,cetiket,nivospr(iprs),          iheur,ip3ent,ctypvar,cnomvar)
 !
          if (irec .lt. 0) then
             write(6,*)            'RECORD N EXISTE PAS VERIFIER DIRECTIVE MOYENT/MOYSRT'
@@ -205,15 +198,9 @@
          if (.not.message) then
             iopc= fstopc('TOLRNC','DEBUGS',.true.)
          endif
-         if (date .eq. 1) then
-            if (date3.eq.-1) then
-               date=date2
-            else
-               call newdate(date, date2, date3, 3)
-            endif
-         endif
+         call chk_userdate(datev)
 !
-         num=pgsmlir(tmpif1,iunit,ni,nj,nk,date,cetiket,jp1,jp2,         jp3,ctypvar,cnomvar,cigtyp)
+         num=pgsmlir(tmpif1,iunit,ni,nj,nk,datev,cetiket,jp1,jp2,         jp3,ctypvar,cnomvar,cigtyp)
 
         if (printen)  then
            call imprime(cnom,tmpif1,ni,nj)
