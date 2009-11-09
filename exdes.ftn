@@ -59,7 +59,7 @@
 *
       DO i = 1,N
          IF ((M .eq. 1) .and. (cle(i) .ne. -2) .and. (cle(i) .ne. -3)) then 
-  ! convertir IP1 en Kind et Level dans un interger*8
+  ! convertir IP1 en Kind et Level dans un integer*8
              CALL convip(cle(i),p,kind,-1,string,.false.)
 C             print *,'Debug+ i=',i,' cle(i)=',cle(i),' p=',p
              p_int8 = Z'80000000'

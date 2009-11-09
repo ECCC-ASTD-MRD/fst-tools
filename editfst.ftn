@@ -96,6 +96,9 @@
 *         M. Lepine        Reload avec librmnbeta, correction fichiers > 2G - v6.08 - Sept 2007
 *         M. Lepine        Reload avec librmnbeta, correction fichiers > 2G - v6.09 - Mars 2008
 *         M. Lepine        Reload avec librmnbeta, correction lng mode image pour datyp=6 - v6.10 - Juillet 2008
+*         M. Lepine        Reload avec librm_rc010, correction pour fichier cmcarc remote - v6.11 - Sept 2008
+*         M. Lepine        Reload avec librm_rc010, correction pour alias dans gossip_sock - v6.12 - Oct 2008
+*         M. Lepine        Correction pour empecher le remapping du datatype  - v6.13 - Fev 2009
 *
 *LANGAGE  - FTN77
 *
@@ -307,9 +310,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.10','NON')
+         I = EXDB('EDITFST','V6.13','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.10   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.13   ***'
       ENDIF
 
 
@@ -325,6 +328,9 @@
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
+
+*     ON EMPECHE LE REMAPPING DU DATATYPE EN MODE IMAGE
+      call c_no_datyp_remap()
 
 *     COMPTEE LES FICHIERS SOURCES
       DO 10 I=1,120

@@ -1,6 +1,6 @@
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .o
+.SUFFIXES : .ftn .cdk .c .o
 
 SHELL = /bin/sh
 
@@ -15,14 +15,7 @@ OPTIMIZ = -O 2
 
 default: absolu
 
-.ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
-.c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
-
-#.f.o:
-#	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
 OBJECTS= \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
@@ -30,7 +23,7 @@ OBJECTS= \
 	 fstnol.o        holacar.o       julhr.o 	 ouvred.o \
 	 ouvres.o        rewinds.o 	 sautsqi.o 	 sauvdez.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
-	 weofile.o       zap.o 	         ip1equiv.o
+	 weofile.o       zap.o 	         ip1equiv.o      c_no_datyp_remap.o
 
 
 FICHIERS= \
@@ -39,7 +32,7 @@ FICHIERS= \
 	 fstnol.f        holacar.f       julhr.f 	 ouvred.f \
 	 ouvres.f        rewinds.f 	 sautsqi.f 	 sauvdez.f \
 	 select.f 	 setper.f 	 sqicopi.f 	 stdcopi.f \
-	 weofile.f       zap.f 
+	 weofile.f       zap.f           c_no_datyp_remap.c
 
 
 
@@ -99,13 +92,16 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
 ip1equiv.o:    ip1equiv.ftn
 
 absolu: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_rc009
+	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
 
 editfst+: $(OBJECTS)
-	r.build -o editfst+ -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -arch $(ARCH) -abi $(ABI) -librmn rmn_rc010
+
+editfst_gem_strato: $(OBJECTS)
+	r.build -o editfst_gem_strato -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
