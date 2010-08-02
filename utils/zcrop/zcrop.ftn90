@@ -26,9 +26,9 @@
   character*128 cle(13)
   character*128 def(13),val(13)
 
-  data cle /'src',  'dst', 'ip1', 'ip2', 'ip3', 'imin', 'imax', 'jmin', 'jmax', 'xmin', 'xmax', 'ymin', 'ymax' /
-  data def /'void', 'void','-99', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
-  data val /'void', 'void','-99', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
+  data cle /'src.',  'dst.', 'ip1', 'ip2', 'ip3', 'imin', 'imax', 'jmin', 'jmax',  'xmin', 'xmax', 'ymin', 'ymax' /
+  data def /'void',  'void', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
+  data val /'void',  'void','-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
 
   mode = non_defini
   ipos = 0
