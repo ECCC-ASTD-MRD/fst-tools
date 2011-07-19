@@ -9,7 +9,7 @@
 
 /*****************************************************************************************/
 wordint c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
-wordint f77name(dies_setninj)(wordint *ni_start, wordint *ni_end, wordint *ni, wordint *nj_start, wordint *nj_end, wordint *nj) 
+wordint f77name(dies_setninj)(wordint *ni_start, wordint *ni_end, wordint *ni, wordint *nj_start, wordint *nj_end, wordint *nj)
   {
   gni_start = *ni_start;
   gnj_start = *nj_start;
@@ -17,7 +17,7 @@ wordint f77name(dies_setninj)(wordint *ni_start, wordint *ni_end, wordint *ni, w
   gnj_end   = *nj_end;
   gni       = *ni;
   gnj       = *nj;
-  
+
 /*  fprintf(stderr, "Dies_setninj : %d-%d-%d --- %d-%d-%d\n", gni_start, gni_end, gni, gnj_start, gnj_end, gnj); */
   }
 /*****************************************************************************************/
@@ -27,8 +27,8 @@ wordint f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, i
   ier = c_dies_getgridparams(ni_start, nj_start, ni_end, nj_end);
   }
 
-wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[], 
-      wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[], 
+wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[],
+      wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[],
       wordint lenetiket, wordint lentypvar, wordint lennomvar)
   {
   wordint ier;
@@ -41,8 +41,8 @@ wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, w
   return ier;
   }
 /*****************************************************************************************/
-wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay, 
-      char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, 
+wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay,
+      char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref,
       wordint *ig4ref)
   {
   wordint ier;
@@ -66,9 +66,9 @@ wordint f77name(diesaxay)(int *key, float *ax, float *ay)
   return c_diesaxay(*key, ax, ay);
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3, 
+wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3,
           wordint *dateo, char *typvar, char *etiket, char *grref,
-          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref, 
+          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref,
           wordint lentypvar, wordint lenetiket, wordint lengrref)
   {
   wordint i, ier;
@@ -92,7 +92,7 @@ wordint f77name(diesisincache)(int *key)
 
 
 /*****************************************************************************************/
-wordint c_diesinf(wordint key, wordint iun, wordint *ni, wordint *nj, wordint *nk, wordint datev, char etiket[], 
+wordint c_diesinf(wordint key, wordint iun, wordint *ni, wordint *nj, wordint *nk, wordint datev, char etiket[],
       wordint ip1, wordint ip2, wordint ip3, wordint ig1, wordint ig2, char typvar[], char nomvar[])
 {
   wordint ier, ier_ax, ier_ay, key_ax, key_ay;
@@ -183,11 +183,11 @@ wordint c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_
   *nj_start = grd[igrd].lim_y[0];
   *ni_end   = grd[igrd].lim_x[grd[igrd].ntuiles_x]-1;
   *nj_end   = grd[igrd].lim_y[grd[igrd].ntuiles_y]-1;
-  
+
 /*  fprintf(stderr, "getgridparams: (%d, %d)), (%d, %d)\n", *ni_start, *nj_start, *ni_end, *nj_end); */
   }
 /*****************************************************************************************/
-wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay, 
+wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
       char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref)
 {
   float *tuile;
@@ -196,7 +196,7 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
   char nomvar[5], typvar[2], etiket[13];
   wordint nix, njx, nkx, niy, njy, nky, nig, njg;
   char grtyp[2];
-  wordint ip1, ip2, ip3; 
+  wordint ip1, ip2, ip3;
   wordint ig1t, ig2t, ig3t, ig4t;
   wordint swa, lng, dltf, ubc, extra1, extra2, extra3;
   wordint liste[1024], infon;
@@ -241,7 +241,7 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
   f77name(incdatr)(&datev, &dateo, &delta_t);
   ier = c_fstinl(iun, &nit, &njt, &nkt, datev, etiket, ip1, ip2, -1, typvar, nomvar, liste, &infon, nmax);
   ier = c_inventaire_tuiles(igrd, liste, infon, ig1t, ig2t);
-  
+
   if (ier < 0) return ier;
 
   nig = grd[igrd].nix;
@@ -277,15 +277,29 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
       &ubc, &extra1, &extra2, &extra3);
     if (ig1t == grd[igrd].ip1 && ig2t == grd[igrd].ip2)
       {
-      tuile = (float *) malloc(nit*njt*sizeof(float));
-      ier = c_fstluk(tuile, liste[i], &nit, &njt, &nkt);
       startx = ig3t;
       starty = ig4t;
-      f77name(fillgrid)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
-      if (startx == 1 && ((startx - 1) + nit) < nig)
-        {
-        f77name(fill_lastcol)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
-        }
+      if (nbits > 32)
+         {
+         tuile = (double *) malloc(nit*njt*sizeof(double));
+         ier = c_fstluk(tuile, liste[i], &nit, &njt, &nkt);
+         f77name(fillgrid8)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
+         if (startx == 1 && ((startx - 1) + nit) < nig)
+           {
+           f77name(fill_lastcol8)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
+           }
+         }
+      else
+         {
+         tuile = (float *) malloc(nit*njt*sizeof(float));
+         ier = c_fstluk(tuile, liste[i], &nit, &njt, &nkt);
+         f77name(fillgrid)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
+         if (startx == 1 && ((startx - 1) + nit) < nig)
+           {
+           f77name(fill_lastcol)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
+           }
+         }
+
       c_diesaddkey(liste[i]);
       free(tuile);
       }
@@ -326,13 +340,13 @@ wordint c_diesaxay(int key, float *ax, float *ay)
 }
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesaxayprm(int key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3, 
+wordint c_diesaxayprm(int key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3,
           wordint *dateo, char *typvar, char *etiket, char *grref,
           wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref)
   {
   wordint ier = 0;
 
-  return ier; 
+  return ier;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
 wordint c_diesclrcache()
@@ -394,7 +408,7 @@ wordint c_diesFindGrid(wordint ip1, wordint ip2)
     i++;
     }
 
-  if (i > currentdiese)
+  if (i == ndiese)
     {
     c_diese_AddGrid(i, ip1, ip2);
     currentdiese++;
@@ -435,9 +449,9 @@ int compare_ints(int *token1, int *token2)
 }
 
 
-  /* -------------------------------------------------------------------*/     
+  /* -------------------------------------------------------------------*/
 
-  
+
 int fstfldcmp(_Fld refrec, _Fld therec)
   {
   if (0 != strcmp(refrec.nomvar, therec.nomvar))    return 0;
@@ -477,13 +491,13 @@ int c_diese_AddGrid(int igrid, int ip1, int ip2)
   wordint dateox, datevx, npasx, deetx, datypx, nbitsx;
   char nomvarx[5], typvarx[2], etiketx[13];
   wordint ip1x, ip2x, ip3x;
-  
+
   i = igrid;
   bemol_get_iun_in(&iun);
   /*fprintf(stderr, "iun = %d\n\n", iun);  */
   key_ax = c_fstinf(iun, &nix, &njx, &nkx, -1, "            ", ip1 , ip2 , -1, "  ", ">>  ");
   key_ay = c_fstinf(iun, &niy, &njy, &nky, -1, "            ", ip1 , ip2 , -1, "  ", "^^  ");
-    
+
   grd[i].key_ax = key_ax;
   grd[i].key_ay = key_ay;
   strcpy(grd[i].nomvarx, "    ");
@@ -513,4 +527,4 @@ int c_diese_AddGrid(int igrid, int ip1, int ip2)
   return 0;
   }
 
-  
+

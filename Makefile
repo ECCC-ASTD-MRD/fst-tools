@@ -41,10 +41,13 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 bemol: $(OBJECTS)
-	r.build -o bemol -obj $(OBJECTS) -librmn rmn_009
+	r.build -o bemol -obj $(OBJECTS) -librmn rmn_012
 
 bemol+: $(OBJECTS)
 	r.build -o bemol+ -obj $(OBJECTS) -librmn rmnbeta
+
+bemol_008: $(OBJECTS)
+	r.build -o bemol_1.39_008 -obj $(OBJECTS) -librmn rmn_008
 
 clean:
 	/bin/rm -f $(OBJECTS) *.stb *.f90 *~ bemol bemol_2000

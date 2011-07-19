@@ -25,7 +25,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucore, ucoars
   
   nf = nf -1
   do  i=1, nf
-     ier = fnom(lnkdiun(i),val(i),'STD+RND+OLD+R/O',0)
+     ier = fnom(lnkdiun(i),val(i),'STD+RND+OLD+REMOTE+R/O',0)
      if (ier.lt. 0) then
         print *, '***********************************************'
         print *, 'bemol - fichier ',val(1),' inexistant - au revoir'
@@ -59,7 +59,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucore, ucoars
 
   if (val(cle_dst) /= 'SCRAP') then
      udst = lu_dst
-     ier = fnom(udst,val(cle_dst),'STD+RND',0)
+     ier = fnom(udst,val(cle_dst),'STD+RND+REMOTE',0)
      nrecs = fstouv(udst, 'RND')
   else
      udst = -1
@@ -70,7 +70,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucore, ucoars
         ucoarse = udst
      else
         ucoarse = lu_coarse
-        ier = fnom(ucoarse,val(cle_coarse),'STD+RND',0)
+        ier = fnom(ucoarse,val(cle_coarse),'STD+RND+REMOTE',0)
         nrecs = fstouv(ucoarse, 'RND')
      endif
   else
@@ -84,7 +84,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucore, ucoars
         ucore = ucoarse
      else
         ucore = lu_core
-        ier = fnom(ucore,val(cle_core),'STD+RND',0)
+        ier = fnom(ucore,val(cle_core),'STD+RND+REMOTE',0)
         nrecs = fstouv(ucore, 'RND')
      endif
   else
