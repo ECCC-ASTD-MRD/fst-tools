@@ -3,6 +3,7 @@ Program bemol
 
   ! Yves Chartier
   ! Mai 2002
+  ! Revision:Fev 2011,VL - to add 2nd remote destination for output
 
 
   real a
@@ -45,7 +46,7 @@ Program bemol
   integer nbfich
   integer keyax, keyay
   logical rewrite_flag
-  integer usrc, udst, ucoarse, ucore, avg
+  integer usrc, udst, ucfs, ucoarse, ucore, avg
   integer fill_code, custom_ni_start, custom_ni_end, custom_ni, custom_nj_start, custom_nj_end, custom_nj
   integer make_dst, make_core, make_coarse
   logical oktowrite
@@ -53,11 +54,13 @@ Program bemol
 
   real*8 deltat
 
-  data cle /120 * 'SRC:',  'DST:',  'COARSE:', 'CORE:',  'WHEN_MISSING.', 'COMPRESS', 'NBITS.' , &
+  ! CPY (CFS is used to make code search easier)
+
+  data cle /120 * 'SRC:',  'DST:',  'CPY:', 'COARSE:', 'CORE:',  'WHEN_MISSING.', 'COMPRESS', 'NBITS.' , &
            'IG3CORE', 'IG3COARSE', 'AVG', 'QUIET', 'NI_START', 'NI_END', 'NI', 'NJ_START', 'NJ_END', 'NJ', 'GRTYP'/
-  data def /120 * 'SCRAP', 'SCRAP', 'SCRAP',  'SCRAP', 'ABORT',  'YES', '-1', &
+  data def /120 * 'SCRAP', 'SCRAP', 'SCRAP', 'SCRAP',  'SCRAP', 'ABORT',  'YES', '-1', &
        '1',      '2'  , '-1' , 'NO', 'AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO'    /
-  data val /120 * 'SCRAP', 'SCRAP', 'SCRAP',  'SCRAP', 'ABORT',  'AUTO', '-1', &
+  data val /120 * 'SCRAP', 'SCRAP', 'SCRAP', 'SCRAP',  'SCRAP', 'ABORT',  'AUTO', '-1', &
        '1',      '-1'  , '-1' , 'YES','AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO', 'AUTO'    /
 
   data lnkdiun / 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, &
@@ -76,7 +79,7 @@ Program bemol
 
 !--init program variables ---------------------------------------------
 
-  ier =exdb('BEMOL','v1.41','NON')
+  ier =exdb('BEMOL','v1.42','NON')
 
   call init_bemol_options
   call ccard(cle,def,val, nparams, ipos)
@@ -194,9 +197,10 @@ Program bemol
 !----------------------------------------------------------------------
 
   nbfiles = 1
-  call bm_openfiles(nkeys, val, def, lnkdiun, nbfiles, usrc, udst, ucore, ucoarse)
+  call bm_openfiles(nkeys, val, def, lnkdiun, nbfiles, usrc, udst, ucfs, ucore, ucoarse)
   call bemol_set_iun_in(usrc)
   call bemol_set_iun_dst(udst)
+  call bemol_set_iun_cfs(ucfs)
   call bemol_set_iun_core(ucore)
   call bemol_set_iun_coarse(ucoarse)
 
@@ -361,10 +365,10 @@ Program bemol
 
   !------------------------------------------------------------------------------------------------
 
-  call bm_closefiles(lnkdiun, nbfiles, udst, ucore, ucoarse)
+  call bm_closefiles(lnkdiun, nbfiles, udst, ucfs, ucore, ucoarse)
 
   !------------------------------------------------------------------------------------------------
-  ier = exfin('BEMOL','v1.41','OUI')
+  ier = exfin('BEMOL','v1.42','OUI')
 end program bemol
 
 

@@ -10,7 +10,7 @@
 typedef struct
   {
   char grtyp_out;
-  int iun_in, iun_dst, iun_core, iun_coarse;
+  int iun_in, iun_dst, iun_cfs, iun_core, iun_coarse;
   int ni_start, ni_end, ni;
   int nj_start, nj_end, nj;
   int verbose_level;
@@ -28,6 +28,7 @@ f77name(init_bemol_options)()
   {
   bemolOpt.iun_in     = -1;
   bemolOpt.iun_dst    = -1;
+  bemolOpt.iun_cfs    = -1;
   bemolOpt.iun_core   = -1;
   bemolOpt.iun_coarse = -1;
   bemolOpt.grtyp_out  = ' ';
@@ -72,6 +73,12 @@ f77name(bemol_set_iun_in)(int *iun)
 f77name(bemol_set_iun_dst)(int *iun)
   {
   bemolOpt.iun_dst = *iun;
+  }
+  
+/* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
+f77name(bemol_set_iun_cfs)(int *iun)
+  {
+  bemolOpt.iun_cfs = *iun;
   }
   
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
@@ -200,6 +207,11 @@ bemol_get_iun_in(int *iun)
 bemol_get_iun_dst(int *iun)
   {
   *iun = bemolOpt.iun_dst;
+  }
+/* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
+bemol_get_iun_cfs(int *iun)
+  {
+  *iun = bemolOpt.iun_cfs;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 bemol_get_iun_core(int *iun)

@@ -1,9 +1,9 @@
-  subroutine bm_closefiles(lnkdiun, nbfiles, udst, ucore, ucoarse)
+  subroutine bm_closefiles(lnkdiun, nbfiles, udst, ucfs, ucore, ucoarse)
     implicit none
 
     integer nbfiles
     integer lnkdiun(nbfiles)
-    integer udst, ucore, ucoarse
+    integer udst, ucfs, ucore, ucoarse
     integer i, ier, fstfrm, fclos
 
     do i=1,nbfiles
@@ -14,6 +14,11 @@
     if (udst /= -1) then
        ier = fstfrm(udst)
        ier = fclos(udst)
+    endif
+
+    if (ucfs /= -1) then
+       ier = fstfrm(ucfs)
+       ier = fclos(ucfs)
     endif
 
     if (ucore /= -1 .and. ucore /= udst) then

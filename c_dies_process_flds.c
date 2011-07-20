@@ -21,13 +21,14 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
    char nomvar[8], typvar[4], etiket[16], user_grtyp[2];
    int fill_mode, n, duplicate;
    int ig3, ig4, ig3core, ig3coarse, avg, user_nbits, lcl_nbits;
-   int usrc, udst, ucoarse, ucore;
-   int iun_outs[3];
+   int usrc, udst, ucfs, ucoarse, ucore;
+   int iun_outs[4];
    static int missing_tiles = 0;
    int un = 1;
 
    bemol_get_fill_mode(&fill_mode);
    bemol_get_iun_dst(&udst);
+   bemol_get_iun_cfs(&ucfs);
    bemol_get_iun_core(&ucore);
    bemol_get_iun_coarse(&ucoarse);
    bemol_get_avgfactor(&avg);
@@ -38,6 +39,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
    iun_outs[0] = udst;
    iun_outs[1] = ucore;
    iun_outs[2] = ucoarse;
+   iun_outs[3] = ucfs;
 
    flist = (_Fldlst *)malloc(*nkeys * sizeof(_Fldlst));
    memset (grd, NULL , 256 * sizeof(_Diese));
@@ -171,6 +173,13 @@ for (i=0; i < lng_flist; i++)
          {
          igrd = i;
          f77name(bm_wrt_axay)(&udst, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx,
+         &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits),
+         grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 4,16,2);
+         }
+      if (ucfs != -1)
+         {
+         igrd = i;
+         f77name(bm_wrt_axay)(&ucfs, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx,
          &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits),
          grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 4,16,2);
          }
@@ -334,6 +343,27 @@ for (i=0; i < lng_flist; i++)
                          8,4,16,2);
                }
 
+             if (ucfs != -1)
+               {
+               if (user_grtyp[0] == '#')
+                 {
+                 ig3 = nistart;
+                 ig4 = njstart;
+                 }
+               else
+                 {
+                 ig3 = 0;
+                 ig4 = 0;
+                 }
+
+               f77name(bm_std_wrt)(&ucfs, buffer, &nistart, &njstart, &niend, &njend,
+                         flist[i].fldinfo.nomvar, flist[i].fldinfo.typvar, flist[i].fldinfo.etiket,
+                         &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
+                         &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
+                         user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,
+                         8,4,16,2);
+               }
+
             if (ucore != -1)
                {
                igrd = c_diesFindGrid(flist[i].fldinfo.ig1, flist[i].fldinfo.ig2);
@@ -370,7 +400,8 @@ for (i=0; i < lng_flist; i++)
             break;
 
             default:
-            for (n=0; n < 3; n++)
+            /* loop value check matches size for iun_outs */
+            for (n=0; n < 4; n++)
                {
                if (iun_outs[n] != -1)
                   {
