@@ -17,16 +17,16 @@ FFLAGS =
 default: obj
 
 .ftn90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .f90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 FTNDECKS= bemol.ftn90 bm_openfiles.ftn90 bm_std_wrt.ftn90  bm_vanilla_wrt.ftn90 bm_wrt_axay.ftn90 \
 	  bm_closefiles.ftn90 bm_core_wrt.ftn90 bm_coarse_wrt.ftn90 fillgrid.ftn90 statfld.ftn90
@@ -41,7 +41,7 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 bemol: $(OBJECTS)
-	r.build -o bemol_$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_012 -codebeta moduledate_711
+	r.compile_034 -o bemol_$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 
 bemol+: $(OBJECTS)
 	r.build -o bemol+ -obj $(OBJECTS) -librmn rmnbeta
