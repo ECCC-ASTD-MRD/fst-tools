@@ -1,4 +1,4 @@
-#include /usr/local/env/armnlib/include/$(ARCH)/Makefile_addons
+#include $(ARMNLIB)/include/$(EC_ARCH)/Makefile_addons
 
 .SUFFIXES : 
 
@@ -8,7 +8,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RECLIB = $(REC)/lib/$(ARCH)$(ABI)/librec.a
+RECLIB = $(REC)/lib/$(EC_ARCH)$(ABI)/librec.a
 
 FFLAGS = 
 
@@ -23,13 +23,13 @@ CPPFLAGS = -I$(ARMNLIB)/include
 default: obj
 
 .ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .f90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 FTNDECKS=  fststat.ftn fststatm.ftn statfld4.ftn
 
