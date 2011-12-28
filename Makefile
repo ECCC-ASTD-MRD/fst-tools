@@ -92,16 +92,16 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
 ip1equiv.o:    ip1equiv.ftn
 
 absolu: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
+	r.build -o editfst -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_010
 	
 oldstuff: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
+	r.build -o editfst -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
 
 editfst+: $(OBJECTS)
-	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -arch $(ARCH) -abi $(ABI) -librmn rmn_rc010
+	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_rc010
 
 editfst_gem_strato: $(OBJECTS)
-	r.build -o editfst_gem_strato -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
+	r.build -o editfst_gem_strato -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_010
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
