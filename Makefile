@@ -17,16 +17,16 @@ FFLAGS =
 default: obj
 
 .ftn90.o:
-	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .ftn.o:
-	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .f90.o:
-	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 .c.o:
-	r.compile_034 -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
+	r.compile_034 -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -src $<
 
 FTNDECKS= bemol.ftn90 bm_openfiles.ftn90 bm_std_wrt.ftn90  bm_vanilla_wrt.ftn90 bm_wrt_axay.ftn90 \
 	  bm_closefiles.ftn90 bm_core_wrt.ftn90 bm_coarse_wrt.ftn90 fillgrid.ftn90 statfld.ftn90
