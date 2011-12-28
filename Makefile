@@ -6,7 +6,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
+RMNLIB = $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
 
 FFLAGS =  
 
@@ -18,10 +18,10 @@ DEFINE = -defines =-DFICHSTD98
 OPTIMIZ = -O 2
 
 .ftn90.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(DEFINE) $(OPTIMIZ) -includes "$(CPPFLAGS)" -optc "=$(CFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(DEFINE) $(OPTIMIZ) -includes "$(CPPFLAGS)" -optc "=$(CFLAGS)" -src $<
 
 OBJET =
 
