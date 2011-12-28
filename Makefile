@@ -4,7 +4,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmnbeta.a
+RMNLIB = $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmnbeta.a
 
 FFLAGS =
 
@@ -15,7 +15,7 @@ OPTIMIZ =  -debug -O 0
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
-MYLIB =  $(ARMNLIB)/lib/$(ARCH)$(ABI)/librmn.a
+MYLIB =  $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
 
 .PRECIOUS: $(RMNLIB) $(MALIB)
 
@@ -93,40 +93,40 @@ pgsm2006:
 	r.build -o $@ -obj *.o  $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmnbeta
 
 pgsm2002:
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -bidon -libappl dies -main pgsm -librmn rmn_rc008
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(EC_ARCH)/*.o -bidon -libappl dies -main pgsm -librmn rmn_rc008
 
 pgsm2000:
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(ARCH)/*.o -libappl dies -librmn rmn_007
+	r.build -o $@ -obj *.o $(HOME)/userlibs/$(EC_ARCH)/*.o -libappl dies -librmn rmn_007
 
 pgsm89:
 	r.build -o $@ -obj *.o -libappl dies -librmn rmn_007 -fstd89
 
 pgsmnew: c_pgsm.o
-	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
+	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
 
-# 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
+# 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 
 pgsm-stereo:
-	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
+	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-exp:
-	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
+	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-debug:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta
+	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
 
 pgsm-debug89:
-	r.build -o pgsm89 -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
+	r.build -o pgsm89 -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
 
 pgsm-exp89:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmnbeta -fstd89
+	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta -fstd89
 
 pgsm6.9.8:
-	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005
+	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005
 
 pgsm6.9.8_89:
-	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
+	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
 
 pgsm-src:
 	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_007
