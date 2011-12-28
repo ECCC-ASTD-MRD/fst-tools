@@ -12,13 +12,13 @@ OPTIMIZ = -O 2
 default: absolu
 
 .ftn.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 .f.o:
-	r.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 
 OBJECTS= reflex.o
@@ -26,7 +26,7 @@ OBJECTS= reflex.o
 FICHIERS= reflex.f
 
 absolu: $(OBJECTS) 
-	r.build -o reflex -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmnbeta
+	r.build -o reflex -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
