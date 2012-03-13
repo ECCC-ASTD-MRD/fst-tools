@@ -44,8 +44,8 @@
 !
 #include "voir.cdk90"
 !
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 
        integer nni,nnj,ier
        real p1,p2,p3,p4,pp1,pp2,pp3,pp4
@@ -68,5 +68,6 @@
        call cigaxg(cgrtyp,pp1,pp2,pp3,pp4,lg1,lg2,lg3,lg4)
 !
        gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+       ier = gdll(gdout, tmplat, tmplon)
        return
        end

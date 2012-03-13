@@ -2,6 +2,7 @@
 !**S/P PAIRVCT  REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
 !
       subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir) 
+      implicit none 
 !
 !AUTEUR P. SARRAZIN DORVAL QUE CANADA FEV 87
 !
@@ -55,9 +56,9 @@
 #include "pairs.cdk90"
 !
 !
-      integer nomusag(2),varuu,varvv,varmodule
+      integer nomusag(2),varuu,varvv,varmodule,vardir
       character*8 cnomusr
-      character*4 cvaruu, cvarvv, ccontrl
+      character*4 cvaruu, cvarvv, ccontrl, cvarwd
       integer i, nw
       integer argdims
       
@@ -84,13 +85,15 @@
       write (cvaruu, 200) varuu
       write (cvarvv, 200) varvv
       write (ccontrl, 200) varmodule
+      write (cvarwd, 200) vardir
  200  format(a4)
       
       if (varmodule.eq.0) ccontrl = '??'
+      if (vardir.eq.0) cvarwd = '??'
       
-      write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl
+      write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl, cvarwd
       
-      call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl)
+      call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
       return
       end 
   
@@ -143,6 +146,7 @@
 !
 !-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
+implicit none
 #include "defin.cdk90"
 #include "pairs.cdk90"
 !
@@ -181,6 +185,7 @@
       paire(np)( 9:12) = cvaruu 
       paire(np)(13:16) = cvarvv 
       paire(np)(17:20) = ccontrl 
+      paire(np)(21:24) = cvarwd
       write (6, *) 'PAIRE(NP): ', paire(np)
       return 
 !

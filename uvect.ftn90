@@ -122,7 +122,7 @@
       if (ier .lt. 0 .or. infon.eq.0) then
          write(6,610) cnom1
  610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
-         exit
+         cycle
       endif
 
       if (nk.gt.1) then

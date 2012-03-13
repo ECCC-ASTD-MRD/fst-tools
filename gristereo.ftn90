@@ -27,8 +27,8 @@
 #include "grilles.cdk90"
 !
 !
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 
        integer nni,nnj,ihm,hem,ier
        real pi,pj,d60,dgrw,pp1,pp2,pp3,pp4,clat,clon
@@ -49,6 +49,7 @@
        call cigaxg(cgrtyp,pp1,pp2,pp3,pp4,lg1,lg2,lg3,lg4)
 
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 !
 !
 !

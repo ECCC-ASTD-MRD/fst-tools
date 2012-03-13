@@ -115,9 +115,9 @@
 !
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
-	data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
-	data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
+	data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
+	data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
+	data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','ISENT_SCRAP','IMPOS_SCRAP','NON'/
 
         data form/'(A8)'/
 !
@@ -138,7 +138,8 @@
 	data paire(3) /  'VENTUVS US  VS  UV      ' /
 	data paire(4) /  'UVS     US  VS  ??      ' /
 	data paire(5) /  'WDUV    UU  VV  UV  WD  ' /
-	data paire(6) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
+	data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
+	data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
 !
 	data unefois,once,vvent/.false.,.false.,.false./
 !
@@ -150,7 +151,7 @@
 !
   	data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
 !
-  	data if7,if8,npairuv,npair/0,0,4,6/
+  	data if7,if8,npairuv,npair/0,0,4,7/
 !
   	data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
 
@@ -292,7 +293,7 @@
    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
    data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
    data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
-   data qlxcon(126)/'RESV126' /  qlxval(126)/ 0 /
+   data qlxcon(126)/'EXCLUDE' /  qlxval(126)/ 31/
    data qlxcon(127)/'RESV127' /  qlxval(127)/ 0 /
    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
@@ -314,8 +315,8 @@
 !
 	nequiv=-1
 	lnkdiun = 0
-        lnkdiun(1) = 1
-        lnkdiun(idx_ozsrt) = 2
+   lnkdiun(1) = 1
+   lnkdiun(idx_ozsrt) = 2
 	call ccard(listl,defo,lfn,990,nequiv)
 	ier = fnom(5,lfn(idx_i),'SEQ',0)
 	ier = fnom(6,lfn(idx_l),'SEQ',0)
@@ -323,7 +324,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.2.0',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.3.3',  lfn(idx_date))
  !       print *, jdate
 
 !
@@ -333,7 +334,7 @@
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
 
-	if (lfn(1).ne.'SCRAP'.and.lfn(idx_isent).ne.'SCRAP') then
+	if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  print *,'***************************************************'
 	  print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
 	  print *,'* SEQUENTIELS ET RANDOM                           *'
@@ -342,13 +343,19 @@
 	  call qqexit(13)
 	endif
 
-	if (lfn(idx_isent).ne.'SCRAP') then
+	if (lfn(idx_isll).ne.'TAPE4') then
+	    iun_isll=0
+	    ier = fnom(iun_isll,lfn(idx_isll)(1:5),'FMT+SEQ+R/O',0)
+	    isll_input = 1
+	endif
+
+	if (lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  inputmod = SEQUENTIEL
 	else
 	  inputmod = RANDOM
 	endif
 
-	if (lfn(idx_impos).ne.'SCRAP') then
+	if (lfn(idx_impos)(1:11).ne.'IMPOS_SCRAP') then
 	  ier = fnom(lnkdiun(idx_impos),lfn(idx_impos),'RND+OLD+R/O',0)
 	  ier = fstouv(lnkdiun(idx_impos),'RND')
 	endif
@@ -578,9 +585,9 @@
 !      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
 !      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
 !
-   	call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
-   	call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
-   	call qlxinx (liren,'LIREE', nlire, 0708,2)
+   call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
+   call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
+   call qlxinx (liren,'LIREE', nlire, 0708,2)
 	call qlxinx (lirsr,'LIRES', nlire, 0708,2)
 	call qlxinx(plmnmod,'PLUSE', najou, 0707,2)
 	call qlxinx (pluss,'PLUSS', najou, 0707,2)
@@ -591,15 +598,15 @@
 	call qlxinx (moinse,'MOINSE', nenle, 0707,2)
 	call qlxinx (moinss,'MOINSS', nenle, 0707,2)
 	call qlxinx (moyene,'MOYENE', nmoys, 0101,2)
-   	call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)
-   	call qlxinx (modul2e,'MODUL2E', nmod, 0707,2)
-   	call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
-   	call qlxinx (racine,'RACINE', nraci, 0101,2)
-   	call qlxinx (operat, 'PFOIS', npfo, 0303,2)
-   	call qlxinx (expon, 'EXPON', npex, 0101,2)
-   	call qlxinx (alogn, 'ALOGN', npex, 0101,2)
-   	call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
-   	call qlxinx (carre, 'CARRE', npex, 0101,2)
+   call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)
+   call qlxinx (modul2e,'MODUL2E', nmod, 0707,2)
+   call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
+   call qlxinx (racine,'RACINE', nraci, 0101,2)
+   call qlxinx (operat, 'PFOIS', npfo, 0303,2)
+   call qlxinx (expon, 'EXPON', npex, 0101,2)
+   call qlxinx (alogn, 'ALOGN', npex, 0101,2)
+   call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
+   call qlxinx (carre, 'CARRE', npex, 0101,2)
 !
 	call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
 	call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
@@ -614,7 +621,7 @@
 	call qlxins (typesrt,'TYPESRT', dum, 1, 1)
 	call qlxins ( voire, 'VOIRENT', dum, 1, 1)
 	call qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
-        call qlxINS ( pose,  'PAUSE',   dum, 1, 1)
+   call qlxins ( pose,  'PAUSE',   dum, 1, 1)
 	call qlxins ( userdate,  'DATE',    dum, 3, 1)
 	call qlxins (seldat, 'OPDAT',   dum, 1, 1)
 	call qlxins (printen,'PRINTEN', dum,7, 1)
@@ -631,7 +638,7 @@
 	call qlxins (diese,  'DIESE',dum,1,1)
 	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
-       call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
+   call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
 	do i=1,126
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
@@ -706,8 +713,8 @@
 	if (associated(tmplon)) deallocate(tmplon)
 
 	if (mode.eq.1) then
-          call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
-        endif
+      call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
+   endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
 	   ier = fstfrm(lnkdiun(i))
@@ -722,10 +729,7 @@
 	      endif
 	   endif
 
-
-
-
-	   ier = fstfrm(lnkdiun(idx_ozsrt))
+      ier = fstfrm(lnkdiun(idx_ozsrt))
 	   call fclos(lnkdiun(idx_ozsrt))
 	else
 #if defined (unix)

@@ -21,8 +21,8 @@
 !------------------------------------------------------
 !
       external memoir,pgsmabt,grgg,messags
-      external ezqkdef
-      integer ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 !
 #include "grilles.cdk90"
 !
@@ -67,6 +67,7 @@
 
       tmproot(1)= 100.0
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 
 !
       deallocate(tmproot)

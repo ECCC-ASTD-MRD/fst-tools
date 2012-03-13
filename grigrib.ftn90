@@ -30,8 +30,8 @@
       integer nni,nnj,ihm,hem,ier,npts
       integer ig1,ig2,ig3,ig4
       integer tmpig1, tmpig2, tmpig3, tmpig4
-      integer ezqkdef
-      external ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 
       real, dimension(:,:), allocatable :: x, y
 !
@@ -68,6 +68,7 @@
 !     $        tmplon,tmplat)
 
       gdout = ezqkdef(nni,nnj,cgrtyp,ig1,ig2,ig3,ig4,1)
+      ier = gdll(gdout, tmplat, tmplon)
 
       deallocate(x)
       deallocate(y)

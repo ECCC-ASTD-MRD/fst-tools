@@ -106,6 +106,9 @@
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,1)
          endif
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
+         ier = gdll(gdout, tmplat, tmplon)
       else
          nix = ncoords
          niy = ncoords
@@ -127,6 +130,8 @@
          dateox = 017901000
          li = ncoords
          lj = 1
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
          call cxgaig('L',ig1la,ig2la,ig3la,ig4la,0.,0.,1.0,1.0)
          call cxgaig('L',ig1lo,ig2lo,ig3lo,ig4lo,0.,0.,1.0,1.0)
          npack = -32
@@ -140,12 +145,11 @@
 !
 !     INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
 !
-      allocate(tmplon(li,lj))
-      allocate(tmplat(li,lj))
-
       if (cgtypxy.eq.'E') then
          allocate(tmplong(li,lj))
          allocate(tmplatg(li,lj))
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
       endif
 !
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
@@ -167,7 +171,7 @@
          endif
       else
 !         ier = gdgaxes(gdout, tmplon, tmplat)
-          ier = gdll(gdout, tmplon, tmplat)
+          ier = gdll(gdout, tmplat, tmplon)
       endif
 
 
@@ -179,7 +183,7 @@
 !
       if (cgrtyp.eq.'Z') then
           ier = ezgxprm(gdout,li,lj,cgrtyp,lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-!         ier = gdll(gdout,tmplat,tmplon)
+          ier = gdll(gdout,tmplat,tmplon)
       endif
 
       if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'

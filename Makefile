@@ -1,4 +1,6 @@
+.SUFFIXES :
 
+.SUFFIXES : .ftn90 .c .o .a
 
 SHELL = /bin/sh
 
@@ -10,8 +12,12 @@ FFLAGS =
 
 CFLAGS =
 
-#OPTIMIZ = -O 3
-OPTIMIZ =  -debug -O 0
+#OPTIMIZ =  -debug -O 0
+#OPTIMIZ = -O 3 -fast
+OPTIMIZ = -O 2 -fast
+#OPTIMIZ_AIX = -optf='-qsimd=auto' -optc='-qsimd=auto' -O 2
+OPTIMIZ_AIX = -O 2
+#OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
@@ -51,6 +57,8 @@ c_pgsm.c
 FICHIERS = $(FICHIERS_FTN90) $(FICHIERS_C)
 
 f_pgsm.o: f_pgsm.ftn90
+bidon.o: bidon.ftn90
+c_pgsm.o : c_pgsm.c
 
 obj: $(OBJET)
 f_pgsm.ftn90: $(FICHIERS_FTN90) $(FICHIERS_CDK90)
@@ -62,77 +70,17 @@ genlib: $(OBJET)
 #Creer ou mettre a jour la programmatheque
 	$(AR) rcv $(MYLIB) $(OBJET)
 
-pgsmflib:
-	r.build -o pgsm -libpath $(PGSM) -libappl pgsm -librmn rmnbeta -bidon -main pgsm
+pgsm-interp-aix: f_pgsm.ftn90 c_pgsm.c
+	r.compile -o $@ $(OPTIMIZ_AIX) -src bidon.ftn90 -obj ./f_pgsm.o ./c_pgsm.o $(HOME)/userlibs/$(EC_ARCH)/*.o -librmn rmnbeta_013 -libsys mass
+
+pgsm-interp: f_pgsm.ftn90 c_pgsm.c
+	r.compile -o $@ $(OPTIMIZ) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_012 -obj $(HOME)/src/interp/*.o 
 
 pgsm:
-	r.build -o $@ -obj *.o -bidon -main pgsm -librmn rmn_009
+	r.compile -o $@ $(OPTIMIZ) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_012
 
-pgsm_007:
-	r.build -o $@ -obj *.o -bidon -main pgsm -libappl dies -librmn rmn_007
-
-pgsm2009: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-594
-
-pgsm2009-dev: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmn_009 -obj $(HOME)/src/interp/*.o -codebeta iopdatm
-
-pgsm2010-dev: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -libappl ezscint-606 
-
-pgsm2011-dev: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ $(OPTIMIZ) -src f_pgsm.ftn90 c_pgsm.c -bidon -main pgsm -librmn rmnbeta -obj iopdatm.o
-
-pgsm2008: f_pgsm.ftn90 c_pgsm.c
-	r.compile -o $@ -src f_pgsm.ftn90 c_pgsm.c -obj $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmn_rc010
-
-pgsm2007:
-	r.build -o $@ -obj *.o  $(HOME)/src/isi4/*.o -bidon -main pgsm -librmn rmnbeta
-
-pgsm2006:
-	r.build -o $@ -obj *.o  $(HOME)/src/interp/*.o -bidon -main pgsm -librmn rmnbeta
-
-pgsm2002:
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(EC_ARCH)/*.o -bidon -libappl dies -main pgsm -librmn rmn_rc008
-
-pgsm2000:
-	r.build -o $@ -obj *.o $(HOME)/userlibs/$(EC_ARCH)/*.o -libappl dies -librmn rmn_007
-
-pgsm89:
-	r.build -o $@ -obj *.o -libappl dies -librmn rmn_007 -fstd89
-
-pgsmnew: c_pgsm.o
-	r.build -o pgsm -obj *.o /users/dor/armn/lib/public/xdf98.o  -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies efence -librmn rmnbeta
-
-# 	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
-
-
-pgsm-stereo:
-	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
-
-pgsm-exp:
-	r.build -o pgsm -obj *.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
-
-pgsm-debug:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta
-
-pgsm-debug89:
-	r.build -o pgsm89 -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
-
-pgsm-exp89:
-	r.build -o pgsm -obj *.o $(HOME)/src/interp/*.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmnbeta -fstd89
-
-pgsm6.9.8:
-	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005
-
-pgsm6.9.8_89:
-	r.build -o pgsm -obj *.o $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/c_ezscint_5.1.o -libpath $(PGSM)/lib/$(EC_ARCH)$(ABI) -libappl dies -librmn rmn_005 -fstd89
-
-pgsm-src:
-	r.compile -src f_pgsm.ftn c_pgsm.c $(HOME)/src/interp/c_ezscint.c $(HOME)/src/interp/f_ezscint.ftn $(HOME)/src/utils/diese/dies.c $(HOME)/src/utils/diese/fillgrid.ftn90 -debug -O 0 -o pgsm-src -librmn rmn_007
-
-pgsm-src90:	f_pgsm.ftn90
-	r.compile -src f_pgsm.ftn90 c_pgsm.c -O 2 -obj $(HOME)/src/isi4/*.o -bidon -main pgsm -o pgsm-src -librmn rmnbeta
+pgsm-AIX:
+	r.compile -o $@ $(OPTIMIZ_AIX) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_012 -libsys mass
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o

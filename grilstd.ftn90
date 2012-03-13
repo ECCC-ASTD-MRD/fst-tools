@@ -20,8 +20,8 @@
 !
 !------------------------------------------------------
        external memoir,pgsmabt,grll,messags
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 !
 !
 #include "llccmm.cdk90"
@@ -51,6 +51,7 @@
        lg4=0
 
        gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+       ier = gdll(gdout, tmplat, tmplon)
 !
 !
        if (lg1.ne.0.and.lg1.ne.1.and.lg1.ne.2) then

@@ -587,8 +587,8 @@
       implicit none
       
       integer lu_in, lu_out
-      external fstinl,fstprm, fstecr, fstluk
-      integer fstinl, fstprm, fstecr, fstluk
+      external fstinl,fstprm, fstecr, fstluk, fstinf
+      integer fstinl, fstprm, fstecr, fstluk, fstinf
       integer liste(256)
       logical rewrit
       
@@ -597,9 +597,9 @@
       character *2 ctypvar
       character *1 cigtyp
       
-      integer dateo,i
+      integer dateo,datev,i
       integer deet,ig1,ig2,ig3,ig4
-      integer irec,ip1,ip2,ip3,ni,nj,nk,nrecs,ier,npas
+      integer irec,irec_out,ip1,ip2,ip3,ni,nj,nk,nrecs,ier,npas
       integer nbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
       real hydata(4096)
 
@@ -608,10 +608,12 @@
       rewrit = .true.
       do i=1,nrecs
          irec = liste(i)
-         ier=fstprm(irec, dateo,deet,npas,ni, nj, nk, nbits,cdatyp,         ip1,ip2,ip3,ctypvar,cnomvar,cetiket,         cigtyp,ig1,ig2, ig3, ig4, cswa, clng, cdltf, cubc,          extra1, extra2, extra3)
-         ier=fstluk(hydata, irec, ni, nj, nk)
-         ier = fstecr(hydata,hydata,-nbits,lu_out,dateo,deet,npas,            ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,            cigtyp,ig1,ig2,ig3,ig4,cdatyp,rewrit )
-
+         ier=fstprm(irec, dateo,deet,npas,ni, nj, nk, nbits,cdatyp,         ip1,ip2,ip3,ctypvar,cnomvar,cetiket,         cigtyp,ig1,ig2, ig3, ig4, cswa, clng, cdltf, cubc,          datev, extra2, extra3)
+         irec_out=fstinf(lu_out,ni,nj,nk,dateo,cetiket,ip1,ip2,ip3,ctypvar,cnomvar)
+	 if (irec_out < 0) then
+	    ier=fstluk(hydata, irec, ni, nj, nk)
+	    ier = fstecr(hydata,hydata,-nbits,lu_out,dateo,deet,npas,            ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,            cigtyp,ig1,ig2,ig3,ig4,cdatyp,rewrit )
+	 endif 
       enddo
          
 
@@ -3128,8 +3130,8 @@
 !------------------------------------------------------
 !
       external memoir,pgsmabt,grgg,messags
-      external ezqkdef
-      integer ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 !
 #include "grilles.cdk90"
 !
@@ -3174,6 +3176,7 @@
 
       tmproot(1)= 100.0
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 
 !
       deallocate(tmproot)
@@ -3198,8 +3201,8 @@
 !
 !------------------------------------------------------
       external memoir,pgsmabt,grll,lastcol,messags
-      external ezqkdef
-      integer ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 !
 !
 #include "llccmm.cdk90"
@@ -3226,6 +3229,7 @@
       cgrtyp='E'
       call cxgaig(cgrtyp,lg1,lg2,lg3,lg4,xlat1,xlon1,xlat2,xlon2)
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 
       return
       end
@@ -3263,8 +3267,8 @@
       integer nni,nnj,ihm,hem,ier,npts
       integer ig1,ig2,ig3,ig4
       integer tmpig1, tmpig2, tmpig3, tmpig4
-      integer ezqkdef
-      external ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 
       real, dimension(:,:), allocatable :: x, y
 !
@@ -3301,6 +3305,7 @@
 !     $        tmplon,tmplat)
 
       gdout = ezqkdef(nni,nnj,cgrtyp,ig1,ig2,ig3,ig4,1)
+      ier = gdll(gdout, tmplat, tmplon)
 
       deallocate(x)
       deallocate(y)
@@ -3599,8 +3604,8 @@
 #include "grilles.cdk90"
 !
 !
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 
        integer nni,nnj,ihm,hem,ier
        real pi,pj,d60,dgrw,pp1,pp2,pp3,pp4
@@ -3631,6 +3636,7 @@
       endif
 !
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 !
 !
 !
@@ -3658,8 +3664,8 @@
 !
 !------------------------------------------------------
        external memoir,pgsmabt,grll,messags
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 !
 !
 #include "llccmm.cdk90"
@@ -3689,6 +3695,7 @@
        lg4=0
 
        gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+       ier = gdll(gdout, tmplat, tmplon)
 !
 !
        if (lg1.ne.0.and.lg1.ne.1.and.lg1.ne.2) then
@@ -3749,8 +3756,8 @@
 !
 !------------------------------------------------------
       external memoir,pgsmabt,grll,lastcol,messags
-      external ezqkdef
-      integer ezqkdef
+      external ezqkdef, gdll
+      integer ezqkdef, gdll
 !
 !
 #include "llccmm.cdk90"
@@ -3784,6 +3791,7 @@
 !
 
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 !
 !
       return
@@ -3817,8 +3825,8 @@
 #include "grilles.cdk90"
 !
 !
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 
        integer nni,nnj,ihm,hem,ier
        real pi,pj,d60,dgrw,pp1,pp2,pp3,pp4,clat,clon
@@ -3839,6 +3847,7 @@
        call cigaxg(cgrtyp,pp1,pp2,pp3,pp4,lg1,lg2,lg3,lg4)
 
       gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+      ier = gdll(gdout, tmplat, tmplon)
 !
 !
 !
@@ -3952,6 +3961,9 @@
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,1)
          endif
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
+         ier = gdll(gdout, tmplat, tmplon)
       else
          nix = ncoords
          niy = ncoords
@@ -3973,6 +3985,8 @@
          dateox = 017901000
          li = ncoords
          lj = 1
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
          call cxgaig('L',ig1la,ig2la,ig3la,ig4la,0.,0.,1.0,1.0)
          call cxgaig('L',ig1lo,ig2lo,ig3lo,ig4lo,0.,0.,1.0,1.0)
          npack = -32
@@ -3986,12 +4000,11 @@
 !
 !     INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
 !
-      allocate(tmplon(li,lj))
-      allocate(tmplat(li,lj))
-
       if (cgtypxy.eq.'E') then
          allocate(tmplong(li,lj))
          allocate(tmplatg(li,lj))
+         allocate(tmplon(li,lj))
+         allocate(tmplat(li,lj))
       endif
 !
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
@@ -4013,7 +4026,7 @@
          endif
       else
 !         ier = gdgaxes(gdout, tmplon, tmplat)
-          ier = gdll(gdout, tmplon, tmplat)
+          ier = gdll(gdout, tmplat, tmplon)
       endif
 
 
@@ -4025,7 +4038,7 @@
 !
       if (cgrtyp.eq.'Z') then
           ier = ezgxprm(gdout,li,lj,cgrtyp,lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
-!         ier = gdll(gdout,tmplat,tmplon)
+          ier = gdll(gdout,tmplat,tmplon)
       endif
 
       if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'
@@ -4083,8 +4096,8 @@
 !
 #include "voir.cdk90"
 !
-       external ezqkdef
-       integer ezqkdef
+       external ezqkdef, gdll
+       integer ezqkdef, gdll
 
        integer nni,nnj,ier
        real p1,p2,p3,p4,pp1,pp2,pp3,pp4
@@ -4107,6 +4120,7 @@
        call cigaxg(cgrtyp,pp1,pp2,pp3,pp4,lg1,lg2,lg3,lg4)
 !
        gdout = ezqkdef(li,lj,cgrtyp,lg1,lg2,lg3,lg4,0)
+       ier = gdll(gdout, tmplat, tmplon)
        return
        end
 !
@@ -5755,6 +5769,7 @@
 !**S/P PAIRVCT  REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
 !
       subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir) 
+      implicit none 
 !
 !AUTEUR P. SARRAZIN DORVAL QUE CANADA FEV 87
 !
@@ -5808,9 +5823,9 @@
 #include "pairs.cdk90"
 !
 !
-      integer nomusag(2),varuu,varvv,varmodule
+      integer nomusag(2),varuu,varvv,varmodule,vardir
       character*8 cnomusr
-      character*4 cvaruu, cvarvv, ccontrl
+      character*4 cvaruu, cvarvv, ccontrl, cvarwd
       integer i, nw
       integer argdims
       
@@ -5837,13 +5852,15 @@
       write (cvaruu, 200) varuu
       write (cvarvv, 200) varvv
       write (ccontrl, 200) varmodule
+      write (cvarwd, 200) vardir
  200  format(a4)
       
       if (varmodule.eq.0) ccontrl = '??'
+      if (vardir.eq.0) cvarwd = '??'
       
-      write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl
+      write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl, cvarwd
       
-      call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl)
+      call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
       return
       end 
   
@@ -5896,6 +5913,7 @@
 !
 !-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
+implicit none
 #include "defin.cdk90"
 #include "pairs.cdk90"
 !
@@ -5934,6 +5952,7 @@
       paire(np)( 9:12) = cvaruu 
       paire(np)(13:16) = cvarvv 
       paire(np)(17:20) = ccontrl 
+      paire(np)(21:24) = cvarwd
       write (6, *) 'PAIRE(NP): ', paire(np)
       return 
 !
@@ -6060,9 +6079,9 @@
 !
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT','IMPOS','V'/
-	data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','SCRAP','SCRAP','OUI'/
-	data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','SCRAP','SCRAP','NON'/
+	data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
+	data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
+	data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','ISENT_SCRAP','IMPOS_SCRAP','NON'/
 
         data form/'(A8)'/
 !
@@ -6083,7 +6102,8 @@
 	data paire(3) /  'VENTUVS US  VS  UV      ' /
 	data paire(4) /  'UVS     US  VS  ??      ' /
 	data paire(5) /  'WDUV    UU  VV  UV  WD  ' /
-	data paire(6) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
+	data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
+	data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
 !
 	data unefois,once,vvent/.false.,.false.,.false./
 !
@@ -6095,7 +6115,7 @@
 !
   	data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
 !
-  	data if7,if8,npairuv,npair/0,0,4,6/
+  	data if7,if8,npairuv,npair/0,0,4,7/
 !
   	data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
 
@@ -6237,7 +6257,7 @@
    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
    data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
    data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
-   data qlxcon(126)/'RESV126' /  qlxval(126)/ 0 /
+   data qlxcon(126)/'EXCLUDE' /  qlxval(126)/ 31/
    data qlxcon(127)/'RESV127' /  qlxval(127)/ 0 /
    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
@@ -6259,8 +6279,8 @@
 !
 	nequiv=-1
 	lnkdiun = 0
-        lnkdiun(1) = 1
-        lnkdiun(idx_ozsrt) = 2
+   lnkdiun(1) = 1
+   lnkdiun(idx_ozsrt) = 2
 	call ccard(listl,defo,lfn,990,nequiv)
 	ier = fnom(5,lfn(idx_i),'SEQ',0)
 	ier = fnom(6,lfn(idx_l),'SEQ',0)
@@ -6268,7 +6288,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.2.0',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.3.3',  lfn(idx_date))
  !       print *, jdate
 
 !
@@ -6278,7 +6298,7 @@
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
 
-	if (lfn(1).ne.'SCRAP'.and.lfn(idx_isent).ne.'SCRAP') then
+	if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  print *,'***************************************************'
 	  print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
 	  print *,'* SEQUENTIELS ET RANDOM                           *'
@@ -6287,13 +6307,19 @@
 	  call qqexit(13)
 	endif
 
-	if (lfn(idx_isent).ne.'SCRAP') then
+	if (lfn(idx_isll).ne.'TAPE4') then
+	    iun_isll=0
+	    ier = fnom(iun_isll,lfn(idx_isll)(1:5),'FMT+SEQ+R/O',0)
+	    isll_input = 1
+	endif
+
+	if (lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  inputmod = SEQUENTIEL
 	else
 	  inputmod = RANDOM
 	endif
 
-	if (lfn(idx_impos).ne.'SCRAP') then
+	if (lfn(idx_impos)(1:11).ne.'IMPOS_SCRAP') then
 	  ier = fnom(lnkdiun(idx_impos),lfn(idx_impos),'RND+OLD+R/O',0)
 	  ier = fstouv(lnkdiun(idx_impos),'RND')
 	endif
@@ -6523,9 +6549,9 @@
 !      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
 !      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
 !
-   	call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
-   	call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
-   	call qlxinx (liren,'LIREE', nlire, 0708,2)
+   call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
+   call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
+   call qlxinx (liren,'LIREE', nlire, 0708,2)
 	call qlxinx (lirsr,'LIRES', nlire, 0708,2)
 	call qlxinx(plmnmod,'PLUSE', najou, 0707,2)
 	call qlxinx (pluss,'PLUSS', najou, 0707,2)
@@ -6536,15 +6562,15 @@
 	call qlxinx (moinse,'MOINSE', nenle, 0707,2)
 	call qlxinx (moinss,'MOINSS', nenle, 0707,2)
 	call qlxinx (moyene,'MOYENE', nmoys, 0101,2)
-   	call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)
-   	call qlxinx (modul2e,'MODUL2E', nmod, 0707,2)
-   	call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
-   	call qlxinx (racine,'RACINE', nraci, 0101,2)
-   	call qlxinx (operat, 'PFOIS', npfo, 0303,2)
-   	call qlxinx (expon, 'EXPON', npex, 0101,2)
-   	call qlxinx (alogn, 'ALOGN', npex, 0101,2)
-   	call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
-   	call qlxinx (carre, 'CARRE', npex, 0101,2)
+   call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)
+   call qlxinx (modul2e,'MODUL2E', nmod, 0707,2)
+   call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
+   call qlxinx (racine,'RACINE', nraci, 0101,2)
+   call qlxinx (operat, 'PFOIS', npfo, 0303,2)
+   call qlxinx (expon, 'EXPON', npex, 0101,2)
+   call qlxinx (alogn, 'ALOGN', npex, 0101,2)
+   call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
+   call qlxinx (carre, 'CARRE', npex, 0101,2)
 !
 	call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
 	call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
@@ -6559,7 +6585,7 @@
 	call qlxins (typesrt,'TYPESRT', dum, 1, 1)
 	call qlxins ( voire, 'VOIRENT', dum, 1, 1)
 	call qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
-        call qlxINS ( pose,  'PAUSE',   dum, 1, 1)
+   call qlxins ( pose,  'PAUSE',   dum, 1, 1)
 	call qlxins ( userdate,  'DATE',    dum, 3, 1)
 	call qlxins (seldat, 'OPDAT',   dum, 1, 1)
 	call qlxins (printen,'PRINTEN', dum,7, 1)
@@ -6576,7 +6602,7 @@
 	call qlxins (diese,  'DIESE',dum,1,1)
 	call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
 	call qlxins (dateform, 'DATEFORM', dum, 1, 1)
-       call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
+   call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
 	do i=1,126
 	   call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
@@ -6651,8 +6677,8 @@
 	if (associated(tmplon)) deallocate(tmplon)
 
 	if (mode.eq.1) then
-          call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
-        endif
+      call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
+   endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
 	   ier = fstfrm(lnkdiun(i))
@@ -6667,10 +6693,7 @@
 	      endif
 	   endif
 
-
-
-
-	   ier = fstfrm(lnkdiun(idx_ozsrt))
+      ier = fstfrm(lnkdiun(idx_ozsrt))
 	   call fclos(lnkdiun(idx_ozsrt))
 	else
 #if defined (unix)
@@ -7209,6 +7232,7 @@
 !
 !
       do j= 1,lj
+	 print *, j, xlat(1,j)
          do i = 1,li
             qaqr(i,j) = qaqr(i,j) - omega2*sin(xlat(i,j)*degarad)
          enddo
@@ -7727,7 +7751,7 @@
 
          if (ctypvar(2:2).eq.'@'.and.masque == 1) then
             if (ctypvar(1:1) /= '@') then
-              call scalair_msk(irec, liste, done_fields,total_keys)
+!              call scalair_msk(irec, liste, done_fields,total_keys)
             endif
             cycle
          endif
@@ -7833,196 +7857,6 @@
    end
 
 
-!**s/p scalair  interpolation horizontale d un champ
-!               defini par l usager
-      subroutine scalair_msk(key, liste, done_liste, len_liste)
-#include "impnone.cdk90"
-      integer :: key,len_liste
-      integer, dimension(len_liste) :: liste
-      logical, dimension(len_liste) :: done_liste
-#include "defin.cdk90"
-      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
-         fstsel,symetri,imprime,itrouve,messags,pgsmabt
-      external cvtr2i
-      external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
-
-      integer ezgdef_fmem, ezqkdef, ezsint, ezsint_mdm, ezdefset, fst_get_mask_key, key_masq
-      logical skip
-
-!
-#include "accum.cdk90"
-#include "dates.cdk90"
-#include "defin.cdk90"
-#include "dummys.cdk90"
-#include "ecrires.cdk90"
-#include "gdz.cdk90"
-#include "grilles.cdk90"
-#include "indptr.cdk90"
-#include "lires.cdk90"
-#include "llccmm.cdk90"
-#include "packin.cdk90"
-#include "pairs.cdk90"
-#include "voir.cdk90"
-
-
-   character *12 cetiket
-   character *4 cnom,cnomvar,cnomx
-   character *2 ctypvar
-   character *1 cigtyp
-
-   integer nniv, i, nunv, itrouve, ii
-   integer niveaux(512), deet, ig1, ig2, ig3, ig4, iheur
-   integer dateo, datev, nbits, datyp, ip1, ip2, ip3
-   integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
-   integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
-   logical, save :: unefoys = .true.
-
-   integer dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq
-   integer nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq
-   integer ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, cdltf_masq, cubc_masq
-   integer datev_masq, extra2_masq, extra3_masq
-   logical sym, symetri
-
-   character(len=4)  :: cnomvar_masq
-   character(len=2)  :: ctypvar_masq
-   character(len=12) :: cetiket_masq
-   character(len=1)  :: cigtyp_masq
-
-   real fbidon
-   real, dimension(:,:), allocatable, target ::  fld, fld_out
-   integer, dimension(:,:), allocatable, target :: masq, masq_out, masq_zones
-
-   real, dimension(:,:), pointer :: tmpout
-   integer, dimension(:,:), pointer :: tmpmsk
-
-   logical masque_present, masque_done
-
-   nunv=0
-   iunit=1
-   masque_present = .false.
-   masque_done = .false.
-   ctypvar_masq = '@@'
-
-   ier = fstprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, &
-            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-   allocate(fld(ni,nj), fld_out(li,lj))
-
-   ier = fst_get_mask_key(key_masq, key, 0, iunit)
-
-   if (key_masq >= 0) then
-      masque_present = .true.
-      allocate(masq(ni,nj), masq_out(li,lj))
-   else
-      masque_present = .false.
-   endif
-
-   key = pgsmluk(fld, key, ni,nj,nk,cnomvar,cigtyp)
-
-   if (cdatyp  ==  2 .or. cdatyp  ==  4) then
-      call cvtr2i(fld, fld, ni, nj)
-   endif
-
-   if (printen)  call imprime(cnomvar,tmpif1,ni,nj)
-   if (ig1 /= 0) sym = symetri(cnomvar)
-!
-!  on ne fait pas d'interpolation si igtyp=grtyp  ig1=lg1  ig2=lg2
-!  ig3=lg3  ig4=lg4
-!
-   if (.not.masque_present) then
-      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
-         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-         ier = ezdefset(gdout, gdin)
-         ier = ezsint(fld_out, fld)
-         tmpout => fld_out
-      else
-         tmpout => fld
-         if (message) write(6,660) cnom
- 660           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
-      endif
-!     ecrire sur fichier approprie(std,ms,seq)
-      if (cnomx == cnomqr) then
-         call qaaqr(tmpif2,li,lj,tmplat)
-         cnomvar=cnomqr
-      endif
-      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk,ip1,ip2, ip3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-      deallocate(fld_out)
-   else
-      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
-         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-         ier = ezdefset(gdout, gdin)
-         ier = fstprm(key_masq, dateo_masq, deet_masq, npas_masq, ni_masq, nj_masq, nk_masq, &
-                  nbits_masq, datyp_masq, ip1_masq, ip2_masq, ip3_masq, &
-                  ctypvar_masq, cnomvar_masq, cetiket_masq, &
-                  cigtyp_masq, ig1_masq, ig2_masq, ig3_masq, ig4_masq, cswa_masq, clng_masq, &
-                  cdltf_masq, cubc_masq, datev_masq, extra2_masq, extra3_masq)
-         ier = fstluk(masq, key_masq, ni,nj,nk)
-         ier = ezsint_mdm(fld_out, masq_out, fld, masq)
-         tmpout => fld_out
-         tmpmsk => masq_out
-      else
-         tmpout => fld
-         tmpmsk => masq
-         if (message) write(6,662) cnom
- 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
-      endif
-!     ecrire sur fichier approprie(std,ms,seq)
-      if (cnomx == cnomqr) then
-         call qaaqr(tmpif2,li,lj,tmplat)
-         cnomvar=cnomqr
-      endif
-      call ecritur(tmpout,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
-         ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-         masque_done = .false.
-         do i=1,len_liste
-            if (liste(i) == key_masq) then
-               if (done_liste(i)) then
-                  masque_done = .true.
-               endif
-               exit
-            endif
-         enddo
-      if (masque_present.and..not.masque_done) then
-         if (unefoys) then
-            allocate(masq_zones(li,lj))
-            call ezget_mask_zones(masq_zones, masq)
-            nk = 1
-            call iecritur(masq_zones,-16,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
-               ip1_masq,ip2_masq, ip3_masq, '@Z', cnomvar_masq, cetiket_masq, &
-               cgrtyp, lg1, lg2, lg3, lg4)
-            unefoys = .false.
-            deallocate(masq_zones)
-         endif
-         call iecritur(tmpmsk,-nbits_masq,dateo_masq,deet_masq,npas_masq,li,lj, nk,&
-            ip1_masq,ip2_masq, ip3_masq, ctypvar_masq, cnomvar_masq, cetiket_masq, &
-            cgrtyp, lg1, lg2, lg3, lg4)
-         do i=1,len_liste
-            if (liste(i) == key_masq) then
-               done_liste(i) = .true.
-               exit
-            endif
-         enddo
-         if (allocated(masq_out)) then
-            deallocate(masq_out)
-         endif
-      endif
-      deallocate(fld_out)
-
-   endif
-   deallocate(fld)
-
-!
-   if (nunv > 0) then
-      write(6,666)
- 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
-      write(6,668)
- 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
-      write(6,669)
- 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
-!
-   endif
-   return
-   end!**s/p qqqintx  choisir le degre de l'interpolation
    subroutine qqqintx(ordre)
    integer ordre
 !
@@ -8621,7 +8455,7 @@ integer ezsetopt
       if (ier .lt. 0 .or. infon.eq.0) then
          write(6,610) cnom1
  610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
-         exit
+         cycle
       endif
 
       if (nk.gt.1) then
@@ -8674,7 +8508,7 @@ integer ezsetopt
          if (ctypvar(1:1) == '@') then
             cycle ! Les masques sont traites dans uvecteur_masque
          else if (ctypvar(2:2) == '@') then
-            call uvecteur_masque(irec_uu, irec_vv)
+!            call uvecteur_masque(irec_uu, irec_vv)
             cycle
          endif
       endif
@@ -8823,208 +8657,6 @@ integer ezsetopt
 
 
 !
-!**s/p uvectur interpolation des vecteurs u-v (horizontalement)
-      subroutine uvecteur_masque(key_uu, key_vv)
-#include "impnone.cdk90"
-      integer :: key_uu, key_vv
-#include "defin.cdk90"
-      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
-         fstsel,symetri,imprime,itrouve,messags,pgsmabt
-      external cvtr2i
-      external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
-
-      integer ezgdef_fmem, ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, fst_get_mask_key, key_mask
-      logical skip
-
-!
-#include "accum.cdk90"
-#include "dates.cdk90"
-#include "defin.cdk90"
-#include "dummys.cdk90"
-#include "ecrires.cdk90"
-#include "gdz.cdk90"
-#include "grilles.cdk90"
-#include "indptr.cdk90"
-#include "lires.cdk90"
-#include "llccmm.cdk90"
-#include "packin.cdk90"
-#include "pairs.cdk90"
-#include "voir.cdk90"
-
-
-   character(len=12):: cetiket
-   character(len=4) :: cnom_uu, cnom_vv
-   character(len=2) :: ctypvar
-   character(len=1) :: cigtyp
-
-   integer i, j, nunv, itrouve, ii, key_mask_out, lk
-   integer deet, ig1, ig2, ig3, ig4, iheur
-   integer dateo, datev, nbits, datyp, ip1, ip2, ip3, iun_out
-   integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
-   integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
-
-   integer dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask
-   integer nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask
-   integer ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, cdltf_mask, cubc_mask
-   integer datev_mask, extra2_mask, extra3_mask
-   logical sym, symetri
-
-   character(len=4)  :: cnomvar_mask
-   character(len=2)  :: ctypvar_mask
-   character(len=12) :: cetiket_mask
-   character(len=1)  :: cigtyp_mask
-
-   real fbidon
-   real, dimension(:,:), allocatable, target :: tmp_uuin, tmp_uuout, tmp_vvin, tmp_vvout
-   integer, dimension(:,:), allocatable, target :: masque_in, masque_out
-
-   real, dimension(:,:), pointer :: uu_in, vv_in, uu_out, vv_out
-   integer, dimension(:,:), pointer :: tmpmsk
-
-
-   logical masque_present, masque_done, write_masque, ssw
-
-   nunv=0
-   iunit=1
-   masque_present = .false.
-   masque_done = .false.
-   ctypvar_mask = '@@'
-
-   ier = fstprm(key_uu, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_uu, cetiket, &
-            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-   ier = fstprm(key_vv, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_vv, cetiket, &
-            cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-   allocate(tmp_uuin(ni,nj), tmp_vvin(ni,nj), tmp_uuout(li,lj), tmp_vvout(li,lj))
-
-   ier = fst_get_mask_key(key_mask, key_uu, 0, iunit)
-
-   if (key_mask >= 0) then
-      masque_present = .true.
-      allocate(masque_in(ni,nj), masque_out(li,lj))
-   else
-      masque_present = .false.
-   endif
-
-   ier = pgsmluk(tmp_uuin, key_uu, ni,nj,nk,cnom_uu,cigtyp)
-   ier = pgsmluk(tmp_vvin, key_vv, ni,nj,nk,cnom_vv,cigtyp)
-
-
-   if (printen)  call imprime(cnom_uu,tmp_uuin,ni,nj)
-   if (ig1 /= 0) sym = symetri(cnom_uu)
-
-!  interpolation ordinaire sans masque
-
-   if (.not.masque_present) then
-!     si vvent=.true. on calcule la vitesse du vent
-
-      gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-      ier = ezdefset(gdout, gdin)
-
-      if (vvent) then
-         ssw=.false.
-         if (wdvent) then
-            ssw = .true.
-         endif
-
-         ier = ezwdint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
-         uu_out => tmp_uuout
-
-         call  ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,'UV  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
-
-         if (wdvent) then
-            do j=1,lj
-               do i=1,li
-                  if (tmp_vvout(i,j).lt.0.0) then
-                     tmp_vvout(i,j) = tmp_vvout(i,j) + 360.0
-                  endif
-               enddo
-            enddo
-            vv_out => tmp_vvout
-            call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,'WD  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
-         endif
-      else
-         if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.ig3.ne.lg3.or.ig4.ne.lg4.or.li.ne.ni.or.lj.ne.nj) then
-            ssw = .true.
-            ier = ezuvint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
-            uu_out => tmp_uuout
-            vv_out => tmp_vvout
-         else
-            deallocate(tmp_uuout)
-            deallocate(tmp_vvout)
-            uu_out => tmp_uuin
-            vv_out => tmp_vvout
-            if (message) then
-              write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
-            endif
-         endif
-         call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,cnom_uu,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
-         call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,cnom_vv,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
-      endif
-   else  !!! Masque present
-!
-      if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
-         gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-         ier = ezdefset(gdout, gdin)
-         ier = fstprm(key_mask, dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask, &
-                  nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask, &
-                  ctypvar_mask, cnomvar_mask, cetiket_mask, &
-                  cigtyp_mask, ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, &
-                  cdltf_mask, cubc_mask, datev_mask, extra2_mask, extra3_mask)
-         ier = fstluk(masque_in, key_mask, ni,nj,nk)
-         ier = ezuvint_mdm(tmp_uuout, tmp_vvout, masque_out, tmp_uuin, tmp_vvin, masque_in)
-         uu_out => tmp_uuout
-         vv_out => tmp_vvout
-         tmpmsk => masque_out
-      else
-         uu_out => tmp_uuin
-         vv_out => tmp_vvin
-         tmpmsk => masque_in
-         if (message) write(6,662) cnom_uu
- 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a4)
-      endif
-
-      call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
-         ctypvar, cnom_uu, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-      call ecritur(vv_out,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &
-         ctypvar, cnom_vv, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-
-      ! On regarde si le masque existe dans le fichier de sortie
-
-      iun_out = 2
-      key_mask_out = fstinf(iun_out, ni_mask, nj_mask, nk_mask, datev_mask, cetiket_mask, ip1_mask, ip2_mask, ip3_mask, &
-         ctypvar_mask, cnomvar_mask)
-
-      write_masque = .true.
-      if (key_mask_out >= 0) then
-         write_masque = .false.
-      endif
-
-      if (masque_present.and.write_masque) then
-         call iecritur(tmpmsk,-nbits_mask,dateo_mask,deet_mask,npas_mask,li,lj, nk,&
-            ip1_mask,ip2_mask, ip3_mask, ctypvar_mask, cnomvar_mask, cetiket_mask, &
-            cgrtyp, lg1, lg2, lg3, lg4)
-         if (allocated(masque_out)) then
-            deallocate(masque_out, masque_in)
-         endif
-      endif
-      deallocate(tmp_uuout, tmp_uuin, tmp_vvout, tmp_vvin)
-
-   endif
-
-!
-   if (nunv > 0) then
-      write(6,666)
- 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
-      write(6,668)
- 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
-      write(6,669)
- 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
-!
-   endif
-   return
-   end
-
 !
 !**S/P VDAUV  U ET V DE DIRECTION ET VITESSE DU VENT
 !
