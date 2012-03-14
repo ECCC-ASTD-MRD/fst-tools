@@ -6005,6 +6005,7 @@ implicit none
 !        6.0    - Introduction de ezscint comme interpolateur principal
 !        6.8    - Support des grilles diese
 !        6.9    - Support des grilles T (stereographiques generalisees)
+!        7.3.4  - Rechargement avec librmn_013_rc2 (M. Lepine, Mars 2012)
 !
 !langage   - fortran
 !
@@ -6288,7 +6289,7 @@ implicit none
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.3.3',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.3.4',  lfn(idx_date))
  !       print *, jdate
 
 !
