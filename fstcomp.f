@@ -36,6 +36,8 @@ C*DECK FSTCOMP
 * 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant
 * 025 V7.7 (M. Lepine, Fev. 2007) Comparaison avec l'erreur du a l'algorithme de compaction 
 * 026 V7.8 (M. Lepine, Juin 2007) Reload avec librmn_009
+* 027 V7.9 (M. Lepine, Avr. 2010) Correction pour affichage de facteur de correlation negatif
+* 028 V8.0 (M. Lepine, Juin 2011) Variables d'exception au convip du IP1
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -66,13 +68,19 @@ C*DECK FSTCOMP
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
      X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
      X        TABLO(0:6,0:6)
-      integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2
+      integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
       real Level
       character *30 string
+      character *20 exception_vars
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
       INTEGER      BUF
+
+      REAL, ALLOCATABLE, DIMENSION (:) :: XX1,XX2
+
+      DATA exception_vars /'^^  >>  !!  '/
+
       DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
      X           'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR' /
@@ -157,9 +165,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V7.8  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V8.0  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V7.8', 'NON')
+         L = EXDB('FSTCOMP', 'V8.0', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -230,8 +238,10 @@ C*ENDIF
       KA = FSTINF(1, NI, NJ, NK, -1, ' ', -1, -1, -1,' ', ' ')
       N  = NI*NJ*NK
   10  MX = N
-      CALL MEMOIRH(BUF, X1, MX)
-      CALL MEMOIRH(BUF, X2, MX)
+      ALLOCATE(XX1(MX))
+      ALLOCATE(XX2(MX))
+*      CALL MEMOIRH(BUF, X1, MX)
+*      CALL MEMOIRH(BUF, X2, MX)
 
 *     RAMASSE LES IDENTIFICATEURS DU RECORD KA
   20  L = FSTPRM(KA, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DATYPA,
@@ -263,8 +273,12 @@ C*ENDIF
 
 *     SI LE IP1 EST A CONSIDERER
       IF( P1 ) then
-       call convip(ip1,level,kind,-1,string,.false.)
-       IP1B = IP1_ALL(level,kind)
+        IF (INDEX(exception_vars,nomvar) <> 0) then
+          IP1B = IP1
+        ELSE
+          call convip(ip1,level,kind,-1,string,.false.)
+          IP1B = IP1_ALL(level,kind)
+        ENDIF
       ENDIF
 
 *     SI LE IP2 EST A CONSIDERER
@@ -304,8 +318,10 @@ C*ENDIF
       IF ( DI ) PRINT*,'COMPARE DATYPA=',DATYPA,'  @  DATYPB=',DATYPB
 
 *     TOUT EST OK LIT ET COMPARE
-      L = FSTLUK(BUF(X1), KA, NI, NJ, NK)
-      L = FSTLUK(BUF(X2), KB, NI, NJ, NK)
+      L = FSTLUK(XX1, KA, NI, NJ, NK)
+*      L = FSTLUK(BUF(X1), KA, NI, NJ, NK)
+*      L = FSTLUK(BUF(X2), KB, NI, NJ, NK)
+      L = FSTLUK(XX2, KB, NI, NJ, NK)
       IF ((mod(DATYPA,128) .ne. 1) .and. (mod(DATYPA,128) .ne. 6)) THEN
         PACK_ERR2 = 0
       ELSE
@@ -316,17 +332,19 @@ C*ENDIF
   30  WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',DATYPA,
      X                                    ' DATYPB=',DATYPB
       GO TO 60
-  40  CALL RCMP1D(BUF(X1), BUF(X2), N, 6, KA, KB, NOMVAR, ETIKB,
+  40  CALL RCMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2)
       GO TO 60
-  50  CALL ICMP1D(BUF(X1), BUF(X2), N, 6, KA, KB, NOMVAR, ETIKB,
+  50  CALL ICMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3)
   60  KA = FSTSUI(1, NI, NJ, NK)
       IF(KA .GE. 0) THEN
          N = NI*NJ*NK
          IF(N .LE. MX) GO TO 20
-         CALL MEMOIRH(BUF, X1, 0)
-         CALL MEMOIRH(BUF, X2, 0)
+         DEALLOCATE(XX1)
+         DEALLOCATE(XX2)
+*         CALL MEMOIRH(BUF, X1, 0)
+*         CALL MEMOIRH(BUF, X2, 0)
          GOTO 10
       ENDIF
 
@@ -409,7 +427,9 @@ C*DECK RCMP1D
      X          AA, BB, FN, ERRLIM, VARA, VARB, SAB
       REAL MIN_A, MAX_A, MIN_B, MAX_B, RANGE_A, RANGE_B, DEUX_EXP_NB
       REAL ERR_UNIT
+      integer nbdiff
 
+      nbdiff = 0
       ERRLIM = 10.**LIMITE
       DEUX_EXP_NB = 2.0 ** NBITS
       SA     = 0.
@@ -435,7 +455,8 @@ C*DECK RCMP1D
          SA     = SA+AA
          SB     = SB+BB
          IF(AA .NE. BB) THEN
-C            write(6,888) 'Debug difference au point I=',i,aa,bb
+!            write(6,888) 'Debug difference A vs B au point I=',i,aa,bb
+            nbdiff = nbdiff +1
  888        format(a,i8,2x,e24.16,2x,e24.16)
             ERRABS = ABS(AA-BB)
             SUMABS = SUMABS+ERRABS
@@ -450,6 +471,7 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
             ERR    = ERR+DERR
          ENDIF
    10    CONTINUE
+!      print *,'Debug nbdiff = ',nbdiff,' sur un total de ',n
 
       RANGE_A = MAX_A - MIN_A
       RANGE_B = MAX_B - MIN_B
@@ -469,9 +491,10 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
       SUMABS = SUMABS/FN
       VARA   = SA2/FN
       VARB   = SB2/FN
-      print *,'sab avant=',sab
+!      print *,'Debug+ sab avant=',sab
       IF(SA2*SB2 .NE. 0.) THEN
          SAB    = SAB/SQRT(SA2*SB2)
+!      print *,'Debug+ sa2,sb2,sqtr,sab=',sa2,sb2,SQRT(SA2*SB2),sab
       ELSEIF(SA2.EQ.0. .AND. SB2.EQ.0.) THEN
          SAB = 1.0
       ELSEIF(SA2 .EQ. 0.) THEN
@@ -479,7 +502,7 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
       ELSE
          SAB = SQRT(VARA)
       ENDIF
-      print *,'Debug+ sa2, sb2, sab=',sa2,sb2,sab
+!      print *,'Debug+ sa2,sb2,vara,varb,sab=',sa2,sb2,vara,varb,sab
       CALL convip(ip1,rlevel,kind,-1,level,.true.)
       ERR_UNIT = RANGE_A / DEUX_EXP_NB
       
@@ -508,12 +531,12 @@ C            write(6,888) 'Debug difference au point I=',i,aa,bb
 *     X       '         BIAIS      E-MAX      E-MOY')
   600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
-  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 4(1X,1PE10.4),
-     X       2(1X,1PE12.4), 2(1X,1PE10.4) )
+  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 3(1X,1PE10.4),
+     X       3(1X,1PE12.4), 2(1X,1PE10.4) )
   602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
-  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 4(1X,1PE10.4),
-     X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
+  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 3(1X,1PE10.4),
+     X       3(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
 
       RETURN
       END
