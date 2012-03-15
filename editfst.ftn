@@ -99,6 +99,11 @@
 *         M. Lepine        Reload avec librm_rc010, correction pour fichier cmcarc remote - v6.11 - Sept 2008
 *         M. Lepine        Reload avec librm_rc010, correction pour alias dans gossip_sock - v6.12 - Oct 2008
 *         M. Lepine        Correction pour empecher le remapping du datatype  - v6.13 - Fev 2009
+*         M. Lepine        Reload avec librmn_012 et codebeta moduledate  - v6.14 - Dec 2010
+*         M. Lepine        Reload avec librmn_012 et codebeta c_baseio_714 (remote)  - v6.15 - Oct 2011
+*         M. Lepine        La correction pour empecher le remapping est faite dans fstecr.
+*                          Reload avec librmn_013_rc2 - v6.16 - Mars 2012
+*
 *
 *LANGAGE  - FTN77
 *
@@ -310,9 +315,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.13','NON')
+         I = EXDB('EDITFST','V6.16','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.13   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.16   ***'
       ENDIF
 
 
@@ -330,7 +335,8 @@
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
 
 *     ON EMPECHE LE REMAPPING DU DATATYPE EN MODE IMAGE
-      call c_no_datyp_remap()
+*      call c_no_datyp_remap()
+*     Verification du remapping faite directement dans fstecr pour le mode image
 
 *     COMPTEE LES FICHIERS SOURCES
       DO 10 I=1,120
