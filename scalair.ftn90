@@ -175,6 +175,8 @@
          if (done_fields(ii)) cycle
          ier=fstprm(irec, dateo, deet, npas, ni, nj, nk, cnbits, cdatyp, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp, &
             ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         npack_orig = -cnbits
+!         print *, 'npack_orig=', npack_orig, 'npack=', npack
          if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then

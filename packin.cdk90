@@ -1,5 +1,5 @@
-      integer npack
-      common/packin/npack
+      integer npack,npack_orig
+      common/packin/npack,npack_orig
 !
 !
 #if defined (doc)
