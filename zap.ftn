@@ -10,6 +10,7 @@
 *VERSION ORIGINALE Y. BOURASSA JUL 91
 *REVISION      001 "      "    JUL 92 COUPE DW DE DATE
 *              002 "      "    OCT 92 PADING DU LABEL
+*              003 B. Dugas    fev 12 valider date avec newdate
 *LANGUAGA FTN77
 *  
 *ARGUMENTS
@@ -29,7 +30,9 @@
 *MODULE
 *  
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR
+      INTEGER,     EXTERNAL :: NEWDATE
 **
+      INTEGER      IER,DAT1,DAT2,NDATE
       INTEGER      FSTCVT, ARGDOPE, I, LIS(10)
       CHARACTER *1 G
       CHARACTER *2 T
@@ -63,9 +66,17 @@
          IF( DEBUG ) WRITE(6,*)' ZIP1 = ',Z1
       ENDIF
    40 IF(DATE .NE. -1) THEN
-         ZA = .TRUE.
-         ZD = DATE - DATE/1000000000*1000000000
-         IF( DEBUG ) WRITE(6,*)' ZDAT = ',ZD
+         ! ZD = DATE - DATE/1000000000*1000000000 !
+         ! VERIFIER QUE CE NOUVEAU STAMP EST VALIDE
+         IER = NEWDATE( DATE, DAT1,DAT2, -3 )
+         IF (IER == 0) THEN
+            IER = NEWDATE( NDATE, DAT1,DAT2, +3 )
+            IF (IER == 0 .AND. NDATE == DATE) THEN
+               ZA = .TRUE.
+               ZD = DATE
+               IF( DEBUG ) WRITE(6,*)' ZDAT = ',ZD
+            ENDIF
+         ENDIF
       ENDIF
    50 IF(LBL(1) .NE. -1) THEN
          I = ARGDOPE(3, LIS, 10)

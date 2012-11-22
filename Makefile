@@ -95,7 +95,7 @@ ip1equiv.o:    ip1equiv.ftn
 #	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 #	
 absolu: $(OBJECTS)
-	s.compile -o editfst -obj $(OBJECTS) -librmn rmn_013_rc2
+	s.compile -o editfst -obj $(OBJECTS) -librmn rmn_013
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta

@@ -103,6 +103,8 @@
 *         M. Lepine        Reload avec librmn_012 et codebeta c_baseio_714 (remote)  - v6.15 - Oct 2011
 *         M. Lepine        La correction pour empecher le remapping est faite dans fstecr.
 *                          Reload avec librmn_013_rc2 - v6.16 - Mars 2012
+*         M. Lepine        Reload avec librmn_013 - v6.17 - Sept 2012
+*         B. Dugas         Correction dates etendues dans zap et copystx - v6.18 - Sept 2012
 *
 *
 *LANGAGE  - FTN77
@@ -315,9 +317,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.16','NON')
+         I = EXDB('EDITFST','V6.18','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.16   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.18   ***'
       ENDIF
 
 

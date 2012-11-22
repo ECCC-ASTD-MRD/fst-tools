@@ -101,7 +101,7 @@ C      write(*,777) ip1,kind,p,ip(1)
       IF(FIRSTP .OR. OK) THEN 
 *        CALCUL DE La "SECONDE JULIENNE" (AU MOIN DU PREMIER ENREGISTREMENT).
          CALL JULSEC(IP(4), DATE)
-         IP(4) = IP(4) +  DEET*NPAS    ! possiblement +1800/3600 (en option $$)
+         IP(4) = IP(4) +  DEET*(NPAS*1_8) ! possiblement +1800/3600 (en option $$)
          IF(DEBUG .AND. FIRSTP) WRITE(6,*)'DATE ENRG. #1= ',DATE,
      X                                    ' JUL. SECONDES=',IP(4)
          FIRSTP = .FALSE.
