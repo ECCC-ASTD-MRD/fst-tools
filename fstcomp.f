@@ -39,6 +39,7 @@ C*DECK FSTCOMP
 * 027 V7.9 (M. Lepine, Avr. 2010) Correction pour affichage de facteur de correlation negatif
 * 028 V8.0 (M. Lepine, Juin 2011) Variables d'exception au convip du IP1
 * 026 V8.1 (M. Lepine, Mai  2012) Reload avec librmn_013
+* 027 V8.2 (M. Lepine, Nov  2012) En cas d'erreur, retourner un code d'erreur avec qqexit
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -48,7 +49,7 @@ C*DECK FSTCOMP
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, MEMOIRH, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
      X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip,
-     %         fstopl, ip1_all
+     %         fstopl, ip1_all, qqexit
 *
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
@@ -166,9 +167,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V8.1  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V8.2  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V8.1', 'NON')
+         L = EXDB('FSTCOMP', 'V8.2', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -195,7 +196,10 @@ C*ENDIF
 *     OUVRE LE FICHIER 1
       NA = DEF1(1)
       L  = FNOM  (1, DEF1(1), NOMA//'+OLD+R/O+REMOTE', 0)
-      IF (L .LT. 0) STOP
+      IF (L .LT. 0) THEN
+        CALL QQEXIT(1)
+        STOP
+      ENDIF
       L  = FSTOUV(1, NOMA)
       N1 = FSTNBR(1)
       IF(N1 .Le. 0) THEN
@@ -212,7 +216,10 @@ C*ENDIF
 *     OUVRE LE FICHIER 2
       NB = DEF1(2)
       L  = FNOM  (2, DEF1(2), NOMB//'+OLD+R/O+REMOTE', 0)
-      IF (L .LT. 0) STOP
+      IF (L .LT. 0) THEN
+        CALL QQEXIT(2)
+        STOP
+      ENDIF
       L  = FSTOUV(2, NOMB)
       N2 = FSTNBR(2)
       IF(N2 .Le. 0) THEN
