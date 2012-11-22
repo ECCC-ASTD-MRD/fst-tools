@@ -38,6 +38,7 @@ C*DECK FSTCOMP
 * 026 V7.8 (M. Lepine, Juin 2007) Reload avec librmn_009
 * 027 V7.9 (M. Lepine, Avr. 2010) Correction pour affichage de facteur de correlation negatif
 * 028 V8.0 (M. Lepine, Juin 2011) Variables d'exception au convip du IP1
+* 026 V8.1 (M. Lepine, Mai  2012) Reload avec librmn_013
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -165,9 +166,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V8.0  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V8.1  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V8.0', 'NON')
+         L = EXDB('FSTCOMP', 'V8.1', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)

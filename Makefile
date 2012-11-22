@@ -25,10 +25,10 @@ OBJET= fstcomp.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	r.build -o fstcomp -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_012
+	r.build -o fstcomp -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
 
 fstcomp+: $(OBJET)
-	r.build -o fstcomp+ -debug -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_012
+	r.build -o fstcomp+ -debug -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
