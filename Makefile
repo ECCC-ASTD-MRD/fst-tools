@@ -12,21 +12,23 @@ OPTIMIZ = -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
+VER = 005
+
 default: absolu
 
 .ftn.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 .f.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 OBJET= fstinfo.o
 
 absolu: $(OBJET)
-	r.build -o r.fstinfo -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_x
+	s.compile -o r.fstinfo_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_013
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
@@ -38,4 +40,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o r.fstinfo
+	rm *.o r.fstinfo_$(VER)-$(BASE_ARCH)
