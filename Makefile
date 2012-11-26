@@ -10,16 +10,18 @@ CFLAGS =
 
 OPTIMIZ = -O 0 -debug
 
+VER = 3.5
+
 default: absolu
 
 .ftn.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 .f.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 
 FTNDECKS= \
@@ -50,7 +52,7 @@ setuvd0.o: setuvd0.ftn
 writlzn.o: writlzn.ftn 
 
 absolu: $(OBJECTS) 
-	r.build -o dbzono -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -librmn rmnbeta
+	s.compile -o dbzono_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -abi $(ABI) $(OPTIMIZ) -librmn rmn_013
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
@@ -62,4 +64,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o dbzono
+	rm *.o dbzono_$(VER)-$(BASE_ARCH)
