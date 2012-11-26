@@ -127,6 +127,7 @@
 *       M. Lepine, Oct 2001 - Rechargement (bug fix realloc xdfuse) (2.5)
 *       M. Lepine, Jan 2003 - Rechargement avec rmn_x (2.6)
 *       M. Lepine, Mars 2004 - option nsplit pour subdiviser l'output sur plusieurs fichiers
+*       D. Bouhemhem Oct 2012 Rechargement avec rmn_013 (2.7)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
