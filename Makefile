@@ -17,26 +17,31 @@ DEFINE = -defines =-DFICHSTD98
 #OPTIMIZ = -O 0 -debug
 OPTIMIZ = -O 2
 
+VER_C = 304
+VER_U = 303
+
+default: fstcompress fstuncompress
+
 .ftn90.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(DEFINE) $(OPTIMIZ) -includes "$(CPPFLAGS)" -optc "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(DEFINE) $(OPTIMIZ) -includes "$(CPPFLAGS)" -optc "=$(CFLAGS)" -src $<
 
 OBJET =
 
 fstcompress: fstcompress.o $(OBJET)
-	r.build -o fstcompress -obj fstcompress.o $(OBJET) -librmn rmn_009
+	s.compile -o fstcompress_$(VER_C)-$(BASE_ARCH) -obj fstcompress.o $(OBJET) -librmn rmn_013
 
 fstcompress+: fstcompress.o $(OBJET)
-	r.build -o fstcompress+ -obj fstcompress.o $(OBJET) -librmn rmnbeta
+	s.compile -o fstcompress+ -obj fstcompress.o $(OBJET) -librmn rmnbeta
 
 fstuncompress: fstuncompress.o $(OBJET) 
-	r.build -o fstuncompress -obj fstuncompress.o $(OBJET) -librmn rmn_009
+	s.compile -o fstuncompress_$(VER_U)-$(BASE_ARCH) -obj fstuncompress.o $(OBJET) -librmn rmn_013
 
 fstuncompress+: fstuncompress.o $(OBJET) 
-	r.build -o fstuncompress+ -obj fstuncompress.o $(OBJET) -librmn rmnbeta
+	s.compile -o fstuncompress+ -obj fstuncompress.o $(OBJET) -librmn rmnbeta
 
 clean:
-	  \rm -f *.o *.f90 *.stb *.f
+	  \rm -f *.o *.f90 *.stb *.f *_*-$(BASE_ARCH) 
 
