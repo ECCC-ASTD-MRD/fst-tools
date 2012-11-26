@@ -13,6 +13,8 @@ CFLAGS =
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 
+VER = 6.18
+
 default: absolu
 
 include $(ARMNLIB)/include/makefile_suffix_rules.inc
@@ -95,7 +97,7 @@ ip1equiv.o:    ip1equiv.ftn
 #	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 #	
 absolu: $(OBJECTS)
-	s.compile -o editfst -obj $(OBJECTS) -librmn rmn_013
+	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_013
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
@@ -116,4 +118,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o editfst
+	rm *.o editfst_$(VER)-$(BASE_ARCH) 
