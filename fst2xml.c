@@ -6,8 +6,9 @@
 /*
 fst2xml : Convertisseur de fichier standard RPN version 2000 a XML
 
-Auteur: Yves Chartier
-Statut: Embryonnaire
+Auteur: Djamel Bouhemhem, Yves Chartier
+Statut: Test
+Version: 004
 */
 
 #define NCARMAX 256

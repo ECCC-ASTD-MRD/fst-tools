@@ -1,4 +1,4 @@
-include $(ARMNLIB)/include/$(EC_ARCH)$(ABI)/Makefile_addons
+#include $(ARMNLIB)/include/$(EC_ARCH)$(ABI)/Makefile_addons
 
 .SUFFIXES : 
 
@@ -20,21 +20,23 @@ CPPFLAGS = -I$(ARMNLIB)/include  -DX_WGL
 
 .PRECIOUS: $(RECLIB)
 
-default: fst2xml
+VER = 004
+
+default: fst2xml xml2fst
 
 .ftn.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 .c.a:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 	ar rv $@ $*.o
 	rm -f $*.o
 
 .ftn.a:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 	ar rv $@ $*.o
 	rm -f $*.f $*.o
 
@@ -43,10 +45,11 @@ FTNDECKS=
 CDECKS= fst2xml.c xml2fst.c
 
 fst2xml: fst2xml.o 
-	r.build -o fst2xml -bidon c -main fst2xml_ -obj fst2xml.o -librmn rmnbeta
+	s.compile -o fst2xml_$(VER)-$(BASE_ARCH) -bidon c -main fst2xml_ -obj fst2xml.o -librmn rmn_013
 
 xml2fst: xml2fst.o 
-	r.build -o xml2fst -bidon c -main xml2fst_ -obj xml2fst.o -librmn rmnbeta 
+	s.compile -o xml2fst_$(VER)-$(BASE_ARCH) -bidon c -main xml2fst_ -obj xml2fst.o -librmn rmn_013 
 
 clean:
-	rm -f *.o
+	rm -f *.o *_$(VER)-$(BASE_ARCH)
+
