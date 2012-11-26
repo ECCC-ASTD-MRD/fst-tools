@@ -20,16 +20,18 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 .PRECIOUS:
 
-default: obj
+VER = 6.2
+
+default: fststat 
 
 .ftn.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .f90.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 FTNDECKS=  fststat.ftn fststatm.ftn statfld4.ftn
 
@@ -41,11 +43,11 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 fststat: $(OBJECTS)
-	r.build  -obj $(OBJECTS) -o $@ -librmn rmn_009
+	s.compile  -obj $(OBJECTS) -o $@_$(VER)-$(BASE_ARCH) -librmn rmn_013
 
 fststat+: $(OBJECTS)
 	r.build -obj $(OBJECTS) -o $@ -librmn rmnbeta
 
 clean:
-	/bin/rm -f *.f *.o fststat
+	/bin/rm -f *.f *.o fststat_$(VER)-$(BASE_ARCH)
 

@@ -14,6 +14,8 @@
 *REVISION 001  M. Lepine - Mars 2002 - ajout du mode reduction 32 pour IEEE a 64 bits
 *REVISION 002  M. Lepine - Juin 2003 - remplacement de memoirh
 *
+*Version 6.2   D. Bouhemhem - Nov. 2012 - Compilation avec librmn_013
+*
 *LANGUAGE:  fortran 77
 *
 *OBJECT (fststat)
