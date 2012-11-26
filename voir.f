@@ -9,6 +9,9 @@
 *         98.17 - M. Lepine - sept 2007 - reload librmnbeta, correction fichiers > 2G
 *         98.18 - M. Lepine - sept 2007 - reload pour dates etendues 
 *         98.19 - M. Lepine - sept 2008 - reload pour fichier cmcarc remote 
+*         98.20 - M. Lepine - reload librmn_012
+*         98.21 - Dj. Bouhemhem - oct 2012 - reload librmn_013
+
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
@@ -57,7 +60,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.19','NON')
+         ier = exdb('VOIR','V98.21','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),
