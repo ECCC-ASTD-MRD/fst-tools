@@ -28,7 +28,9 @@ MYLIB = rmn_013_rc2.a
 
 include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
-default: obj
+VER = 7.4.1
+
+default: obj pgsm
 
 OBJET = f_pgsm.o c_pgsm.o
 
@@ -73,16 +75,16 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm-interp-aix: f_pgsm.ftn90 c_pgsm.c
-	s.compile -o $@ $(OPTIMIZ_AIX) -src bidon.ftn90 -obj ./f_pgsm.o ./c_pgsm.o $(HOME)/userlibs/$(EC_ARCH)/*.o -librmn rmnbeta_013 -libsys mass
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj ./f_pgsm.o ./c_pgsm.o $(HOME)/userlibs/$(EC_ARCH)/*.o -librmn rmnbeta_013 -libsys mass
 
 pgsm-interp: f_pgsm.ftn90 c_pgsm.c
-	s.compile -o $@ $(OPTIMIZ) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_013 -obj $(HOME)/src/interp/*.o 
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_013 -obj $(HOME)/src/interp/*.o 
 
 pgsm: f_pgsm.o c_pgsm.o
-	s.compile -o $@ $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
+	r.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
-	s.compile -o $@ $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
