@@ -14,6 +14,8 @@ OPTIMIZ = -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
+VER = 8.2
+
 default: absolu
 
 include $(ARMNLIB)/include/makefile_suffix_rules.inc
@@ -25,10 +27,10 @@ OBJET= fstcomp.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	r.build -o fstcomp -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
+	s.compile -o fstcomp_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
 
 fstcomp+: $(OBJET)
-	r.build -o fstcomp+ -debug -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
+	s.compile -o fstcomp+ -debug -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn rmn_013
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
@@ -40,4 +42,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o fstcomp
+	rm *.o fstcomp_$(VER)-$(BASE_ARCH)
