@@ -12,7 +12,7 @@ OPTIMIZ = -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
-VER = 005
+VER = 006
 
 default: absolu
 

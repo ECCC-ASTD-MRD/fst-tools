@@ -1,5 +1,6 @@
       program fstinfo
 c
+! Revision 006 - M. Lepine, augmenter la longueur pour les noms de fichiers a 4k
       implicit none
 c
       integer pnier,pnfstsrc,pnnis,pnnjs,pnnks
@@ -25,7 +26,7 @@ c
 c
       character(len=8) :: cltimev
       character*8 ptcle(12)
-      character*128 ptvar(12), ptdefvar(12)
+      character*4096 ptvar(12), ptdefvar(12)
 c
       data ptcle /'izfst.','datev.','vdatev.','etiket.','ip1.','ip2.'
      &     ,'ip3.','typvar.','nomvar.','otxt.','del.','champs.'/
