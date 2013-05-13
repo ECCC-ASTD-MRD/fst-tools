@@ -324,7 +324,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.4.0',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.6.1',  lfn(idx_date))
  !       print *, jdate
 
 !
@@ -333,6 +333,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
+        call chk_tmpdir
 
 	if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  print *,'***************************************************'
@@ -714,6 +715,7 @@
 
 	if (mode.eq.1) then
       call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
+      call chk_toctoc(lnkdiun(1),lnkdiun(idx_ozsrt))
    endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
@@ -734,7 +736,7 @@
 	else
 #if defined (unix)
          if (mode.eq.2) then
-	      write (6, *)        'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
+	      write (6, *) 'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
 	      write (6, *) 'DANS CETTE VERSION DE PGSM'
 	   endif
 #endif

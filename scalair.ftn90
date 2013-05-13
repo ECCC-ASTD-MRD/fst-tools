@@ -179,7 +179,7 @@
 !         print *, 'npack_orig=', npack_orig, 'npack=', npack
          if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
-         if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then
+         if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY'.or.cnomvar.eq.'^>'.or.cnomvar.eq.'!!') then
             cycle
          endif
 

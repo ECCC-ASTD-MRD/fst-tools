@@ -6,16 +6,15 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-#RMNLIB = $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmnbeta.a
-RMNLIB = rmn_013
+RMNLIB = rmnbeta_014
 FFLAGS =
 
 CFLAGS =
 
-OPTIMIZ =  -debug -O 0
+#OPTIMIZ =  -debug -O 0
 #OPTIMIZ = -O 3 -fast
- OPTIMIZ = -O 2 -fast
-#OPTIMIZ = -O 2
+#OPTIMIZ = -O 2 -fast
+ OPTIMIZ = -O 2
 #OPTIMIZ_AIX = -optf='-qsimd=auto' -optc='-qsimd=auto' -O 2
 #OPTIMIZ_AIX = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
@@ -23,12 +22,12 @@ OPTIMIZ =  -debug -O 0
 CPPFLAGS = -I$(ARMNLIB)/include -I$(ARMNLIB)/include/$(EC_ARCH)
 
 #MYLIB =  $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
-MYLIB = rmn_013_rc2.a
+MYLIB = rmn_beta014.a
 .PRECIOUS: $(RMNLIB) $(MALIB)
 
 include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
-VER = 7.4.1
+VER = 7.6.1
 
 default: obj pgsm
 
@@ -42,7 +41,7 @@ champseq.cdk90  defin.cdk90    grilles.cdk90  lires.cdk90    pairs.cdk90   voir.
 charac.cdk90    dummys.cdk90   heures.cdk90   llccmm.cdk90   param.cdk90
 
 FICHIERS_FTN90 = \
-calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chkenrpos.ftn90 chk_userdate.ftn90 chmpdif.ftn90 comme.ftn90 \
+calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chk_toctoc.ftn90 chkenrpos.ftn90 chk_userdate.ftn90 chmpdif.ftn90 comme.ftn90 \
 conlalo.ftn90 conver.ftn90 convs.ftn90 coord.ftn90 coupe.ftn90 coupzm.ftn90 ecrits.ftn90 \
 ecritur.ftn90 epais.ftn90 fst_get_mask_key.ftn90 fillcoord.ftn90 grigaus.ftn90 grigef.ftn90 grigrib.ftn90 grille2.ftn90 \
 grillps.ftn90 grilstd.ftn90 griltp4.ftn90 gristdb.ftn90 gristereo.ftn90 gritp12.ftn90 grlalon.ftn90 \
@@ -56,7 +55,7 @@ uvect.ftn90 uvecteur_masque.ftn90 vdauv.ftn90 verlalo.ftn90
 
 
 FICHIERS_C = \
-c_pgsm.c
+chk_tmpdir.c c_pgsm_utils.c
 
 FICHIERS = $(FICHIERS_FTN90) $(FICHIERS_C)
 
@@ -68,28 +67,22 @@ obj: $(OBJET)
 f_pgsm.ftn90: $(FICHIERS_FTN90) $(FICHIERS_CDK90)
 	cat $(FICHIERS_FTN90) > f_pgsm.ftn90
 
+c_pgsm.c: $(FICHIERS_C)
+	cat $(FICHIERS_C) > c_pgsm.c
+
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 genlib: $(OBJET)
 #Creer ou mettre a jour la programmatheque
 	$(AR) rcv $(MYLIB) $(OBJET)
 
-pgsm-interp-aix: f_pgsm.ftn90 c_pgsm.c
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj ./f_pgsm.o ./c_pgsm.o $(HOME)/userlibs/$(EC_ARCH)/*.o -librmn rmnbeta_013 -libsys mass
-
-pgsm-interp: f_pgsm.ftn90 c_pgsm.c
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 f_pgsm.ftn90 c_pgsm.c -librmn rmn_013 -obj $(HOME)/src/interp/*.o 
-
 pgsm: f_pgsm.o c_pgsm.o
-	r.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
-	rm -f *.o *~ *.f *.f90 pgsm pgsm2000 pgsm89
-
-fastclean:
-	rm *.o pgsm.f
+	rm -f *.o *~ *.f *.f90 pgsm_$(VER)-$(BASE_ARCH) 
 

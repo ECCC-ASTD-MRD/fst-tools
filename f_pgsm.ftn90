@@ -619,6 +619,43 @@
 
       return
       end
+      subroutine chk_toctoc(lu_in, lu_out)
+      implicit none
+      
+      integer lu_in, lu_out
+      external fstinl,fstprm, fstecr, fstluk, fstinf, fstopl
+      integer fstinl, fstprm, fstecr, fstluk, fstinf, fstopl
+      integer liste(256)
+      logical rewrit
+      
+      character *12 cetiket
+      character *4 cnomvar,cnomx
+      character *2 ctypvar
+      character *1 cigtyp
+      
+      integer dateo,datev,i
+      integer deet,ig1,ig2,ig3,ig4
+      integer irec,irec_out,ip1,ip2,ip3,ni,nj,nk,nrecs,ier,npas
+      integer nbits,cdatyp,cswa,clng,cdltf,cubc,extra1,extra2,extra3
+      real hydata(4096)
+
+      ier = fstopl('REDUCTION32',.false.,.false.)
+      irec=fstinl(lu_in,ni,nj,nk,-1,'            ',-1,-1,-1,'  ','!!  ', liste, nrecs, 256)
+
+      rewrit = .true.
+      do i=1,nrecs
+         irec = liste(i)
+         ier=fstprm(irec, dateo,deet,npas,ni, nj, nk, nbits,cdatyp,         ip1,ip2,ip3,ctypvar,cnomvar,cetiket,         cigtyp,ig1,ig2, ig3, ig4, cswa, clng, cdltf, cubc,          datev, extra2, extra3)
+         irec_out=fstinf(lu_out,ni,nj,nk,dateo,cetiket,ip1,ip2,ip3,ctypvar,cnomvar)
+	      if (irec_out < 0) then
+	         ier=fstluk(hydata, irec, ni, nj, nk)
+	         ier = fstecr(hydata,hydata,-nbits,lu_out,dateo,deet,npas,            ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,            cigtyp,ig1,ig2,ig3,ig4,cdatyp,rewrit )
+	      endif 
+      enddo
+         
+
+      return
+      end
       integer function chkenrpos(luin, luout, ip1, ip2, ip3)
       implicit none
 
@@ -633,7 +670,8 @@
       external fstinf, fstluk, fstecr, fstprm
 
       integer ni1, nj1, nk1, ni2, nj2, nk2
-      integer ier,ier1, ier2
+      integer ier,ier1, ier2, yy_key, ax_key, ay_key
+      logical yinyang_grid
 
       character*2 typvarx, typvary, grtyp, grref
       character*12 etikx, etiky
@@ -642,16 +680,31 @@
       integer  cdatyp
       integer dateo, deet, npas, nbits,datyp, ig1, ig2, ig3,      ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3, npak
 
+      yinyang_grid = .false.
+      chkenrpos = -1
 
       if (mode.eq.1) then
-         ier1 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-         ier2 = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+         ax_key = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+         ay_key = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
 
-         if (ier1.ge.0.and.ier2.ge.0) then
+         if (ax_key.ge.0.and.ay_key.ge.0) then
             chkenrpos = 0
-            return
          endif
 
+         yy_key = fstinf(luout, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
+         if (yy_key.ge.0) then
+            chkenrpos = 1
+         endif
+         
+         if (chkenrpos == 1 .and. ax_key >= 0) then
+            if (yy_key > ax_key.or.yy_key > ay_key) then
+               chkenrpos = 0
+            endif
+         endif
+         
+         if (chkenrpos >= 0) then
+            return   
+         endif
       endif
 
       if (mode.eq.5) then
@@ -659,33 +712,59 @@
          return
       endif
 
-      ier1 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-      ier2 = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+      ax_key = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+      ay_key = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+      yy_key = fstinf(luin, ni1, nj1, nk1, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
 
-      if (ier1.lt.0.or.ier2.lt.0) then
+      if (ax_key.lt.0.or.ay_key.lt.0) then
          chkenrpos = -1
+      else
+         chkenrpos = 0
+      endif
+      
+      if (yy_key.ge.0) then
+         chkenrpos = 1
+         yinyang_grid = .true.   
+      endif
+      
+      if (chkenrpos == 1 .and. ax_key >= 0) then
+         if (yy_key > ax_key.or.yy_key > ay_key) then
+            chkenrpos = 0
+            yinyang_grid = .false.
+         endif
+      endif
+      if (chkenrpos == -1) then        
          return
       endif
+      
+      if (yinyang_grid) then
+         ier = fstprm(yy_key, dateo, deet, npas, ni1, nj1, nk1, nbits,      datyp, lip1, lip2, lip3, typvarx, nomx, etikx,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
 
-      ier = fstprm(ier1, dateo, deet, npas, ni1, nj1, nk1, nbits,      datyp, lip1, lip2, lip3, typvarx, nomx, etikx,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
+         allocate(ax(ni1*nj1*nk1))
 
-      ier = fstprm(ier2, dateo, deet, npas, ni2, nj2, nk2, nbits,      datyp, lip1, lip2, lip3, typvary, nomy, etiky,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
+         ier = fstluk(ax, yy_key, ni1, nj1, nk1)
 
-      allocate(ax(ni1*nj1*nk1))
-      allocate(ay(ni2*nj2*nk2))
+         call ecritur(ax,-nbits,dateo,deet,npas,ni1,nj1,nk1,      lip1,lip2,lip3,       typvarx,nomx,etikx,grref,ig1ref,ig2ref,ig3ref,ig4ref)
 
-      ier = fstluk(ax, ier1, ni1, nj1, nk1)
-      ier = fstluk(ay, ier2, ni2, nj2, nk2)
+         deallocate(ax)
+      else
+         ier = fstprm(ax_key, dateo, deet, npas, ni1, nj1, nk1, nbits,      datyp, lip1, lip2, lip3, typvarx, nomx, etikx,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
+         ier = fstprm(ay_key, dateo, deet, npas, ni2, nj2, nk2, nbits,      datyp, lip1, lip2, lip3, typvary, nomy, etiky,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
 
-      call ecritur(ax,-nbits,dateo,deet,npas,ni1,nj1,nk1,      lip1,lip2,lip3,       typvarx,nomx,etikx,grref,ig1ref,ig2ref,ig3ref,ig4ref)
+         allocate(ax(ni1*nj1*nk1))
+         allocate(ay(ni2*nj2*nk2))
 
-      call ecritur(ay,-nbits,dateo,deet,npas,ni2,nj2,nk2,      lip1,lip2,lip3,       typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
+         ier = fstluk(ax, ax_key, ni1, nj1, nk1)
+         ier = fstluk(ay, ay_key, ni2, nj2, nk2)
 
-      deallocate(ax)
-      deallocate(ay)
+         call ecritur(ax,-nbits,dateo,deet,npas,ni1,nj1,nk1,      lip1,lip2,lip3,       typvarx,nomx,etikx,grref,ig1ref,ig2ref,ig3ref,ig4ref)
 
-      chkenrpos = 0
+         call ecritur(ay,-nbits,dateo,deet,npas,ni2,nj2,nk2,      lip1,lip2,lip3,       typvary,nomy,etiky,grref,ig1ref,ig2ref,ig3ref,ig4ref)
 
+         deallocate(ax)
+         deallocate(ay)
+      endif
+      
       return
       end
    subroutine chk_userdate(datev)
@@ -3922,20 +4001,24 @@
       integer i
       integer swa, lng, dltf, ubc, extra1, extra2, extra3
 
-      integer iunit,irecla,ireclo,ni,nj,nk
+      integer iunit,irecla,ireclo,irecyy,ni,nj,nk
       integer dateo, deet, npas
       integer numla,numlo,ier,iopc
       integer ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
       integer ip1x, ip2x, ip3x
 
-      character*4 nomvarx, nomvary
-      character*12  etiketx, etikety
-      character*2   typvarx, typvary
-      integer nix, njx, niy, njy, nkx, nky
+      character*4 nomvarx, nomvary, nomu
+      character*12  etiketx, etikety, etiku
+      character*2   typvarx, typvary, typvaru
+      integer nix, njx, niu, niy, njy, nju, nkx, nky, nku
       integer dateox, deetx,npasx, nbitsx, datypx
+      integer dateou, deetu,npasu, nbitsu, datypu
 !
       real pidum,pjdum,d60dum
       integer lip1, lip2, lip3
+
+      logical grille_z, grille_u
+
 
 !
 !
@@ -3948,31 +4031,59 @@
 !  VERIFICATION DES PARAMETRES DES 2 RECORDS
 !  SI LU SUR UNIT 1 ON ECRIT LES 2 RECORDS SUR UNIT 2
 !
+      nix = -1
+      njx = -1
+      nkx = -1
+      niy = -1
+      njy = -1
+      nky = -1
+      niu = -1
+      nju = -1
+      nku = -1
+      grille_z = .false.
+      grille_u = .false.
 
       if (it.ne.gr_stations) then
-         if (it.ne.gr_tape2) then
+!         if (it.ne.gr_tape2) then
             ier = chkenrpos(lnkdiun(1),lnkdiun(idx_ozsrt),ip1,ip2,ip3)
             if (ier.lt.0) then
                print *, '<gritp12> enregistrements positionnels absents!'
                print *, '          impossible de continuer...'
 !               call exit(13)
                call pgsmabt
-            endif
+            elseif (ier == 0) then
+	            grille_z = .true.
+	         else
+	            grille_u = .true.
+!	         endif
          endif
 
          if (mode.eq.1) then
-            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-
-            ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,            datypx, lip1, lip2, lip3, typvarx, nomx, etikx,            grref, ig1ref, ig2ref, ig3ref, ig4ref,             swa, lng, dltf, ubc, extra1, extra2, extra3)
-            li = nix
+	         if (grille_z) then
+               ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+               irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+               cgrtyp = 'Z'
+               gdout = ezqkdef(nix,njy,cgrtyp,ip1,ip2,ip3,0,iunit)
+            endif
+	    
+	         if (grille_u) then
+               irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
+               cgrtyp = 'U'
+	            ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu,etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+	            gdout = ezqkdef(niu,nju,cgrtyp,lip1,lip2,lip3,0,iunit)
+	            ier = ezgxprm(gdout, nix, njy, cgrtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+            endif
+	    
+	         li = nix
             lj = njy
-            gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
-            cgrtyp = 'Z'
+            lg1 = ig1
+            lg2 = ig2
+            lg3 = ig3
+            lg4 = ig4
          else
             ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
             irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-            ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,            datypx, lip1, lip2, lip3, typvarx, nomx, etikx,            grref, ig1ref, ig2ref, ig3ref, ig4ref,             swa, lng, dltf, ubc, extra1, extra2, extra3)
+            ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx, datypx, lip1, lip2, lip3, typvarx, nomx, etikx, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
             li = nix
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,1)
@@ -6304,7 +6415,7 @@ implicit none
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.4.0',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.6.1',  lfn(idx_date))
  !       print *, jdate
 
 !
@@ -6313,6 +6424,7 @@ implicit none
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	call qqqfilt(1,0,0,0)
 	call qqqfilt(2,0,0,0)
+        call chk_tmpdir
 
 	if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
 	  print *,'***************************************************'
@@ -6694,6 +6806,7 @@ implicit none
 
 	if (mode.eq.1) then
       call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
+      call chk_toctoc(lnkdiun(1),lnkdiun(idx_ozsrt))
    endif
 	iopc= fstopc('MSGLVL','INFORMS',.false.)
 	do i=1,niun
@@ -6714,7 +6827,7 @@ implicit none
 	else
 #if defined (unix)
          if (mode.eq.2) then
-	      write (6, *)        'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
+	      write (6, *) 'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
 	      write (6, *) 'DANS CETTE VERSION DE PGSM'
 	   endif
 #endif
@@ -7762,7 +7875,7 @@ implicit none
 !         print *, 'npack_orig=', npack_orig, 'npack=', npack
          if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
 
-         if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY') then
+         if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY'.or.cnomvar.eq.'^>'.or.cnomvar.eq.'!!') then
             cycle
          endif
 
