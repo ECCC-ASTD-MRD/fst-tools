@@ -14,8 +14,9 @@ FFLAGS =
 .PRECIOUS:
 
 VER = 2.04
+VERZC = 2.0
 
-default: bemol
+default: bemol zcrop
 
 .ftn90.o:
 	s.compile -abi $(ABI) $(OPTIMIZ) -src $<
@@ -44,6 +45,10 @@ obj: $(OBJECTS)
 bemol: $(OBJECTS)
 	s.compile -o bemol_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_013
 
+zcrop:
+	(cd utils/zcrop; s.compile -o zcrop_$(VERZC)-$(BASE_ARCH) -src zcrop.ftn90 -librmn rmn_013)
+	(cd utils/zcrop; mv zcrop_$(VERZC)-$(BASE_ARCH) ../..)
+
 bemol+: $(OBJECTS)
 	r.build -o bemol+ -obj $(OBJECTS) -librmn rmnbeta
 
@@ -51,5 +56,5 @@ bemol_008: $(OBJECTS)
 	s.compile -o bemol_1.39_008 -obj $(OBJECTS) -librmn rmn_008
 
 clean:
-	/bin/rm -f $(OBJECTS) *.stb *.f90 *~ bemol_$(VER)-$(BASE_ARCH)
-
+	/bin/rm -f $(OBJECTS) *.stb *.f90 *~ bemol_$(VER)-$(BASE_ARCH) zcrop_$(VERZC)-$(BASE_ARCH)
+	(cd utils/zcrop; /bin/rm -f *.o *.f90 *~)
