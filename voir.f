@@ -9,9 +9,9 @@
 *         98.17 - M. Lepine - sept 2007 - reload librmnbeta, correction fichiers > 2G
 *         98.18 - M. Lepine - sept 2007 - reload pour dates etendues 
 *         98.19 - M. Lepine - sept 2008 - reload pour fichier cmcarc remote 
-*         98.20 - M. Lepine - reload librmn_012
-*         98.21 - Dj. Bouhemhem - oct 2012 - reload librmn_013
-*         98.22 - Dj. Bouhemhem - juin 2013 - correction version
+*         98.20 - M. Lepine - dec  2010 - reload avec librmn_012 et codebeta moduledate 
+*         98.21 - M. Lepine - sept 2011 - reload avec librmn_012 et codebeta moduledate_711e, fstd98
+*         98.22 - M. Lepine - juin 2012 - reload avec librmn_013
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
