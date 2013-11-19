@@ -6,7 +6,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = rmnbeta_014
+RMNLIB = rmn_014_rc2a
 FFLAGS =
 
 CFLAGS =
@@ -25,7 +25,7 @@ CPPFLAGS = -I$(ARMNLIB)/include -I$(ARMNLIB)/include/$(EC_ARCH)
 MYLIB = rmn_beta014.a
 .PRECIOUS: $(RMNLIB) $(MALIB)
 
-include $(ARMNLIB)/include/makefile_suffix_rules.inc
+#include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
 VER = 7.6.1
 
