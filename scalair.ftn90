@@ -198,7 +198,7 @@
             if (cnom.eq.'    ') then
                if ((paire(i)(9:10).eq.cnomvar(1:2)).or.(paire(i)(13:14).eq.cnomvar(1:2)))  then
                   nunv=nunv + 1
-                  cycle
+                  goto 99999
                endif
             endif
          enddo
@@ -256,6 +256,7 @@
             endif
             deallocate(tmpif1)
          endif
+99999    continue
 !
          if (unefois) goto 23000
 !
