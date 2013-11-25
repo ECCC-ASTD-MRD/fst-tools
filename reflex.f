@@ -127,7 +127,9 @@
 *       M. Lepine, Oct 2001 - Rechargement (bug fix realloc xdfuse) (2.5)
 *       M. Lepine, Jan 2003 - Rechargement avec rmn_x (2.6)
 *       M. Lepine, Mars 2004 - option nsplit pour subdiviser l'output sur plusieurs fichiers
-*       D. Bouhemhem Oct 2012 Rechargement avec rmn_013 (2.7)
+*       M. Lepine, Fevrier 2008 - Rechargement avec librmn_009 (2.8)
+*       M. Lepine, Fevrier 2010 - Terminer avec un code d erreur si le fichier intrant est inexistant (2.9)
+*       D. Bouhemhem, Nov 2013 - Rechargement avec librmn_013 (3.0)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
@@ -155,7 +157,7 @@
       INTEGER NSPLIT,nf
       INTEGER PRIDEF(2, 100), AUXDEF(2, 100), STAT(12)
       CHARACTER*4 CVRSN, CAPPL, suffix
-      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V2.7'/
+      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V3.0'/
       DATA LISTE /'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.',
      %'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.','OXSRT.','DATE',
      %'STATS','RSTR','ERRTOLR','MSGLVL','NSPLIT'/
@@ -207,6 +209,10 @@ c      print *,'Debug+ apres fnom fichier out'
             IF((IER.EQ. 0))THEN
                IER2 = XDFSTA(FICHIN,STAT,12,PRIDEF, 100,AUXDEF, 100,
      %         CVRSN,CAPPL)
+            ELSE
+              WRITE(6,5000) VAL(1)
+              STATUS = 'ERREUR'
+              GOTO 5555
             ENDIF
             IF(( IER.EQ. 0 .AND. IER2.EQ. 0))THEN
                IER = QDFRSTR(FICHIN,FICHOUT)
@@ -233,6 +239,10 @@ c      print *,'Debug+ appel a XDFSTA fichier in'
                      IER2 = XDFSTA(FICHIN,STAT,12,PRIDEF, 100,AUXDEF
      %               , 100,CVRSN,CAPPL)
 c      print *,'Debug+ apres XDFSTA'
+                  ELSE
+                    WRITE(6,5000) VAL(I)
+                    STATUS = 'ERREUR'
+                    GOTO 5555
                   ENDIF
                   IF(( IER.EQ. 0 .AND. IER2.EQ. 0))THEN
 c      print *,'Debug+ appel a XDFUSE'
@@ -281,6 +291,8 @@ c      print *,'Debug+ apres XDFUSE'
                      IER = QDFDIAG(FICHIN)
                   ELSE
                      WRITE(6,5000) VAL(I)
+                     STATUS = 'ERREUR'
+                     GOTO 5555
                   ENDIF
                ENDIF
                FICHIN = FICHIN + 1
@@ -291,8 +303,10 @@ c      print *,'Debug+ apres XDFUSE'
             STATUS = 'ERREUR'
          ENDIF
       ENDIF
-5555  ISTAMP = EXFIN(PROG,STATUS,VAL(12))
-5000  FORMAT(' ON SAUTE FICHIER VIDE OU INEXISTANT: ',A)
+5555  CONTINUE
+      ISTAMP = EXFIN(PROG,STATUS,VAL(12))
+      IF (status == 'ERREUR') call qqexit(1)
+5000  FORMAT(' ERREUR, FICHIER VIDE OU INEXISTANT: ',A)
       STOP
       END
       
