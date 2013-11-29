@@ -177,6 +177,6 @@
       ier = fstfrm(iun_in)
       ier = fstfrm(iun_out)
 
-      ier= exfin('FSTCOMPRESS',' V3.02',  'NON')
+      ier= exfin('FSTCOMPRESS',' V3.04',  'NON')
       stop
       end
