@@ -11,6 +11,8 @@ OPTIMIZ = -O 2
 
 REV = 3.0
 
+LIBRMN = rmn_014
+
 default: absolu
 
 .ftn.o:
@@ -28,7 +30,7 @@ OBJECTS= reflex.o
 FICHIERS= reflex.f
 
 absolu: $(OBJECTS) 
-	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_013
+	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
