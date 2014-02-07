@@ -29,6 +29,8 @@ MYLIB = rmn_beta014.a
 
 VER = 7.6.1
 
+LIBRMN = rmn_014
+
 default: obj pgsm
 
 OBJET = f_pgsm.o c_pgsm.o
@@ -77,10 +79,10 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm: f_pgsm.o c_pgsm.o
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN) -libsys mass
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
