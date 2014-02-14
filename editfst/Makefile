@@ -97,14 +97,15 @@ ip1equiv.o:    ip1equiv.ftn
 #	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 #	
 absolu: $(OBJECTS)
-	s.f90 -o editfst_$(VER)-$(BASE_ARCH) convert_ip123.f90 fstd98.o fst_missing.o DlInterface.o $(OBJECTS) -lrmn_013
+	s.cc -c -O 2 DlInterface.c  fstd98.c  fst_missing.c
+	s.f90 -o editfst_$(VER)-$(BASE_ARCH) convert_ip123.f90 fstd98.o fst_missing.o DlInterface.o $(OBJECTS) -lrmnbeta_014
 
 test.fst:	create_test_file
 	./create_test_file
 
 create_test_file:	create_test_file.f90
 	s.f90 convert_ip123.f90 $< -o $@ -lrmnbeta_014
-	rm test.fst
+	rm -f test.fst
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
@@ -125,4 +126,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o editfst_$(VER)-$(BASE_ARCH) 
+	rm -f *.mod *.o editfst_$(VER)-$(BASE_ARCH)  create_test_file test.fst
