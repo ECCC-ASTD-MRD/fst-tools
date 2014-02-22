@@ -1,1 +1,1 @@
-../../../GITHUB/rmnlib/EXTRAS/fst_missing.c
+EXTRAS/fst_missing.c

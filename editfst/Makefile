@@ -1,8 +1,21 @@
+# check that a compiler architecture is defined
+ifeq "$(BASE_ARCH)" "$(EC_ARCH)"
+$(error FATAL: EC_ARCH is equal to BASE_ARCH, no compiler architecture is defined, ABORTING)
+endif
+# check that environment variable ARMNLIB is present
+ifeq "$(ARMNLIB)" ""
+$(error FATAL: environment variable ARMNLIB is not defined, ABORTING)
+endif
+# check that the suffix rules files is available
+ifeq (,$(wildcard  $(ARMNLIB)/include/makefile_suffix_rules.inc))
+$(error FATAL: file $(ARMNLIB)/include/makefile_suffix_rules.inc not found, ABORTING)
+endif
+
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .c .o
+.SUFFIXES : .ftn .cdk .c .o .f90
 
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 COMPILE = compile
 
@@ -15,7 +28,11 @@ OPTIMIZ = -O 2
 
 VER = 6.19
 
-default: absolu
+RMNLIB = rmnbeta_014
+
+EDITFST = editfst_$(VER)-$(BASE_ARCH)
+
+default: $(EDITFST)
 
 include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
@@ -27,7 +44,6 @@ OBJECTS= \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
 	 weofile.o       zap.o 	         ip1equiv.o
 
-
 FICHIERS= \
 	 copystx.f 	 critsup.f 	 desire.f 	 dmpdes.f \
 	 editfst.f 	 entsort.f 	 exdes.f    	 fermes.f \
@@ -35,8 +51,6 @@ FICHIERS= \
 	 ouvres.f        rewinds.f 	 sautsqi.f 	 sauvdez.f \
 	 select.f 	 setper.f 	 sqicopi.f 	 stdcopi.f \
 	 weofile.f       zap.f
-
-
 
 FTNDECKS= \
 	 copystx.ftn 	 critsup.ftn 	 desire.ftn 	 dmpdes.ftn \
@@ -93,28 +107,36 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
                desrs.cdk       char.cdk
 ip1equiv.o:    ip1equiv.ftn
 
-#absolu: $(OBJECTS)
-#	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
-#	
-absolu: $(OBJECTS)
-	s.cc -c -O 2 DlInterface.c  fstd98.c  fst_missing.c
-	s.f90 -o editfst_$(VER)-$(BASE_ARCH) convert_ip123.f90 fstd98.o fst_missing.o DlInterface.o $(OBJECTS) -lrmnbeta_014
+#
+# a few extra items on top of rmnlib version 014, this will eventually get removed
+#
+EXTRAS = EXTRAS
 
-test.fst:	create_test_file
+convert_ip123.o: $(EXTRAS)/convert_ip123.f90
+
+fst_missing.o: $(EXTRAS)/fst_missing.c
+
+DlInterface.o: $(EXTRAS)/DlInterface.c
+
+fstd98.o: $(EXTRAS)/fstd98.c $(EXTRAS)/if_fstd98.c $(EXTRAS)/qstdir.h  $(EXTRAS)/convert_ip.h
+
+EXTRA_OBJECTS = \
+	convert_ip123.o fstd98.o fst_missing.o DlInterface.o
+
+$(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
+	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -l$(RMNLIB)
+
+all: $(EDITFST) test.fst
+
+test.fst: create_test_file
 	./create_test_file
 
-create_test_file:	create_test_file.f90
-	s.f90 convert_ip123.f90 $< -o $@ -lrmnbeta_014
+create_test_file:	create_test_file.f90 fstd98.o convert_ip123.f90
+	s.f90 convert_ip123.f90 fstd98.o $< -o $@ -l$(RMNLIB)
 	rm -f test.fst
-	
-oldstuff: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
 
-editfst+: $(OBJECTS)
-	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta_011
-
-editfst_gem_strato: $(OBJECTS)
-	r.build -o editfst_gem_strato -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
+tests: editfst_$(VER)-$(BASE_ARCH) test.fst
+	./run_tests.sh editfst_$(VER)-$(BASE_ARCH) test.fst
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 

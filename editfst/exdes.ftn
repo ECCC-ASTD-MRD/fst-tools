@@ -106,6 +106,7 @@ C      write(*,777) cle(i),kind,p,cle8(i)
             endif
             REQ(J,M,NREQ) = CLE(J)
    20    CONTINUE
+         print *,N,' requests copied, m=',m
       ELSE
          REQ( 1,M,NREQ) = BOT(M)                       ! minimum par defaut
          REQ( 2,M,NREQ) = TOP(M)                       ! maximum par defaut

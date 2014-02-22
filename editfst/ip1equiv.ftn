@@ -63,6 +63,7 @@ C     %                 errtol
       character(len=1) :: string
       real, parameter :: errtol=1.0E-6
 
+!      print *,'DEBUG: matching ',ipa8,ipb8
       is_equiv = .false.
       if(ipa8==ipb8) then !  both IPs equal, definitely equivalent
         is_equiv = .true.

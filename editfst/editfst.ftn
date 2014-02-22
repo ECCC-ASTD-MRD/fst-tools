@@ -272,7 +272,7 @@
   
 *     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
       I    = -111  
-      CALL CCARD(KLE, DEF2, DEF1, 144, I)
+      CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
       READ(DEF1(3), '(I2)') EOF
       READ(DEF1(15),'(I8)') LIMITE
       READ(DEF1(25),'(I8)') NRECMIN
@@ -288,8 +288,8 @@
 *     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
 *
       IF (.NOT. SELEC) THEN
-	SELEC = .TRUE.
-	DEF1(10) = '/dev/null'
+        SELEC = .TRUE.
+        DEF1(10) = '/dev/null'
       ENDIF
 
       DEBUG  = (DEF1(13)  .EQ.'DEBUG')
@@ -366,6 +366,7 @@
 *     LIT UN ENSEMBLE DE DIRECTIVES?
 
       IF( SELEC ) THEN
+!         print *,"directive file is ",trim( DEF1(10))
          I = FNOM(5, DEF1(10), 'SEQ', 0)
          IF(DEF1(10) .EQ. '$IN') THEN
 *           mode interactif, attend les directives

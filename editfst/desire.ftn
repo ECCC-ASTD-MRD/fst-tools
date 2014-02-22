@@ -174,10 +174,10 @@ c         IF(DIAG .OR. DEBUG)
 
       nnewip = 0
       i = 1
-      do while (i < nip)
+      do while (i <= nip)
         nnewip = nnewip + 1
         newip(nnewip) = ip(i) ! copier ip -> newip (sous reserve de correction si "p,kind")
-        if(i+1 < nip) then  ! paire possible
+        if(i+1 <= nip) then  ! paire possible
           if(ip(i+1)>=-1031 .and. ip(i+1)<=-1000) then ! paire, car ip(i+1) est un code -(1000+kind)
              p = transfer(ip(i),p)   ! transferer les bits de ip  a p (remplace equivalence)
              kindp = -(ip(i+1)+1000)

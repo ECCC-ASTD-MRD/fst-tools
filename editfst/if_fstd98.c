@@ -1,1 +1,1 @@
-../../../GITHUB/rmnlib/EXTRAS/if_fstd98.c
+EXTRAS/if_fstd98.c

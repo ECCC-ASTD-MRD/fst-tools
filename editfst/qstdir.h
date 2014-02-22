@@ -1,1 +1,1 @@
-../../../GITHUB/rmnlib/EXTRAS/qstdir.h
+EXTRAS/qstdir.h
