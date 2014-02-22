@@ -14,6 +14,7 @@ integer :: status
 print *,'creating standard file for editfst test'
 call fnom(10,'test.fst','STD+RND',0)
 call fstouv(10,'RND')
+call fstopc("PRINTOPT","NINJNK+DATESTAMPO+IPALL+NOIP23+IG1234",0)
 kind1a = 2  ! millibars
 kind1b = 4  ! meters above ground
 kind1c = 6  ! theta

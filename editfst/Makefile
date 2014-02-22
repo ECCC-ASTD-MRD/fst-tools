@@ -28,7 +28,7 @@ OPTIMIZ = -O 2
 
 VER = 6.19
 
-RMNLIB = rmnbeta_014
+RMNLIB = rmn_014
 
 EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
@@ -135,8 +135,8 @@ create_test_file:	create_test_file.f90 fstd98.o convert_ip123.f90
 	s.f90 convert_ip123.f90 fstd98.o $< -o $@ -l$(RMNLIB)
 	rm -f test.fst
 
-tests: editfst_$(VER)-$(BASE_ARCH) test.fst
-	./run_tests.sh editfst_$(VER)-$(BASE_ARCH) test.fst
+tests: $(EDITFST) test.fst
+	./run_tests.sh $(EDITFST) test.fst
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
@@ -148,4 +148,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm -f *.mod *.o editfst_$(VER)-$(BASE_ARCH)  create_test_file test.fst
+	rm -f *.mod *.o $(EDITFST)  create_test_file test.fst

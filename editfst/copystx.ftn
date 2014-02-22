@@ -195,7 +195,7 @@ c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
             GO TO 110
          ENDIF
 
-*        SI LES CRITERES SUPLEMENTAIRES S'APPLIQUENT
+*        SI DES CRITERES SUPLEMENTAIRES S'APPLIQUENT
   100    IF(SUP(8,K).NE.0  .AND.
      X    ((SUP(1,K).NE.-1 .AND. SUP(1,K).NE.NI)  .OR.
      X     (SUP(2,K).NE.-1 .AND. SUP(2,K).NE.NJ)  .OR.
@@ -224,32 +224,30 @@ c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
       IF( .NOT. EXCL ) GO TO 140
   
 *     CONTROLE DE LA MEMOIRE TEMPON AVANT LECTURE
-  120 IF(LNG .GT. NM) THEN
-C         IF(IST .NE. 0) CALL MEMOIRH(BUFL, IST, 0)
+  120 IF(LNG .GT. NM) THEN  ! make sure buffer is large enough to receive data
          IF (allocated(buftemp)) deallocate(buftemp) 
          NM = LNG
          allocate(BUFtemp(NM))
          ist = 1
-C         CALL MEMOIRH(BUFL, IST, NM)
       ENDIF
       I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
       IP(1) = IP1      ! remettre la valeur de ip1 provenant du fstprm
-      IF( ZA ) THEN
-         IF(Z1 .NE. -1)  IP(1) = Z1
-         IF(Z2 .NE. -1)  IP(2) = Z2
-         IF(Z3 .NE. -1)  IP(3) = Z3
-         IF(ZD .NE. -1)  DATE  = ZD
-         IF(ZT .NE. '??') THEN
+      IF( ZA ) THEN    ! we are "zapping"
+         IF(Z1 .NE. -1)  IP(1) = Z1  ! zap ip1
+         IF(Z2 .NE. -1)  IP(2) = Z2  ! zap ip2
+         IF(Z3 .NE. -1)  IP(3) = Z3  ! zap ip3
+         IF(ZD .NE. -1)  DATE  = ZD  ! zap date
+         IF(ZT .NE. '??') THEN   ! zap type
             IF(ZT(1:1) .NE. '?') TYP(1:1) = ZT(1:1)
             IF(ZT(2:2) .NE. '?') TYP(2:2) = ZT(2:2)
          ENDIF
-         IF(ZN .NE. '??') THEN
+         IF(ZN .NE. '??') THEN   ! zap name
             IF(ZN(1:1) .NE. '?') NOM(1:1) = ZN(1:1)
             IF(ZN(2:2) .NE. '?') NOM(2:2) = ZN(2:2)
             IF(ZN(3:3) .NE. '?') NOM(3:3) = ZN(3:3)
             IF(ZN(4:4) .NE. '?') NOM(4:4) = ZN(4:4)
          ENDIF
-         IF(ZE .NE. '????????????') THEN
+         IF(ZE .NE. '????????????') THEN   ! zap ETIKET
             DO 130 I=1,12
                IF(ZE(I:I) .NE. '?') ETI(I:I) = ZE(I:I)
   130          CONTINUE
@@ -258,7 +256,7 @@ C         CALL MEMOIRH(BUFL, IST, NM)
       ip1 = IP(1)
       ip2 = IP(2)
       ip3 = IP(3)
-      if(dryrun) then
+      if(dryrun) then  ! dry run debug mode, say what we would be copying
         i = decode_ip(p1,kind1,p2,kind2,p3,kind3,ip1,ip2,ip3)
         strkind1=kind_to_string(kind1)
         strkind2=kind_to_string(kind2)
@@ -270,14 +268,14 @@ C         CALL MEMOIRH(BUFL, IST, NM)
         endif
 666     format(A,A3,A5,A13,3I14,I12,A2,4I10)
 667     format(A,A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
-        i = 0
-      else
+        i = 0  ! cannot fail
+      else   !  real mode, we write into the output file
         I = FSTECR(BUFtemp, BUFtemp, -NBITS, 3, DATE, DEET,
      X           NPAS, NI, NJ, NK, IP1, IP2, IP3, TYP, NOM,
      X           ETI, GTY, IG1, IG2, IG3, IG4, DTYP, ECR)
       endif
       if (i .lt. 0) then
-         write(6,*) 'EDITFST aborts: write error'
+         write(6,*) 'EDITFST: write error, ABORTING'
          call qqexit(55)
       endif
       COPIES = COPIES + 1
