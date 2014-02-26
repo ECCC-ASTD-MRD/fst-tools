@@ -28,7 +28,7 @@ OPTIMIZ = -O 2
 
 VER = 6.19
 
-RMNLIB = rmn_014
+LIBRMN = rmn_014
 
 EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
@@ -124,15 +124,15 @@ EXTRA_OBJECTS = \
 	convert_ip123.o fstd98.o fst_missing.o DlInterface.o
 
 $(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
-	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -l$(RMNLIB)
+	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -l$(LIBRMN)
 
 all: $(EDITFST) test.fst
 
 test.fst: create_test_file
 	./create_test_file
 
-create_test_file:	create_test_file.f90 fstd98.o convert_ip123.f90
-	s.f90 convert_ip123.f90 fstd98.o $< -o $@ -l$(RMNLIB)
+create_test_file:	create_test_file.f90 $(EXTRA_OBJECTS)
+	s.f90 $< $(EXTRA_OBJECTS) -o $@ -l$(LIBRMN)
 	rm -f test.fst
 
 tests: $(EDITFST) test.fst

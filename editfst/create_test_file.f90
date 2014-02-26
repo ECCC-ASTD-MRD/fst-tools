@@ -45,7 +45,6 @@ do j=1,4
   ip1=63240+(j-1)*100 ; ip2=0 ; ip3 = 0
   call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'YY',name2(j),etiket,'X',0,0,0,0,134,.false.)
 enddo
-
 call fstfrm(10)
 stop
 end
