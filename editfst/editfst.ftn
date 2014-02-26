@@ -260,7 +260,7 @@
 *     X              40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,
 *     X              55,56,57,58,59/
 
-      allocate(def1(145),def2(145))
+      allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b
 
