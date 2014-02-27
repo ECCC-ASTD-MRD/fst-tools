@@ -13,7 +13,7 @@ endif
 
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .c .o .f90
+.SUFFIXES : .ftn .cdk .c .o .f90 .f
 
 SHELL = /bin/bash
 
@@ -34,7 +34,22 @@ EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
 default: $(EDITFST)
 
-include $(ARMNLIB)/include/makefile_suffix_rules.inc
+#include $(ARMNLIB)/include/makefile_suffix_rules.inc
+.ftn.f:
+	s.ftn -c $(OPTIMIZ) -P -src $<
+
+.ftn.o:
+	s.ftn -c $(OPTIMIZ) $(FFLAGS) -src $<
+
+.f90.o:
+	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
+
+.f.o:
+	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
+
+.c.o:
+	s.cc $(OPTIMIZ) $(CFLAGS) -c $<
+
 
 OBJECTS= \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \

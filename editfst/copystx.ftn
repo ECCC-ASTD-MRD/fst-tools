@@ -48,7 +48,8 @@ C      INTEGER      BUFL
      X             FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC,
      X             FSTLUK, FSTWEO, IG4, NBITS, NM,    NPAS, IST
       integer *8   IP(4), p_int8, kind_8, ior
-      intrinsic    ior
+!      integer *8   IP(4), p_int8, kind_8, ior
+!      intrinsic    ior
       integer      IP1,IP2,IP3,kind,p_int
       real         p
       equivalence (p_int,p)
