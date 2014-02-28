@@ -46,7 +46,8 @@
      X             FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC,
      X             FSTLUK, FSTWEO, IG4, NBITS, NPAS
       integer *8   IP(4), p_int8, kind_8, ior
-      intrinsic    ior
+!      integer *8   IP(4), p_int8, kind_8, ior
+!      intrinsic    ior
       integer      IP1,IP2,IP3,kind,p_int
       real         p
       equivalence (p_int,p)
@@ -106,7 +107,7 @@
 !      IP(1)= IOR(p_int8, ishft(kind_8,32))
       IP(1)=IP1
 C      write(*,777) ip1,kind,p,ip(1)
- 777  format('Debug+ cle(i)=',i10,' kind=',i2,' p =',e10.4,' IP(i) =',z16.16)
+ 777  format('Debug+ cle(i)=',i10,' kind=',i2,' p =',e11.4,' IP(i) =',z16.16)
       IP(2)=IP2
       IP(3)=IP3
       IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
