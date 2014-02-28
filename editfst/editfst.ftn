@@ -107,7 +107,7 @@
 *         M. Lepine        Reload avec librmn_013 - v6.17 - Sept 2012
 *         B. Dugas         Correction dates etendues dans zap et copystx - v6.18 - Sept 2012
 *         M. Valin         Ajustements pour traduction IP1/ip2/IP3, librmn_014, dryrun - v6.19 - Fev 2014
-*         M. Valin         refactoring                                                 - v6.19 - Fev 2014
+*         M. Valin         refactoring, fold comdecks into a single module             - v6.19 - Fev 2014
 *
 *
 *LANGAGE  - FTN77
@@ -237,6 +237,7 @@
       INTEGER     FSTOPC, FSTOPL, EXDB, EXFIN, OUVRED, FNOM, I
       integer junk
       LOGICAL     FASTIO
+      character(len=*), parameter :: current_version="v 1.19"
 
 !      DATA KLE /'NNN', 'D:', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
 !     X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
@@ -259,7 +260,7 @@
 !      DATA NFS, NIS, NJS, NKS, GTYPS, IG1S, IG2S, IG3S, IG4S
 !     X    /  0,  -1,  -1,  -1,   ' ',   -1,   -1,   -1,   -1/
 
-      call config_init
+      call config_init   ! initialize values in module "configuration"
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b
@@ -273,42 +274,43 @@
 *     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
       I    = -111  
       CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
-      READ(DEF1(3), '(I2)') EOF
-      READ(DEF1(15),'(I8)') LIMITE
-      READ(DEF1(25),'(I8)') NRECMIN
-      PRINTR = DEF1(11)
-      ND     = DEF1(2)
-      VD     = (DEF1(6) .EQ.'OUI')  .OR.  (DEF1(18).EQ.'OUI') 
-      VS     = (DEF1(20).EQ.'OUI')
-      BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON') 
-      ECR    = (DEF1(9) .EQ.'OUI')  .OR.  (DEF1(21).EQ.'OUI') 
-      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND.
-     X         (DEF1(10).NE.'0')
+      READ(DEF1(3), '(I2)') EOF                                 ! -eof
+      READ(DEF1(15),'(I8)') LIMITE                              ! -c
+      READ(DEF1(25),'(I8)') NRECMIN                             ! -nrecmin
+      PRINTR = DEF1(11)                                         ! -l  fichier pour listing
+      ND     = DEF1(2)                                          ! -d  fichier destination
+      VD     = (DEF1(6) .EQ.'OUI')  .OR.  (DEF1(18).EQ.'OUI')   ! -vd , -v  voir destination
+      VS     = (DEF1(20).EQ.'OUI')                              ! -vs   voir source
+      BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON')   ! -nobox , -n
+      ECR    = (DEF1(9) .EQ.'OUI')  .OR.  (DEF1(21).EQ.'OUI')   ! -ecr , -e
+      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i 
 *
 *     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
 *
-      IF (.NOT. SELEC) THEN
+      IF (.NOT. SELEC) THEN  ! def1(10) = "$IN" si cle non specifiee, selec = .true. par defaut
         SELEC = .TRUE.
         DEF1(10) = '/dev/null'
       ENDIF
 
-      DEBUG  = (DEF1(13)  .EQ.'DEBUG')
-      DRYRUN  = (DEF1(146)  .EQ.'DRYRUN')
-      FASTIO = (DEF1(22).EQ.'OUI') 
+      DEBUG  = (DEF1(13)  .EQ.'DEBUG')       ! -m  (non par defaut)
+      DRYRUN  = (DEF1(146)  .EQ.'DRYRUN')    ! -dryrun  (non par defaut)
+      FASTIO = (DEF1(22).EQ.'OUI')           ! -f  (oui par defaut)
       DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
-      IF((DEF1(16).NE.'NON') .OR. (DEF1(4).NE.'NON') .OR.
-     X   (DEF1(23).NE.'NON') ) THEN   ! -ss -sseq -sf
-         IF(DEF1(23) .NE.'NON') THEN
+      IF((DEF1(16).NE.'NON') .OR.      ! -ss , source is sequential sqi
+     X   (DEF1(4).NE.'NON')  .OR.      ! -sseq , source is sequential
+     X   (DEF1(23).NE.'NON') ) THEN    ! -ss -sseq -sf
+         IF(DEF1(23) .NE.'NON') THEN   ! -sf , source is sequential fortran
             SNOM = 'STD+SEQ+R/O+OLD'
          ELSE
             SNOM = 'STD+SEQ+OLD+R/O'
          ENDIF
-      ELSE
+      ELSE                             ! standard random file
          SNOM = 'STD+RND+OLD+R/O'
       ENDIF
 
-      IF((DEF1(17).NE.'NON') .OR. (DEF1(5).NE.'NON') .OR.
-     X   (DEF1(24).NE.'NON') ) THEN
+      IF((DEF1(17).NE.'NON') .OR.      ! -ds , destination is sequential sqi
+     X   (DEF1(5).NE.'NON')  .OR.      ! -dseq , destination is sequential
+     X   (DEF1(24).NE.'NON') ) THEN    ! -df , destination is sequential fortran
          IF(DEF1(24) .NE.'NON') THEN
             DNOM = 'STD+SEQ+FTN'
          ELSE
@@ -317,25 +319,25 @@
       ELSE
          DNOM = 'STD+RND'
       ENDIF
-      I = FNOM(6, PRINTR, 'SEQ', 0)
+      I = FNOM(6, PRINTR, 'SEQ', 0)    ! open listing file
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.18+','NON')
+         I = EXDB('EDITFST',current_version,'NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.18+   ***'
+         WRITE(6,*)'***   E D I T F S T   '//current_version//'   ***'
       ENDIF
 
 
       IF( DIAG ) THEN
          I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
       ELSE
-         I = FSTOPC('MSGLVL', DEF1(13), .FALSE.)
+         I = FSTOPC('MSGLVL', DEF1(13), .FALSE.)   ! -m
       ENDIF
       IF(DEF1(14) .NE. 'FATALE') THEN
-         I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)
+         I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)   ! -t
       ELSE
-         I = FSTOPC('TOLRNC', DEF1(12), .FALSE.)
+         I = FSTOPC('TOLRNC', DEF1(12), .FALSE.)   ! -k
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
@@ -344,12 +346,12 @@
 *      call c_no_datyp_remap()
 *     Verification du remapping faite directement dans fstecr pour le mode image
 
-*     COMPTEE LES FICHIERS SOURCES
+*     COMPTER LES FICHIERS SOURCES
       DO 10 I=1,120
-         IF(DEF1(I+25) .NE. ' ') NFS = NFS+1
+         IF(DEF1(I+25) .NE. ' ') NFS = NFS+1  ! -s
  10   CONTINUE
       IF(NFS .GT. 0) THEN
-         CALL OUVRES( DEF1(26) )
+         CALL OUVRES( DEF1(26) )    ! ouvrir le premier fichier
          IF(NFSO .EQ. 0) THEN
             PRINT*,' *********************************'
             PRINT*,'***         PAS DE COPIE        ***'
@@ -361,20 +363,18 @@
       ENDIF
    
 *     OUVRE LE FICHIER DESTINATION
-      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )
+      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )   ! -d 
 
-*     LIT UN ENSEMBLE DE DIRECTIVES?
+*     LIRE UN JEU DE DIRECTIVES
 
       IF( SELEC ) THEN
-!         print *,"directive file is ",trim( DEF1(10))
          I = FNOM(5, DEF1(10), 'SEQ', 0)
-         IF(DEF1(10) .EQ. '$IN') THEN
-*           mode interactif, attend les directives
+         IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             INTERAC = .TRUE.
             PRINT*,'DONNEZ VOS DIRECTIVES S.V.P.'
             PRINT*,'TAPEZ  END  POUR INDIQUER LA FIN DES DIRECTIVES'
          ENDIF
-         CALL SELECT 
+         CALL SELECT                    ! process directives
       ENDIF
 
 *     SI PAS DE DIRECTIVES STDCOPI OU SEQCOPI ALORS
@@ -395,17 +395,17 @@
 *     TOUT EST TERMINE , FERME LES FICHIERS
       CALL FERMES
       CALL FERMED
-*     IMPRIME L'INDICATIF DE FIN DU PGM.
+*     IMPRIMER L'INDICATIF DE FIN DU PGM.
    30 IF( BOX ) THEN
          I = EXFIN('EDITFST', ETAT, 'NON')
       ELSE
          IF(ETAT .EQ. 'ABORT') THEN
-            WRITE(6,*)'***   E D I T I O N   A V O R T E   ***'
+            WRITE(6,*)'***   E D I T F S T   A V O R T E   ***'
          ELSE
-            WRITE(6,*)'***   E D I T I O N   T E R M I N E   ***'
+            WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
          ENDIF
       ENDIF
-      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)
+      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
       STOP
       END 
       
