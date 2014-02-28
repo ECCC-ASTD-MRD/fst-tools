@@ -297,7 +297,7 @@
       FASTIO = (DEF1(22).EQ.'OUI') 
       DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
       IF((DEF1(16).NE.'NON') .OR. (DEF1(4).NE.'NON') .OR.
-     X   (DEF1(23).NE.'NON') ) THEN
+     X   (DEF1(23).NE.'NON') ) THEN   ! -ss -sseq -sf
          IF(DEF1(23) .NE.'NON') THEN
             SNOM = 'STD+SEQ+R/O+OLD'
          ELSE
