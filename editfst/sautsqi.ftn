@@ -1,8 +1,8 @@
 *** S/R SAUTSQI
 *        POSITIONNE LE FICHIER SEQUENTIEL DN 
 *        A UN CERTAIN NIVEAU D'EOF LOGIQUE
-  
       SUBROUTINE SAUTSQI(DN, LEV, NL)
+      use configuration
   
       IMPLICIT   NONE
         
@@ -24,12 +24,12 @@
 *
 *LANGUAGE   - FTN77 
 *
-#include "lin128.cdk"
-#include "tapes.cdk"
-#include "logiq.cdk"
-#include "maxprms.cdk"
-#include "char.cdk"
-#include "fiches.cdk"
+!#include "lin128.cdk"
+!#include "tapes.cdk"
+!#include "logiq.cdk"
+!#include "maxprms.cdk"
+!#include "char.cdk"
+!#include "fiches.cdk"
 *
 *MODULES  
       EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 

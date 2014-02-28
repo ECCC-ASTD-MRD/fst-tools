@@ -1,6 +1,6 @@
 *** S/R FERMES FERME  LES FICHIERS SOURCES
       SUBROUTINE FERMES
-  
+      use configuration
       IMPLICIT      NONE
 *
 *AUTEURs
@@ -11,13 +11,13 @@
 *         003         "      "    FEV 14 mode DRYRUN
 *     LANGUAGE FTN77
 *
-#include "maxprms.cdk"
-#include "desrs.cdk"
-#include "key.cdk"
-#include "char.cdk"
-#include "tapes.cdk"
-#include "fiches.cdk"
-#include "logiq.cdk"
+!#include "maxprms.cdk"
+!#include "desrs.cdk"
+!#include "key.cdk"
+!#include "char.cdk"
+!#include "tapes.cdk"
+!#include "fiches.cdk"
+!#include "logiq.cdk"
 *
 *MODULES
       EXTERNAL      FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS

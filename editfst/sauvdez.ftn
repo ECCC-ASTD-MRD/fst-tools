@@ -1,6 +1,6 @@
 *** S/R SAUVDEZ CONTROLE LA PORTEE DES DIRECTIVES APRES COPIE
       SUBROUTINE SAUVDEZ
-  
+      use configuration
       IMPLICIT NONE 
 *
 *AUTEURS
@@ -9,10 +9,10 @@
 *
 *LANGUAGE   - FTN77 
 *
-#include "maxprms.cdk"
-#include "fiches.cdk"
-#include "desrs.cdk"
-#include "char.cdk"
+!#include "maxprms.cdk"
+!#include "fiches.cdk"
+!#include "desrs.cdk"
+!#include "char.cdk"
 *
 *MODULE
       EXTERNAL FSTCVT, ZAP

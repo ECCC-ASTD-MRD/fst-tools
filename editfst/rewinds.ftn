@@ -1,7 +1,7 @@
 *** S/R REWINDS
 *     REWIND LE FICHIER SOURCE AU DEBUT 
       SUBROUTINE REWINDS( DSN, TIPE )
-  
+      use configuration
       IMPLICIT NONE 
       INTEGER  DSN(*), TIPE(*)
   
@@ -19,13 +19,13 @@
 *
 *LANGUAGE   - FTN77 
 *
-#include "lin128.cdk"
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "desrs.cdk"
-#include "tapes.cdk"
-#include "fiches.cdk"
-#include "char.cdk"
+!#include "lin128.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "desrs.cdk"
+!#include "tapes.cdk"
+!#include "fiches.cdk"
+!#include "char.cdk"
 *
 *MODULES
       EXTERNAL      ARGDIMS, FSTRWD, OUVRES, LOW2UP, qqexit

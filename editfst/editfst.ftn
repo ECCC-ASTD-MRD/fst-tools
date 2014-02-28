@@ -4,6 +4,7 @@
 *****************************************
 *********    VERSION  'UNIX'    *********
 *****************************************
+      use configuration
       IMPLICIT NONE 
 *
 *         AUTEURS                                         DATE   VERSION
@@ -106,6 +107,7 @@
 *         M. Lepine        Reload avec librmn_013 - v6.17 - Sept 2012
 *         B. Dugas         Correction dates etendues dans zap et copystx - v6.18 - Sept 2012
 *         M. Valin         Ajustements pour traduction IP1/ip2/IP3, librmn_014, dryrun - v6.19 - Fev 2014
+*         M. Valin         refactoring                                                 - v6.19 - Fev 2014
 *
 *
 *LANGAGE  - FTN77
@@ -134,14 +136,14 @@
 *                   -v                ( un voir de d)
 *                   -nrecmin          ( nombre minimal d'enregistrement)
 *           FICHIERS (25@39 = SOURCE) (3 = DESTINATION)
-#include "maxprms.cdk"
+!#include "maxprms.cdk"
 *               NMR = MAXIMUM DE REGIONS
 *               NMS =    "     " SCORES 
 *               NME =    "     " ETAPES 
 *               NMN =    "     " NIVEAUX
 *               NMM =    "     " MODELES
 *               NMD =    "     " DESIRES/EXCLURES 
-#include "tapes.cdk"
+!#include "tapes.cdk"
 *     - MEOF       - LEVEL D'EOF LOGIQUE A NE PAS PASSER
 *     - COPIES     - NOMBRE D'AJOUTS AU FICHIER DESTINATION EN USAGE
 *     - NDS        - NOMBRE D'ENREGISTREMENT FICHIER SOURCE EN USAGE
@@ -157,7 +159,7 @@
 *     - NFS        -    "   DE FICHIERS SOURCES SOURCES
 *     - NFSO       -    "    "    "        "       "    OUVERTS
 *     - SOURCES    - TABLEAU DES NUMERO DE FICHIER SOURCE
-#include "fiches.cdk"
+!#include "fiches.cdk"
 *     - IST        - INDICATEUR DU PREMIER POINT DE LA MEMOIRE FLOTTANTE
 *     - NP         - NOMBRE DE PARAMETRES DANS SUB. APPELEE PAR DIRECTIVE
 *     - FIXD       - INDIQUE QUE LES ENREGISTREMENTS DU FICHIER SOURCE
@@ -169,7 +171,7 @@
 *     - VD         -    "       "    "    "   "   "    "    DESTINATION
 *     - OUVS       -    "    FICHIER SOURCE EST OUVERT
 *     - OUVD       -    "       "    DESTIN  "     "
-#include "logiq.cdk"
+!#include "logiq.cdk"
 *     - SCRI       - .TRUE. SI DES CRITERES SUPLEMENTAIRE EN FORCE
 *     - XPRES      - .TRUE. POUR COPIE COMPLETE DE SOURCE A DESTINATION
 *     - ESAIS      -    "   SI UNE TENTATIVE DE COPIE A ETE FAITE.
@@ -181,7 +183,7 @@
 *     - DIAG       -    "    " DIAGNOSTIQUES SERONT A IMPRIMER
 *     - INTERC     -    "    " EN MODE INTERACTIF
 *     - ZA         -    "    " ON VEUT MODIFIER UN ETIQUETTE A LA SORTIE
-#include "desrs.cdk"
+!#include "desrs.cdk"
 *     - JOURS      - PERIODE A UTILISER PAR DESIRE/EXCLURE
 *     - NREQ       - NOMBRE DE DIRECTIVES DESIRE/EXCLURE RENCONTREES
 *     - SAUV       -    "    "     "      A CONSERVER APRES COPIE
@@ -205,12 +207,12 @@
 *     - Z3         - IP3  "    "     "     "      "  "
 *     - ZD         - DATE "    "     "     "      "  "
 *     - ZG1@ZG4    - IG1 A IG4 A ZAPPER
-#include "key.cdk"
+!#include "key.cdk"
 *     - KLE        - CLES DE LA SEQUENCE D'APPEL
 *     - DEF1       - VALEURE DES CLES PAR DEFAUT
 *     - DEF2       -     "    "    "  SI PRESENTES
 *     - PRINTR     - DN DU FICHIER DE SORTIE D'IMPRIMENTE
-#include "char.cdk"
+!#include "char.cdk"
 *     - NS         - DN DU FICHIER SOURCE
 *     - ND         -  "  "    "    DESTINATION
 *     - SNOM       - TYPE  PASSE A FNOM FICHIER SOURCE
@@ -236,30 +238,28 @@
       integer junk
       LOGICAL     FASTIO
 
-      DATA KLE /'NNN', 'D:', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
-     X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
-     X          'DS', 'V', 'N', 'VS', 'E', 'F', 'SF', 'DF',
-     X          'NRECMIN', 120*'S:','DRYRUN'/
-      DATA DEF1b/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
-     X          'NON', '$IN', '$OUT', 'FATALE', 'ERRORS', 'FATALE',
-     X          '-1',  'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'OUI',
-     X          'NON', 'NON', '-1', 120*' ',' '/
-      DATA DEF2b/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
-     X          'OUI', '$IN', '$OUT', 'ERRORS', 'INFORM', 'ERRORS',
-     X          '-1',  'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI',
-     X          'OUI', 'OUI', '-1', 120*' ','DRYRUN'/
-      DATA VS, OUVS, OUVD, FIXD, DEBUG, XPRES, SCRI, ESAIS, INTERAC, ZA, DRYRUN
-     X    /11 * .FALSE./
-      DATA JOURS, DESEXC, SATISF,  NS,    ETAT
-     X    /  4*0,  NMD*0,  NMD*0, ' ', 'NORMAL'/
-      DATA NREQ, NEXC, CEOF, SAUV, MEOF, LEOF, NFSO
-     X    /   0,    0,    0,    0,    1,    0,    0/
-      DATA NFS, NIS, NJS, NKS, GTYPS, IG1S, IG2S, IG3S, IG4S
-     X    /  0,  -1,  -1,  -1,   ' ',   -1,   -1,   -1,   -1/
-*      DATA SOURCES /25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-*     X              40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,
-*     X              55,56,57,58,59/
+!      DATA KLE /'NNN', 'D:', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
+!     X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
+!     X          'DS', 'V', 'N', 'VS', 'E', 'F', 'SF', 'DF',
+!     X          'NRECMIN', 120*'S:','DRYRUN'/
+!      DATA DEF1b/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
+!     X          'NON', '$IN', '$OUT', 'FATALE', 'ERRORS', 'FATALE',
+!     X          '-1',  'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'OUI',
+!     X          'NON', 'NON', '-1', 120*' ',' '/
+!      DATA DEF2b/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
+!     X          'OUI', '$IN', '$OUT', 'ERRORS', 'INFORM', 'ERRORS',
+!     X          '-1',  'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI',
+!     X          'OUI', 'OUI', '-1', 120*' ','DRYRUN'/
+!      DATA VS, OUVS, OUVD, FIXD, DEBUG, XPRES, SCRI, ESAIS, INTERAC, ZA, DRYRUN
+!     X    /11 * .FALSE./
+!      DATA JOURS, DESEXC, SATISF,  NS,    ETAT
+!     X    /  4*0,  NMD*0,  NMD*0, ' ', 'NORMAL'/
+!      DATA NREQ, NEXC, CEOF, SAUV, MEOF, LEOF, NFSO
+!     X    /   0,    0,    0,    0,    1,    0,    0/
+!      DATA NFS, NIS, NJS, NKS, GTYPS, IG1S, IG2S, IG3S, IG4S
+!     X    /  0,  -1,  -1,  -1,   ' ',   -1,   -1,   -1,   -1/
 
+      call config_init
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b

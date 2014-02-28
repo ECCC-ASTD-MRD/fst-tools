@@ -1,7 +1,7 @@
 *** S/P STDCOPI - APPELEE VIA DIRECTIVE STDCOPI(S,TYPE,D,TYPE)
 *                 OUVRE LES FICHIERS AU BESOIN, APPEL A COPYSTX
       SUBROUTINE STDCOPI(INPT, TS, OUPT, TD)
-  
+      use configuration
       IMPLICIT NONE 
   
       INTEGER    INPT(*), TS(*), OUPT(*), TD(*)
@@ -22,12 +22,12 @@
 *
 *LANGAGE  - FTN77
 *
-#include "lin128.cdk"
-#include "logiq.cdk"
-#include "tapes.cdk"
-#include "maxprms.cdk"
-#include "char.cdk"
-#include "fiches.cdk"
+!#include "lin128.cdk"
+!#include "logiq.cdk"
+!#include "tapes.cdk"
+!#include "maxprms.cdk"
+!#include "char.cdk"
+!#include "fiches.cdk"
 *
 *MODULERS
       EXTERNAL      ARGDIMS, OUVRES, OUVRED, COPYSTX, DMPDES, SAUVDEZ,

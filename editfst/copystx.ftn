@@ -2,6 +2,7 @@
       SUBROUTINE COPYSTX
       use ISO_C_BINDING
       use convert_ip123
+      use configuration
       IMPLICIT NONE 
   
 *AUTEURS
@@ -25,17 +26,14 @@
 *Revision 014   M. Valin  - Fev  14 - mode dryrun, noveau traitement IP1/2/3
 *
 *LANGAGE  - FTN77
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "desrs.cdk"
-#include "tapes.cdk"
-#include "key.cdk"
-#include "char.cdk"
-#include "fiches.cdk"
-C      COMMON /   / BUFL(1)
-C      INTEGER      BUFL
-      integer, dimension ( : ), allocatable :: buftemp
-      save buftemp
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "desrs.cdk"
+!#include "tapes.cdk"
+!#include "key.cdk"
+!#include "char.cdk"
+!#include "fiches.cdk"
+      integer, dimension ( : ), pointer, save :: buftemp => NULL()
 *     - buftemp    CHAMP DONT LA LONGUEUR VARIE SELON LES RESSOURCES
 *                  NECESSAIRES, LA ROUTINE MEMOIR RESERVE L'ESPACE
 *                  (LONGUEUR INITIALE = 1)
@@ -46,7 +44,7 @@ C      INTEGER      BUFL
       INTEGER      FSTINF, FSTEOF, IG1, XTRA1, NI, I, IREC, DATE, SWA,
      X             FSTPRM, FSTFRM, IG2, XTRA2, NJ, J, DEET,       LNG,
      X             FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC,
-     X             FSTLUK, FSTWEO, IG4, NBITS, NM,    NPAS, IST
+     X             FSTLUK, FSTWEO, IG4, NBITS, NPAS
       integer *8   IP(4), p_int8, kind_8, ior
       intrinsic    ior
       integer      IP1,IP2,IP3,kind,p_int
@@ -67,8 +65,8 @@ C      INTEGER      BUFL
         character(C_CHAR), dimension(*), intent(IN) :: name
         end function
       end interface
-      SAVE         NM, IST
-      DATA         NM, IST / 0, 0/
+      integer, save :: NM=0, IST=0
+!      DATA         NM, IST / 0, 0/
 
       EXCL   = (NEXC.GT.0) .AND. (NREQ.EQ.NEXC)
       OK     = .NOT.FIXD .AND. .NOT.DM1 
@@ -226,12 +224,16 @@ c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
   
 *     CONTROLE DE LA MEMOIRE TEMPON AVANT LECTURE
   120 IF(LNG .GT. NM) THEN  ! make sure buffer is large enough to receive data
-         IF (allocated(buftemp)) deallocate(buftemp) 
+         IF (associated(buftemp)) deallocate(buftemp) 
          NM = LNG
          allocate(BUFtemp(NM))
          ist = 1
       ENDIF
-      I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
+      if(dryrun)then
+        I = 0
+      else
+        I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
+      endif
       IP(1) = IP1      ! remettre la valeur de ip1 provenant du fstprm
       IF( ZA ) THEN    ! we are "zapping"
          IF(Z1 .NE. -1)  IP(1) = Z1  ! zap ip1
@@ -282,7 +284,6 @@ c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
       COPIES = COPIES + 1
       LIMITE = LIMITE - 1
       IF(LIMITE .EQ. 0) GO TO 180
-     
   140 IF(.NOT.BONNE .AND. FIXD) THEN
          IF( DIAG .OR. DEBUG) WRITE(6,*)'*** DATE DE VALIDATION DU ', 
      X     'PREMIER ENREGITREMENT INACCEPTABLE ***'
@@ -295,7 +296,6 @@ c                  write(*,889) MOD((IP(J)-REQ(1,J,K)),REQ(3,J,K))
          IREC = FSTSUI(SOURCES(1), NI, NJ, NK)
          IF(IREC .GE. 0) GO TO 20
       ENDIF
-  
   160 IF(SSEQ) THEN 
          LEOF = FSTEOF(SOURCES(1))
          print*,'apres fsteof leof=',leof

@@ -26,11 +26,7 @@
       INTEGER  RSHIFT, X, Y
 
       RSHIFT(X, Y) = ishft(X, -(Y))
-#if defined (ALL64)
-      NCW          = 8
-#else
       NCW = 4
-#endif
 
 *     PASSE DE HOLLERITH A CARACTERES
       DO 10 K=1,NL

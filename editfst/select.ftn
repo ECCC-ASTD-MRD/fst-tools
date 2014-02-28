@@ -1,6 +1,6 @@
 *** S/R SELECT INTERPRETE DES DIRECTIVES DE L'USAGER
       SUBROUTINE SELECT
-  
+      use configuration
       IMPLICIT NONE 
   
 *AUTEUR       YVON R. BOURASSA JUN 86
@@ -31,11 +31,11 @@
      %       / -1000, -1001, -1002, -1003, -1004, -1005, -1006, -1010, -1017, -1021 /
 *
 *IMPLICITE
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "fiches.cdk"
-#include "desrs.cdk"
-#include "tapes.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "fiches.cdk"
+!#include "desrs.cdk"
+!#include "tapes.cdk"
 **
 
 *     PREPARE LE DICTIONAIRE DE READLX

@@ -1,6 +1,6 @@
 ***S/R CRITSUP DEFIFIT LES CRITERES SUPLEMENTAIRES DE SELECTION
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
-  
+      use configuration
       IMPLICIT NONE 
   
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
@@ -29,11 +29,11 @@
       EXTERNAL FSTCVT
 *
 *IMPLICITES
-#include "maxprms.cdk"
-#include "desrs.cdk"
-#include "logiq.cdk"
-#include "char.cdk"
-#include "fiches.cdk"
+!#include "maxprms.cdk"
+!#include "desrs.cdk"
+!#include "logiq.cdk"
+!#include "char.cdk"
+!#include "fiches.cdk"
 **
       INTEGER  I, FSTCVT
       CHARACTER*2 TV

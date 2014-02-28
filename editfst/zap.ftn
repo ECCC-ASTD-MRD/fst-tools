@@ -1,7 +1,7 @@
 *** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
 *
       SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
-  
+      use configuration
       IMPLICIT NONE 
   
       INTEGER  TV, NV, LBL(*), DATE, IP1, IP2, IP3
@@ -23,11 +23,11 @@
 *  "     IP2  -  IP2
 *  "     IP3  -  IP3
 *
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "fiches.cdk"
-#include "char.cdk"
-#include "desrs.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "fiches.cdk"
+!#include "char.cdk"
+!#include "desrs.cdk"
 *MODULE
 *  
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR

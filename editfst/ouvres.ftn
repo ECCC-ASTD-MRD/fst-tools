@@ -1,6 +1,6 @@
 *** S/R OUVRES OUVRE UN FICHIER SOURCE
       SUBROUTINE OUVRES( DN ) 
-  
+      use configuration
       IMPLICIT      NONE
       CHARACTER*(*) DN(120)
   
@@ -17,12 +17,12 @@
 *         005  M. Lepine   Juil 2005, limite du nombre de fichiers a 120
 *LANGUAGE FTN77
 *
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "key.cdk"
-#include "char.cdk"
-#include "tapes.cdk"
-#include "fiches.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "key.cdk"
+!#include "char.cdk"
+!#include "tapes.cdk"
+!#include "fiches.cdk"
 *
 *MODULES
       EXTERNAL FSTNOL, FSTVOI, FSTRWD, FERMES, FERMED

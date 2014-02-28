@@ -1,6 +1,6 @@
 ***   FUNCTION OUVRE UN FICHIER DESTINATION
       FUNCTION OUVRED( DN ) 
-  
+      use configuration
       IMPLICIT      NONE
       INTEGER       OUVRED
       CHARACTER*(*) DN
@@ -24,12 +24,12 @@
 *
 *LANGUAGE FTN77
 *
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "key.cdk"
-#include "char.cdk"
-#include "tapes.cdk"
-#include "fiches.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "key.cdk"
+!#include "char.cdk"
+!#include "tapes.cdk"
+!#include "fiches.cdk"
 *
 *MODULES
       EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit

@@ -1,6 +1,6 @@
 *** S/R SETPER ETABLIR UNE DATE (DEBUT/FIN DE PERIODE)
       SUBROUTINE SETPER(DN, ECART, DUREE, DELTA)
-  
+      use configuration
       IMPLICIT NONE 
   
       INTEGER    DN(*), ECART, DUREE, DELTA
@@ -22,11 +22,11 @@
 *
 *LANGUAGE   - FTN77 
 *
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "lin128.cdk"
-#include "desrs.cdk"
-#include "fiches.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "lin128.cdk"
+!#include "desrs.cdk"
+!#include "fiches.cdk"
 *
 *MODULES  
       EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC,

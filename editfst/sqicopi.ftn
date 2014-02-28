@@ -1,6 +1,6 @@
 *** S/R SQICOPI COPIE UN FICHIER SEQUENTIEL SQI DANS UN FICHIER STANDARD
       SUBROUTINE SQICOPI(INPT, OUPT, TD, PR, TO, PS, NB)
-  
+      use configuration
       IMPLICIT   NONE
       INTEGER    INPT(*), OUPT(*), TD(*), PR, TO, PS, NB
 *
@@ -25,13 +25,13 @@
 *
 *LANGUAGE   - FTN77 
 *
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "lin128.cdk"
-#include "fiches.cdk"
-#include "desrs.cdk"
-#include "char.cdk"
-#include "tapes.cdk"
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "lin128.cdk"
+!#include "fiches.cdk"
+!#include "desrs.cdk"
+!#include "char.cdk"
+!#include "tapes.cdk"
 *
 *MODULES  
       EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES,
