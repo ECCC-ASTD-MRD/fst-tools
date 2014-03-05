@@ -18,8 +18,6 @@ module configuration
       character *128 , save :: NS=' ', ND
       character *15  , save :: SNOM, DNOM
 
-      character(len=4096) ,dimension(:), pointer, save:: def1,     def2
-      character(len=4096), save :: PRINTR
       integer, parameter :: NCCARDKEYS=146   ! dimension for program options (processed by ccard)
       character(len=8), dimension(NCCARDKEYS), save ::    &
       kle = (/ 'NNN     ', 'D:      ', 'EOF     ', 'SSEQ    ', 'DSEQ    ', 'VD      ', &
@@ -51,8 +49,8 @@ module configuration
 !     req(,4,) DATE
 
       integer, save ::  NREQ=0, SAUV=0, DESEXC(NMD), SATISF(NMD),                    &
-                        NEXC=0, SUP(8,NMD), NIS=-1, NJS=-1, NKS=-1,                         &
-                        IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),            &
+                        NEXC=0, SUP(8,NMD), NIS=-1, NJS=-1, NKS=-1,                  &
+                        IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),    &
                         REQE(NMD), Z1, Z2, Z3, ZD
       integer, save ::  NP
       integer, save ::  MEOF=1, COPIES, NDS, NDD, EOF, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0,   SOURCES(120), NRECMIN
@@ -60,10 +58,10 @@ module configuration
       logical, save :: SCRI=.false., XPRES=.false., ESAIS=.false.,      &
                        DM1, DEBUG=.false., SELEC, BOX, DIAG,            &
                        INTERAC=.false., ZA=.false., DRYRUN=.false.,     &
-                       FIXD=.false., ECR, SSEQ=.false., VS=.false.,             &
+                       FIXD=.false., ECR, SSEQ=.false., VS=.false.,     &
                        OUVS=.false., DSEQ, VD, OUVD=.false.
 contains
-subroutine config_init
+subroutine config_init  ! initialisation des tableaux 
   req     = 0
   jours   = 0
   desexc  = 0

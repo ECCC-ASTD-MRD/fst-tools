@@ -35,8 +35,8 @@
       EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 
 *
 **
-      INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL,
-     X              I, J, K, L, M
+      INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL
+      INTEGER       I, J, K, L, M
       CHARACTER*128 CLE
       CHARACTER*15  SORTE, TAPE
       CHARACTER*3   DND
@@ -100,12 +100,10 @@
   600    FORMAT(' SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
       ENDIF       
 *     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
-   10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0)
-     X   GOTO 10
+   10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 10
       M = FSTEOF(J) 
       IF(M.LT.1 .OR. M.GT.15) THEN
-         PRINT*,' MAUVAISE MARQUE DE FIN DE FICHIER =',M,
-     X          ' RENCONTREE DANS TAPE=',J
+         PRINT*,' MAUVAISE MARQUE DE FIN DE FICHIER =',M,' RENCONTREE DANS TAPE=',J
          CALL qqexit(64)
       ENDIF
       IF(DIAG .OR. DEBUG) WRITE(6,*)'RENCONTRE UN EOF #',M

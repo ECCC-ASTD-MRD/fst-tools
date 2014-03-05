@@ -50,8 +50,7 @@
             IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT SEQUENTIEL'
          ELSE
             OUVRED = FSTNBR( 3 )
-            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT RANDOM ',
-     X                         'TALIIE =',OUVRED
+            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT RANDOM ','TALIIE =',OUVRED
          ENDIF
          RETURN
       ENDIF

@@ -40,8 +40,7 @@
          REQE(N) = 0
          REQT(N) = 0
          DO 30 J=1,10
-            I = FSTCVT(-1, -1, -1, -1, NOMS(J,N), TYPS(J,N), ETIS(J,N),
-     X              GTYS(N), .TRUE.)
+            I = FSTCVT(-1, -1, -1, -1, NOMS(J,N), TYPS(J,N), ETIS(J,N), GTYS(N), .TRUE.)
    30       CONTINUE
 *     CONTE LES EXCLUSIONS QUI RESTENT EN FORCE
       NEXC = 0

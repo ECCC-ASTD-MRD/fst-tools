@@ -29,8 +29,7 @@
 !#include "fiches.cdk"
 *
 *MODULES  
-      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC,
-     X              LOW2UP
+      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC, LOW2UP
 *
 **
       INTEGER       IOPDATM, ARGDIMS, DTG(14), I, K

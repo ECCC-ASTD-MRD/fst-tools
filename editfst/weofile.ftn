@@ -62,8 +62,7 @@
 
       IF(NP.GT.1) THEN
          IF(MARC.GT.14 .OR. MARC.LT.1) THEN
-            WRITE(6,*)'MARQUE DE FIN DE FICHIER LOGIQUE ',MARC,
-     X                ' INACCEPTABLE, DOIT ETRE >0 ET <15.'
+            WRITE(6,*)'MARQUE DE FIN DE FICHIER LOGIQUE ',MARC,' INACCEPTABLE, DOIT ETRE >0 ET <15.'
             IF( INTERAC ) THEN
                RETURN
             ELSE

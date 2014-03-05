@@ -34,11 +34,11 @@
 !#include "tapes.cdk"
 *
 *MODULES  
-      EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES,
-     X              FSTINF,  FSTEOF, ARGDIMS, FERMES, LOW2UP
-      INTEGER       FSTINF,  FSTEOF, ARGDIMS, OUVRED, NI, NJ, NK,
-     X              N, M, I, J,
-     X              PRE, CSD,  POS
+      EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES
+      EXTERNAL      FSTINF,  FSTEOF, ARGDIMS, FERMES, LOW2UP
+      INTEGER       FSTINF,  FSTEOF, ARGDIMS, OUVRED, NI, NJ, NK
+      INTEGER       N, M, I, J
+      INTEGER       PRE, CSD,  POS
       CHARACTER*128 DD
   
 *     INITIALISATION
@@ -119,8 +119,7 @@
   
       IF(PRE .GT. 0) THEN
 *        SAUTE AU PROCHAIN EOF NIVEAU PRE
-   90    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0)
-     X      GOTO 90
+   90    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 90
          LEOF = FSTEOF(J)
          IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
@@ -144,8 +143,7 @@
 *     SAUTE DES MARQUES DE FIN DE FICHIER LOGIQUES APRES COPIE
       IF(LEOF .LT. POS) THEN
 *        SAUTE AU PROCHAIN EOF NIVEAU POS
-  100    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0)
-     X      GOTO 100
+  100    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 100
          LEOF = FSTEOF(J)
          IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN

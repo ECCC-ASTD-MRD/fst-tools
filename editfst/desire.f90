@@ -1,65 +1,63 @@
-*** S/P DESIRE - EXTRACTION DES ARGUMENTS D'UNE DIRECTIVE "DESIRE"
+!** S/P DESIRE - EXTRACTION DES ARGUMENTS D'UNE DIRECTIVE "DESIRE"
 
       SUBROUTINE DESIRE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       use configuration
       IMPLICIT NONE 
   
-      INTEGER  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10),
-     X         LBL(20)
-*     AUTEUR YVON R. BOURASSA JAN 86
-*              "  "      "    OCT 90 VERSION QLXINS
-*              "  "      "    FEV 91 BUG DECODING ETIKET
-*Revision 003   M. Lepine - mars 98 - extensions pour fstd98
-*Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
-*Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
-*Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3
-*     LANGUAGE FTN77
-*  
-*ARGUMENTS
-* ENTRE   TC   -  1 A 10 TYPES DE CHAMPS ( 1 CHARACTERE )
-*   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CHARACTERES )
-*   "     LBL  -  1 A 10 ETIQUETTES ( 1 @A8 CHARACTERES )
-*   "     DATE -  1 A 10 DATES OU INTERVALE AVEC SAUT
-*   "     IP1  -  1 A 10 IP1    "      "      "    "
-*   "     IP2  -  1 A 10 IP2    "      "      "    "
-*   "     IP3  -  1 A 10 IP3    "      "      "    "
+      INTEGER  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(20)
+!     AUTEUR YVON R. BOURASSA JAN 86
+!              "  "      "    OCT 90 VERSION QLXINS
+!              "  "      "    FEV 91 BUG DECODING ETIKET
+!Revision 003   M. Lepine - mars 98 - extensions pour fstd98
+!Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
+!Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
+!Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3
+!     LANGUAGE FTN77
+!  
+!ARGUMENTS
+! ENTRE   TC   -  1 A 10 TYPES DE CHAMPS ( 1 CHARACTERE )
+!   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CHARACTERES )
+!   "     LBL  -  1 A 10 ETIQUETTES ( 1 @A8 CHARACTERES )
+!   "     DATE -  1 A 10 DATES OU INTERVALE AVEC SAUT
+!   "     IP1  -  1 A 10 IP1    "      "      "    "
+!   "     IP2  -  1 A 10 IP2    "      "      "    "
+!   "     IP3  -  1 A 10 IP3    "      "      "    "
 !#include "maxprms.cdk"
 !#include "desrs.cdk"
 !#include "lin128.cdk"
 !#include "logiq.cdk"
 !#include "fiches.cdk"
 !#include "char.cdk"
-*
-*MODULES
-      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, EXDES,
-     X         HOLACAR
-**  
+!
+!MODULES
+      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, EXDES, HOLACAR
+!*  
       INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, D, LIS(10)
 !      DATA     LIS/10*0/
       integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
 
       D = -1   ! desire  si D==0 exclure (voir entry plus bas)
    10 IF(NREQ .EQ. NMD) THEN
-c         IF(DIAG .OR. DEBUG)
+!         IF(DIAG .OR. DEBUG)
          PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
          RETURN
       ENDIF
-      if ((argdims(1) .gt. 10) .or. (argdims(2) .gt. 10) .or.
-     %    (argdims(3) .gt. 10) .or. (argdims(4) .gt. 10) .or.
-     %    (argdims(5) .gt. 10) .or. (argdims(6) .gt. 10) .or.
-     %    (argdims(7) .gt. 10)) then
+      if ((argdims(1) .gt. 10) .or. (argdims(2) .gt. 10) .or.   &
+          (argdims(3) .gt. 10) .or. (argdims(4) .gt. 10) .or.   &
+          (argdims(5) .gt. 10) .or. (argdims(6) .gt. 10) .or.   &
+          (argdims(7) .gt. 10)) then
          PRINT*, '** MAXIMUM DE 10 ELEMENTS POUR UN ARGUMENT DE SELECTION **' 
          PRINT *,'** SEULS LES 10 PREMIERS ELEMENTS SERONT TRAITES        **'
          PRINT *,'** UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE **'
       endif
   
-*     COMPTE LES DIRECTIVES DESIRE/EXCLURE
+!     COMPTE LES DIRECTIVES DESIRE/EXCLURE
       IF(D .EQ. 0) NEXC = NEXC + 1
       NREQ = NREQ+1 
   
-*     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
+!     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
       SATISF(NREQ) = 0
-*     INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
+!     INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
       DESEXC(NREQ) = D
   
       DO 20 J=1,4
@@ -111,21 +109,19 @@ c         IF(DIAG .OR. DEBUG)
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
          REQN(NREQ) = ARGDIMS(2)
          DO 100 J=1, ARGDIMS(2)
-            I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY,
-     X                .TRUE.)
+            I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY, .TRUE.)
   100       CONTINUE
          IF( DEBUG ) PRINT*,'NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
       ENDIF
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
          REQT(NREQ) = ARGDIMS(1)
          DO 120 J=1, ARGDIMS(1)
-            I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY,
-     X                .TRUE.)
+            I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY, .TRUE.)
   120       CONTINUE
          IF( DEBUG ) PRINT*,'TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
       ENDIF
   
-*     APPLIQUER LES CRITERES SUPPLEMENTAIRES AU BESOIN
+!     APPLIQUER LES CRITERES SUPPLEMENTAIRES AU BESOIN
       IF( SCRI ) THEN
          SUP(8,NREQ) = 1
          SUP(1,NREQ) = NIS
@@ -139,13 +135,13 @@ c         IF(DIAG .OR. DEBUG)
       ENDIF
       RETURN
   
-*     POUR CHOISIR LES CHAMPS NON VOULUS
+!     POUR CHOISIR LES CHAMPS NON VOULUS
       ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       D = 0
       GO TO 10
   
       contains
-*** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
+!** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
 ! transformer la liste ip pouvant contenir des paires valeur/kind
 ! en liste de ip entiers
       subroutine ip_to_newip(ip,newip,nip,nnewip)
@@ -155,19 +151,19 @@ c         IF(DIAG .OR. DEBUG)
       integer, intent(OUT) :: nnewip
       integer, intent(IN), dimension(nip) :: ip
       integer, intent(OUT), dimension(*) :: newip
-*
-*AUTEUR M. Valin - fev 2014 (d'apres ancien sous-programme ip1_to_newip1)
-*
-*LANGUAGE Fortran 90
-*  
-*ARGUMENTS
-* Entree  ip     -  liste de niveaux encodes ou non
-*   "     nip    -  dimension de ip
-* Sortie  newip  -  liste des niveaux encodes (entiers)
-*   "     nnewip -  nombre de valeurs dans newip
-*
-*
-**  
+!
+!AUTEUR M. Valin - fev 2014 (d'apres ancien sous-programme ip1_to_newip1)
+!
+!LANGUAGE Fortran 90
+!  
+!ARGUMENTS
+! Entree  ip     -  liste de niveaux encodes ou non
+!   "     nip    -  dimension de ip
+! Sortie  newip  -  liste des niveaux encodes (entiers)
+!   "     nnewip -  nombre de valeurs dans newip
+!
+!
+!*  
       integer :: i, kindp
       character(len=12) :: dummy
       real :: p

@@ -61,8 +61,7 @@
       ENDIF
       IF( OUVS ) THEN
          I = FSTRWD( SOURCES )
-         IF(DEBUG .OR. INTERAC) 
-     X      WRITE(6,*)' LE FICHIER ',DN,' POSITIONNNE AU DEBUT'
+         IF(DEBUG .OR. INTERAC)  WRITE(6,*)' LE FICHIER ',DN,' POSITIONNNE AU DEBUT'
       ELSE
          IF( INTERAC ) THEN
             WRITE(6,*)' LE FICHIER ',DN,' PAS OUVERT'

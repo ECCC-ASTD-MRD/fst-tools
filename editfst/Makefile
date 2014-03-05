@@ -2,18 +2,10 @@
 ifeq "$(BASE_ARCH)" "$(EC_ARCH)"
 $(error FATAL: EC_ARCH is equal to BASE_ARCH, no compiler architecture is defined, ABORTING)
 endif
-# check that environment variable ARMNLIB is present
-ifeq "$(ARMNLIB)" ""
-$(error FATAL: environment variable ARMNLIB is not defined, ABORTING)
-endif
-# check that the suffix rules files is available
-ifeq (,$(wildcard  $(ARMNLIB)/include/makefile_suffix_rules.inc))
-$(error FATAL: file $(ARMNLIB)/include/makefile_suffix_rules.inc not found, ABORTING)
-endif
 
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .c .o .f90 .f
+.SUFFIXES : .ftn .cdk .c .o .f90 .f .F90
 
 SHELL = /bin/bash
 
@@ -26,7 +18,7 @@ CFLAGS =
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 
-VER = 6.19
+VER = 6.20
 
 LIBRMN = rmn_014
 
@@ -36,10 +28,13 @@ default: $(EDITFST)
 
 #include $(ARMNLIB)/include/makefile_suffix_rules.inc
 .ftn.f:
-	s.ftn -c $(OPTIMIZ) -P -src $<
+	s.ftn -c -DRELEASE="'$(VER)'" -P -src $<
 
 .ftn.o:
-	s.ftn -c $(OPTIMIZ) $(FFLAGS) -src $<
+	s.ftn -c -DRELEASE="'$(VER)'" $(OPTIMIZ) $(FFLAGS) -src $<
+
+.F90.o:
+	s.f90 -c -DRELEASE="'$(VER)'" $(OPTIMIZ) $(FFLAGS) -src $<
 
 .f90.o:
 	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<

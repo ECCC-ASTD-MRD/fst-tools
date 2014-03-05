@@ -30,8 +30,7 @@
 !#include "fiches.cdk"
 *
 *MODULERS
-      EXTERNAL      ARGDIMS, OUVRES, OUVRED, COPYSTX, DMPDES, SAUVDEZ,
-     X              LOW2UP,  qqexit
+      EXTERNAL      ARGDIMS, OUVRES, OUVRED, COPYSTX, DMPDES, SAUVDEZ, LOW2UP,  qqexit
       INTEGER       ARGDIMS, OUVRED, I
       CHARACTER*128 DD
  
