@@ -16,7 +16,7 @@
 	ip8a = ishft(ip1a,-31)     ! kind + bit de signe
 	ip8b = ishft(ip1b,-31)     ! kind + bit de signe
 
-C        print *,'Debug+ ip1a,ip1b,ip8a,ip8b',ip1a,ip1b,ip8a,ip8b
+!        print *,'Debug+ ip1a,ip1b,ip8a,ip8b',ip1a,ip1b,ip8a,ip8b
 	if (ip8a .ne. ip8b) then
 	   ip1equiv = .false.
 	   return
@@ -32,8 +32,8 @@ C        print *,'Debug+ ip1a,ip1b,ip8a,ip8b',ip1a,ip1b,ip8a,ip8b
 	   pa = -pa
 	   pb = -pb
 	endif
-C	print *,'Debug+ sbit=',sbit,' pa=',pa,' pb=',pb
-C	write(*,777) pa,pb
+!	print *,'Debug+ sbit=',sbit,' pa=',pa,' pb=',pb
+!	write(*,777) pa,pb
  777	format('Debug+ pa=',z16.16,' pb=',z16.16) 
 	if (pb .eq. 0.) then
 	   if (pa .eq. 0.) then
@@ -43,12 +43,12 @@ C	write(*,777) pa,pb
 	   endif
 	else
 	   if (abs(1- pa/pb) .lt. errtol) then
-C	      print *,'Debug+ 1- pa/pb=',abs(1- pa/pb),' errtol=',
-C     %                 errtol
+!	      print *,'Debug+ 1- pa/pb=',abs(1- pa/pb),' errtol=',
+!     %                 errtol
 	      ip1equiv = .true.
 	   else
-C	      print *,'Debug+ 1- pa/pb=',abs(1- pa/pb),' errtol=',
-C     %                 errtol
+!	      print *,'Debug+ 1- pa/pb=',abs(1- pa/pb),' errtol=',
+!     %                 errtol
 	      ip1equiv = .false.
 	   endif
 	endif

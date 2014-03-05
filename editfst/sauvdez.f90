@@ -1,25 +1,25 @@
-*** S/R SAUVDEZ CONTROLE LA PORTEE DES DIRECTIVES APRES COPIE
+!** S/R SAUVDEZ CONTROLE LA PORTEE DES DIRECTIVES APRES COPIE
       SUBROUTINE SAUVDEZ
-  
+      use configuration
       IMPLICIT NONE 
-*
-*AUTEURS
-*VERSION ORIGINALE -   Y. BOURASSA NOV 89
-*REVISION      001 -   Y. BOURASSA AVR 92 ANULE LE ZAP SI SAUV=0
-*
-*LANGUAGE   - FTN77 
-*
-#include "maxprms.cdk"
-#include "fiches.cdk"
-#include "desrs.cdk"
-#include "char.cdk"
-*
-*MODULE
+!
+!AUTEURS
+!VERSION ORIGINALE -   Y. BOURASSA NOV 89
+!REVISION      001 -   Y. BOURASSA AVR 92 ANULE LE ZAP SI SAUV=0
+!
+!LANGUAGE   - FTN77 
+!
+!#include "maxprms.cdk"
+!#include "fiches.cdk"
+!#include "desrs.cdk"
+!#include "char.cdk"
+!
+!MODULE
       EXTERNAL FSTCVT, ZAP
-*
-**
+!
+!*
       INTEGER  FSTCVT, I, J, N
-*     SI LES DIRECTIVES RESTENT VALIDES
+!     SI LES DIRECTIVES RESTENT VALIDES
       IF( SAUV .LE. 0) THEN
          NP = 1
          CALL ZAP( -1 )
@@ -27,7 +27,7 @@
       ENDIF
 
     
-*     EFFACE TOUTE TRACE DES DESIRE/EXCLURE/CRITSUP INUTILES
+!     EFFACE TOUTE TRACE DES DESIRE/EXCLURE/CRITSUP INUTILES
       NREQ = SAUV
       DO 10 N=SAUV*77+1, 11*4*NMD
          REQ(N,1,1) = 0
@@ -40,10 +40,9 @@
          REQE(N) = 0
          REQT(N) = 0
          DO 30 J=1,10
-            I = FSTCVT(-1, -1, -1, -1, NOMS(J,N), TYPS(J,N), ETIS(J,N),
-     X              GTYS(N), .TRUE.)
+            I = FSTCVT(-1, -1, -1, -1, NOMS(J,N), TYPS(J,N), ETIS(J,N), GTYS(N), .TRUE.)
    30       CONTINUE
-*     CONTE LES EXCLUSIONS QUI RESTENT EN FORCE
+!     CONTE LES EXCLUSIONS QUI RESTENT EN FORCE
       NEXC = 0
       IF(SAUV .GT. 0) THEN
          DO 40 N=1,SAUV

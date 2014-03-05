@@ -1,37 +1,37 @@
-*** S/R DMPDES MET EDITFST EN MODE XPRES SI L'USAGER VEUT TOUT LE FICHIER
-*       IMPRIME L'INTERPRETATION DES DIRECTIVES DESIRE SI EN MODE DEBUG
+!** S/R DMPDES MET EDITFST EN MODE XPRES SI L'USAGER VEUT TOUT LE FICHIER
+!       IMPRIME L'INTERPRETATION DES DIRECTIVES DESIRE SI EN MODE DEBUG
       SUBROUTINE DMPDES
-  
+      use configuration
       IMPLICIT NONE 
   
-*     AUTEUR - Y. R. BOURASSA AVR 86
-*Revision 002   M. Lepine - mars 98 - extensions pour fstd98  
-*     LANGUAGE FTN77
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "desrs.cdk"
-#include "fiches.cdk"
-#include "char.cdk"
+!     AUTEUR - Y. R. BOURASSA AVR 86
+!Revision 002   M. Lepine - mars 98 - extensions pour fstd98  
+!     LANGUAGE FTN77
+!#include "maxprms.cdk"
+!#include "logiq.cdk"
+!#include "desrs.cdk"
+!#include "fiches.cdk"
+!#include "char.cdk"
   
       INTEGER I, J, K, L
   
-*     NOTE UNE TENTATIVE DE COPIE
+!     NOTE UNE TENTATIVE DE COPIE
       ESAIS = .TRUE.
       DM1   = .TRUE.
   
-*     AUCUNE DIRECTIVE ?
+!     AUCUNE DIRECTIVE ?
       IF(NREQ .EQ. 0) THEN
          XPRES = .NOT.SCRI
          IF( DEBUG ) WRITE(6,*)' ON DEMANDE TOUT LE FICHIER '
          RETURN
       ENDIF
   
-*     ANALYSE DES REQUETES
+!     ANALYSE DES REQUETES
       L = 0
       DO 20 J=4,1,-1
          DO 10 K=1,NREQ
             IF(REQ(11,J,K) .GT. 0) THEN 
-*              LISTE DE PARAMETRES
+!              LISTE DE PARAMETRES
                L = 1
                IF( DEBUG ) THEN
                   IF(J.EQ.4) WRITE(6,601) (REQ(I,J,K),I=1,REQ(11,J,K))
@@ -40,7 +40,7 @@
                   IF(J.EQ.3) WRITE(6,607) (REQ(I,J,K),I=1,REQ(11,J,K))
                ENDIF
             ELSEIF(REQ(11,J,K) .EQ. -1)THEN
-*              INTERVALE AVEC SAUT.
+!              INTERVALE AVEC SAUT.
                L = 1
                IF( DEBUG ) THEN
                   IF(J.EQ.4) WRITE(6,611) (REQ(I,J,K),I=1,3)
@@ -49,7 +49,7 @@
                   IF(J.EQ.3) WRITE(6,617) (REQ(I,J,K),I=1,3)
                ENDIF
             ENDIF
-*           SI(J.EQ.4 ET L.EQ.1) LES DATES NE SONT PAS TOUTES =-1
+!           SI(J.EQ.4 ET L.EQ.1) LES DATES NE SONT PAS TOUTES =-1
             IF(J.EQ.4 .AND. L.EQ.1) DM1 = .FALSE. 
    10       CONTINUE
    20    CONTINUE
@@ -57,19 +57,19 @@
       DO 30 K=1,NREQ
     
          IF(REQN(K) .GT. 0) THEN
-*           LISTE DE PARAMETRES NOM
+!           LISTE DE PARAMETRES NOM
             L = 1
             IF( DEBUG ) WRITE(6,603) (NOMS(I,K),I=1,REQN(K))
          ENDIF
          
          IF(REQT(K) .GT. 0) THEN
-*           LISTE DE PARAMETRES TYPVAR
+!           LISTE DE PARAMETRES TYPVAR
             L = 1
             IF( DEBUG ) WRITE(6,604) (TYPS(I,K),I=1,REQT(K))
          ENDIF
          
          IF(REQE(K) .GT. 0) THEN
-*           LISTE DE PARAMETRES ETIKETTES
+!           LISTE DE PARAMETRES ETIKETTES
             L = 1
             IF( DEBUG ) WRITE(6,605) (ETIS(I,K),I=1,REQE(K))
          ENDIF
