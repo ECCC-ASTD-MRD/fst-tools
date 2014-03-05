@@ -1,37 +1,37 @@
-***   FUNCTION OUVRE UN FICHIER DESTINATION
+!**   FUNCTION OUVRE UN FICHIER DESTINATION
       FUNCTION OUVRED( DN ) 
       use configuration
       IMPLICIT      NONE
       INTEGER       OUVRED
       CHARACTER*(*) DN
   
-*ARGUMENTS
-*SORTIE OUVRED - >=0 DIMENSION DU FICHIER OUVERT
-*                <0  ERREUR DE FNOM PAS OUVERT
-*ENTREE DN    -  NOM DU FICHIERUS DESTINATION
-*
-*AUTEUR -       Y. BOURASSA OCT 91 SEPARATION DE OUVRES
-*REVISION  001  "     "     FEV 92 ENLEVE EXTERNAL INUTILE
-*          002  "     "     MAR 92 CHANGE S/R EN FUNCTION
-*                                  CHANGE APPEL A FNOM
-*          003  "     "     MAR 92 DEPLACE LE RETURN QUAND DEJA OUVERT
-*          004  "     "     MAI 92 SKIP ABORT EN INTERACTIF
-*          005  "     "     DEC 94 SI FICHIER DESTINATION EST SEQUENTIEL
-*                                  ON PLACE LE FICHIER A LA FIN AVANT COPIE
-*          006  M. Lepine   Fev 05 Utilisation optionnelle des fichiers remotes
-*          007  M. Lepine   Nov 05 Remplacement de tous les fstabt par qqexit
-*          008  M. Valin    Fev 14 mode DRYRUN
-*
-*LANGUAGE FTN77
-*
+!ARGUMENTS
+!SORTIE OUVRED - >=0 DIMENSION DU FICHIER OUVERT
+!                <0  ERREUR DE FNOM PAS OUVERT
+!ENTREE DN    -  NOM DU FICHIERUS DESTINATION
+!
+!AUTEUR -       Y. BOURASSA OCT 91 SEPARATION DE OUVRES
+!REVISION  001  "     "     FEV 92 ENLEVE EXTERNAL INUTILE
+!          002  "     "     MAR 92 CHANGE S/R EN FUNCTION
+!                                  CHANGE APPEL A FNOM
+!          003  "     "     MAR 92 DEPLACE LE RETURN QUAND DEJA OUVERT
+!          004  "     "     MAI 92 SKIP ABORT EN INTERACTIF
+!          005  "     "     DEC 94 SI FICHIER DESTINATION EST SEQUENTIEL
+!                                  ON PLACE LE FICHIER A LA FIN AVANT COPIE
+!          006  M. Lepine   Fev 05 Utilisation optionnelle des fichiers remotes
+!          007  M. Lepine   Nov 05 Remplacement de tous les fstabt par qqexit
+!          008  M. Valin    Fev 14 mode DRYRUN
+!
+!LANGUAGE FTN77
+!
 !#include "maxprms.cdk"
 !#include "logiq.cdk"
 !#include "key.cdk"
 !#include "char.cdk"
 !#include "tapes.cdk"
 !#include "fiches.cdk"
-*
-*MODULES
+!
+!MODULES
       EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit
 
       INTEGER  FSTOUV, FNOM, FSTNBR, FSTINF, RENDUA, I, J, K
@@ -43,7 +43,7 @@
         ouvd = .true.
         return
       endif
-*     SI DEJA OUVERT COMME DESTINATION, RELE NOMBRE D'ENREGISTREMENTS
+!     SI DEJA OUVERT COMME DESTINATION, RELE NOMBRE D'ENREGISTREMENTS
       IF(DN.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM,'SEQ') .GT. 0) THEN
             OUVRED = 0
@@ -55,7 +55,7 @@
          RETURN
       ENDIF
   
-*     SI DEJA OUVERT COMME SOURCE, RIEN A FAIRE DU TOUT
+!     SI DEJA OUVERT COMME SOURCE, RIEN A FAIRE DU TOUT
       IF(DN.EQ.NS .AND. OUVS) THEN
          PRINT*,'  **************************************'
          PRINT*,' *              ATTENTION               *'
@@ -69,10 +69,10 @@
          CALL qqexit(54)
       ENDIF
 
-*     FERME LE FICHIER DESTINATION D'OUVERT
+!     FERME LE FICHIER DESTINATION D'OUVERT
       IF( OUVD ) CALL FERMED
 
-*     RETOURNE OUVRED >= 0 SI OUVERT
+!     RETOURNE OUVRED >= 0 SI OUVERT
       ier = FNOM(3, DN, DNOM//'R/W+REMOTE', 0)
       IF(ier .EQ. 0) THEN
          OUVRED = FSTOUV(3, DNOM)

@@ -1,46 +1,46 @@
-*** S/R WEOFILE
-*     ECRIT UNE MARQUE DE FIN DE FICHIER LOGIQUE DE NIVO M DANS LE FICHIER
-*     DESTINATION LA POSITION COURANTE. 
-*
+!** S/R WEOFILE
+!     ECRIT UNE MARQUE DE FIN DE FICHIER LOGIQUE DE NIVO M DANS LE FICHIER
+!     DESTINATION LA POSITION COURANTE. 
+!
       SUBROUTINE WEOFILE(OUPT, MARC, TD)
       use configuration
       IMPLICIT NONE 
   
       INTEGER    OUPT(*), MARC, TD(*)
-*
-*ARGUMENTS
-*  ENTRE    - OUPT    - DN FICHIER DESTINATION
-*    "      - MARC    - MARQUE A ECRIRE DANS FICHIER DESTINATION
-*    "      - TD      - TYPE FICHIER DESTINATION (SEQ,STD/SEQ,STD/SQI)
-*
-*LANGUAGE   - FTN77 
-*
-*AUTEURS
-*
-*AUTEURS
-*VERSION ORIGINALE Y. BOURASSA - AVR 86
-*REVISION 001      "     "       OCT 90 ADAPTATION AUX FSTDS.
-*         002      "     "       MAR 92 APPEL A LOW2UP POUR TD
-*         003      "     "       AVR 93 FIX BUG DECODE DNOM
-*         004      "     "       MAI 92 SKIP ABORT SI INTERACTIF
-*         005      M. Lepine     Nov 05 remplacement de fstabt par qqexit
+!
+!ARGUMENTS
+!  ENTRE    - OUPT    - DN FICHIER DESTINATION
+!    "      - MARC    - MARQUE A ECRIRE DANS FICHIER DESTINATION
+!    "      - TD      - TYPE FICHIER DESTINATION (SEQ,STD/SEQ,STD/SQI)
+!
+!LANGUAGE   - FTN77 
+!
+!AUTEURS
+!
+!AUTEURS
+!VERSION ORIGINALE Y. BOURASSA - AVR 86
+!REVISION 001      "     "       OCT 90 ADAPTATION AUX FSTDS.
+!         002      "     "       MAR 92 APPEL A LOW2UP POUR TD
+!         003      "     "       AVR 93 FIX BUG DECODE DNOM
+!         004      "     "       MAI 92 SKIP ABORT SI INTERACTIF
+!         005      M. Lepine     Nov 05 remplacement de fstabt par qqexit
 !#include "lin128.cdk"
 !#include "logiq.cdk"
 !#include "fiches.cdk"
 !#include "maxprms.cdk"
 !#include "char.cdk"
-*
-*MODULES
+!
+!MODULES
       EXTERNAL      ARGDIMS, FSTWEO, OUVRED, qqexit, LOW2UP
-*
-**
+!
+!*
       INTEGER       ARGDIMS, FSTWEO, OUVRED, L, M
       CHARACTER*128 DN
 
       M = 1
       GO TO(30, 20, 10) NP
 
-*     DECODE TYPE DU FICHIER DESTINATION
+!     DECODE TYPE DU FICHIER DESTINATION
    10 IF(TD(1).NE.-1 .AND. OUPT(1).NE.-1) THEN
          WRITE(DNOM, LIN128) (TD(L), L=1,ARGDIMS(3))
          CALL LOW2UP(DNOM, DNOM)
@@ -75,7 +75,7 @@
      
    30 IF(OUPT(1) .NE. -1) THEN
          WRITE(DN,LIN128) (OUPT(L),L=1,ARGDIMS(1))
-*        OUVERTURE LE FICHIER DESTINATION
+!        OUVERTURE LE FICHIER DESTINATION
          L = OUVRED( DN )
       ENDIF
   
@@ -88,7 +88,7 @@
          ENDIF
       ENDIF
 
-*     AJOUTE LA MARQUE LOGIQUE
+!     AJOUTE LA MARQUE LOGIQUE
       L = FSTWEO(3, M)
       IF( DIAG ) WRITE(6,*)' MARQUE ',M,' AJOUTEE AU FICHIER ',ND
   

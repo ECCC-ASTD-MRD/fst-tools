@@ -1,6 +1,6 @@
-*** S/R SAUTSQI
-*        POSITIONNE LE FICHIER SEQUENTIEL DN 
-*        A UN CERTAIN NIVEAU D'EOF LOGIQUE
+!** S/R SAUTSQI
+!        POSITIONNE LE FICHIER SEQUENTIEL DN 
+!        A UN CERTAIN NIVEAU D'EOF LOGIQUE
       SUBROUTINE SAUTSQI(DN, LEV, NL)
       use configuration
   
@@ -8,33 +8,33 @@
         
       INTEGER    DN(*), LEV, NL
   
-*ARGUMENTS
-*  ENTRE    - DN    - DATASET NAME DU FICHIER DESTINATION A POSITIONNER
-*    "      - LEVEL - NIVEAU DE EOF LIGIQUE RECHERCHE [1]
-*    "      - NL    - NOMBRE DE DE CES EOF RECHERCHES 1]
-*
-*AUTEURS
-*VERSION ORIGINALE  C. THIBEAULT, C. CHOUINARD ET M.VALIN (STDSAUT)
-*REVISION 001       Y. BOURASSA MARS 86
-*         002       "      "    NOV 90 VERSION FTN/SQI
-*         003       "      "    FEV 92 LE FICHIER DOIT EXISTER
-*         004       "      "    MAR 92 CORRIGE BUG DANS TEST FSTINF
-*         005       "      "    MAI 92 SKIP ABORT SI EN INTERACTIF
-*         006       M. Lepine   Nov 05 Remplacement de fstabt par qqexit
-*
-*LANGUAGE   - FTN77 
-*
+!ARGUMENTS
+!  ENTRE    - DN    - DATASET NAME DU FICHIER DESTINATION A POSITIONNER
+!    "      - LEVEL - NIVEAU DE EOF LIGIQUE RECHERCHE [1]
+!    "      - NL    - NOMBRE DE DE CES EOF RECHERCHES 1]
+!
+!AUTEURS
+!VERSION ORIGINALE  C. THIBEAULT, C. CHOUINARD ET M.VALIN (STDSAUT)
+!REVISION 001       Y. BOURASSA MARS 86
+!         002       "      "    NOV 90 VERSION FTN/SQI
+!         003       "      "    FEV 92 LE FICHIER DOIT EXISTER
+!         004       "      "    MAR 92 CORRIGE BUG DANS TEST FSTINF
+!         005       "      "    MAI 92 SKIP ABORT SI EN INTERACTIF
+!         006       M. Lepine   Nov 05 Remplacement de fstabt par qqexit
+!
+!LANGUAGE   - FTN77 
+!
 !#include "lin128.cdk"
 !#include "tapes.cdk"
 !#include "logiq.cdk"
 !#include "maxprms.cdk"
 !#include "char.cdk"
 !#include "fiches.cdk"
-*
-*MODULES  
+!
+!MODULES  
       EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 
-*
-**
+!
+!*
       INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL
       INTEGER       I, J, K, L, M
       CHARACTER*128 CLE
@@ -43,7 +43,7 @@
 
       DND   = 'SEQ'
       SORTE = 'STD+SEQ+OLD'
-*     ASSIGNATION DES PARAMETRES PAR DEFAUT ET OUVRE FICHIER
+!     ASSIGNATION DES PARAMETRES PAR DEFAUT ET OUVRE FICHIER
     1 IF(NP .GT. 1) THEN
          LEVEL = LEV
       ELSE
@@ -57,7 +57,7 @@
   
       WRITE(CLE, LIN128) (DN(M), M=1,ARGDIMS(1))
       IF(CLE.EQ.ND .AND. OUVD) THEN
-         IF(INDEX(DNOM, DND). EQ. 0) THEN
+         IF(INDEX(DNOM, DND) .EQ. 0) THEN
             WRITE(6,*)'PROBLEME AVEC FICHIER D= ', ND
             WRITE(6,*)'DEJA OUVERT AVEC   TYPE= ', DNOM
             WRITE(6,*)'TYPE PRESEMT=            ', SORTE
@@ -99,7 +99,7 @@
          WRITE(6,600) I, LEVEL, J, TAPE
   600    FORMAT(' SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
       ENDIF       
-*     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
+!     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
    10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 10
       M = FSTEOF(J) 
       IF(M.LT.1 .OR. M.GT.15) THEN
@@ -115,7 +115,7 @@
       IF(J .EQ. SOURCES(1)) LEOF = M
       RETURN
   
-***   SAUTSEQ OUVRE LE FICHIER 2 (SEQUENTIEL 'SEQ+FTN')
+!**   SAUTSEQ OUVRE LE FICHIER 2 (SEQUENTIEL 'SEQ+FTN')
       ENTRY SAUTSEQ(DN, LEV, NL)
       DND   = 'FTN'
       SORTE = 'STD+SEQ+FTN+OLD'

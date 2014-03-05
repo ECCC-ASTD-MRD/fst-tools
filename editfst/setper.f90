@@ -1,42 +1,42 @@
-*** S/R SETPER ETABLIR UNE DATE (DEBUT/FIN DE PERIODE)
+!** S/R SETPER ETABLIR UNE DATE (DEBUT/FIN DE PERIODE)
       SUBROUTINE SETPER(DN, ECART, DUREE, DELTA)
       use configuration
       IMPLICIT NONE 
   
       INTEGER    DN(*), ECART, DUREE, DELTA
-*
-*ARGUMENTS
-*  ENTRE    - DN    - A) 'OPRUN'
-*                     C) 'YYJJJZZ'
-*                     D) -(CMCSTAMP)
-*    "      - ECART - NOMBRE D'HEURES PAR LEQUEL IF FAUT MODIFIER
-*                     LA DATE QUI VIENT DU FICHIER "DN" (SI PRESENT)
-*    "      - DUREE - DUREE DE LA PERIODE (SI PRESENT)
-*    "      - DELTA - INTERVALE EN HEURES ENTRE LES CAS (SI PRESENT)
-*
-*AUTEURS
-*         Y BOURASSA NOV  90
-*REV 001  "     "    JUIL 91 ACCEPTE LES DATESTAMP CMC *
-*REV 002  "     "    FEV  92 APPEL A LOW2UP AVANT IOPDATM
-*Rev 003  M. Lepine  Nov  05 Remplacement de fstabt par qqexit
-*
-*LANGUAGE   - FTN77 
-*
+!
+!ARGUMENTS
+!  ENTRE    - DN    - A) 'OPRUN'
+!                     C) 'YYJJJZZ'
+!                     D) -(CMCSTAMP)
+!    "      - ECART - NOMBRE D'HEURES PAR LEQUEL IF FAUT MODIFIER
+!                     LA DATE QUI VIENT DU FICHIER "DN" (SI PRESENT)
+!    "      - DUREE - DUREE DE LA PERIODE (SI PRESENT)
+!    "      - DELTA - INTERVALE EN HEURES ENTRE LES CAS (SI PRESENT)
+!
+!AUTEURS
+!         Y BOURASSA NOV  90
+!REV 001  "     "    JUIL 91 ACCEPTE LES DATESTAMP CMC *
+!REV 002  "     "    FEV  92 APPEL A LOW2UP AVANT IOPDATM
+!Rev 003  M. Lepine  Nov  05 Remplacement de fstabt par qqexit
+!
+!LANGUAGE   - FTN77 
+!
 !#include "maxprms.cdk"
 !#include "logiq.cdk"
 !#include "lin128.cdk"
 !#include "desrs.cdk"
 !#include "fiches.cdk"
-*
-*MODULES  
+!
+!MODULES  
       EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC, LOW2UP
-*
-**
+!
+!*
       INTEGER       IOPDATM, ARGDIMS, DTG(14), I, K
       EQUIVALENCE   (K, DTG(14))
       CHARACTER*128 C
 
-*     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE 
+!     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE 
       IF(DN(1) .LT. 0) THEN
          K = -DN(1)
       ELSE
@@ -49,14 +49,14 @@
          ENDIF
       ENDIF
   
-*     SI ON DOIT MODIFIER LA DATE PASSEE
+!     SI ON DOIT MODIFIER LA DATE PASSEE
       IF(NP .GT. 1) CALL INCDAT(K, K, ECART)
       CALL JULSEC(JOURS(1) , K)
       JOURS(2) = 0
       JOURS(3) = 0
       JOURS(4) = 1
   
-*     SI ON A DONNE UNE DATA SIMPLE
+!     SI ON A DONNE UNE DATA SIMPLE
       IF(NP .LT. 3) THEN
          IF( DEBUG ) THEN
             CALL DATMGP( DTG )

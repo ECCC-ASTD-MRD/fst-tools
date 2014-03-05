@@ -1,25 +1,25 @@
-***S/R HOLACAR - UTILITAIRE PERMETTANT DE TRANSFORMER EN HOLLERITH 
-*                LES CARACTERES PASSES VIA DIRECTIVES.
+!**S/R HOLACAR - UTILITAIRE PERMETTANT DE TRANSFORMER EN HOLLERITH 
+!                LES CARACTERES PASSES VIA DIRECTIVES.
 
       SUBROUTINE HOLACAR(LABEL, LIST, NL, STRING, NC)
   
       IMPLICIT   NONE 
       INTEGER    NL, LIST(NL), STRING(NL*3), NC
       CHARACTER*(*) LABEL(NL)
-*
-*AUTEUR   -   Y. BOURASSA  - AVR 91
-*REVISION 001 "      "     - JAN 92 
-*Revision 002   M. Lepine - mars 98 - extensions pour fstd98
-*Revision 003   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
-*LANGAGE  - FTN77
-*
-*ARGUMENTS
-*SORTIE   - LABEL   - ETIKETTES 
-*ENTREE   - LIST    - CHAMP RETOURNEE PAR ARGDOPE.
-*   "     - NL      - DIMENSION DE LABEL ET LIST.
-*   "     - STRING  - CHAINE DE CARACTHERES A DECODER.
-*   "     - NC      - NOMBRE DE CARACTERES ALLOUE POUR LABEL. (on suppose <=12 dans le code)
-*
+!
+!AUTEUR   -   Y. BOURASSA  - AVR 91
+!REVISION 001 "      "     - JAN 92 
+!Revision 002   M. Lepine - mars 98 - extensions pour fstd98
+!Revision 003   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
+!LANGAGE  - FTN77
+!
+!ARGUMENTS
+!SORTIE   - LABEL   - ETIKETTES 
+!ENTREE   - LIST    - CHAMP RETOURNEE PAR ARGDOPE.
+!   "     - NL      - DIMENSION DE LABEL ET LIST.
+!   "     - STRING  - CHAINE DE CARACTHERES A DECODER.
+!   "     - NC      - NOMBRE DE CARACTERES ALLOUE POUR LABEL. (on suppose <=12 dans le code)
+!
       EXTERNAL qqexit
       INTEGER  NCW, I, J, K, L, M
       character *12 temp12
@@ -28,7 +28,7 @@
       RSHIFT(X, Y) = ishft(X, -(Y))
       NCW = 4
 
-*     PASSE DE HOLLERITH A CARACTERES
+!     PASSE DE HOLLERITH A CARACTERES
       DO 10 K=1,NL
          L = RSHIFT(LIST(K), 16)             ! position du debut d'extraction dans string
          I = IAND(255, RSHIFT(LIST(K), 8))   ! nombre de caracteres par entier
@@ -43,11 +43,7 @@
          J = I/NCW
          IF(J*NCW .LT. I) J = J+1             ! nombre de mots a convertir
          M = L+J-1
-#if defined (ALL64)
-         WRITE(LABEL(K), '(2A8)') (STRING(J),J=L,M)
-#else
          WRITE(LABEL(K), '(3A4)') (STRING(J),J=L,M)
-#endif
    10    CONTINUE 
 
       RETURN

@@ -1,38 +1,38 @@
-*** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
-*
+!** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
+!
       SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
       use configuration
       IMPLICIT NONE 
   
       INTEGER  TV, NV, LBL(*), DATE, IP1, IP2, IP3
-*
-*AUTEURS
-*VERSION ORIGINALE Y. BOURASSA JUL 91
-*REVISION      001 "      "    JUL 92 COUPE DW DE DATE
-*              002 "      "    OCT 92 PADING DU LABEL
-*              003 B. Dugas    fev 12 valider date avec newdate
-*              004 M. Valin    fev 14 initialisation de LIS 
-*LANGUAGA FTN77
-*  
-*ARGUMENTS
-*ENTRE   TV   -  TYPEVAR 
-*  "     NV   -  NOMVAR  
-*  "     LBL  -  ETIKET  
-*  "     DATE -  DATE
-*  "     IP1  -  IP1 
-*  "     IP2  -  IP2
-*  "     IP3  -  IP3
-*
+!
+!AUTEURS
+!VERSION ORIGINALE Y. BOURASSA JUL 91
+!REVISION      001 "      "    JUL 92 COUPE DW DE DATE
+!              002 "      "    OCT 92 PADING DU LABEL
+!              003 B. Dugas    fev 12 valider date avec newdate
+!              004 M. Valin    fev 14 initialisation de LIS 
+!LANGUAGA FTN77
+!  
+!ARGUMENTS
+!ENTRE   TV   -  TYPEVAR 
+!  "     NV   -  NOMVAR  
+!  "     LBL  -  ETIKET  
+!  "     DATE -  DATE
+!  "     IP1  -  IP1 
+!  "     IP2  -  IP2
+!  "     IP3  -  IP3
+!
 !#include "maxprms.cdk"
 !#include "logiq.cdk"
 !#include "fiches.cdk"
 !#include "char.cdk"
 !#include "desrs.cdk"
-*MODULE
-*  
+!MODULE
+!  
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR
       INTEGER,     EXTERNAL :: NEWDATE
-**
+!*
       INTEGER      IER,DAT1,DAT2,NDATE
       INTEGER      FSTCVT, ARGDOPE, I, LIS(10)
       CHARACTER *1 G

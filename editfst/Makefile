@@ -26,20 +26,11 @@ EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
 default: $(EDITFST)
 
-#include $(ARMNLIB)/include/makefile_suffix_rules.inc
-.ftn.f:
-	s.ftn -c -DRELEASE="'$(VER)'" -P -src $<
-
-.ftn.o:
-	s.ftn -c -DRELEASE="'$(VER)'" $(OPTIMIZ) $(FFLAGS) -src $<
 
 .F90.o:
 	s.f90 -c -DRELEASE="'$(VER)'" $(OPTIMIZ) $(FFLAGS) -src $<
 
 .f90.o:
-	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
-
-.f.o:
 	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
 
 .c.o:

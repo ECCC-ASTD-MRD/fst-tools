@@ -1,21 +1,21 @@
-*** S/R SELECT INTERPRETE DES DIRECTIVES DE L'USAGER
+!** S/R SELECT INTERPRETE DES DIRECTIVES DE L'USAGER
       SUBROUTINE SELECT
       use configuration
       IMPLICIT NONE 
   
-*AUTEUR       YVON R. BOURASSA JUN 86
-*REVISION 001   "  "      "    OCT 90 VERSION QLXINS
-*         002   "  "      "    JUL 91 DIRECTIVE ZAP
-*         003   "  "      "    DEC 91 QLXINX (NEC)
-*         004   "  "      "    MAI 91 QLXINX (partout sauf CRAY)
-*         005 Mario Lepine     Juil 2001 ip1 en valeurs reels    
-*         006 Mario Lepine     Mars 2003 correction valeur hybrid
-*         006 Mario Lepine     Nov  2005 remplacement de fstabt par qqexit
-*         007 Michel Valin     Fev  2014 ajout de constantes pour les "kind" ip
-*
-*LANGUAGE FTN77
-*
-*MODULES
+!AUTEUR       YVON R. BOURASSA JUN 86
+!REVISION 001   "  "      "    OCT 90 VERSION QLXINS
+!         002   "  "      "    JUL 91 DIRECTIVE ZAP
+!         003   "  "      "    DEC 91 QLXINX (NEC)
+!         004   "  "      "    MAI 91 QLXINX (partout sauf CRAY)
+!         005 Mario Lepine     Juil 2001 ip1 en valeurs reels    
+!         006 Mario Lepine     Mars 2003 correction valeur hybrid
+!         006 Mario Lepine     Nov  2005 remplacement de fstabt par qqexit
+!         007 Michel Valin     Fev  2014 ajout de constantes pour les "kind" ip
+!
+!LANGUAGE FTN77
+!
+!MODULES
       EXTERNAL QLXINX
       EXTERNAL SAUTSEQ, STDCOPI, WEOFILE, SETPER, QLXINS, ZAP
       EXTERNAL EXCLURE, SEQCOPI, REWINDS, DESIRE, qqexit
@@ -30,16 +30,16 @@
       integer  M1005, M1006, M1010, M1017, M1021
       data     M1000, M1001, M1002, M1003, M1004 / -1000, -1001, -1002, -1003, -1004/
       data     M1005, M1006, M1010, M1017, M1021 / -1005, -1006, -1010, -1017, -1021/
-*
-*IMPLICITE
+!
+!IMPLICITE
 !#include "maxprms.cdk"
 !#include "logiq.cdk"
 !#include "fiches.cdk"
 !#include "desrs.cdk"
 !#include "tapes.cdk"
-**
+!*
 
-*     PREPARE LE DICTIONAIRE DE READLX
+!     PREPARE LE DICTIONAIRE DE READLX
       CALL QLXINS(DEBUG  , 'DEBUG'  , DUMY, 1, 1) 
       CALL QLXINS(DIAG   , 'DIAG'   , DUMY, 1, 1) 
       CALL QLXINS(ECR    , 'ECR'    , DUMY, 1, 1) 
@@ -53,7 +53,7 @@
       CALL QLXINS(VD     , 'VOIRD'  , DUMY, 1, 1) 
       CALL QLXINS(VD     , 'VOIR'   , DUMY, 1, 1) 
   
-*     APELLE UN SOUS-PROGRAMME
+!     APELLE UN SOUS-PROGRAMME
 
       CALL QLXINX(DESIRE , 'DESIRE',  NP, 107, 2) 
       CALL QLXINX(CRITSUP, 'CRITSUP', NP, 108, 2) 
@@ -70,7 +70,7 @@
       CALL QLXINX(WEOFILE, 'STDWEOF', NP, 103, 2) 
       CALL QLXINX(ZAP,     'ZAP',     NP, 107, 2)
   
-*     CHANGE UNE CONSTANTE
+!     CHANGE UNE CONSTANTE
       CALL QLXINS(MOIN1  , 'TOUS'   , DUMY, 1, 0) 
       CALL QLXINS(MOIN2  , '@'      , DUMY, 1, 0) 
       CALL QLXINS(MOIN3  , 'DELTA'  , DUMY, 1, 0) 
