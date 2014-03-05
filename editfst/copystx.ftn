@@ -2,6 +2,7 @@
       SUBROUTINE COPYSTX
       use ISO_C_BINDING
       use convert_ip123
+      use format_ip123_kind
       use configuration
       IMPLICIT NONE 
   
