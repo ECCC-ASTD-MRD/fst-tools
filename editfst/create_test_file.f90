@@ -2,7 +2,8 @@ program create_test_file
 use convert_ip123
 implicit none
 integer, dimension(10,10) :: array, work
-integer :: i, j, k
+real, dimension(4000,4000) :: big_array
+integer :: i, j, k, ni, nj, nk
 character(len=4), dimension(4) :: name1 = (/ "UU  ", "VV  ", "GZ  ", "TT  "   /)
 character(len=4), dimension(4) :: name2 = (/ ">>  ", "^^  ", "!!  ", "<>  "   /)
 character(len=12) :: etiket
@@ -10,6 +11,7 @@ integer :: ip1, ip2, ip3
 real :: p1, p2, p3
 integer :: kind1a, kind2, kind3, kind1b, kind1c, kind1d
 integer :: status
+integer, external :: fstlir
 
 print *,'creating standard file for editfst test'
 call fnom(10,'test.fst','STD+RND',0)
@@ -21,7 +23,7 @@ kind1c = 6  ! theta
 kind1d = 1  ! sigma
 kind2 = 10  ! hours
 kind3 = 3   ! arbitrary number
-
+!goto 10   ! if large record test
 do j=1,4
   do i=0,24,6
     do k=200,1000,400
@@ -46,6 +48,19 @@ do j=1,4
   call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'YY',name2(j),etiket,'X',0,0,0,0,134,.false.)
 enddo
 call fstecr(array,work,-16,10,0,0,0,10,10,1,63540,0,0,'XX','HHHH',etiket,'X',0,0,0,0,6,.false.)
+goto 20
+
+10 continue   ! large record test
+etiket='ABCDEFG123456'
+big_array(:,:)=1.5 ; big_array(1,1)=1.0
+call fstecr(big_array,work,-16,10,0,0,0,4000,4000,1,12345,0,0,'XX','HHHH',etiket,'X',0,0,0,0,198,.false.)
+big_array(:,:)=0
+call fstecr(big_array,work,-16,10,0,0,0,4000,4000,1,12346,0,0,'XX','HHHH',etiket,'X',0,0,0,0,2,.false.)
+big_array(:,:)=-1.0
+i=fstlir(big_array,10,ni,nj,nk,-1,etiket,12345,-1,-1,'  ','    ')
+i=fstlir(big_array,10,ni,nj,nk,-1,etiket,12346,-1,-1,'  ','    ')
+
+20 continue
 call fstfrm(10)
 stop
 end

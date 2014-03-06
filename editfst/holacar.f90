@@ -1,49 +1,47 @@
-!**S/R HOLACAR - UTILITAIRE PERMETTANT DE TRANSFORMER EN HOLLERITH 
-!                LES CARACTERES PASSES VIA DIRECTIVES.
+!**S/R HOLACAR - TRANSFORMER EN VRAIES CHAINES DE CARACTERES
+!                LES CARACTERES PASSES VIA DIRECTIVES READLX (STOCKES DANS DES ENTIERS)
 
       SUBROUTINE HOLACAR(LABEL, LIST, NL, STRING, NC)
   
       IMPLICIT   NONE 
-      INTEGER    NL, LIST(NL), STRING(NL*3), NC
-      CHARACTER*(*) LABEL(NL)
+      INTEGER, intent(IN) ::   NL, LIST(NL), STRING(NL*3), NC
+      CHARACTER(len=*), intent(OUT) :: LABEL(NL)
 !
 !AUTEUR   -   Y. BOURASSA  - AVR 91
 !REVISION 001 "      "     - JAN 92 
 !Revision 002   M. Lepine - mars 98 - extensions pour fstd98
 !Revision 003   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
+!Revision 004   M. Valin  - Mars 14 - menage et suppression de l'option entiers 64 bits
 !LANGAGE  - FTN77
 !
 !ARGUMENTS
 !SORTIE   - LABEL   - ETIKETTES 
-!ENTREE   - LIST    - CHAMP RETOURNEE PAR ARGDOPE.
-!   "     - NL      - DIMENSION DE LABEL ET LIST.
-!   "     - STRING  - CHAINE DE CARACTHERES A DECODER.
+!ENTREE   - LIST    - CHAMP RETOURNEE PAR ARGDOPE. (readlx)
+!   "     - NL      - DIMENSION DE LABEL ET LIST (nombre de strings a decoder).
+!   "     - STRING  - CHAINE DE CARACTERES A DECODER.(tasse dans des entiers)
 !   "     - NC      - NOMBRE DE CARACTERES ALLOUE POUR LABEL. (on suppose <=12 dans le code)
 !
       EXTERNAL qqexit
-      INTEGER  NCW, I, J, K, L, M
+      INTEGER  :: I, J, K, L
+      integer, parameter :: NCW = 4  ! stocke dans des entiers a 32 bits par readlx
       character *12 temp12
-      INTEGER  RSHIFT, X, Y
-
-      RSHIFT(X, Y) = ishft(X, -(Y))
-      NCW = 4
+      INTEGER  X, Y
 
 !     PASSE DE HOLLERITH A CARACTERES
       DO 10 K=1,NL
-         L = RSHIFT(LIST(K), 16)             ! position du debut d'extraction dans string
-         I = IAND(255, RSHIFT(LIST(K), 8))   ! nombre de caracteres par entier
+         L = ishft(LIST(K), -16)             ! position du debut d'extraction dans string
+         I = IAND(255, ishft(LIST(K), -8))   ! nombre de caracteres a extraire
          IF(I .GT. NC) THEN
-            WRITE(6,*)' LA VARIABLES LIMITEES A',NC,' CARACTERES'
+            WRITE(6,*)' LIMITE DE',NC,' CARACTERES DEPASSEE :',I
             CALL qqexit(40)
          ENDIF
-         IF(IAND(255, LIST(K)) .NE. 3) THEN  ! ce ne sont pas des caracteres qui cont dans string
-            WRITE(6,*)' ARGUMENT MAL PASSE'
+         IF(IAND(255, LIST(K)) .NE. 3) THEN  ! ce ne sont pas des caracteres (dixit readlx)
+            WRITE(6,*)' ARGUMENT PAS DE TYPE CARACTERE'
             CALL qqexit(41)
          ENDIF
-         J = I/NCW
-         IF(J*NCW .LT. I) J = J+1             ! nombre de mots a convertir
-         M = L+J-1
-         WRITE(LABEL(K), '(3A4)') (STRING(J),J=L,M)
+         J = (I+NCW-1)/NCW             ! nombre de mots de 32 bits
+         WRITE(temp12, '(3A4)') (STRING(J),J=L,L+J-1)
+         LABEL(K) = temp12(1:I)
    10    CONTINUE 
 
       RETURN

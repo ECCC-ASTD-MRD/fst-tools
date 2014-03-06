@@ -10,6 +10,9 @@ module configuration
 !     le nombre maximum de valeurs dans une liste de desiderata
 !     est limite (hardcoded) a 10 ( a corriger eventuellement)
 !
+! GTYS, TYPS, NOMS, ETIS : tables utilisee pour stocker les requetes
+!     GTYS sert pour critere supplementaire type de grille
+!
       character *1   , save :: GTY, GTYPS=' ', GTYS(NMD)
       character *2   , save :: ZT, TYP, TYPS(10,NMD)
       character *4   , save :: ZN, NOM, NOMS(10,NMD)
@@ -35,7 +38,8 @@ module configuration
                'INFORM  ', 'ERRORS  ', '-1      ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', &
                '-1      ',('        ',i = 1,120),  'DRYRUN  '/)
-! table utilisee pour stocker les requetes
+!
+! REQ : table utilisee pour stocker les requetes
       integer*8, save :: JOURS(4),REQ(11,4,NMD)
 ! si REQ(11,...) = -1
 !     REQ(1,...)  valeur de depart
@@ -47,12 +51,20 @@ module configuration
 !     req(,2,) IP2
 !     req(,3,) IP3
 !     req(,4,) DATE
-
+!
+! SUP : table utilisee pour les parametres supplementaires
+!     sup(8,...) == 1 s'il y en a d'associes a la requete
+!     sup(1:7,...) ni.nj.nk.ig1,ig2,ig3,ig4
+!
+! REQN, REQE, REQT : population de NOMS, ETIS, TYPS
+!     DESEXC : flag desire/exclure associe a la requete
+!     SATISF : nb de requetes satisfaites
+!
       integer, save ::  NREQ=0, SAUV=0, DESEXC(NMD), SATISF(NMD),                    &
                         NEXC=0, SUP(8,NMD), NIS=-1, NJS=-1, NKS=-1,                  &
                         IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),    &
                         REQE(NMD), Z1, Z2, Z3, ZD
-      integer, save ::  NP
+      integer, save ::  NP  ! nb de parametres passes lors de l'appel courant a une directive (readlx)
       integer, save ::  MEOF=1, COPIES, NDS, NDD, EOF, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0,   SOURCES(120), NRECMIN
 
       logical, save :: SCRI=.false., XPRES=.false., ESAIS=.false.,      &

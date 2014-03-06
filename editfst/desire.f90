@@ -4,21 +4,21 @@
       use configuration
       IMPLICIT NONE 
   
-      INTEGER  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(20)
+      INTEGER, intent(IN) ::  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(20)
 !     AUTEUR YVON R. BOURASSA JAN 86
 !              "  "      "    OCT 90 VERSION QLXINS
 !              "  "      "    FEV 91 BUG DECODING ETIKET
 !Revision 003   M. Lepine - mars 98 - extensions pour fstd98
 !Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
 !Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
-!Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3
-!     LANGUAGE FTN77
+!Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
+!     LANGUAGE FTN90
 !  
 !ARGUMENTS
-! ENTRE   TC   -  1 A 10 TYPES DE CHAMPS ( 1 CHARACTERE )
-!   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CHARACTERES )
-!   "     LBL  -  1 A 10 ETIQUETTES ( 1 @A8 CHARACTERES )
-!   "     DATE -  1 A 10 DATES OU INTERVALE AVEC SAUT
+! ENTRE   TC   -  1 A 10 TYPES DE CHAMPS ( 1 CARACTERE )
+!   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CARACTERES )
+!   "     LBL  -  1 A 10 ETIQUETTES ( 1 A 12 CARACTERES )
+!   "     DATE -  1 A 10 DATES OU INTERVALLE AVEC SAUT
 !   "     IP1  -  1 A 10 IP1    "      "      "    "
 !   "     IP2  -  1 A 10 IP2    "      "      "    "
 !   "     IP3  -  1 A 10 IP3    "      "      "    "
@@ -36,7 +36,7 @@
 !      DATA     LIS/10*0/
       integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
 
-      D = -1   ! desire  si D==0 exclure (voir entry plus bas)
+      D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
    10 IF(NREQ .EQ. NMD) THEN
 !         IF(DIAG .OR. DEBUG)
          PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
@@ -51,9 +51,9 @@
          PRINT *,'** UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE **'
       endif
   
-!     COMPTE LES DIRECTIVES DESIRE/EXCLURE
-      IF(D .EQ. 0) NEXC = NEXC + 1
-      NREQ = NREQ+1 
+!     COMPTER LES DIRECTIVES DESIRE/EXCLURE
+      IF(D .EQ. 0) NEXC = NEXC + 1   ! compteur pour "exclure"
+      NREQ = NREQ+1                  ! nombre de requetes
   
 !     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
       SATISF(NREQ) = 0
@@ -70,30 +70,30 @@
       IF( DEBUG ) PRINT*,'REQUETE # ',NREQ
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
-         if (argdims(7) .gt. 1) then  ! transformer les paires p/kind en ip
-           call ip_to_newip(ip3,newip3,argdims(7),nip3)
+!         if (argdims(7) .gt. 1) then
+           call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
            CALL EXDES(newip3,  nip3, 3)
-         else
-           CALL EXDES(IP3,  ARGDIMS(7), 3)
-         endif
+!         else
+!           CALL EXDES(IP3,  ARGDIMS(7), 3)
+!         endif
          IF( DEBUG ) PRINT*,'IP3 =',(REQ(I,3,NREQ),I=1,11)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
-         if (argdims(6) .gt. 1) then  ! transformer les paires p/kind en ip
-           call ip_to_newip(ip2,newip2,argdims(6),nip2)
+!         if (argdims(6) .gt. 1) then
+           call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
            CALL EXDES(newip2,  nip2, 2)
-         else
-           CALL EXDES(IP2,  ARGDIMS(6), 2)
-         endif
+!         else
+!           CALL EXDES(IP2,  ARGDIMS(6), 2)
+!         endif
          IF( DEBUG ) PRINT*,'IP2 =',(REQ(I,2,NREQ),I=1,11)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
-         if (argdims(5) .gt. 1) then  ! transformer les paires p/kind en ip
-            call ip_to_newip(ip1,newip1,argdims(5),nip1)
+!         if (argdims(5) .gt. 1) then
+            call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
             CALL EXDES(newip1, nip1, 1)
-         else
-            CALL EXDES(IP1,  ARGDIMS(5), 1)
-         endif
+!         else
+!            CALL EXDES(IP1,  ARGDIMS(5), 1)
+!         endif
          IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
       ENDIF
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE
@@ -102,7 +102,7 @@
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET
          lis = 0
-         REQE(NREQ) = ARGDOPE(3, LIS, 10)  ! nombre de strings
+         REQE(NREQ) = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ETIS(1,NREQ), LIS, REQE(NREQ), LBL, 12)
          IF( DEBUG ) PRINT*,'ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
       ENDIF

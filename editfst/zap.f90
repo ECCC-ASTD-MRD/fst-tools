@@ -4,14 +4,14 @@
       use configuration
       IMPLICIT NONE 
   
-      INTEGER  TV, NV, LBL(*), DATE, IP1, IP2, IP3
+      INTEGER, intent(IN) ::  TV, NV, LBL(*), DATE, IP1, IP2, IP3
 !
 !AUTEURS
 !VERSION ORIGINALE Y. BOURASSA JUL 91
 !REVISION      001 "      "    JUL 92 COUPE DW DE DATE
 !              002 "      "    OCT 92 PADING DU LABEL
 !              003 B. Dugas    fev 12 valider date avec newdate
-!              004 M. Valin    fev 14 initialisation de LIS 
+!              004 M. Valin    fev 14 initialisation de LIS, intent 
 !LANGUAGA FTN77
 !  
 !ARGUMENTS
@@ -39,9 +39,8 @@
       CHARACTER *2 T
       CHARACTER *4 N
       CHARACTER *12 E
-!      DATA         LIS/10*0/
 
-      ZA = .FALSE.
+      ZA = .FALSE.  ! initialize to do nothing values
       ZD = -1
       Z1 = -1
       Z2 = -1
@@ -81,7 +80,7 @@
       ENDIF
    50 IF(LBL(1) .NE. -1) THEN
          lis = 0
-         I = ARGDOPE(3, LIS, 10)
+         I = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ZE, LIS, I, LBL, 12)
          IF(ZE .NE. '????????????') THEN
             ZA = .TRUE.
