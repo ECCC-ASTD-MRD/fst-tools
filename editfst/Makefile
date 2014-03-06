@@ -50,6 +50,9 @@ OBJECTS= configuration.o \
 #
 EXTRAS = EXTRAS
 
+excdes.o:
+	$(EXTRAS)/excdes.c
+
 convert_ip123.o: $(EXTRAS)/convert_ip123.f90
 
 fst_missing.o: $(EXTRAS)/fst_missing.c
@@ -59,7 +62,7 @@ DlInterface.o: $(EXTRAS)/DlInterface.c
 fstd98.o: $(EXTRAS)/fstd98.c $(EXTRAS)/if_fstd98.c $(EXTRAS)/qstdir.h  $(EXTRAS)/convert_ip.h
 
 EXTRA_OBJECTS = \
-	convert_ip123.o fstd98.o fst_missing.o DlInterface.o
+	convert_ip123.o fstd98.o fst_missing.o DlInterface.o excdes.o
 
 $(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
 	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -l$(LIBRMN)
