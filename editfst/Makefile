@@ -50,8 +50,7 @@ OBJECTS= configuration.o \
 #
 EXTRAS = EXTRAS
 
-excdes.o:
-	$(EXTRAS)/excdes.c
+excdes.o: $(EXTRAS)/excdes.c
 
 convert_ip123.o: $(EXTRAS)/convert_ip123.f90
 
