@@ -13,8 +13,10 @@ OPTIMIZ = -O 2
 FFLAGS = 
 .PRECIOUS:
 
-VER = 2.04
-VERZC = 2.0
+VER = 2.05
+VERZC = 2.1
+
+LIBRMN = rmn_014
 
 default: bemol zcrop
 
@@ -43,10 +45,10 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 bemol: $(OBJECTS)
-	s.compile -o bemol_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_013
+	s.compile -o bemol_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn $(LIBRMN)
 
 zcrop:
-	(cd utils/zcrop; s.compile -o zcrop_$(VERZC)-$(BASE_ARCH) -src zcrop.ftn90 -librmn rmn_013)
+	(cd utils/zcrop; s.compile -o zcrop_$(VERZC)-$(BASE_ARCH) -src zcrop.ftn90 -librmn $(LIBRMN))
 	(cd utils/zcrop; mv zcrop_$(VERZC)-$(BASE_ARCH) ../..)
 
 bemol+: $(OBJECTS)

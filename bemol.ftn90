@@ -79,7 +79,7 @@ Program bemol
 
 !--init program variables ---------------------------------------------
 
-  ier =exdb('BEMOL','v1.42','NON')
+  ier =exdb('BEMOL','v2.05','NON')
 
   call init_bemol_options
   call ccard(cle,def,val, nparams, ipos)
