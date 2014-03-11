@@ -13,7 +13,9 @@ CFLAGS =
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 
-VER = 6.18
+VER = 6.19
+
+LIBRMN = rmn_014
 
 default: absolu
 
@@ -97,7 +99,7 @@ ip1equiv.o:    ip1equiv.ftn
 #	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 #	
 absolu: $(OBJECTS)
-	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn rmn_013
+	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn $(LIBRMN)
 	
 oldstuff: $(OBJECTS)
 	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
