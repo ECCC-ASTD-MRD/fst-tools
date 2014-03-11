@@ -40,6 +40,7 @@ C*DECK FSTCOMP
 * 028 V8.0 (M. Lepine, Juin 2011) Variables d'exception au convip du IP1
 * 026 V8.1 (M. Lepine, Mai  2012) Reload avec librmn_013
 * 027 V8.2 (M. Lepine, Nov  2012) En cas d'erreur, retourner un code d'erreur avec qqexit
+* 028 V8.3 (M. Lepine, Mars 2014) Utilisation du fichier $ARMNLIB/data/exception_vars
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -49,7 +50,7 @@ C*DECK FSTCOMP
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, MEMOIRH, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
      X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip,
-     %         fstopl, ip1_all, qqexit
+     %         fstopl, ip1_all, qqexit, longueur
 *
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
@@ -61,19 +62,21 @@ C*DECK FSTCOMP
       CHARACTER*128 DEF1(21), DEF2(21), NOMD
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT,
-     X        P1, P2, P3, TN ,T
+     X        P1, P2, P3, TN ,T, EXCEPTION
       INTEGER KA, KB, N1, N2, X1, X2, LIMITE, I, J, K, L, N, MX,
      X        DATE, DEET, NPAS, NI, NJ, NK, IP1, IP2, IP3,
      X        IG1, IG2, IG3, IG4, IB1, IB2, IB3, IB4, SWA, LNG, DLTF,
      X        UBC, EX1, EX2, EX3, NBITS, DATYPA, IDATE, NBIT2,
      X        DATYPB, FSTRWD, IP1B, IP2B, IP3B,
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
-     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
+     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl, longueur,
      X        TABLO(0:6,0:6)
       integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
+      integer lvar, iunexpv
       real Level
       character *30 string
-      character *20 exception_vars
+      character *128 exception_vars
+      character * 512 ARMNLIB_var
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
@@ -82,6 +85,7 @@ C*DECK FSTCOMP
       REAL, ALLOCATABLE, DIMENSION (:) :: XX1,XX2
 
       DATA exception_vars /'^^  >>  !!  '/
+*      DATA exception_vars /'^^  >>  !!   ^>  '/
 
       DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
@@ -167,13 +171,28 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V8.2  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V8.3  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V8.2', 'NON')
+         L = EXDB('FSTCOMP', 'V8.3', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
 
+      CALL GETENV('ARMNLIB',ARMNLIB_var)
+      lvar = LONGUEUR(ARMNLIB_var)
+      IF (lvar .gt. 0) THEN
+	ier = fnom(iunexpv,
+     %     ARMNLIB_var(1:lvar)//'/data/exception_vars_ok',
+     %     'SEQ+FTN+FMT',0)
+        IF (ier .lt. 0) THEN
+          print *,'$ARMNLIB/data/exception_vars file not found;'//
+     %            'using internal exception list'
+        ELSE
+          READ(iunexpv,'(a)') exception_vars
+        ENDIF
+      ENDIF
+      print *,'Debug exception_vars=',exception_vars
+      
 *     SI A=RND & B=SEQ CHANGE [A POUR B] & [B POUR A]
       IF((BF.OR.BS) .AND. .NOT.(AF.OR.AS)) THEN
          NOMD    = DEF1(1)
@@ -281,11 +300,13 @@ C*ENDIF
 
 *     SI LE IP1 EST A CONSIDERER
       IF( P1 ) then
-        IF (INDEX(exception_vars,nomvar) <> 0) then
+        IF (INDEX(exception_vars,nomvar) .ne. 0) then
           IP1B = IP1
+          EXCEPTION = .TRUE.
         ELSE
           call convip(ip1,level,kind,-1,string,.false.)
           IP1B = IP1_ALL(level,kind)
+          EXCEPTION = .FALSE.
         ENDIF
       ENDIF
 
@@ -341,10 +362,11 @@ C*ENDIF
      X                                    ' DATYPB=',DATYPB
       GO TO 60
   40  CALL RCMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
-     X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2)
+     X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2,
+     X            EXCEPTION)
       GO TO 60
   50  CALL ICMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
-     X            IP1, IP2, IP3)
+     X            IP1, IP2, IP3, EXCEPTION)
   60  KA = FSTSUI(1, NI, NJ, NK)
       IF(KA .GE. 0) THEN
          N = NI*NJ*NK
@@ -379,7 +401,7 @@ C*ENDIF
       ENDIF
 
   600 FORMAT('  NOM    ETIKET        IP1',
-     X       '           IP2 IP3 E-REL-MAX',
+     X       '            IP2  IP3  E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY')
 
@@ -391,7 +413,7 @@ C*ENDIF
      %       ' CHERCHE',3I5)
      
   700 FORMAT('  NOM    ETIKET        IP1',
-     X       '           IP2 IP3 E-REL-MAX',
+     X       '           IP2  IP3  E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY     TOLERANCE')
 
@@ -402,17 +424,19 @@ C*DECK RCMP1D
 ***S/P RCMP1D  COMPARAISON DE DEUX CHAMPS REELS DE UNE DIMENSION
 *
       SUBROUTINE RCMP1D(A, B, N, IUN, NUMA, NUMB, NOMVAR, ETIKET, IP1,
-     X                  IP2, IP3, LIMITE, NBITS, PACK_ERR)
+     X                  IP2, IP3, LIMITE, NBITS, PACK_ERR, EXCEPTION)
 
       IMPLICIT NONE
       INTEGER  N, IUN, LIMITE, NUMA, NUMB, IP1, IP2, IP3, NBITS
       INTEGER  PACK_ERR
+      LOGICAL EXCEPTION
       CHARACTER*12 ETIKET
       CHARACTER*4 NOMVAR
       REAL     A(N), B(N), MAXABS, SUMABS, ERRABS
 *
 *AUTEURS  VERSION ORIGINALE (REALCMP)  M.VALIN DRPN 1987
 *         VERSION (RCMP1D)  Y.BOURASSA DRPN JAN 1990
+*         Ajout de l'argument exception - M. Lepine Mars 2014
 *
 *ARGUMENTS
 * ENTRE  A,B     CHAMPS REELS A COMPARER
@@ -511,7 +535,11 @@ C*DECK RCMP1D
          SAB = SQRT(VARA)
       ENDIF
 !      print *,'Debug+ sa2,sb2,vara,varb,sab=',sa2,sb2,vara,varb,sab
-      CALL convip(ip1,rlevel,kind,-1,level,.true.)
+      IF (EXCEPTION) THEN
+        WRITE(level,'(i5)') ip1
+      ELSE
+        CALL convip(ip1,rlevel,kind,-1,level,.true.)
+      ENDIF
       ERR_UNIT = RANGE_A / DEUX_EXP_NB
       
       IF ((ERRMAX .LE. ERRLIM) .and. (PACK_ERR .eq.0)) THEN
@@ -537,13 +565,13 @@ C*DECK RCMP1D
 *  600 FORMAT('  CLEA CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
 *     X       '  E-REL-MOY   VAR-A       C-COR         MOY-A',
 *     X       '         BIAIS      E-MAX      E-MOY')
-  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
+  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I5, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
-  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 3(1X,1PE10.4),
+  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I5, 3(1X,1PE10.4),
      X       3(1X,1PE12.4), 2(1X,1PE10.4) )
-  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I4, 4(1X,1PE10.4),
+  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I5, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
-  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I4, 3(1X,1PE10.4),
+  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I5, 3(1X,1PE10.4),
      X       3(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
 
       RETURN
@@ -552,7 +580,7 @@ C*DECK ICMP1D
 ***S/P ICMP1D DIFFERENCES ENTRE DEUX CHAMPS ENTIERS DE UNE DIMENSION
 *
       SUBROUTINE ICMP1D(A, B, N, IUN, NUMA, NUMB, NOMVAR, ETIKET, IP1,
-     X                  IP2, IP3)
+     X                  IP2, IP3, EXCEPTION)
 
       IMPLICIT    NONE
       INTEGER     N, A(N), B(N), IUN, NUMA, NUMB, IP1, IP2, IP3
@@ -575,6 +603,7 @@ C*DECK ICMP1D
       INTEGER I, J, K, MD, NC, kind
       CHARACTER*15 Level
       REAL      rlevel
+      LOGICAL EXCEPTION
 
       MD  = 0
       NC  = 0
@@ -590,7 +619,11 @@ C*DECK ICMP1D
          ENDIF
 10    CONTINUE
 
-      CALL convip(ip1,rlevel,kind,-1,level,.true.)
+      IF (EXCEPTION) THEN
+        WRITE(level,'(i5)') ip1
+      ELSE
+        CALL convip(ip1,rlevel,kind,-1,level,.true.)
+      ENDIF
       IF (MD .EQ. 0) THEN
          WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3
       ELSE
@@ -598,8 +631,8 @@ C*DECK ICMP1D
      X                  NC, MD, J
       ENDIF
 
- 600  FORMAT(' ',  '  ', A4, '  ', A12, a15, 2I4,' SONT EGAUX')
- 601  FORMAT(' ',  ' <', A4, '> ', A12, a15, 2I4,' ONT',I6,' POINTS ',
+ 600  FORMAT(' ',  '  ', A4, '  ', A12, a15, 2I5,' SONT EGAUX')
+ 601  FORMAT(' ',  ' <', A4, '> ', A12, a15, 2I5,' ONT',I6,' POINTS ',
      X       'INEGAUX, L''ERREUR MAX.=',I10,'  AU POINT',I6)
 
       RETURN
