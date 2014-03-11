@@ -10,7 +10,10 @@ CFLAGS =
 
 OPTIMIZ = -O 0 -debug
 
-VER = 3.5
+VER = 3.6
+
+LIBRMN = rmn_014
+
 
 default: absolu
 
@@ -52,7 +55,7 @@ setuvd0.o: setuvd0.ftn
 writlzn.o: writlzn.ftn 
 
 absolu: $(OBJECTS) 
-	s.compile -o dbzono_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -abi $(ABI) $(OPTIMIZ) -librmn rmn_013
+	s.compile -o dbzono_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -abi $(ABI) $(OPTIMIZ) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
