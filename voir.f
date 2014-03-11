@@ -12,6 +12,7 @@
 *         98.20 - M. Lepine - dec  2010 - reload avec librmn_012 et codebeta moduledate 
 *         98.21 - M. Lepine - sept 2011 - reload avec librmn_012 et codebeta moduledate_711e, fstd98
 *         98.22 - M. Lepine - juin 2012 - reload avec librmn_013
+*         98.30 - M. Lepine - mars 2014 - reload avec librmn_014
 
       parameter (ncle=4)
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
@@ -60,7 +61,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.22','NON')
+         ier = exdb('VOIR','V98.30','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),

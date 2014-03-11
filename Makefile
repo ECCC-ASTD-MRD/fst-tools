@@ -14,7 +14,9 @@ OPTIMIZ = -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
-VER = 98.22
+VER = 98.30
+
+LIBRMN = rmn_014
 
 default: absolu
 
@@ -28,7 +30,7 @@ OBJSUP=/users/dor/armn/lib/OBJ/*.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn rmn_013
+	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
         
 voir+: $(OBJET)
 	r.build -o voir+ -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmnbeta
