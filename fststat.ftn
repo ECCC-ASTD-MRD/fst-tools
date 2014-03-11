@@ -15,6 +15,7 @@
 *REVISION 002  M. Lepine - Juin 2003 - remplacement de memoirh
 *
 *Version 6.2   D. Bouhemhem - Nov. 2012 - Compilation avec librmn_013
+*Version 6.3   M. Lepine    - Mars 2014 - Compilation avec librmn_014
 *
 *LANGUAGE:  fortran 77
 *

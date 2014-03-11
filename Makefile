@@ -20,7 +20,9 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 .PRECIOUS:
 
-VER = 6.2
+VER = 6.3
+
+LIBRMN = rmn_014
 
 default: fststat 
 
@@ -43,7 +45,7 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 fststat: $(OBJECTS)
-	s.compile  -obj $(OBJECTS) -o $@_$(VER)-$(BASE_ARCH) -librmn rmn_013
+	s.compile  -obj $(OBJECTS) -o $@_$(VER)-$(BASE_ARCH) -librmn $(LIBRMN)
 
 fststat+: $(OBJECTS)
 	r.build -obj $(OBJECTS) -o $@ -librmn rmnbeta
