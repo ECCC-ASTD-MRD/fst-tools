@@ -27,7 +27,7 @@
       data def /'void',    'void', 'env', '-1' /
       data val /'void',    'void', 'env', '-1' /
 
-      ier = exdb('FSTCOMPRESS','3.04',  'NON')
+      ier = exdb('FSTCOMPRESS','3.05',  'NON')
 
       rewrite_flag = .false.
       ipos = 0
@@ -38,25 +38,25 @@
       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
       if (ier.lt.0) then
          print *, 'FSTCOMPRESS: INVALID INPUT FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.04',  'NON')
+         ier = exfin('FSTCOMPRESS','3.05',  'NON')
          call exit(13)
       endif
       ier = fstouv(iun_in,'RND')
       if (ier.lt.0) then
          print *, 'FSTCOMPRESS: INPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.04',  'NON')
+         ier = exfin('FSTCOMPRESS','3.05',  'NON')
          call exit(13)
       endif
       ier = fnom(iun_out, val(2), 'STD+RND+R/W+REMOTE', 0)
       if (ier.lt.0) then
          print *, 'FSTCOMPRESS: INVALID OUTPUT FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.04',  'NON')
+         ier = exfin('FSTCOMPRESS','3.05',  'NON')
          call exit(13)
       endif
       ier = fstouv(iun_out,'RND')
       if (ier.lt.0) then
          print *, 'FSTCOMPRESS: OUTPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.04',  'NON')
+         ier = exfin('FSTCOMPRESS','3.05',  'NON')
          call exit(13)
       endif
 !       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
@@ -177,6 +177,6 @@
       ier = fstfrm(iun_in)
       ier = fstfrm(iun_out)
 
-      ier= exfin('FSTCOMPRESS',' V3.04',  'NON')
+      ier= exfin('FSTCOMPRESS',' V3.05',  'NON')
       stop
       end
