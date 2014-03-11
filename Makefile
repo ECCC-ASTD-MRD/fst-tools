@@ -14,6 +14,8 @@ CPPFLAGS = -I$(ARMNLIB)/include
 
 VER = 006
 
+LIBRMN = rmn_014
+
 default: absolu
 
 .ftn.o:
@@ -28,7 +30,7 @@ default: absolu
 OBJET= fstinfo.o
 
 absolu: $(OBJET)
-	s.compile -o r.fstinfo_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_013
+	s.compile -o r.fstinfo_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
