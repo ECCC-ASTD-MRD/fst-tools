@@ -12,7 +12,7 @@ OPTIMIZ = -O 2
 
 CPPFLAGS = -I$(ARMNLIB)/include
 
-VER = 006
+VER = 007
 
 LIBRMN = rmn_014
 
