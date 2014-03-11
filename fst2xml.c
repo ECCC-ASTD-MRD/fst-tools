@@ -9,6 +9,7 @@ fst2xml : Convertisseur de fichier standard RPN version 2000 a XML
 Auteur: Djamel Bouhemhem, Yves Chartier
 Statut: Test
 Version: 004
+Version: 005, reload avec librmn_014
 */
 
 #define NCARMAX 256
