@@ -31,10 +31,12 @@
 !
 !MODULES
       EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, EXDES, HOLACAR
+      include 'excdes.inc'
 !*  
       INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, D, LIS(10)
 !      DATA     LIS/10*0/
       integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
+      integer :: status
 
       D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
    10 IF(NREQ .EQ. NMD) THEN
@@ -73,6 +75,7 @@
 !         if (argdims(7) .gt. 1) then
            call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
            CALL EXDES(newip3,  nip3, 3)
+           status = Select_ip3(nreq, d, newip3, nip3)
 !         else
 !           CALL EXDES(IP3,  ARGDIMS(7), 3)
 !         endif
@@ -82,6 +85,7 @@
 !         if (argdims(6) .gt. 1) then
            call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
            CALL EXDES(newip2,  nip2, 2)
+           status = Select_ip2(nreq, d, newip2, nip2)
 !         else
 !           CALL EXDES(IP2,  ARGDIMS(6), 2)
 !         endif
@@ -91,6 +95,7 @@
 !         if (argdims(5) .gt. 1) then
             call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
             CALL EXDES(newip1, nip1, 1)
+           status = Select_ip1(nreq, d, newip1, nip1)
 !         else
 !            CALL EXDES(IP1,  ARGDIMS(5), 1)
 !         endif
@@ -144,6 +149,7 @@
 !** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
 ! transformer la liste ip pouvant contenir des paires valeur/kind
 ! en liste de ip entiers
+! des valeurs negatives dans ip comme -1,-2,-3 (@,delta,tous) restent inchangees
       subroutine ip_to_newip(ip,newip,nip,nnewip)
       use convert_ip123
       implicit none
@@ -176,17 +182,16 @@
         if(i+1 <= nip) then  ! paire possible
           if(ip(i+1)>=-1031 .and. ip(i+1)<=-1000) then ! paire, car ip(i+1) est un code -(1000+kind)
              p = transfer(ip(i),p)   ! transferer les bits de ip  a p (remplace equivalence)
-             kindp = -(ip(i+1)+1000)
+             kindp = -(ip(i+1)+1000) ! symbole pour kind = -(1000+kind) dans directives
              call convip_plus(newip(nnewip),p,kindp,1,dummy,.false.)  ! p,kind -> ip
              if(newip(nnewip)<0) then
                WRITE(6,*)'*** Editfst *** ERREUR:  erreur de conversion  P,kind =',p,kindp
                call qqexit(20)
              endif
              i = i + 1  ! sauter kind
-          endif
+          endif  ! paire possible
         endif
         i = i + 1
-!       verifier que newip(nnewip) >= 0 (pas d'erreur de conversion)
       enddo
       return
       end subroutine
