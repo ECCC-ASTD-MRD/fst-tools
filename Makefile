@@ -6,8 +6,6 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = rmn_013
-RMNLIB = rmn_014_rc2a
 RMNLIB = rmn_014
 FFLAGS =
 
@@ -24,14 +22,15 @@ OPTIMIZ =  -debug -O 0
 CPPFLAGS = -I$(ARMNLIB)/include -I$(ARMNLIB)/include/$(EC_ARCH)
 
 #MYLIB =  $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
-MYLIB = rmn_beta014.a
+#MYLIB = rmn_beta014.a
+MYLIB = rmn_014.a
 .PRECIOUS: $(RMNLIB) $(MALIB)
 
 #include $(ARMNLIB)/include/makefile_suffix_rules.inc
 
 VER = 7.7.2
 
-LIBRMN = rmn_014
+RMNLIB = rmn_014
 
 default: obj pgsm
 
@@ -89,7 +88,7 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm: f_pgsm.o c_pgsm.o
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN)
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
