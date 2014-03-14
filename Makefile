@@ -6,7 +6,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = rmn_014
+LIBRMN = rmn_014
 FFLAGS =
 
 CFLAGS =
@@ -19,14 +19,14 @@ OPTIMIZ =  -debug -O 0
 #OPTIMIZ_AIX = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
 
-CPPFLAGS = -I$(ARMNLIB)/include -I$(ARMNLIB)/include/$(EC_ARCH)
+CPPFLAGS = -I$(ALIBRMN)/include -I$(ALIBRMN)/include/$(EC_ARCH)
 
-#MYLIB =  $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
+#MYLIB =  $(ALIBRMN)/lib/$(EC_ARCH)$(ABI)/librmn.a
 #MYLIB = rmn_beta014.a
 MYLIB = rmn_014.a
-.PRECIOUS: $(RMNLIB) $(MALIB)
+.PRECIOUS: $(LIBRMN) $(MALIB)
 
-#include $(ARMNLIB)/include/makefile_suffix_rules.inc
+#include $(ALIBRMN)/include/makefile_suffix_rules.inc
 
 VER = 7.7.2
 
@@ -91,7 +91,7 @@ pgsm: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
-	s.compile -o $@_$(VER) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB) -libsys mass
+	s.compile -o $@_$(VER) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN) -libsys mass
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
