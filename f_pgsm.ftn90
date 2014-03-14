@@ -1309,11 +1309,13 @@
 
       if (cnomvar=='    '.and.ctypvar.eq.'  '.and.cetiqet=='            '.and. niv == -1 .and.ihr==-1.and.ip3==-1.and.idat==-1) then
          print *, '****************************************************'
-         print *, '*             Un chausson avec ca?                 *'
+         print *, '* Parametres de selection trop vagues... Sorry...  *'
          print *, '****************************************************'
          call pgsmabt
       endif
 
+!      print *, 'COMME', iunit
+!      print *, idat, cetiqet, niv,ihr,ip3,ctypvar,cnomvar
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,ip3,      ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)         'RECORD N EXISTE PAS (routine COMME)'
@@ -1350,7 +1352,12 @@
          allocate(tmplon(li,lj))
          allocate(tmplat(li,lj))
       else
-         call gritp12(7,igg1,igg2,igg3)
+         print *, 'avant gritp12', igg1, igg2, igg3
+	 if (iunit == 1) then
+            call gritp12(7,igg1,igg2,igg3)
+         else
+            call gritp12(8,igg1,igg2,igg3)
+         endif
       endif
 
 !
@@ -6415,7 +6422,7 @@ implicit none
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.6.1',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.7.2',  lfn(idx_date))
  !       print *, jdate
 
 !
@@ -7894,7 +7901,7 @@ implicit none
             if (cnom.eq.'    ') then
                if ((paire(i)(9:10).eq.cnomvar(1:2)).or.(paire(i)(13:14).eq.cnomvar(1:2)))  then
                   nunv=nunv + 1
-                  cycle
+                  goto 99999
                endif
             endif
          enddo
@@ -7952,6 +7959,7 @@ implicit none
             endif
             deallocate(tmpif1)
          endif
+99999    continue
 !
          if (unefois) goto 23000
 !
@@ -8276,7 +8284,7 @@ integer ezsetopt
 
 
       external fnom,memoir,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
-      external fstabt, fstlnk, exfin, pgsmof, fstnbr
+      external fstabt, fstlnk, exfin, pgsmof
       integer  fnom,fstnbr,fsteof,fstouv,fstvoi,fstapp,exfin,pgsmof
 !
 !AUTEUR P. SARRAZIN DEC 81 DRPN DORVAL P.Q. CANADA

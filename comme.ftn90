@@ -92,11 +92,13 @@
 
       if (cnomvar=='    '.and.ctypvar.eq.'  '.and.cetiqet=='            '.and. niv == -1 .and.ihr==-1.and.ip3==-1.and.idat==-1) then
          print *, '****************************************************'
-         print *, '*             Un chausson avec ca?                 *'
+         print *, '* Parametres de selection trop vagues... Sorry...  *'
          print *, '****************************************************'
          call pgsmabt
       endif
 
+!      print *, 'COMME', iunit
+!      print *, idat, cetiqet, niv,ihr,ip3,ctypvar,cnomvar
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,ip3,      ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
          write(6,*)         'RECORD N EXISTE PAS (routine COMME)'
@@ -133,7 +135,12 @@
          allocate(tmplon(li,lj))
          allocate(tmplat(li,lj))
       else
-         call gritp12(7,igg1,igg2,igg3)
+         print *, 'avant gritp12', igg1, igg2, igg3
+	 if (iunit == 1) then
+            call gritp12(7,igg1,igg2,igg3)
+         else
+            call gritp12(8,igg1,igg2,igg3)
+         endif
       endif
 
 !

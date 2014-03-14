@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <rmnlib.h> 
+#include <rmnlib.h>
 
 /* Cette fonction verifie si le repertoire $TMPDIR existe.
  * Si oui, la fonction retourne sans problemes

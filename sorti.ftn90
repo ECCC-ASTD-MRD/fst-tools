@@ -8,7 +8,7 @@
 
 
       external fnom,memoir,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
-      external fstabt, fstlnk, exfin, pgsmof, fstnbr
+      external fstabt, fstlnk, exfin, pgsmof
       integer  fnom,fstnbr,fsteof,fstouv,fstvoi,fstapp,exfin,pgsmof
 !
 !AUTEUR P. SARRAZIN DEC 81 DRPN DORVAL P.Q. CANADA
