@@ -11,16 +11,19 @@ SHELL = /bin/bash
 
 COMPILE = compile
 
-FFLAGS =
+#FFLAGS =
+FFLAGS = -IEXTRAS -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
-CFLAGS =
+#CFLAGS =
+CFLAGS = -IEXTRAS -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 
 VER = 6.20
 
-LIBRMN = rmn_014
+#LIBRMN = rmn_014
+LIBRMN = rmnbeta_015
 
 EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
@@ -52,6 +55,8 @@ EXTRAS = EXTRAS
 
 excdes_new.o: $(EXTRAS)/excdes_new.c
 
+convip_plus.o: $(EXTRAS)/convip_plus.f90
+
 convert_ip123.o: $(EXTRAS)/convert_ip123.f90
 
 fst_missing.o: $(EXTRAS)/fst_missing.c
@@ -61,10 +66,12 @@ DlInterface.o: $(EXTRAS)/DlInterface.c
 fstd98.o: $(EXTRAS)/fstd98.c $(EXTRAS)/if_fstd98.c $(EXTRAS)/qstdir.h  $(EXTRAS)/convert_ip.h
 
 EXTRA_OBJECTS = \
-	convert_ip123.o fstd98.o fst_missing.o DlInterface.o excdes_new.o
+	convert_ip123.o convip_plus.o fstd98.o fst_missing.o DlInterface.o excdes_new.o
 
+#$(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
 $(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
-	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -l$(LIBRMN)
+#	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -LEXTRAS/Locallib/$(EC_ARCH) -l$(LIBRMN)
+	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(OBJECTS) $(FFLAGS) -l$(LIBRMN)
 
 all: $(EDITFST) test.fst
 
@@ -72,7 +79,8 @@ test.fst: create_test_file
 	./create_test_file
 
 create_test_file:	create_test_file.f90 $(EXTRA_OBJECTS)
-	s.f90 $< $(EXTRA_OBJECTS) -o $@ -l$(LIBRMN)
+#	s.f90 $< $(EXTRA_OBJECTS) -o $@ $(FFLAGS) -l$(LIBRMN)
+	s.f90 $< -o $@ $(FFLAGS) -l$(LIBRMN)
 	rm -f test.fst
 
 tests: $(EDITFST) test.fst

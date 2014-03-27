@@ -1,10 +1,12 @@
 !** S/P COPYSTX COPIE UN FICHIER STANDARD EN TOUT OU EN PARTIE.
       SUBROUTINE COPYSTX
       use ISO_C_BINDING
-      use convert_ip123
-      use format_ip123_kind
-      use configuration
+!      use convert_ip123
+!      use format_ip123_kind
+       use configuration
       IMPLICIT NONE 
+       include 'convert_ip123.inc'
+       include 'excdes.inc'
   
 !AUTEURS
 !         - C. THIBEAULT  FEV 83
@@ -56,7 +58,7 @@
       character(len=4) :: nomvar
       logical :: can_translate
       real :: p1, p2, p3
-      integer :: kind1, kind2, kind3
+      integer :: kind1, kind2, kind3, matches
       character (len=2) :: strkind1, strkind2, strkind3
   
       LOGICAL      FIRSTP, BONNE, OK, EXCL
@@ -81,6 +83,8 @@
 !     BONNE  = .TRUE. SI LA DATE DU PREMIER ENREGISTREMENT ACCEPTABLE 
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
+      call Dump_Request_table()
+
    10 BONNE  = .FALSE.
       FIRSTP = .TRUE.
 !     TROUVE LA CLE DU PROCHAIN ENREGISTREMENT.
@@ -92,6 +96,8 @@
                  IG3, IG4, SWA, LNG, DLFT, UBC, XTRA1, XTRA2, XTRA3)
       write(nomvar,'(A4)')NOM
       can_translate = 0/=fstcantranslate(nomvar)
+      matches = fst_match_req(irec)
+!      print *,matches
 !     on ne convertit plus ip1, la logique de selection va devoir aller plus bas
 !     on regarde si NOM permet la conversion des IP1/2/3
 !      CALL convip(IP1,p,kind,-1,string,.true.)

@@ -1,6 +1,8 @@
 program create_test_file
-use convert_ip123
+!use convert_ip123
+use ISO_C_BINDING
 implicit none
+include 'convert_ip123.inc'
 integer, dimension(10,10) :: array, work
 real, dimension(4000,4000) :: big_array
 integer :: i, j, k, ni, nj, nk

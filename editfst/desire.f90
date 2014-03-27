@@ -37,8 +37,10 @@
 !      DATA     LIS/10*0/
       integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
       integer :: status
+      integer excdes_de
 
       D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
+      excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. NMD) THEN
 !         IF(DIAG .OR. DEBUG)
          PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
@@ -75,7 +77,7 @@
 !         if (argdims(7) .gt. 1) then
            call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
            CALL EXDES(newip3,  nip3, 3)
-           status = Select_ip3(nreq, d, newip3, nip3)
+           status = Select_ip3(nreq, excdes_de, newip3, nip3)
 !         else
 !           CALL EXDES(IP3,  ARGDIMS(7), 3)
 !         endif
@@ -85,7 +87,7 @@
 !         if (argdims(6) .gt. 1) then
            call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
            CALL EXDES(newip2,  nip2, 2)
-           status = Select_ip2(nreq, d, newip2, nip2)
+           status = Select_ip2(nreq, excdes_de, newip2, nip2)
 !         else
 !           CALL EXDES(IP2,  ARGDIMS(6), 2)
 !         endif
@@ -95,7 +97,7 @@
 !         if (argdims(5) .gt. 1) then
             call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
             CALL EXDES(newip1, nip1, 1)
-           status = Select_ip1(nreq, d, newip1, nip1)
+           status = Select_ip1(nreq, excdes_de, newip1, nip1)
 !         else
 !            CALL EXDES(IP1,  ARGDIMS(5), 1)
 !         endif
@@ -103,6 +105,7 @@
       ENDIF
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE
          CALL EXDES(DATE, ARGDIMS(4), 4)
+         status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
          IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET
@@ -110,6 +113,7 @@
          REQE(NREQ) = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ETIS(1,NREQ), LIS, REQE(NREQ), LBL, 12)
          IF( DEBUG ) PRINT*,'ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
+         status = Select_etiquette(nreq,excdes_de,etis(1,nreq),REQE(NREQ),12)
       ENDIF
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
          REQN(NREQ) = ARGDIMS(2)
@@ -117,6 +121,7 @@
             I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY, .TRUE.)
   100       CONTINUE
          IF( DEBUG ) PRINT*,'NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
+         status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
       ENDIF
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
          REQT(NREQ) = ARGDIMS(1)
@@ -124,6 +129,7 @@
             I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY, .TRUE.)
   120       CONTINUE
          IF( DEBUG ) PRINT*,'TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
+         status = Select_typvar(nreq,excdes_de,typs(1,nreq),REQT(NREQ),2)
       ENDIF
   
 !     APPLIQUER LES CRITERES SUPPLEMENTAIRES AU BESOIN
@@ -137,12 +143,15 @@
          SUP(6,NREQ) = IG3S
          SUP(7,NREQ) = IG4S
          GTYS(NREQ)  = GTYPS
+         status =  Select_suppl(nreq,excdes_de,nis,njs,nks,ig1s,ig2s,ig3s,ig4s,gtyps)
       ENDIF
+!      call Dump_Request_table()
       RETURN
   
 !     POUR CHOISIR LES CHAMPS NON VOULUS
       ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       D = 0
+      excdes_de = EXCDES_EXCLURE
       GO TO 10
   
       contains
@@ -151,8 +160,10 @@
 ! en liste de ip entiers
 ! des valeurs negatives dans ip comme -1,-2,-3 (@,delta,tous) restent inchangees
       subroutine ip_to_newip(ip,newip,nip,nnewip)
-      use convert_ip123
+!     use convert_ip123
+      use ISO_C_BINDING
       implicit none
+      include 'convert_ip123.inc'
       integer, intent(IN) :: nip
       integer, intent(OUT) :: nnewip
       integer, intent(IN), dimension(nip) :: ip
