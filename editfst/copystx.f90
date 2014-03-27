@@ -60,6 +60,7 @@
       real :: p1, p2, p3
       integer :: kind1, kind2, kind3, matches
       character (len=2) :: strkind1, strkind2, strkind3
+      integer :: nrecords
   
       LOGICAL      FIRSTP, BONNE, OK, EXCL
       interface
@@ -84,6 +85,7 @@
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
       call Dump_Request_table()
+      nrecords = 0
 
    10 BONNE  = .FALSE.
       FIRSTP = .TRUE.
@@ -94,6 +96,7 @@
    20 I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,    &
                  IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2,        &
                  IG3, IG4, SWA, LNG, DLFT, UBC, XTRA1, XTRA2, XTRA3)
+      nrecords = nrecords + 1
       write(nomvar,'(A4)')NOM
       can_translate = 0/=fstcantranslate(nomvar)
       matches = fst_match_req(irec)
@@ -337,6 +340,7 @@
   170       CONTINUE
       ENDIF
   180 WRITE(6,*) COPIES,' ENREGISTREMENT(S) COPIES DANS ', ND
+      WRITE(6,*) nrecords,' ENREGISTREMENT(S) LUS DANS ', NS
 
       IF (COPIES .LT. NRECMIN) THEN
          WRITE(6,*) ' NOMBRE MINIMAL D ENREGISTREMENT INSATISFAIT'
