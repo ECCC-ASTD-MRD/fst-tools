@@ -106,6 +106,12 @@
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE
          CALL EXDES(DATE, ARGDIMS(4), 4)
          status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
+!        il va falloir arranger les choses pour mettre delta s'il y en a un en secondes
+!        et rendre setper coherent avec tout ca (on oublie les secondes juliennes)
+!        si date(1) ==  -4   (COMMUNE)
+!         si jours(4) ==  0   OUCH !!
+!         si jours(4) ==  1   status = Select_date(nreq,excdes_de,jours(1),1)
+!         si jours(4) ==- 1   status = Select_date(nreq,excdes_de,(/ jours(1), "@", jours(2),"delta",jours(3) /), 5)
          IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET
