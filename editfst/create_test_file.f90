@@ -3,6 +3,9 @@ program create_test_file
 use ISO_C_BINDING
 implicit none
 include 'convert_ip123.inc'
+integer, parameter :: TYP134=1
+integer, parameter :: TYP198=1
+integer, parameter :: TYP6=1
 integer, dimension(10,10) :: array, work
 real, dimension(4000,4000) :: big_array
 integer :: i, j, k, ni, nj, nk
@@ -37,19 +40,19 @@ do j=1,4
     !  print *,status,ip1,kind_to_string(kind1),ip2,kind_to_string(kind2),ip3,kind_to_string(kind3)
       write(etiket,1)'ETIKET',mod(j+i,7)
     1 format(A,I6.6)
-      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,134,.false.)
+      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,TYP134,.false.)
       status =  encode_ip(ip1,ip2,ip3,p1,kind1b,p2,kind2,p3,kind3)
-      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,134,.false.)
+      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,TYP134,.false.)
       status =  encode_ip(ip1,ip2,ip3,p1,kind1c,p2,kind2,p3,kind3)
-      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,134,.false.)
+      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,TYP134,.false.)
       status =  encode_ip(ip1,ip2,ip3,p1*.001,kind1d,p2,kind2,p3,kind3)
-      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,134,.false.)
+      call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'XX',name1(j),etiket,'X',0,0,0,0,TYP134,.false.)
     enddo
   enddo
   ip1=63240+(j-1)*100 ; ip2=0 ; ip3 = 0
-  call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'YY',name2(j),etiket,'X',0,0,0,0,134,.false.)
+  call fstecr(array,work,-16,10,0,0,0,10,10,1,ip1,ip2,ip3,'YY',name2(j),etiket,'X',0,0,0,0,TYP134,.false.)
 enddo
-call fstecr(array,work,-16,10,0,0,0,10,10,1,63540,0,0,'XX','HHHH',etiket,'X',0,0,0,0,6,.false.)
+call fstecr(array,work,-16,10,0,0,0,10,10,1,63540,0,0,'XX','HHHH',etiket,'X',0,0,0,0,TYP6,.false.)
 goto 20
 
 10 continue   ! large record test
