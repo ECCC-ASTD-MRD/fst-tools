@@ -84,8 +84,8 @@ C*DECK FSTCOMP
 
       REAL, ALLOCATABLE, DIMENSION (:) :: XX1,XX2
 
-      DATA exception_vars /'^^  >>  !!  '/
-*      DATA exception_vars /'^^  >>  !!   ^>  '/
+*      DATA exception_vars /'^^  >>  !!  '/
+      DATA exception_vars /'^^  >>  !!   ^>  '/
 
       DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
@@ -181,17 +181,18 @@ C*ENDIF
       CALL GETENV('ARMNLIB',ARMNLIB_var)
       lvar = LONGUEUR(ARMNLIB_var)
       IF (lvar .gt. 0) THEN
+        iunexpv=0
 	ier = fnom(iunexpv,
      %     ARMNLIB_var(1:lvar)//'/data/exception_vars_ok',
-     %     'SEQ+FTN+FMT',0)
+     %     'SEQ+FTN+FMT+OLD+R/O',0)
         IF (ier .lt. 0) THEN
           print *,'$ARMNLIB/data/exception_vars file not found;'//
-     %            'using internal exception list'
+     %            ' using internal exception list'
         ELSE
           READ(iunexpv,'(a)') exception_vars
         ENDIF
       ENDIF
-      print *,'Debug exception_vars=',exception_vars
+*      print *,'Debug exception_vars=',exception_vars
       
 *     SI A=RND & B=SEQ CHANGE [A POUR B] & [B POUR A]
       IF((BF.OR.BS) .AND. .NOT.(AF.OR.AS)) THEN
