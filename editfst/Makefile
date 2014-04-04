@@ -22,8 +22,8 @@ OPTIMIZ = -O 2
 
 VER = 6.20
 
-#LIBRMN = rmn_014
-LIBRMN = rmnbeta_015
+LIBRMN = rmn_014
+#LIBRMN = rmnbeta_015
 
 EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
@@ -78,7 +78,7 @@ all: $(EDITFST) test.fst
 test.fst: create_test_file
 	./create_test_file
 
-create_test_file:	create_test_file.f90 $(EXTRA_OBJECTS)
+create_test_file:	create_test_file.f90
 #	s.f90 $< $(EXTRA_OBJECTS) -o $@ $(FFLAGS) -l$(LIBRMN)
 	s.f90 $< -o $@ $(FFLAGS) -l$(LIBRMN)
 	rm -f test.fst
