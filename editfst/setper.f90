@@ -55,27 +55,28 @@
       CHARACTER*128 C
 
 !     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE 
-      IF(DN(1) .LT. 0) THEN
+      IF(DN(1) .LT. 0) THEN   ! CMC date-time stamp numerique
          K = -DN(1)
-      ELSE
+      ELSE                    ! chaine de caracteres
          WRITE(C,LIN128) (DN(I), I=1,ARGDIMS(1))
          CALL LOW2UP(C, C)
-         K = IOPDATM( C )
+         K = IOPDATM( C )     ! aller chercher le date-time stamp numerique associe
          IF(K .EQ. 10101011) THEN
             PRINT*,'DATE DE IOPDATM INACCEPTABLE'
             CALL qqexit(67) 
          ENDIF
       ENDIF
   
-!     SI ON DOIT MODIFIER LA DATE PASSEE
+!     SI ON DOIT MODIFIER LA DATE QUI A ETE PASSEE
       IF(NP .GT. 1) CALL INCDAT(K, K, ECART)
-      CALL JULSEC(JOURS(1) , K)
-      JOURS(2) = 0
-      JOURS(3) = 0
+!!!      CALL JULSEC(JOURS(1) , K)
+      JOURS(2) = JOURS(1)    ! date1 @ date1
+!      JOURS(2) = 0
+      JOURS(3) = 0           ! DELTA 0 (pas de DELTA)
       JOURS(4) = 1
   
-!     SI ON A DONNE UNE DATA SIMPLE
-      IF(NP .LT. 3) THEN
+!     SI ON A SEULEMENT DONNE UNE DATE (pas de duree ni de delta)
+      IF(NP .LT. 3) THEN   ! plus rien a faire
          IF( DEBUG ) THEN
             CALL DATMGP( DTG )
             WRITE(6,600) (DTG(I),I=7,13), JOURS(1)
@@ -83,17 +84,21 @@
          ENDIF
       ELSE
          IF(DUREE .GE. 0) THEN
-            JOURS(2) = JOURS(1) + DUREE 
-         ELSE
+            call INCDAT(JOURS(2), JOURS(1), DUREE)  ! JOURS(2) = JOURS(1) + DUREE
+!            JOURS(2) = JOURS(1) + DUREE 
+         ELSE   ! les dates sont a l'envers
             JOURS(2) = JOURS(1)
-            JOURS(1) = JOURS(1) + DUREE 
+            call INCDAT(JOURS(1), JOURS(2), DUREE)  ! JOURS(1) = JOURS(2) + DUREE
+!            JOURS(1) = JOURS(1) + DUREE 
          ENDIF
          IF(NP .GT. 3) THEN
-            JOURS(3) = ABS( DELTA ) * 3600   ! remettre en secondes
+            JOURS(3) = ABS( DELTA ) 
+!            JOURS(3) = ABS( DELTA ) * 3600   ! remettre en secondes
          ELSE
-            JOURS(3) = 1
+            JOURS(3) = 0                      ! pas de DELTA
+!            JOURS(3) = 1
          ENDIF
-         JOURS(4) = -1
+         JOURS(4) = -1                        ! on a @ date2 et peut-etre un delta
          IF( DEBUG ) THEN
             CALL DATMGP( DTG )
             WRITE(6,601) (DTG(I),I=7,13)

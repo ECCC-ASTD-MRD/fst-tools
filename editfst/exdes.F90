@@ -170,10 +170,10 @@
       IF(M .EQ. 4) THEN
          I = REQ(11,M,NREQ)
          IF(I .EQ. -1) I=2
-         DO 40 J=1,I
-            temp = REQ(J,M,NREQ)
-            CALL JULSEC(REQ(J,M,NREQ), temp)
-   40       CONTINUE
+!!!!!!         DO 40 J=1,I
+!!!!!!            temp = REQ(J,M,NREQ)
+!!!!!!            CALL JULSEC(REQ(J,M,NREQ), temp)
+!!!!!   40       CONTINUE
       ENDIF
 
       IF(REQ(11,M,NREQ) .EQ. -1) THEN

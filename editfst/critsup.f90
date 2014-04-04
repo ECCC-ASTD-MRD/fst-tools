@@ -20,7 +20,7 @@
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
       use configuration
       IMPLICIT NONE 
-  
+      include 'excdes.inc'
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
 !
 !AUTEUR       AUTEUR YVON BOURASSA . JAN 90
@@ -68,18 +68,17 @@
       NJS  = -1
       NIS  = -1
   
-!     ACTIVAGE DES CRITERES FOURNIS PAR LA DIRECTIVE
+!     RECUPERATION DES CRITERES FOURNIS PAR LA DIRECTIVE
       GO TO (8, 7, 6, 5, 4, 3, 2, 1) NP 
     1 IG4S = IG4
     2 IG3S = IG3
     3 IG2S = IG2
-    4 IG3S = IG1
+    4 IG1S = IG1
 !      I = FSTCVT(' ',' ',' ', GRID, NV, TV, LBL, GTYPS, .TRUE.)
     5 I = FSTCVT(-1, -1, -1, GRID, NV, TV, LBL, GTYPS, .TRUE.)
     6 NKS  = NK
     7 NJS  = NJ
     8 NIS  = NI
-  
 !     DESACTIVER LES CRITERES SUPLEMENTAIRES AVEC "CTITSUP(-1)"
       IF(NP.EQ.1 .AND. NI.EQ.-1) THEN
          SCRI = .FALSE.
