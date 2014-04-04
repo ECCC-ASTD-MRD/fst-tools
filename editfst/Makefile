@@ -22,8 +22,8 @@ OPTIMIZ = -O 2
 
 VER = 6.20
 
-LIBRMN = rmn_014
-#LIBRMN = rmnbeta_015
+#LIBRMN = rmn_014
+LIBRMN = rmnbeta_015
 
 EDITFST = editfst_$(VER)-$(BASE_ARCH)
 
