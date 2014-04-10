@@ -375,8 +375,8 @@
          I = FNOM(5, DEF1(10), 'SEQ', 0)
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             INTERAC = .TRUE.
-            PRINT*,'DONNEZ VOS DIRECTIVES S.V.P.'
-            PRINT*,'TAPEZ  END  POUR INDIQUER LA FIN DES DIRECTIVES'
+            PRINT*,'DIRECTIVES ?'
+            PRINT*,'TAPER  END  POUR INDIQUER LA FIN DES DIRECTIVES'
          ENDIF
          CALL SELECT                    ! process directives
       ENDIF
@@ -414,6 +414,6 @@
       END 
       
       character *128 function product_id_tag()
-      product_id_tag='$Id: editfst.ftn 116 2012-11-22 18:53:41Z armnlib $'
+      product_id_tag='$Id: editfst.F90 116 2014-04-30 18:53:41Z armnlib $'
       return
       end

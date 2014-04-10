@@ -46,18 +46,14 @@
             SNOM = 'STD+RND+OLD+R/O'
          ENDIF
       ENDIF
-      IF(INPT(1) .NE. -1) THEN
+      IF(INPT(1) .NE. -1) THEN  ! on a fourni un nom
          NFS = 1
          WRITE(DD, LIN128) (INPT(I), I=1,ARGDIMS(1))
          CALL OUVRES( DD )
       ENDIF
       IF( .NOT. OUVS ) THEN
          PRINT*,'****  FICHIER SOURCE INCONNU  ****'
-         IF( INTERAC ) THEN
-            RETURN
-         ELSE
-            CALL qqexit(80)
-         ENDIF
+         CALL qqexit(80)
       ENDIF
 
 !     FICHIER DESTINATION
@@ -80,16 +76,12 @@
       ENDIF
       IF( .NOT. OUVD) THEN
          PRINT*,'****  FICHIER DESTINATION INCONNU  ****'
-         IF( INTERAC ) THEN
-            RETURN
-         ELSE
-            CALL qqexit(81)
-         ENDIF
+         CALL qqexit(81)
       ENDIF
 
 !     DEVONS=NOUS METTRE COPYSTX,EN MODE XPRES?
       CALL DMPDES
-      IF(LIMITE .NE. 0) THEN
+      IF(LIMITE .NE. 0) THEN  ! nombre  limite d'enregistrements a copier pas encore atteint
          CALL COPYSTX
       ELSE
          WRITE(6,*)'LA LIMITE DES TRANSFERS DEJA ATEINTE'

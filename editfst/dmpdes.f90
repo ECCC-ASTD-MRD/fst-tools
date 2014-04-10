@@ -21,12 +21,15 @@
   
 !     AUCUNE DIRECTIVE ?
       IF(NREQ .EQ. 0) THEN
-         XPRES = .NOT.SCRI
+         XPRES = .NOT.SCRI  ! si pas de criteres supplementaires, on veut vraiment tout
          IF( DEBUG ) WRITE(6,*)' ON DEMANDE TOUT LE FICHIER '
          RETURN
       ENDIF
   
-!     ANALYSE DES REQUETES
+!     IMPRESSION DES REQUETES
+!     appeler la routine appropriee des fichiers standard pour ce faire (si DEBUG)
+!     ca va remplacer le bazar qui suit
+!     il faut pouvoir demander aux fichiers standard s'il y a des directives en vigueur
       L = 0
       DO 20 J=4,1,-1
          DO 10 K=1,NREQ
@@ -40,7 +43,7 @@
                   IF(J.EQ.3) WRITE(6,607) (REQ(I,J,K),I=1,REQ(11,J,K))
                ENDIF
             ELSEIF(REQ(11,J,K) .EQ. -1)THEN
-!              INTERVALE AVEC SAUT.
+!              INTERVALLE AVEC DELTA.
                L = 1
                IF( DEBUG ) THEN
                   IF(J.EQ.4) WRITE(6,611) (REQ(I,J,K),I=1,3)

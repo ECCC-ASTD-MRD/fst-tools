@@ -28,13 +28,17 @@
 
     
 !     EFFACER TOUTE TRACE DES DESIRE/EXCLURE/CRITSUP INUTILES
+!     appeler la routine appropriee des fichiers standard
+!     REQ(11,4,NMD)
       NREQ = SAUV
-      DO 10 N=SAUV*77+1, 11*4*NMD
+      DO 10 N=SAUV*77+1, 11*4*NMD   ! ca devrait pas etre 44 plutot que 77 ?
          REQ(N,1,1) = 0
    10    CONTINUE
+!     REQ(:,:,sauv+1:NMD) = 0       ! forme plus logique ?
       DO 20 N=SAUV*9+1, 8*NMD 
          SUP(N,1) = 0
    20    CONTINUE
+!     SUP(:,sauv+1:NMD) = 0         ! forme plus logique ?
       DO 30 N=SAUV+1, NMD
          REQN(N) = 0
          REQE(N) = 0

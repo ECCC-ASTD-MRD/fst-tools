@@ -3,7 +3,7 @@
       use configuration
       IMPLICIT      NONE
 !
-!AUTEURs
+!AUTEUR
 !VERSION ORIGINALE  - Y. BOURASSA NOV 90
 !REVISION 001         "      "    MAR 92 VARIABLE NFSO (NOMBRE DE SOURCE OUVERTS)
 !                                        CHANGE ALLEL A FATVOI
@@ -19,12 +19,10 @@
 !#include "fiches.cdk"
 !#include "logiq.cdk"
 !
-!MODULES
-      EXTERNAL      FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
-!
 !*
-      INTEGER       FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS, I, J
-      CHARACTER*128 DN
+      INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
+      integer :: I, J
+      CHARACTER(len=128) :: DN
   
 !     TRAITEMENT DES FICHIERS SOURCES
       IF( OUVS ) THEN
@@ -37,18 +35,32 @@
          NFSO = 0
       ENDIF
       RETURN
+      END
   
-      ENTRY FERMED
+!** S/R FERMED FERME  LE FICHIER DESTINATION
+      SUBROUTINE FERMED
+      use configuration
+      IMPLICIT      NONE
+!AUTEUR
+!VERSION ORIGINALE  - Y. BOURASSA NOV 90
+!REVISION 001         "      "    MAR 92 VARIABLE NFSO (NOMBRE DE SOURCE OUVERTS)
+!                                        CHANGE ALLEL A FATVOI
+!         002         "      "    MAI 92 FCLOS SUB.>FUNCTION.
+!         003         "      "    FEV 14 mode DRYRUN
+!*
+      INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
+      integer :: I
+      CHARACTER(len=128) :: DN
 !     TRAITEMENT DU FICHIER DESTINATION 
       if(dryrun) then  ! dry run, on ne fait rien
         OUVD = .FALSE.
         return
       endif
       DN = ND
-      IF( OUVD ) THEN
-         IF( VD ) THEN 
+      IF( OUVD ) THEN    ! fichier destination ouvert
+         IF( VD ) THEN   ! voir contenu du fichier destination
             I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
-            IF( DSEQ ) I = FSTRWD(3)
+            IF( DSEQ ) I = FSTRWD(3)  ! fichier sequentiel, on rembobine
             IF( INDEX(DNOM,'FTN') .NE. 0) THEN
                I = FSTVOI(3, 'SEQ')
             ELSE

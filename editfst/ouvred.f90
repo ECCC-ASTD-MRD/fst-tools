@@ -20,7 +20,7 @@
 !                                  ON PLACE LE FICHIER A LA FIN AVANT COPIE
 !          006  M. Lepine   Fev 05 Utilisation optionnelle des fichiers remotes
 !          007  M. Lepine   Nov 05 Remplacement de tous les fstabt par qqexit
-!          008  M. Valin    Fev 14 mode DRYRUN
+!          008  M. Valin    Fev-Avr 14 mode DRYRUN - simplification de la logique d'erreur
 !
 !LANGUAGE FTN77
 !
@@ -43,33 +43,29 @@
         ouvd = .true.
         return
       endif
-!     SI DEJA OUVERT COMME DESTINATION, RELE NOMBRE D'ENREGISTREMENTS
+!     SI DEJA OUVERT COMME DESTINATION, TROUVER LE NOMBRE D'ENREGISTREMENTS
       IF(DN.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM,'SEQ') .GT. 0) THEN
             OUVRED = 0
-            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT SEQUENTIEL'
+            IF( DEBUG ) PRINT*,'FICHIER SEQUENTIEL ',ND,' DEJA OUVERT'
          ELSE
             OUVRED = FSTNBR( 3 )
-            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT RANDOM ','TALIIE =',OUVRED
+            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT RANDOM ','TAILLE =',OUVRED
          ENDIF
          RETURN
       ENDIF
   
-!     SI DEJA OUVERT COMME SOURCE, RIEN A FAIRE DU TOUT
+!     SI DEJA OUVERT COMME SOURCE, ERREUR FATALE
       IF(DN.EQ.NS .AND. OUVS) THEN
          PRINT*,'  **************************************'
          PRINT*,' *              ATTENTION               *'
-         IF( INTERAC ) THEN
-            PRINT*,'*        DESTINATION = SOURCE,           *'
-         ELSE
-            PRINT*,'* DESTINATION = SOURCE,  ERREUR FATALE   *'
-            PRINT*,' *                ABORT                 *'
-         ENDIF
+         PRINT*,'* DESTINATION = SOURCE,  ERREUR FATALE   *'
+         PRINT*,' *                ABORT                 *'
          PRINT*,'  **************************************'
          CALL qqexit(54)
       ENDIF
 
-!     FERME LE FICHIER DESTINATION D'OUVERT
+!     FERMER LE FICHIER DESTINATION SI OUVERT
       IF( OUVD ) CALL FERMED
 
 !     RETOURNE OUVRED >= 0 SI OUVERT
@@ -87,7 +83,7 @@
          ND     = DN
          OUVD   = .TRUE.
          DSEQ   = INDEX(DNOM,'SEQ') .NE. 0
-         IF( DSEQ ) THEN
+         IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
             RENDUA = 0
  10         COPIES = FSTINF( 3, I, J, K, -1, ' ', -1, -1, -1, ' ', ' ')
             IF(COPIES .GE. 0) THEN
@@ -101,13 +97,9 @@
          PRINT*,'  **************************************'
          PRINT*,' *              ATTENTION               *'
          PRINT*,'* ERREUR DANS FNOM FICHIER INUTILISABLE  *'
-         IF( INTERAC ) THEN
-            PRINT*,'  **************************************'
-         ELSE
-            PRINT*,' *                ABORT                 *'
-            PRINT*,'  **************************************'
-            CALL qqexit(55)
-         ENDIF
+         PRINT*,' *                ABORT                 *'
+         PRINT*,'  **************************************'
+         CALL qqexit(55)
       ENDIF
 
       RETURN
