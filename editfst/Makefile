@@ -78,7 +78,7 @@ all: $(EDITFST) test.fst
 test.fst: create_test_file
 	./create_test_file
 
-create_test_file:	create_test_file.f90 $(EXTRA_OBJECTS)
+create_test_file:	create_test_file.f90
 #	s.f90 $< $(EXTRA_OBJECTS) -o $@ $(FFLAGS) -l$(LIBRMN)
 	s.f90 $< -o $@ $(FFLAGS) -l$(LIBRMN)
 	rm -f test.fst

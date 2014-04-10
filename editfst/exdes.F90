@@ -1,3 +1,21 @@
+!/* EDITFST - Collection of useful routines in C and FORTRAN
+! * Copyright (C) 1975-2014  Environnement Canada
+! *
+! * This library is free software; you can redistribute it and/or
+! * modify it under the terms of the GNU Lesser General Public
+! * License as published by the Free Software Foundation,
+! * version 2.1 of the License.
+! *
+! * This library is distributed in the hope that it will be useful,
+! * but WITHOUT ANY WARRANTY; without even the implied warranty of
+! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! * Lesser General Public License for more details.
+! *
+! * You should have received a copy of the GNU Lesser General Public
+! * License along with this library; if not, write to the
+! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+! * Boston, MA 02111-1307, USA.
+! */
 !** S/R EXDES DECODE LA DATE, LES IP1, IP2 ET IP3 DE LA CARTE
 !             DESIRE/EXCLURE
 !
@@ -152,10 +170,10 @@
       IF(M .EQ. 4) THEN
          I = REQ(11,M,NREQ)
          IF(I .EQ. -1) I=2
-         DO 40 J=1,I
-            temp = REQ(J,M,NREQ)
-            CALL JULSEC(REQ(J,M,NREQ), temp)
-   40       CONTINUE
+!!!!!!         DO 40 J=1,I
+!!!!!!            temp = REQ(J,M,NREQ)
+!!!!!!            CALL JULSEC(REQ(J,M,NREQ), temp)
+!!!!!   40       CONTINUE
       ENDIF
 
       IF(REQ(11,M,NREQ) .EQ. -1) THEN

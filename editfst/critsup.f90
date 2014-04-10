@@ -1,8 +1,26 @@
+!/* EDITFST - Collection of useful routines in C and FORTRAN
+! * Copyright (C) 1975-2014  Environnement Canada
+! *
+! * This library is free software; you can redistribute it and/or
+! * modify it under the terms of the GNU Lesser General Public
+! * License as published by the Free Software Foundation,
+! * version 2.1 of the License.
+! *
+! * This library is distributed in the hope that it will be useful,
+! * but WITHOUT ANY WARRANTY; without even the implied warranty of
+! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! * Lesser General Public License for more details.
+! *
+! * You should have received a copy of the GNU Lesser General Public
+! * License along with this library; if not, write to the
+! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+! * Boston, MA 02111-1307, USA.
+! */
 !**S/R CRITSUP DEFIFIT LES CRITERES SUPLEMENTAIRES DE SELECTION
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
       use configuration
       IMPLICIT NONE 
-  
+      include 'excdes.inc'
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
 !
 !AUTEUR       AUTEUR YVON BOURASSA . JAN 90
@@ -50,18 +68,17 @@
       NJS  = -1
       NIS  = -1
   
-!     ACTIVAGE DES CRITERES FOURNIS PAR LA DIRECTIVE
+!     RECUPERATION DES CRITERES FOURNIS PAR LA DIRECTIVE
       GO TO (8, 7, 6, 5, 4, 3, 2, 1) NP 
     1 IG4S = IG4
     2 IG3S = IG3
     3 IG2S = IG2
-    4 IG3S = IG1
+    4 IG1S = IG1
 !      I = FSTCVT(' ',' ',' ', GRID, NV, TV, LBL, GTYPS, .TRUE.)
     5 I = FSTCVT(-1, -1, -1, GRID, NV, TV, LBL, GTYPS, .TRUE.)
     6 NKS  = NK
     7 NJS  = NJ
     8 NIS  = NI
-  
 !     DESACTIVER LES CRITERES SUPLEMENTAIRES AVEC "CTITSUP(-1)"
       IF(NP.EQ.1 .AND. NI.EQ.-1) THEN
          SCRI = .FALSE.

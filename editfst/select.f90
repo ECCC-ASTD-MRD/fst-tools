@@ -1,3 +1,21 @@
+!/* EDITFST - Collection of useful routines in C and FORTRAN
+! * Copyright (C) 1975-2014  Environnement Canada
+! *
+! * This library is free software; you can redistribute it and/or
+! * modify it under the terms of the GNU Lesser General Public
+! * License as published by the Free Software Foundation,
+! * version 2.1 of the License.
+! *
+! * This library is distributed in the hope that it will be useful,
+! * but WITHOUT ANY WARRANTY; without even the implied warranty of
+! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! * Lesser General Public License for more details.
+! *
+! * You should have received a copy of the GNU Lesser General Public
+! * License along with this library; if not, write to the
+! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+! * Boston, MA 02111-1307, USA.
+! */
 !** S/R SELECT INTERPRETE DES DIRECTIVES DE L'USAGER
       SUBROUTINE SELECT
       use configuration
@@ -39,7 +57,7 @@
 !#include "tapes.cdk"
 !*
 
-!     PREPARE LE DICTIONAIRE DE READLX
+!     OPTIONS (cle = valeur)
       CALL QLXINS(DEBUG  , 'DEBUG'  , DUMY, 1, 1) 
       CALL QLXINS(DIAG   , 'DIAG'   , DUMY, 1, 1) 
       CALL QLXINS(ECR    , 'ECR'    , DUMY, 1, 1) 
@@ -53,7 +71,7 @@
       CALL QLXINS(VD     , 'VOIRD'  , DUMY, 1, 1) 
       CALL QLXINS(VD     , 'VOIR'   , DUMY, 1, 1) 
   
-!     APELLE UN SOUS-PROGRAMME
+!     FONCTIONS ( cle(.....) )
 
       CALL QLXINX(DESIRE , 'DESIRE',  NP, 107, 2) 
       CALL QLXINX(CRITSUP, 'CRITSUP', NP, 108, 2) 
@@ -70,11 +88,17 @@
       CALL QLXINX(WEOFILE, 'STDWEOF', NP, 103, 2) 
       CALL QLXINX(ZAP,     'ZAP',     NP, 107, 2)
   
-!     CHANGE UNE CONSTANTE
+!     MOTS CLES (CONSTANTES)
+
       CALL QLXINS(MOIN1  , 'TOUS'   , DUMY, 1, 0) 
       CALL QLXINS(MOIN2  , '@'      , DUMY, 1, 0) 
       CALL QLXINS(MOIN3  , 'DELTA'  , DUMY, 1, 0) 
       CALL QLXINS(MOIN4  , 'COMMUNE', DUMY, 1, 0) 
+      CALL QLXINS(.TRUE. , 'OUI'    , DUMY, 1, 0) 
+      CALL QLXINS(.FALSE., 'NON'    , DUMY, 1, 0) 
+
+!     SYMBOLES POUR LES UNITES IP1/2/3 (CONSTANTES)
+
       CALL QLXINS(M1000  , 'METERS' , DUMY, 1, 0)
       CALL QLXINS(M1000  , 'METRES' , DUMY, 1, 0)
       CALL QLXINS(M1001  , 'SIGMA'  , DUMY, 1, 0) 
@@ -88,10 +112,8 @@
       CALL QLXINS(M1010  , 'HOURS'  , DUMY, 1, 0)
       CALL QLXINS(M1017  , 'INDX'   , DUMY, 1, 0)
       CALL QLXINS(M1021  , 'MPRES'  , DUMY, 1, 0)
-      CALL QLXINS(.TRUE. , 'OUI'    , DUMY, 1, 0) 
-      CALL QLXINS(.FALSE., 'NON'    , DUMY, 1, 0) 
   
-      CALL READLX(5, DUMY, KERR)
+      CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete
   
       IF(DUMY .LT. 0) THEN
          WRITE(6,*)'  **************************************'

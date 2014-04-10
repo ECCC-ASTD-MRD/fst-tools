@@ -1,3 +1,21 @@
+!/* EDITFST - Collection of useful routines in C and FORTRAN
+! * Copyright (C) 1975-2014  Environnement Canada
+! *
+! * This library is free software; you can redistribute it and/or
+! * modify it under the terms of the GNU Lesser General Public
+! * License as published by the Free Software Foundation,
+! * version 2.1 of the License.
+! *
+! * This library is distributed in the hope that it will be useful,
+! * but WITHOUT ANY WARRANTY; without even the implied warranty of
+! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! * Lesser General Public License for more details.
+! *
+! * You should have received a copy of the GNU Lesser General Public
+! * License along with this library; if not, write to the
+! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+! * Boston, MA 02111-1307, USA.
+! */
 !** S/P DESIRE - EXTRACTION DES ARGUMENTS D'UNE DIRECTIVE "DESIRE"
 
       SUBROUTINE DESIRE(TC, NV, LBL, DATE, IP1, IP2, IP3)
@@ -103,9 +121,13 @@
 !         endif
          IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
       ENDIF
-   60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE
-         CALL EXDES(DATE, ARGDIMS(4), 4)
-         status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
+   60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE, on s'occupe de 'COMMUNE' ici
+!        IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA 
+!          status = Select_date(nreq,excdes_de,local_date,5)
+!        else
+           CALL EXDES(DATE, ARGDIMS(4), 4)
+           status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
+!        endif
 !        il va falloir arranger les choses pour mettre delta s'il y en a un en secondes
 !        et rendre setper coherent avec tout ca (on oublie les secondes juliennes)
 !        si date(1) ==  -4   (COMMUNE)
@@ -138,7 +160,7 @@
          status = Select_typvar(nreq,excdes_de,typs(1,nreq),REQT(NREQ),2)
       ENDIF
   
-!     APPLIQUER LES CRITERES SUPPLEMENTAIRES AU BESOIN
+!     AJOUTER LES CRITERES SUPPLEMENTAIRES AU BESOIN
       IF( SCRI ) THEN
          SUP(8,NREQ) = 1
          SUP(1,NREQ) = NIS
