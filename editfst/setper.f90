@@ -54,6 +54,7 @@
       EQUIVALENCE   (K, DTG(14))
       CHARACTER*128 C
 
+         print *,'PERIODE',jours
 !     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE 
       IF(DN(1) .LT. 0) THEN   ! CMC date-time stamp numerique
          K = -DN(1)
@@ -69,36 +70,31 @@
   
 !     SI ON DOIT MODIFIER LA DATE QUI A ETE PASSEE
       IF(NP .GT. 1) CALL INCDAT(K, K, ECART)
-!!!      CALL JULSEC(JOURS(1) , K)
-      JOURS(2) = JOURS(1)    ! date1 @ date1
-!      JOURS(2) = 0
+      JOURS(1) = K
+      JOURS(2) = K           ! date1 @ date1
       JOURS(3) = 0           ! DELTA 0 (pas de DELTA)
-      JOURS(4) = 1
+      JOURS(4) = 1           ! periode valide presente si jours(4) .ne. 0
   
 !     SI ON A SEULEMENT DONNE UNE DATE (pas de duree ni de delta)
       IF(NP .LT. 3) THEN   ! plus rien a faire
          IF( DEBUG ) THEN
             CALL DATMGP( DTG )
             WRITE(6,600) (DTG(I),I=7,13), JOURS(1)
-  600       FORMAT(' * CAS DU '7A4,'  JULH = ',I8)
+  600       FORMAT(' * CAS DU ',7A4,'  JULH = ',I8)
          ENDIF
-      ELSE
+      ELSE   !  NP >= 3,  on a @ date2 et peut-etre un delta
+         JOURS(4) = -1 
          IF(DUREE .GE. 0) THEN
             call INCDAT(JOURS(2), JOURS(1), DUREE)  ! JOURS(2) = JOURS(1) + DUREE
-!            JOURS(2) = JOURS(1) + DUREE 
-         ELSE   ! les dates sont a l'envers
+         ELSE   ! les dates sont a l'envers, DUREE < 0
             JOURS(2) = JOURS(1)
             call INCDAT(JOURS(1), JOURS(2), DUREE)  ! JOURS(1) = JOURS(2) + DUREE
-!            JOURS(1) = JOURS(1) + DUREE 
          ENDIF
          IF(NP .GT. 3) THEN
             JOURS(3) = ABS( DELTA ) 
-!            JOURS(3) = ABS( DELTA ) * 3600   ! remettre en secondes
          ELSE
             JOURS(3) = 0                      ! pas de DELTA
-!            JOURS(3) = 1
          ENDIF
-         JOURS(4) = -1                        ! on a @ date2 et peut-etre un delta
          IF( DEBUG ) THEN
             CALL DATMGP( DTG )
             WRITE(6,601) (DTG(I),I=7,13)
@@ -109,7 +105,7 @@
   602       FORMAT(' *  FIN  *  ',7A4)
             WRITE(6,*) JOURS(1), ' @ ', JOURS(2), ' DELTA ', JOURS(3) 
          ENDIF
-      ENDIF
+      ENDIF   ! NP 
   
       RETURN
       END 

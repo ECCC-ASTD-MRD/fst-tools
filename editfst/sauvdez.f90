@@ -20,6 +20,7 @@
       SUBROUTINE SAUVDEZ
       use configuration
       IMPLICIT NONE 
+      include 'excdes.inc'
 !
 !AUTEURS
 !VERSION ORIGINALE -   Y. BOURASSA NOV 89
@@ -27,12 +28,6 @@
 !
 !LANGUAGE   - FTN77 
 !
-!#include "maxprms.cdk"
-!#include "fiches.cdk"
-!#include "desrs.cdk"
-!#include "char.cdk"
-!
-!MODULE
       EXTERNAL FSTCVT, ZAP
 !
 !*
@@ -69,7 +64,7 @@
       IF(SAUV .GT. 0) THEN
          DO 40 N=1,SAUV
             SATISF(N) = 0
-            IF(DESEXC(N) .EQ. 0) NEXC = NEXC + 1
+            IF(DESEXC(N) .EQ. EXCDES_EXCLURE) NEXC = NEXC + 1
    40       CONTINUE
       ENDIF
   

@@ -16,7 +16,7 @@
 ! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ! * Boston, MA 02111-1307, USA.
 ! */
-!** S/R SELECT INTERPRETE DES DIRECTIVES DE L'USAGER
+!** S/R SELECT TRAITER LES DIRECTIVES DE L'USAGER
       SUBROUTINE SELECT
       use configuration
       IMPLICIT NONE 
@@ -58,6 +58,7 @@
 !*
 
 !     OPTIONS (cle = valeur)
+
       CALL QLXINS(DEBUG  , 'DEBUG'  , DUMY, 1, 1) 
       CALL QLXINS(DIAG   , 'DIAG'   , DUMY, 1, 1) 
       CALL QLXINS(ECR    , 'ECR'    , DUMY, 1, 1) 
@@ -103,7 +104,8 @@
       CALL QLXINS(M1000  , 'METRES' , DUMY, 1, 0)
       CALL QLXINS(M1001  , 'SIGMA'  , DUMY, 1, 0) 
       CALL QLXINS(M1002  , 'MBAR'   , DUMY, 1, 0) 
-      CALL QLXINS(M1003  , 'OTHER'  , DUMY, 1, 0) 
+      CALL QLXINS(M1003  , 'OTHER'  , DUMY, 1, 0)
+      CALL QLXINS(M1003  , 'AUTRE'  , DUMY, 1, 0)
       CALL QLXINS(M1004  , 'MGND'   , DUMY, 1, 0)
       CALL QLXINS(M1004  , 'MSOL'   , DUMY, 1, 0)
       CALL QLXINS(M1005  , 'HYBRID' , DUMY, 1, 0)

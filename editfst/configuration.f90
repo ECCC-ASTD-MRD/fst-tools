@@ -58,7 +58,7 @@ module configuration
                '-1      ',('        ',i = 1,120),  'DRYRUN  '/)
 !
 ! REQ : table utilisee pour stocker les requetes
-      integer*8, save :: JOURS(4),REQ(11,4,NMD)
+      integer, save :: JOURS(4),REQ(11,4,NMD)
 ! si REQ(11,...) = -1
 !     REQ(1,...)  valeur de depart
 !     REQ(2,...)  valeur de fin
@@ -94,9 +94,10 @@ contains
 subroutine config_init  ! initialisation des tableaux 
   req     = 0
   jours   = 0
-  desexc  = 0
+  desexc  = 0   ! ni desire, ni exclure
   satisf  = 0
   sources = -1
+  sup = 0
 end subroutine config_init
 
 end module configuration

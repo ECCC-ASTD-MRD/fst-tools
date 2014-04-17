@@ -47,13 +47,6 @@
 !Revision 014   M. Valin  - Fev  14 - mode dryrun, noveau traitement IP1/2/3
 !
 !LANGAGE  - FTN77
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "desrs.cdk"
-!#include "tapes.cdk"
-!#include "key.cdk"
-!#include "char.cdk"
-!#include "fiches.cdk"
       integer, dimension ( : ), pointer, save :: buftemp => NULL()
 !     - buftemp    CHAMP DONT LA LONGUEUR VARIE SELON LES RESSOURCES
 !                  NECESSAIRES, LA ROUTINE MEMOIR RESERVE L'ESPACE
@@ -66,7 +59,7 @@
       INTEGER      FSTPRM, FSTFRM, IG2, XTRA2, NJ, J, DEET,       LNG
       INTEGER      FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC
       INTEGER      FSTLUK, FSTWEO, IG4, NBITS, NPAS
-      integer *8   IP(4), p_int8, kind_8, ior
+      integer   IP(4)
 !      integer *8   IP(4), p_int8, kind_8, ior
 !      intrinsic    ior
       integer      IP1,IP2,IP3,kind,p_int
@@ -79,6 +72,7 @@
       integer :: kind1, kind2, kind3, matches
       character (len=2) :: strkind1, strkind2, strkind3
       integer :: nrecords
+      integer :: date_1, date_2
   
       LOGICAL      FIRSTP, BONNE, OK, EXCL
       interface
@@ -107,15 +101,13 @@
 
    10 BONNE  = .FALSE.
       FIRSTP = .TRUE.
-!     TROUVE LA CLE DU PROCHAIN ENREGISTREMENT.
-      IREC   = FSTINF(SOURCES(1), NI, NJ, NK, -1, ' ', -1, -1, -1,' ', ' ')
-      IF(IREC .LT. 0) GO TO 160
       IF( DEBUG ) WRITE(6,*)' FIRSTP=',FIRSTP,'  OK=',OK,' BONNE=',BONNE
+!     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT.
+      IREC   = FSTINF(SOURCES(1), NI, NJ, NK, -1, ' ', -1, -1, -1,' ', ' ')
 !
-!     on revient a 20 apres le fstsui
-!     do while(irec >= 0)
+      do while(irec >= 0)
 !
-   20 I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,    &
+      I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,    &
                  IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2,        &
                  IG3, IG4, SWA, LNG, DLFT, UBC, XTRA1, XTRA2, XTRA3)
 !
@@ -126,13 +118,9 @@
       nrecords = nrecords + 1
       write(nomvar,'(A4)')NOM
       can_translate = (0 /= fstcantranslate(nomvar))   ! est-ce qu'on peut traduire ip1/2/3 pour cette variable ?
-!      matches = fst_match_req(irec)
-!      print *,matches
       IP(1)=IP1
       IP(2)=IP2
       IP(3)=IP3
-!      write(*,777) ip1,kind,p,ip(1)
-! 777  format('Debug+ cle(i)=',i10,' kind=',i2,' p =',e11.4,' IP(i) =',z16.16)
 
       IF(FIRSTP .OR. OK) THEN 
 !        CALCUL DE La "SECONDE JULIENNE" (AU MOINS DU PREMIER ENREGISTREMENT).
@@ -149,8 +137,9 @@
          BONNE  = .TRUE.
          GO TO 120
       ENDIF
+      go to 120
 !
-!     goto 120  ! si on se rend ici, c'est que le package FSTD98 a fait la job de selection
+!     si on se rend ici, c'est que le package FSTD98 a fait la job de selection
 !     faut voir ce qu'on va faire avec satisf(:), car on ne voit plus les exclure satisfaits
 !     et on ne sait pas quelle requete a ete satisfaite
 !     interface supplementaire avec les fichiers standard pour le savoir ?
@@ -233,7 +222,7 @@
          SATISF(K) = SATISF(K) + 1
 
 !        SI LA DIRECTIVE SATISFAITE EST UN DESIRE
-         IF( DESEXC(K) .EQ. -1 ) GO TO 120
+         IF( DESEXC(K) .EQ. EXCDES_DESIRE ) GO TO 120
 
 !        SI LA DIRECTIVE SATISFAITE EST UN EXCLURE            
          IF( DIAG ) WRITE(6,*)'CLE',IREC, 'TYPRVAR=',TYP, ' NOMVAR=',NOM,' ETIKET=',ETI,  &
@@ -247,23 +236,24 @@
 !
 !     ===============  fin de la vieille logique de satisfaction de desiderata ====================
 !
-!     CONTROLE DE LA MEMOIRE TEMPON AVANT LECTURE
+!     CONTROLE DE LA MEMOIRE TAMPON AVANT LECTURE
 !     si on se rend ici, c'est que l'enregistrement est a copier
-  120 IF(LNG .GT. NM) THEN  ! make sure buffer is large enough to receive data
-         IF (associated(buftemp)) deallocate(buftemp) 
-         NM = LNG
-         allocate(BUFtemp(NM))
-         ist = 1
-      ENDIF
+  120 CONTINUE
       if(dryrun)then
         I = 0
       else
-        I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)
+        IF(LNG .GT. NM) THEN  ! make sure buffer is large enough to receive data
+          IF (associated(buftemp)) deallocate(buftemp)
+          NM = LNG
+          allocate(BUFtemp(NM+10))
+          ist = 1
+        ENDIF
+        I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)  ! on lit l'enregistrement
       endif
 !
-!     ==================   logique du ZAP  ==================
+!     ==================   logique pour directive ZAP  ==================
       IP(1) = IP1      ! remettre la valeur de ip1 provenant du fstprm
-      IF( ZA ) THEN    ! on "zappe"
+      IF( ZA ) THEN    ! on "zappe ?"
          IF(Z1 .NE. -1)  IP(1) = Z1  ! zap ip1
          IF(Z2 .NE. -1)  IP(2) = Z2  ! zap ip2
          IF(Z3 .NE. -1)  IP(3) = Z3  ! zap ip3
@@ -288,26 +278,27 @@
       ip2 = IP(2)
       ip3 = IP(3)
 !
-      if(dryrun) then  ! dry run debug mode, say what we would be copying
+      if(dryrun) then  ! dry run debug mode, tell what we would be copying
 !
         i = decode_ip(p1,kind1,p2,kind2,p3,kind3,ip1,ip2,ip3)
         strkind1=kind_to_string(kind1)
         strkind2=kind_to_string(kind2)
         strkind3=kind_to_string(kind3)
+        call newdate(date,date_1,date_2,-3)   ! translate date time stamp to printable format
         if(can_translate)then
-          write(6,667)'DRYRUN-select: ',TYP,NOM,ETI,P1,strkind1,P2,strkind2,P3,strkind3,DATE,GTY,IG1,IG2,IG3,IG4
+          write(6,667)'DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,P1,strkind1,P2,strkind2,P3,strkind3,DATE,GTY,IG1,IG2,IG3,IG4
         else
-          write(6,666)'DRYRUN-select: ',TYP,NOM,ETI,IP1,IP2,IP3,DATE,GTY,IG1,IG2,IG3,IG4
+          write(6,666)'DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,IP1,IP2,IP3,DATE,GTY,IG1,IG2,IG3,IG4
         endif
-666     format(A,A3,A5,A13,3I14,I12,A2,4I10)
-667     format(A,A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
+666     format(A,2(I8.8,1X),A3,A5,A13,3I14       ,I12,A2,4I10)
+667     format(A,2(I8.8,1X),A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
 !
-      else   !  real mode, we write into the output file
+      else   !  real mode, write into the output file
 !
         I = FSTECR(BUFtemp, BUFtemp, -NBITS, 3, DATE, DEET, NPAS, NI, NJ, NK,  &
                    IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2, IG3, IG4, DTYP, ECR)
         if (i .lt. 0) then
-          write(6,*) 'EDITFST: write error, ABORTING'
+          write(6,*) 'ERROR: (copystx) write error, ABORTING'
           call qqexit(55)
         endif
       endif
@@ -317,18 +308,18 @@
       IF(LIMITE .EQ. 0) GO TO 180       ! nombre maximum d'enregistrements a copier atteint
   140 IF(.NOT.BONNE .AND. FIXD) THEN
          IF( DIAG .OR. DEBUG) WRITE(6,*)'*** DATE DE VALIDATION DU PREMIER ENREGITREMENT INACCEPTABLE ***'
-!        PREMIERE DATE MAUVAISE ET LES AUTRES SUPPAUSEES PAREILLES.
+!        PREMIERE DATE MAUVAISE ET LES AUTRES SUPPOSEES PAREILLES.
 !        SI LE SOURCE EST RANDOM LA COPIE EST TERMINEE.
 !         "  "    "    "  SEQUENTIEL SKIP AU PROCHAIN EOF.
-  150    IF(SSEQ .AND. FSTSUI(SOURCES(1), NI, NJ, NK) .NE. 0) GO TO 150
-!        IREC = -1   ! on sort de la boucle
+         DO WHILE(SSEQ .AND. FSTSUI(SOURCES(1), NI, NJ, NK) .NE. 0)
+         END DO
+         IREC = -1   ! on sort de la boucle
       ELSE
 !        PREMIERE DATE BONNE OU DATES SONT PAS TOUTES PAREILLES
          IREC = FSTSUI(SOURCES(1), NI, NJ, NK)
-         IF(IREC .GE. 0) GO TO 20
       ENDIF
 !
-!     enddo  ! (while(irec >= 0)
+      END DO  ! (while(irec >= 0)
 !
   160 IF(SSEQ) THEN 
          LEOF = FSTEOF(SOURCES(1))

@@ -22,7 +22,7 @@
       use configuration
       IMPLICIT NONE 
   
-      INTEGER, intent(IN) ::  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(20)
+      INTEGER, intent(IN) ::  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(30)
 !     AUTEUR YVON R. BOURASSA JAN 86
 !              "  "      "    OCT 90 VERSION QLXINS
 !              "  "      "    FEV 91 BUG DECODING ETIKET
@@ -30,34 +30,29 @@
 !Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
 !Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
 !Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
+!                           mar  14 - interface avec la selection par le logiciel fstd 
 !     LANGUAGE FTN90
 !  
 !ARGUMENTS
-! ENTRE   TC   -  1 A 10 TYPES DE CHAMPS ( 1 CARACTERE )
+!  ENT    TC   -  1 A 10 TYPES DE CHAMPS ( 1 CARACTERE )
 !   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CARACTERES )
-!   "     LBL  -  1 A 10 ETIQUETTES ( 1 A 12 CARACTERES )
+!   "     LBL  -  1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
 !   "     DATE -  1 A 10 DATES OU INTERVALLE AVEC SAUT
 !   "     IP1  -  1 A 10 IP1    "      "      "    "
 !   "     IP2  -  1 A 10 IP2    "      "      "    "
 !   "     IP3  -  1 A 10 IP3    "      "      "    "
-!#include "maxprms.cdk"
-!#include "desrs.cdk"
-!#include "lin128.cdk"
-!#include "logiq.cdk"
-!#include "fiches.cdk"
-!#include "char.cdk"
 !
 !MODULES
       EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, EXDES, HOLACAR
       include 'excdes.inc'
 !*  
-      INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, D, LIS(10)
+      INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, LIS(10)
 !      DATA     LIS/10*0/
       integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
       integer :: status
       integer excdes_de
 
-      D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
+!      D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
       excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. NMD) THEN
 !         IF(DIAG .OR. DEBUG)
@@ -74,15 +69,15 @@
       endif
   
 !     COMPTER LES DIRECTIVES DESIRE/EXCLURE
-      IF(D .EQ. 0) NEXC = NEXC + 1   ! compteur pour "exclure"
+      IF(excdes_de == EXCDES_EXCLURE) NEXC = NEXC + 1   ! compteur pour "exclure"
       NREQ = NREQ+1                  ! nombre de requetes
   
 !     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
       SATISF(NREQ) = 0
 !     INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
-      DESEXC(NREQ) = D
+      DESEXC(NREQ) = excdes_de
   
-      DO 20 J=1,4
+      DO 20 J=1,4              ! mise a zero de la requete NREQ dans la table de requetes
       DO 20 I=1,11
    20    REQ(I,J,NREQ) = 0
       REQE(NREQ) = 0
@@ -92,42 +87,40 @@
       IF( DEBUG ) PRINT*,'REQUETE # ',NREQ
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
-!         if (argdims(7) .gt. 1) then
-           call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
-           CALL EXDES(newip3,  nip3, 3)
-           status = Select_ip3(nreq, excdes_de, newip3, nip3)
-!         else
-!           CALL EXDES(IP3,  ARGDIMS(7), 3)
-!         endif
+         call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
+!         CALL EXDES(newip3,  nip3, 3)
+         status = Select_ip3(nreq, excdes_de, newip3, nip3)   ! selecteur ip1 fstd98
          IF( DEBUG ) PRINT*,'IP3 =',(REQ(I,3,NREQ),I=1,11)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
-!         if (argdims(6) .gt. 1) then
-           call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
-           CALL EXDES(newip2,  nip2, 2)
-           status = Select_ip2(nreq, excdes_de, newip2, nip2)
-!         else
-!           CALL EXDES(IP2,  ARGDIMS(6), 2)
-!         endif
+         call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
+!         CALL EXDES(newip2,  nip2, 2)
+         status = Select_ip2(nreq, excdes_de, newip2, nip2)   ! selecteur ip2 fstd98
          IF( DEBUG ) PRINT*,'IP2 =',(REQ(I,2,NREQ),I=1,11)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
-!         if (argdims(5) .gt. 1) then
-            call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
-            CALL EXDES(newip1, nip1, 1)
-           status = Select_ip1(nreq, excdes_de, newip1, nip1)
-!         else
-!            CALL EXDES(IP1,  ARGDIMS(5), 1)
-!         endif
+         call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
+!         CALL EXDES(newip1, nip1, 1)
+         status = Select_ip1(nreq, excdes_de, newip1, nip1)   ! selecteur ip3 fstd98
          IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
       ENDIF
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE, on s'occupe de 'COMMUNE' ici
-!        IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA 
-!          status = Select_date(nreq,excdes_de,local_date,5)
-!        else
-           CALL EXDES(DATE, ARGDIMS(4), 4)
+!         CALL EXDES(DATE, ARGDIMS(4), 4)
+         IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA nheures
+!           IF(jours(4) == 0)  OUCH !! periode pas initialisee
+           IF(jours(4) == 1) THEN ! juste une date1
+             status = Select_date(nreq,excdes_de,(/jours(1)/),1)
+           ELSE
+             IF(jours(3) == 0) THEN  ! pas de delta
+               status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2)/),3)
+             ELSE
+               status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2),-3,jours(3)/),5)
+             ENDIF
+           ENDIF
+         else
            status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
-!        endif
+           print *,'calling Select_date with',date(1:ARGDIMS(4))
+         endif
 !        il va falloir arranger les choses pour mettre delta s'il y en a un en secondes
 !        et rendre setper coherent avec tout ca (on oublie les secondes juliennes)
 !        si date(1) ==  -4   (COMMUNE)
@@ -178,7 +171,7 @@
   
 !     POUR CHOISIR LES CHAMPS NON VOULUS
       ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
-      D = 0
+!      D = 0
       excdes_de = EXCDES_EXCLURE
       GO TO 10
   
@@ -188,7 +181,6 @@
 ! en liste de ip entiers
 ! des valeurs negatives dans ip comme -1,-2,-3 (@,delta,tous) restent inchangees
       subroutine ip_to_newip(ip,newip,nip,nnewip)
-!     use convert_ip123
       use ISO_C_BINDING
       implicit none
       include 'convert_ip123.inc'
@@ -202,9 +194,9 @@
 !LANGUAGE Fortran 90
 !  
 !ARGUMENTS
-! Entree  ip     -  liste de niveaux encodes ou non
+! Entree  ip     -  liste de niveaux (ip [entier] ou paire [reel,code_de_type entier])
 !   "     nip    -  dimension de ip
-! Sortie  newip  -  liste des niveaux encodes (entiers)
+! Sortie  newip  -  liste des niveaux encodes (ip entiers)
 !   "     nnewip -  nombre de valeurs dans newip
 !
 !
@@ -228,9 +220,9 @@
                call qqexit(20)
              endif
              i = i + 1  ! sauter kind
-          endif  ! paire possible
-        endif
-        i = i + 1
+          endif ! paire
+        endif  ! paire possible
+        i = i + 1       ! sauter valeur
       enddo
       return
       end subroutine

@@ -260,27 +260,6 @@
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
       character(len=4096), save :: PRINTR
 
-!      DATA KLE /'NNN', 'D:', 'EOF', 'SSEQ', 'DSEQ', 'VD', 'NOBOX',
-!     X          'DIAG', 'ECR', 'I.', 'L.', 'K', 'M', 'T', 'C', 'SS',
-!     X          'DS', 'V', 'N', 'VS', 'E', 'F', 'SF', 'DF',
-!     X          'NRECMIN', 120*'S:','DRYRUN'/
-!      DATA DEF1b/'OUI', ' ', '0', 'NON', 'NON', 'NON', 'NON', 'NON', 
-!     X          'NON', '$IN', '$OUT', 'FATALE', 'ERRORS', 'FATALE',
-!     X          '-1',  'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'OUI',
-!     X          'NON', 'NON', '-1', 120*' ',' '/
-!      DATA DEF2b/'OUI', ' ', '0', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 
-!     X          'OUI', '$IN', '$OUT', 'ERRORS', 'INFORM', 'ERRORS',
-!     X          '-1',  'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI', 'OUI',
-!     X          'OUI', 'OUI', '-1', 120*' ','DRYRUN'/
-!      DATA VS, OUVS, OUVD, FIXD, DEBUG, XPRES, SCRI, ESAIS, INTERAC, ZA, DRYRUN
-!     X    /11 * .FALSE./
-!      DATA JOURS, DESEXC, SATISF,  NS,    ETAT
-!     X    /  4*0,  NMD*0,  NMD*0, ' ', 'NORMAL'/
-!      DATA NREQ, NEXC, CEOF, SAUV, MEOF, LEOF, NFSO
-!     X    /   0,    0,    0,    0,    1,    0,    0/
-!      DATA NFS, NIS, NJS, NKS, GTYPS, IG1S, IG2S, IG3S, IG4S
-!     X    /  0,  -1,  -1,  -1,   ' ',   -1,   -1,   -1,   -1/
-
       call config_init   ! initialize values in module "configuration"
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
@@ -394,7 +373,8 @@
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             INTERAC = .TRUE.
             PRINT*,'DIRECTIVES ?'
-            PRINT*,'TAPER  END  POUR INDIQUER LA FIN DES DIRECTIVES'
+            PRINT*,'TAPER  END A LA FIN DES DIRECTIVES'
+            PRINT*,'TYPE  END  AFTER LAST DIRECTIVE'
          ENDIF
          CALL SELECT                    ! process directives
       ENDIF

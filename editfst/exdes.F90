@@ -72,7 +72,7 @@
 !      p_int8 = Z'80000000'
 !      kind_8 = 31
 !      top(1) = ior (p_int8, ishft(kind_8,32))   ! valeur maximale pour IP1 encode
-
+      stop
       IF (M .EQ. 4) THEN
          DELTAS = 3600   ! Facteur multiplicatif pour passage en secondes
       ELSE
