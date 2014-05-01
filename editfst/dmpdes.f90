@@ -20,10 +20,14 @@
 !       IMPRIME L'INTERPRETATION DES DIRECTIVES DESIRE SI EN MODE DEBUG
       SUBROUTINE DMPDES
       use configuration
-      IMPLICIT NONE 
+      IMPLICIT NONE
+
+      include 'excdes.inc'
   
 !     AUTEUR - Y. R. BOURASSA AVR 86
-!Revision 002   M. Lepine - mars 98 - extensions pour fstd98  
+!Revision 002   M. Lepine - mars 98  - extensions pour fstd98
+!Revision 003   M.Valin   - mai 2014 - utiliser les fonctions des fichiers standard pour
+!                                      l'impression des directives
 !     LANGUAGE FTN77
 !#include "maxprms.cdk"
 !#include "logiq.cdk"
@@ -38,16 +42,18 @@
       DM1   = .TRUE.
   
 !     AUCUNE DIRECTIVE ?
-      IF(NREQ .EQ. 0) THEN
+      IF(NREQ .EQ. 0) THEN  ! NREQ = no de la directive courante
          XPRES = .NOT.SCRI  ! si pas de criteres supplementaires, on veut vraiment tout
-         IF( DEBUG ) WRITE(6,*)' ON DEMANDE TOUT LE FICHIER '
+         IF( DEBUG ) WRITE(6,*)'INFO: ON COPIE TOUT LE FICHIER '
          RETURN
       ENDIF
   
 !     IMPRESSION DES REQUETES
 !     appeler la routine appropriee des fichiers standard pour ce faire (si DEBUG)
-!     ca va remplacer le bazar qui suit
-!     il faut pouvoir demander aux fichiers standard s'il y a des directives en vigueur
+      IF( DEBUG ) call Dump_Request_Table  
+      return
+!     ca va remplacer tout le bazar qui suit
+!     il faudrait idealement pouvoir demander aux fichiers standard s'il y a des directives en vigueur
       L = 0
       DO 20 J=4,1,-1
          DO 10 K=1,NREQ

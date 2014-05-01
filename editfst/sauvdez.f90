@@ -24,7 +24,9 @@
 !
 !AUTEURS
 !VERSION ORIGINALE -   Y. BOURASSA NOV 89
-!REVISION      001 -   Y. BOURASSA AVR 92 ANULE LE ZAP SI SAUV=0
+!REVISION      001 -   Y. BOURASSA AVR 92 ANNULE LE ZAP SI SAUV=0
+!REVISION      002 -   M. Valin mai 2014 utilisation des fonctions des fichiers standard pour
+!                                        la gestion des requetes
 !
 !LANGUAGE   - FTN77 
 !
@@ -32,6 +34,7 @@
 !
 !*
       INTEGER  FSTCVT, I, J, N
+      integer :: status
 !     SI LES DIRECTIVES RESTENT VALIDES
       IF( SAUV .LE. 0) THEN
          NP = 1
@@ -39,7 +42,12 @@
          IF( SAUV .LT. 0) RETURN  
       ENDIF
 
-    
+      do N=SAUV,MAX_REQUETES
+        status = f_requetes_reset(N,0,0,0,0,0,0,0)
+      enddo
+      return
+
+!     =========  le code qui suit est maintenant desuet =======
 !     EFFACER TOUTE TRACE DES DESIRE/EXCLURE/CRITSUP INUTILES
 !     appeler la routine appropriee des fichiers standard
 !     REQ(11,4,NMD)
