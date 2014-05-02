@@ -43,7 +43,7 @@
 !   "     IP3  -  1 A 10 IP3    "      "      "    "
 !
 !MODULES
-      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, EXDES, HOLACAR
+      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, HOLACAR
       include 'excdes.inc'
 !*  
       INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, LIS(10)
@@ -52,7 +52,6 @@
       integer :: status
       integer excdes_de
 
-!      D = -1   ! desire si D==-1,  exclure si D==0 (voir entry plus bas)
       excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. NMD) THEN
 !         IF(DIAG .OR. DEBUG)
@@ -113,24 +112,19 @@
            ELSE
              IF(jours(3) == 0) THEN  ! pas de delta
                status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2)/),3)
-             ELSE
+             ELSE                    ! intervalle et delta
                status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2),-3,jours(3)/),5)
              ENDIF
            ENDIF
-         else
+         else  ! directive date normale, sans COMMUNE
            status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
-           print *,'calling Select_date with',date(1:ARGDIMS(4))
+           IF( DEBUG ) print *,'calling Select_date with',date(1:ARGDIMS(4))
          endif
-!        il va falloir arranger les choses pour mettre delta s'il y en a un en secondes
-!        et rendre setper coherent avec tout ca (on oublie les secondes juliennes)
-!        si date(1) ==  -4   (COMMUNE)
 !         si jours(4) ==  0   OUCH !!
-!         si jours(4) ==  1   status = Select_date(nreq,excdes_de,jours(1),1)
-!         si jours(4) ==- 1   status = Select_date(nreq,excdes_de,(/ jours(1), "@", jours(2),"delta",jours(3) /), 5)
          IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET
-         lis = 0
+         LIS = 0
          REQE(NREQ) = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ETIS(1,NREQ), LIS, REQE(NREQ), LBL, 12)
          IF( DEBUG ) PRINT*,'ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
@@ -166,12 +160,11 @@
          GTYS(NREQ)  = GTYPS
          status =  Select_suppl(nreq,excdes_de,nis,njs,nks,ig1s,ig2s,ig3s,ig4s,gtyps)
       ENDIF
-!      call Dump_Request_table()
+      IF( DEBUG )  call Dump_Request_table()
       RETURN
   
 !     POUR CHOISIR LES CHAMPS NON VOULUS
       ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
-!      D = 0
       excdes_de = EXCDES_EXCLURE
       GO TO 10
   
@@ -216,7 +209,7 @@
              kindp = -(ip(i+1)+1000) ! symbole pour kind = -(1000+kind) dans directives
              call convip_plus(newip(nnewip),p,kindp,1,dummy,.false.)  ! p,kind -> ip
              if(newip(nnewip)<0) then
-               WRITE(6,*)'*** Editfst *** ERREUR:  erreur de conversion  P,kind =',p,kindp
+               WRITE(6,*)'ERROR: (Desire/Exclure) erreur de conversion  P,kind =',p,kindp
                call qqexit(20)
              endif
              i = i + 1  ! sauter kind

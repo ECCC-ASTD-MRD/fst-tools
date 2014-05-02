@@ -27,6 +27,7 @@
 !                      "      "      OCT 90 VERSION QLXINS
 !Revision 002   M. Lepine - mars 98 - extensions pour fstd98
 !Revision 003   M. Lepine - Nov 2002 - passage du bon type d'arguments pour fstcvt
+!Revision 004   M. Valin  - Mai 2014 - remplacement des cdk par un module
 !
 !LANGAGE      FTN77 
 !
@@ -45,13 +46,6 @@
 !
 !MODULE
       EXTERNAL FSTCVT
-!
-!IMPLICITES
-!#include "maxprms.cdk"
-!#include "desrs.cdk"
-!#include "logiq.cdk"
-!#include "char.cdk"
-!#include "fiches.cdk"
 !*
       INTEGER  I, FSTCVT
       CHARACTER*2 TV
@@ -69,13 +63,12 @@
       NIS  = -1
   
 !     RECUPERATION DES CRITERES FOURNIS PAR LA DIRECTIVE
-      GO TO (8, 7, 6, 5, 4, 3, 2, 1) NP 
+      GO TO (8, 7, 6, 5, 4, 3, 2, 1) NP   ! la valeur de NP vient de READLX
     1 IG4S = IG4
     2 IG3S = IG3
     3 IG2S = IG2
     4 IG1S = IG1
-!      I = FSTCVT(' ',' ',' ', GRID, NV, TV, LBL, GTYPS, .TRUE.)
-    5 I = FSTCVT(-1, -1, -1, GRID, NV, TV, LBL, GTYPS, .TRUE.)
+    5 I = FSTCVT(-1, -1, -1, GRID, NV, TV, LBL, GTYPS, .TRUE.) ! traduire GRID en caracteres, resultat dans GTYPS
     6 NKS  = NK
     7 NJS  = NJ
     8 NIS  = NI
@@ -91,7 +84,7 @@
                PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION ACTIVES'
             ENDIF
          ENDIF
-         SCRI = .TRUE.
+         SCRI = .TRUE.  ! on a des criteres supplementaires
       ENDIF
   
       RETURN

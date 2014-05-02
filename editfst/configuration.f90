@@ -96,7 +96,7 @@ subroutine config_init  ! initialisation des tableaux
   jours   = 0
   desexc  = 0   ! ni desire, ni exclure
   satisf  = 0
-  sources = -1
+  sources = -1  ! invalidate all unit numbers
   sup = 0
 end subroutine config_init
 

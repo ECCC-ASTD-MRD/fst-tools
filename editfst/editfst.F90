@@ -272,7 +272,7 @@
       CALL SAUVDEZ
   
 !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
-      I    = -111  
+      I    = -111
       CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
       def1b = def1
       READ(DEF1(3), '(I2)') EOF                                 ! -eof

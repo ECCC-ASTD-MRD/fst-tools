@@ -5,7 +5,7 @@ endif
 
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .c .o .f90 .f .F90
+.SUFFIXES : .o .c .f90 .f .F90
 
 SHELL = /bin/bash
 
@@ -42,35 +42,14 @@ default: $(EDITFST)
 
 OBJECTS= configuration.o \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
-	 editfst.o 	 exdes.o         fermes.o \
+	 editfst.o 	 fermes.o \
 	 fstnol.o        holacar.o       julhr.o 	 ouvred.o \
 	 ouvres.o        rewinds.o 	 sautsqi.o 	 sauvdez.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
 	 weofile.o       zap.o 	         ip1equiv.o	 
 
-#
-# a few extra items on top of rmnlib version 014, this will eventually get removed
-#
-EXTRAS = EXTRAS
 
-excdes_new.o: $(EXTRAS)/excdes_new.c
-
-convip_plus.o: $(EXTRAS)/convip_plus.f90
-
-convert_ip123.o: $(EXTRAS)/convert_ip123.f90
-
-fst_missing.o: $(EXTRAS)/fst_missing.c
-
-DlInterface.o: $(EXTRAS)/DlInterface.c
-
-fstd98.o: $(EXTRAS)/fstd98.c $(EXTRAS)/if_fstd98.c $(EXTRAS)/qstdir.h  $(EXTRAS)/convert_ip.h
-
-EXTRA_OBJECTS = \
-	convert_ip123.o convip_plus.o fstd98.o fst_missing.o DlInterface.o excdes_new.o
-
-#$(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
-$(EDITFST): $(EXTRA_OBJECTS) $(OBJECTS)
-#	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(EXTRA_OBJECTS) $(OBJECTS) -LEXTRAS/Locallib/$(EC_ARCH) -l$(LIBRMN)
+$(EDITFST): $(OBJECTS)
 	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(OBJECTS) $(FFLAGS) -l$(LIBRMN)
 
 all: $(EDITFST) test.fst

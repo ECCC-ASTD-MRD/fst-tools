@@ -35,14 +35,14 @@
 !*
       INTEGER  FSTCVT, I, J, N
       integer :: status
+
 !     SI LES DIRECTIVES RESTENT VALIDES
       IF( SAUV .LE. 0) THEN
          NP = 1
          CALL ZAP( -1 )
          IF( SAUV .LT. 0) RETURN  
       ENDIF
-
-      do N=SAUV,MAX_REQUETES
+      do N=SAUV,MAX_REQUETES-1
         status = f_requetes_reset(N,0,0,0,0,0,0,0)
       enddo
       return
