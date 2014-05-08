@@ -39,15 +39,9 @@
 !         004       "      "    MAR 92 CORRIGE BUG DANS TEST FSTINF
 !         005       "      "    MAI 92 SKIP ABORT SI EN INTERACTIF
 !         006       M. Lepine   Nov 05 Remplacement de fstabt par qqexit
+!         007       M. Valin    Mai 14 Remplacement des comdecks par un module
 !
 !LANGUAGE   - FTN77 
-!
-!#include "lin128.cdk"
-!#include "tapes.cdk"
-!#include "logiq.cdk"
-!#include "maxprms.cdk"
-!#include "char.cdk"
-!#include "fiches.cdk"
 !
 !MODULES  
       EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 

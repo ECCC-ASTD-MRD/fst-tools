@@ -126,7 +126,8 @@
 !         B. Dugas         Correction dates etendues dans zap et copystx - v6.18 - Sept 2012
 !         M. Valin         Ajustements pour traduction IP1/ip2/IP3, librmn_014, dryrun      - v6.19 - Fev 2014
 !         M. Valin         refactoring, fold comdecks into a single module, rename to .F90  - v6.20 - Fev/Mar 2014
-!
+!                          replacement of record selection logic. version 015 or newer is NEEDED for librmn
+!                          subroutine exdes no longer used
 !
 !LANGAGE  - FTN77
 !

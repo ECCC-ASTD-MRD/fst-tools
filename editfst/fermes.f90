@@ -26,16 +26,9 @@
 !REVISION 001         "      "    MAR 92 VARIABLE NFSO (NOMBRE DE SOURCE OUVERTS)
 !                                        CHANGE ALLEL A FATVOI
 !         002         "      "    MAI 92 FCLOS SUB.>FUNCTION.
-!         003         "      "    FEV 14 mode DRYRUN
+!         003         M.Valin     FEV 14 mode DRYRUN / remplacement des comdecks par un module
 !     LANGUAGE FTN77
 !
-!#include "maxprms.cdk"
-!#include "desrs.cdk"
-!#include "key.cdk"
-!#include "char.cdk"
-!#include "tapes.cdk"
-!#include "fiches.cdk"
-!#include "logiq.cdk"
 !
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
@@ -44,7 +37,7 @@
   
 !     TRAITEMENT DES FICHIERS SOURCES
       IF( OUVS ) THEN
-         IF(NFSO .GT. 1) I = FSTUNL( )
+         IF(NFSO .GT. 1) I = FSTUNL( )  ! unlink
          DO 10 J=1,NFSO
             I = FSTFRM( SOURCES(J) )
             I = FCLOS(  SOURCES(J) )
@@ -64,7 +57,7 @@
 !REVISION 001         "      "    MAR 92 VARIABLE NFSO (NOMBRE DE SOURCE OUVERTS)
 !                                        CHANGE ALLEL A FATVOI
 !         002         "      "    MAI 92 FCLOS SUB.>FUNCTION.
-!         003         "      "    FEV 14 mode DRYRUN
+!         003         M.Valin     FEV 14 mode DRYRUN / remplacement des comdecks par un module
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
       integer :: I

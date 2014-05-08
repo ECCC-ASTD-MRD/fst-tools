@@ -34,16 +34,9 @@
 !         003      "      "    MAI 92 ABORT SI FICHIER INEXISTANT
 !         004      "      "     "  "  SKIP ABORT SI EN INTERACTIF 
 !         005      M. Lepine   Nov 05 Remplacement de fstabt par qqexit
+!         006       M. Valin    Mai 14 Remplacement des comdecks par un module
 !
 !LANGUAGE   - FTN77 
-!
-!#include "lin128.cdk"
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "desrs.cdk"
-!#include "tapes.cdk"
-!#include "fiches.cdk"
-!#include "char.cdk"
 !
 !MODULES
       EXTERNAL      ARGDIMS, FSTRWD, OUVRES, LOW2UP, qqexit

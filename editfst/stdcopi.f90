@@ -40,13 +40,6 @@
 !
 !LANGAGE  - FTN77
 !
-!#include "lin128.cdk"
-!#include "logiq.cdk"
-!#include "tapes.cdk"
-!#include "maxprms.cdk"
-!#include "char.cdk"
-!#include "fiches.cdk"
-!
 !MODULERS
       EXTERNAL      ARGDIMS, OUVRES, OUVRED, COPYSTX, DMPDES, SAUVDEZ, LOW2UP,  qqexit
       INTEGER       ARGDIMS, OUVRED, I

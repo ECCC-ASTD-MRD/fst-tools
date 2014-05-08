@@ -40,16 +40,9 @@
 !         004       "      "    MAI 92  SKIP ABORT SI EN INTERACTIF
 !                                       OUVRE FICHIER SOURCE AVANT DESTINATION
 !         005       M. Lepine   Nov 05  rempalcement de fstabt par qqexit
+!         006       M. Valin    Mai 14 Remplacement des comdecks par un module
 !
 !LANGUAGE   - FTN77 
-!
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "lin128.cdk"
-!#include "fiches.cdk"
-!#include "desrs.cdk"
-!#include "char.cdk"
-!#include "tapes.cdk"
 !
 !MODULES  
       EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES

@@ -42,12 +42,6 @@
 !
 !LANGUAGE FTN77
 !
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "key.cdk"
-!#include "char.cdk"
-!#include "tapes.cdk"
-!#include "fiches.cdk"
 !
 !MODULES
       EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit

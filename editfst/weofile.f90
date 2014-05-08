@@ -42,11 +42,7 @@
 !         003      "     "       AVR 93 FIX BUG DECODE DNOM
 !         004      "     "       MAI 92 SKIP ABORT SI INTERACTIF
 !         005      M. Lepine     Nov 05 remplacement de fstabt par qqexit
-!#include "lin128.cdk"
-!#include "logiq.cdk"
-!#include "fiches.cdk"
-!#include "maxprms.cdk"
-!#include "char.cdk"
+!         006      M. Valin      Mai 14 Remplacement des comdecks par un module
 !
 !MODULES
       EXTERNAL      ARGDIMS, FSTWEO, OUVRED, qqexit, LOW2UP

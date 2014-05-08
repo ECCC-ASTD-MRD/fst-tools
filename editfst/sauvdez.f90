@@ -36,45 +36,20 @@
       INTEGER  FSTCVT, I, J, N
       integer :: status
 
-!     SI LES DIRECTIVES RESTENT VALIDES
-      IF( SAUV .LE. 0) THEN
-         NP = 1
+!     CERTAINS CRITERES DE SELECTION DOIVENT-ILS RESTER VALIDES ?
+!     sauv = 0 : on ne conserve rien, et on annulle le 'ZAP'
+!     sauv > 0 : on conserver les criteres sauv, sauv+1, ...
+!     editfst numerote ses jeux de criteres a partir de 1
+!     les fichiers standard les numerotent a partir de 0
+!     d'ou le sauv -1 (compatibilite arriere des directives)
+      IF( SAUV-1 .LT. 0) THEN
+         NP = 1  ! simuler directive ZAP(-1) en mettant NP (nombre de parametres READLX) a 1
          CALL ZAP( -1 )
-         IF( SAUV .LT. 0) RETURN  
+         RETURN
       ENDIF
       do N=SAUV,MAX_REQUETES-1
-        status = f_requetes_reset(N,0,0,0,0,0,0,0)
+        status = f_requetes_reset(N,0,0,0,0,0,0,0)  ! annuller le jeu de criteres N
       enddo
-      return
-
-!     =========  le code qui suit est maintenant desuet =======
-!     EFFACER TOUTE TRACE DES DESIRE/EXCLURE/CRITSUP INUTILES
-!     appeler la routine appropriee des fichiers standard
-!     REQ(11,4,NMD)
-      NREQ = SAUV
-      DO 10 N=SAUV*77+1, 11*4*NMD   ! ca devrait pas etre 44 plutot que 77 ?
-         REQ(N,1,1) = 0
-   10    CONTINUE
-!     REQ(:,:,sauv+1:NMD) = 0       ! forme plus logique ?
-      DO 20 N=SAUV*9+1, 8*NMD 
-         SUP(N,1) = 0
-   20    CONTINUE
-!     SUP(:,sauv+1:NMD) = 0         ! forme plus logique ?
-      DO 30 N=SAUV+1, NMD
-         REQN(N) = 0
-         REQE(N) = 0
-         REQT(N) = 0
-         DO 30 J=1,10
-            I = FSTCVT(-1, -1, -1, -1, NOMS(J,N), TYPS(J,N), ETIS(J,N), GTYS(N), .TRUE.)
-   30       CONTINUE
-!     COMPTER LES EXCLUSIONS QUI RESTENT EN FORCE
-      NEXC = 0
-      IF(SAUV .GT. 0) THEN
-         DO 40 N=1,SAUV
-            SATISF(N) = 0
-            IF(DESEXC(N) .EQ. EXCDES_EXCLURE) NEXC = NEXC + 1
-   40       CONTINUE
-      ENDIF
   
       RETURN
       END 

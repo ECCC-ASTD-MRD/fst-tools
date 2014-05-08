@@ -33,14 +33,9 @@
 !                                 CHANGE APPEL A FSTVOI
 !         004  "      "    NOV 92 liimite a 15 nombre de fichiers
 !         005  M. Lepine   Juil 2005, limite du nombre de fichiers a 120
+!         006  M. Valin    Mai  2014, remplacement des comecks par un module
 !LANGUAGE FTN77
 !
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "key.cdk"
-!#include "char.cdk"
-!#include "tapes.cdk"
-!#include "fiches.cdk"
 !
 !MODULES
       EXTERNAL FSTNOL, FSTVOI, FSTRWD, FERMES, FERMED

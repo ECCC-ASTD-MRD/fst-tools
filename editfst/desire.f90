@@ -87,24 +87,20 @@
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
          call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
-!         CALL EXDES(newip3,  nip3, 3)
          status = Select_ip3(nreq, excdes_de, newip3, nip3)   ! selecteur ip1 fstd98
          IF( DEBUG ) PRINT*,'IP3 =',(REQ(I,3,NREQ),I=1,11)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
          call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
-!         CALL EXDES(newip2,  nip2, 2)
          status = Select_ip2(nreq, excdes_de, newip2, nip2)   ! selecteur ip2 fstd98
          IF( DEBUG ) PRINT*,'IP2 =',(REQ(I,2,NREQ),I=1,11)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
          call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
-!         CALL EXDES(newip1, nip1, 1)
          status = Select_ip1(nreq, excdes_de, newip1, nip1)   ! selecteur ip3 fstd98
          IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
       ENDIF
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE, on s'occupe de 'COMMUNE' ici
-!         CALL EXDES(DATE, ARGDIMS(4), 4)
          IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA nheures
 !           IF(jours(4) == 0)  OUCH !! periode pas initialisee
            IF(jours(4) == 1) THEN ! juste une date1
@@ -120,7 +116,6 @@
            status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
            IF( DEBUG ) print *,'calling Select_date with',date(1:ARGDIMS(4))
          endif
-!         si jours(4) ==  0   OUCH !!
          IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET

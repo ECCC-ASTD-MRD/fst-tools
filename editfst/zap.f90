@@ -41,11 +41,6 @@
 !  "     IP2  -  IP2
 !  "     IP3  -  IP3
 !
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "fiches.cdk"
-!#include "char.cdk"
-!#include "desrs.cdk"
 !MODULE
 !  
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR

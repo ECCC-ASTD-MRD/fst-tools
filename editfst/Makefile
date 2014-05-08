@@ -43,10 +43,10 @@ default: $(EDITFST)
 OBJECTS= configuration.o \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
 	 editfst.o 	 fermes.o \
-	 fstnol.o        holacar.o       julhr.o 	 ouvred.o \
+	 fstnol.o        holacar.o       ouvred.o \
 	 ouvres.o        rewinds.o 	 sautsqi.o 	 sauvdez.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
-	 weofile.o       zap.o 	         ip1equiv.o	 
+	 weofile.o       zap.o
 
 
 $(EDITFST): $(OBJECTS)

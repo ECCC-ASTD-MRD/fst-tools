@@ -49,12 +49,6 @@
       data     M1000, M1001, M1002, M1003, M1004 / -1000, -1001, -1002, -1003, -1004/
       data     M1005, M1006, M1010, M1017, M1021 / -1005, -1006, -1010, -1017, -1021/
 !
-!IMPLICITE
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "fiches.cdk"
-!#include "desrs.cdk"
-!#include "tapes.cdk"
 !*
 
 !     OPTIONS (cle = valeur)
@@ -115,13 +109,13 @@
       CALL QLXINS(M1017  , 'INDX'   , DUMY, 1, 0)
       CALL QLXINS(M1021  , 'MPRES'  , DUMY, 1, 0)
   
-      CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete
+      CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete READLX
   
       IF(DUMY .LT. 0) THEN
          WRITE(6,*)'  **************************************'
          WRITE(6,*)' *                                      *'
-         WRITE(6,*)'*               ATTENTION                *'
-         WRITE(6,*)'*       ERREUR DANS LES DIRECTIVES       *'
+         WRITE(6,*)'*     ERREUR(S) DANS LES DIRECTIVES      *'
+         WRITE(6,*)'*      ERROR(S) FOUND IN DIRECTIVES      *'
          WRITE(6,*)' *                                      *'
          WRITE(6,*)'  **************************************'
          CALL qqexit(66) 

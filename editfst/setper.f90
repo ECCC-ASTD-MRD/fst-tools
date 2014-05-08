@@ -37,17 +37,12 @@
 !REV 001  "     "    JUIL 91 ACCEPTE LES DATESTAMP CMC *
 !REV 002  "     "    FEV  92 APPEL A LOW2UP AVANT IOPDATM
 !Rev 003  M. Lepine  Nov  05 Remplacement de fstabt par qqexit
+!Rev 004  M. Valin   Mai 14 Remplacement des comdecks par un module
 !
 !LANGUAGE   - FTN77 
 !
-!#include "maxprms.cdk"
-!#include "logiq.cdk"
-!#include "lin128.cdk"
-!#include "desrs.cdk"
-!#include "fiches.cdk"
-!
 !MODULES  
-      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, JULSEC, LOW2UP
+      EXTERNAL      IOPDATM, ARGDIMS, INCDAT, DATMGP, qqexit, LOW2UP
 !
 !*
       INTEGER       IOPDATM, ARGDIMS, DTG(14), I, K
