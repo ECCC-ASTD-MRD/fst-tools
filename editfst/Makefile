@@ -12,10 +12,10 @@ SHELL = /bin/bash
 COMPILE = compile
 
 #FFLAGS =
-FFLAGS = -IEXTRAS -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
+FFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
 #CFLAGS =
-CFLAGS = -IEXTRAS -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
+CFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
