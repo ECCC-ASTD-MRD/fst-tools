@@ -47,7 +47,7 @@ f77name(init_bemol_options)()
   bemolOpt.ig3coarse  = -1;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
-f77name(bemol_set_grtyp_out)(char grtyp)
+f77name(bemol_set_grtyp_out)(char grtyp,F2Cl lng)
   {
   bemolOpt.grtyp_out = grtyp;
   }

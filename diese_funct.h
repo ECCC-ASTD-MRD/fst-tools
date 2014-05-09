@@ -2,16 +2,16 @@
 wordint ftnstrclean(char *string, wordint length);
 wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[], 
       wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[], 
-      wordint lenetiket, wordint lentypvar, wordint lennomvar);
+      F2Cl flenetiket, F2Cl flentypvar, F2Cl flennomvar);
 wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay, 
-        char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref);
+        char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref, F2Cl lengrref);
 wordint f77name(diesfillval)(float *value);
 wordint f77name(diesfillmode)(int *mode);
 wordint f77name(diesaxay)(int *key, float *ax, float *ay);
 wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3, 
           wordint *dateo, char *typvar, char *etiket, char *grref,
           wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref, 
-          wordint lentypvar, wordint lenetiket, wordint lengrref);
+          F2Cl flentypvar, F2Cl flenetiket, F2Cl flengrref);
 wordint f77name(diesclrcache)();
 wordint f77name(diesisincache)(int *key);
 wordint f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, int *nj_end);

@@ -174,14 +174,16 @@ for (i=0; i < lng_flist; i++)
          igrd = i;
          f77name(bm_wrt_axay)(&udst, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx,
          &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits),
-         grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 4,16,2);
+         grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref),
+         (F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
          }
       if (ucfs != -1)
          {
          igrd = i;
          f77name(bm_wrt_axay)(&ucfs, grd[igrd].ax, grd[igrd].ay, &(grd[igrd].nix), &(grd[igrd].njy), grd[igrd].typvarx, grd[igrd].etiketx,
          &(grd[igrd].ip1), &(grd[igrd].ip2), &(grd[igrd].ip3), &(grd[igrd].dateo), &(grd[igrd].deet), &(flist[i].fldinfo.npas), &(flist[i].fldinfo.nbits),
-         grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), 4,16,2);
+         grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref),
+         (F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
          }
 
       }
@@ -340,7 +342,7 @@ for (i=0; i < lng_flist; i++)
                          &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
                          &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                          user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,
-                         8,4,16,2);
+                         (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
                }
 
              if (ucfs != -1)
@@ -361,7 +363,7 @@ for (i=0; i < lng_flist; i++)
                          &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
                          &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                          user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3, &ig4,
-                         8,4,16,2);
+                         (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
                }
 
             if (ucore != -1)
@@ -378,7 +380,7 @@ for (i=0; i < lng_flist; i++)
                                    &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                                    user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3core, &ig4,
                                    grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref),
-                                   &(grd[igrd].ig4ref), 8,4,16,2,2);
+                                   &(grd[igrd].ig4ref), (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2,(F2Cl) 2);
                }
 
             if (ucoarse != -1)
@@ -394,7 +396,7 @@ for (i=0; i < lng_flist; i++)
                                    &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
                                    &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                                    user_grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &ig3coarse, &ig4,
-                                   grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), &avg, 8,4,16,2,2);
+                                   grd[igrd].grref, &(grd[igrd].ig1ref), &(grd[igrd].ig2ref), &(grd[igrd].ig3ref), &(grd[igrd].ig4ref), &avg, (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2,(F2Cl) 2);
                }
             free(buffer);
             break;
@@ -412,7 +414,7 @@ for (i=0; i < lng_flist; i++)
                            &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
                            &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                            flist[i].fldinfo.grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &(flist[i].fldinfo.ig3), &(flist[i].fldinfo.ig4),
-                           8,4,16,2);
+                           (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
                      }
                   else
                      {
@@ -421,7 +423,7 @@ for (i=0; i < lng_flist; i++)
                            &(flist[i].fldinfo.ip1), &(flist[i].fldinfo.ip2), &(flist[i].fldinfo.ip3), &(flist[i].fldinfo.dateo), &(flist[i].fldinfo.deet),
                            &(flist[i].fldinfo.npas), &(flist[i].fldinfo.datyp), &lcl_nbits,
                            flist[i].fldinfo.grtyp, &(flist[i].fldinfo.ig1), &(flist[i].fldinfo.ig2), &(flist[i].fldinfo.ig3), &(flist[i].fldinfo.ig4),
-                           8,4,16,2);
+                           (F2Cl) 8,(F2Cl) 4,(F2Cl) 16,(F2Cl) 2);
                      }
                   }
                }

@@ -29,9 +29,10 @@ wordint f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, i
 
 wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[],
       wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[],
-      wordint lenetiket, wordint lentypvar, wordint lennomvar)
+      F2Cl flenetiket, F2Cl flentypvar, F2Cl flennomvar)
   {
   wordint ier;
+  wordint lenetiket=flenetiket, lentypvar=flentypvar, lennomvar=flennomvar;
 
   ier = ftnstrclean(nomvar, lennomvar);
   ier = ftnstrclean(typvar, lentypvar);
@@ -43,7 +44,7 @@ wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, w
 /*****************************************************************************************/
 wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay,
       char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref,
-      wordint *ig4ref)
+      wordint *ig4ref, F2Cl lengrref)
   {
   wordint ier;
 
@@ -69,9 +70,10 @@ wordint f77name(diesaxay)(int *key, float *ax, float *ay)
 wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3,
           wordint *dateo, char *typvar, char *etiket, char *grref,
           wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref,
-          wordint lentypvar, wordint lenetiket, wordint lengrref)
+          F2Cl flentypvar, F2Cl flenetiket, F2Cl flengrref)
   {
   wordint i, ier;
+  wordint lenetiket=flenetiket, lentypvar=flentypvar, lengrref=flengrref;
 
   ier = ftnstrclean(typvar, lentypvar);
   ier = ftnstrclean(etiket, lenetiket);
