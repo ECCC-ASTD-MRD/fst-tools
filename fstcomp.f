@@ -178,7 +178,7 @@ C*ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
 
-      CALL GETENV('ARMNLIB',ARMNLIB_var)
+      CALL GETENV('ARMNLIB_DATA',ARMNLIB_var)
       lvar = LONGUEUR(ARMNLIB_var)
       IF (lvar .gt. 0) THEN
         iunexpv=0
@@ -186,7 +186,7 @@ C*ENDIF
      %     ARMNLIB_var(1:lvar)//'/data/exception_vars_ok',
      %     'SEQ+FTN+FMT+OLD+R/O',0)
         IF (ier .lt. 0) THEN
-          print *,'$ARMNLIB/data/exception_vars file not found;'//
+          print *,'$ARMNLIB_DATA/exception_vars file not found;'//
      %            ' using internal exception list'
         ELSE
           READ(iunexpv,'(a)') exception_vars
