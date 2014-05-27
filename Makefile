@@ -12,11 +12,11 @@ RECLIB = $(REC)/lib/$(EC_ARCH)$(ABI)/librec.a
 
 FFLAGS = 
 
-CFLAGS = -I/usr/include/Motif1.2R6 -I/usr/X11R6/include -I$(ARMNLIB)/include -I$(HOME)/src/include -DX_WGL
+CFLAGS = -I/usr/include/Motif1.2R6 -I/usr/X11R6/include -I$(HOME)/src/include -DX_WGL
 
 OPTIMIZ = -O 2
 
-CPPFLAGS = -I$(ARMNLIB)/include 
+CPPFLAGS =
 
 .PRECIOUS:
 
