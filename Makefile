@@ -6,7 +6,8 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-RMNLIB = $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
+# RMNLIB = $(ARMNLIB)/lib/$(EC_ARCH)$(ABI)/librmn.a
+RMNLIB =
 
 FFLAGS =  
 
