@@ -19,7 +19,7 @@ LIBRMN = rmn_014
 
 default: absolu
 
-include $(ARMNLIB)/include/makefile_suffix_rules.inc
+include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
 OBJECTS= \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
