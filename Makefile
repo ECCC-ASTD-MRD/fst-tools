@@ -9,14 +9,14 @@ SHELL = /bin/sh
 CPP = /lib/cpp
 
 
-FFLAGS = -I$(ARMNLIB)/include -DX_WGL
+FFLAGS = -DX_WGL
 
-CFLAGS = -I$(ARMNLIB)/include -I$(ARMNLIB)/xml/include/libxml2
+CFLAGS = 
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug -O 0
 
-CPPFLAGS = -I$(ARMNLIB)/include  -DX_WGL
+CPPFLAGS = -DX_WGL
 
 .PRECIOUS: $(RECLIB)
 
