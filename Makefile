@@ -12,7 +12,7 @@ CFLAGS =
 
 OPTIMIZ = -O 2
 
-CPPFLAGS = -I$(ARMNLIB)/include
+CPPFLAGS = 
 
 VER = 98.30
 
@@ -20,7 +20,7 @@ LIBRMN = rmn_014
 
 default: absolu
 
-include $(ARMNLIB)/include/makefile_suffix_rules.inc
+include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
 FDECKS= voir.f
 
