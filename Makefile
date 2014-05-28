@@ -11,12 +11,13 @@ FFLAGS =
 CFLAGS =
 
 OPTIMIZ = -O 2
+$(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = 
 
 VER = 98.30
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: absolu
 
