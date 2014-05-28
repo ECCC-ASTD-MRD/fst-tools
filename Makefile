@@ -12,10 +12,11 @@ CFLAGS =
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
+$(info OPTIMIZ is ${OPTIMIZ})
 
 VER = 6.19
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: absolu
 
