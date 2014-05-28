@@ -17,11 +17,12 @@ DEFINE = -defines =-DFICHSTD98
 #
 #OPTIMIZ = -O 0 -debug
 OPTIMIZ = -O 2
+$(info OPTIMIZ is ${OPTIMIZ})
 
 VER_C = 305
 VER_U = 304
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: fstcompress fstuncompress
 
