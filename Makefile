@@ -15,6 +15,7 @@ CFLAGS =
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug -O 0
+$(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = -DX_WGL
 
@@ -22,7 +23,7 @@ CPPFLAGS = -DX_WGL
 
 VER = 005
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: fst2xml xml2fst
 
