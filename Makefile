@@ -15,6 +15,7 @@ FFLAGS =
 CFLAGS = -I/usr/include/Motif1.2R6 -I/usr/X11R6/include -I$(HOME)/src/include -DX_WGL
 
 OPTIMIZ = -O 2
+$(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS =
 
@@ -22,7 +23,7 @@ CPPFLAGS =
 
 VER = 6.3
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: fststat 
 
