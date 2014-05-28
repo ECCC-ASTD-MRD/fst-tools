@@ -6,31 +6,29 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-LIBRMN = rmn_014
+LIBRMN = 
 FFLAGS =
 
 CFLAGS =
 
-OPTIMIZ =  -debug -O 0
+#OPTIMIZ =  -debug -O 0
 #OPTIMIZ = -O 3 -fast
 #OPTIMIZ = -O 2 -fast
-#OPTIMIZ = -O 2
+OPTIMIZ = -O 2
 #OPTIMIZ_AIX = -optf='-qsimd=auto' -optc='-qsimd=auto' -O 2
 #OPTIMIZ_AIX = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
+$(info OPTIMIZ is ${OPTIMIZ})
 
-CPPFLAGS = -I$(ALIBRMN)/include -I$(ALIBRMN)/include/$(EC_ARCH)
+CPPFLAGS = 
 
-#MYLIB =  $(ALIBRMN)/lib/$(EC_ARCH)$(ABI)/librmn.a
-#MYLIB = rmn_beta014.a
 MYLIB = rmn_014.a
 .PRECIOUS: $(LIBRMN) $(MALIB)
 
 #include $(ALIBRMN)/include/makefile_suffix_rules.inc
+include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
 VER = 7.7.2
-
-RMNLIB = rmn_014
 
 default: obj pgsm
 
@@ -88,7 +86,7 @@ genlib: $(OBJET)
 	$(AR) rcv $(MYLIB) $(OBJET)
 
 pgsm: f_pgsm.o c_pgsm.o
-	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(RMNLIB)
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN) -libsys mass
