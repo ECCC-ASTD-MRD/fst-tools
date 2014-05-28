@@ -9,6 +9,7 @@ CPP = /lib/cpp
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug -O 0 -optc =-Wall
 #OPTIMIZ = -debug -O 0 
+$(info OPTIMIZ is ${OPTIMIZ})
 
 FFLAGS = 
 .PRECIOUS:
@@ -16,7 +17,7 @@ FFLAGS =
 VER = 2.05
 VERZC = 2.1
 
-LIBRMN = rmn_014
+LIBRMN = 
 
 default: bemol zcrop
 
