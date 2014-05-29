@@ -1,4 +1,4 @@
-#include $(ARMNLIB)/include/$(EC_ARCH)/Makefile_addons
+#include $(RPN_TEMPLATE_LIBS)/include/$(EC_ARCH)/Makefile_addons
 
 .SUFFIXES : 
 
