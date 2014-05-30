@@ -30,10 +30,10 @@ OBJET= fstcomp.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	s.compile -o fstcomp_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o fstcomp_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
 
 fstcomp+: $(OBJET)
-	s.compile -o fstcomp+ -debug -obj $(OBJET) -arch $(ARCH) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o fstcomp+ -debug -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
