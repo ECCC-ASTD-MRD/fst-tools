@@ -31,7 +31,7 @@ OBJECTS= reflex.o
 FICHIERS= reflex.f
 
 absolu: $(OBJECTS) 
-	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) -arch $(EC_ARCH) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) -abi $(ABI) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
