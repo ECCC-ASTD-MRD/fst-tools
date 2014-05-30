@@ -33,12 +33,12 @@ VER = 7.7.2
 default: obj pgsm
 
 .c.o:
-	s.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -optc "=$(CFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -optc "=$(CFLAGS)" -src $<
 .ftn90.o:
-	s.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .f90.o:
-	s.compile -arch $(ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 OBJET = f_pgsm.o c_pgsm.o
 
