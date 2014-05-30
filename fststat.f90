@@ -126,7 +126,7 @@
 ! 
 ! MODULES
       
-   external fstinf,memoirh,fstprm,fstluk,fstsui,fstopl
+   external fstinf,fstprm,fstluk,fstsui,fstopl
    integer ier,fstprm,fstinf,fstsui,fstluk,fstopl
    character*1 grtyp
    integer i
