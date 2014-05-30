@@ -97,19 +97,19 @@ zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
 ip1equiv.o:    ip1equiv.ftn
 
 #absolu: $(OBJECTS)
-#	r.compile_034 -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
+#	r.compile_034 -o editfst -obj $(OBJECTS) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
 #	
 absolu: $(OBJECTS)
 	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn $(LIBRMN)
 	
 oldstuff: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -fstd89 -librmn rmnbeta
+	r.build -o editfst -obj $(OBJECTS) -abi $(ABI) -fstd89 -librmn rmnbeta
 
 editfst+: $(OBJECTS)
-	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -arch $(ARCH) -abi $(ABI) -librmn rmnbeta_011
+	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -abi $(ABI) -librmn rmnbeta_011
 
 editfst_gem_strato: $(OBJECTS)
-	r.build -o editfst_gem_strato -obj $(OBJECTS) -arch $(ARCH) -abi $(ABI) -librmn rmn_010
+	r.build -o editfst_gem_strato -obj $(OBJECTS) -abi $(ABI) -librmn rmn_010
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
