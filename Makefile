@@ -31,7 +31,7 @@ default: absolu
 OBJET= fstinfo.o
 
 absolu: $(OBJET)
-	s.compile -o r.fstinfo_$(VER)-$(BASE_ARCH) -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o r.fstinfo_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
