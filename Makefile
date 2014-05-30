@@ -34,13 +34,13 @@ absolu: $(OBJET)
 	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
         
 voir+: $(OBJET)
-	r.build -o voir+ -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmnbeta
+	r.build -o voir+ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta
         
 voirca: $(OBJET)
-	s.compile -o voirca -debug -obj $(OBJET) /home/dormrb02/RMNLIB_working_copy/trunk/primitives/*.o -arch $(EC_ARCH) -abi $(ABI) -librmn rmn_rc010
+	s.compile -o voirca -debug -obj $(OBJET) /home/dormrb02/RMNLIB_working_copy/trunk/primitives/*.o -abi $(ABI) -librmn rmn_rc010
 
 voir__: $(OBJET)
-	s.compile -o voir__ -obj $(OBJET) -arch $(EC_ARCH) -abi $(ABI) -librmn rmnbeta
+	s.compile -o voir__ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
