@@ -1,11 +1,13 @@
       program fstuncompress
+      implicit none
       integer iun_in,iun_out,key1
       integer dateo,deet,npas,ni,nj,nk,nbits,datyp,ip1,ip2,ip3
       integer ig1,ig2,ig3,ig4,swa,lng,dltf,ubc
-      integer extra2,extra3,datev
-      integer fstinf,fstprm,fstinl,fstecr,fstouv,fnom,fstluk,fstsui,realordouble
+      integer extra2,extra3,datev,ier,ipos,ni1,nj1,nk1
+      integer fstinf,fstprm,fstinl,fstecr,fstouv,fnom,fstluk,fstsui,realordouble,fstfrm
+      integer exdb,exfin
       logical rewrite_flag
-      external fstinf,fstprm,fstecr,ccard,fstinl,fstouv,fnom,fstluk,exdb,exfin,fstsui
+      external fstinf,fstprm,fstecr,ccard,fstinl,fstouv,fnom,fstluk,exdb,exfin,fstsui,fstfrm
 
       real, allocatable, dimension(:) :: buf
       character *12 etiket
