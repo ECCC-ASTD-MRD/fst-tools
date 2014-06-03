@@ -13,12 +13,15 @@
 *         98.21 - M. Lepine - sept 2011 - reload avec librmn_012 et codebeta moduledate_711e, fstd98
 *         98.22 - M. Lepine - juin 2012 - reload avec librmn_013
 *         98.30 - M. Lepine - mars 2014 - reload avec librmn_014
+*         98.31 - M. Lepine - juin 2014 - ajout de implicit none
 
-      parameter (ncle=4)
+      implicit none
+      integer, parameter :: ncle=4
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
       external fnom,fstouv,fstvoi,fstnbr,ccard,c_init_appl_var_table
       character *8192 ccard_arg
       external exdb,exfin,ccard_arg
+      integer ipos,ier,n
 
       character * 8 cles(ncle)
       character * 128 val(ncle), def(ncle)
@@ -61,7 +64,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.30','NON')
+         ier = exdb('VOIR','V98.31','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),

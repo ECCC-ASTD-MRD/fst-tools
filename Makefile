@@ -15,7 +15,7 @@ $(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = 
 
-VER = 98.30
+VER = 98.31
 
 LIBRMN = 
 
@@ -34,11 +34,8 @@ absolu: $(OBJET)
 	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
         
 voir+: $(OBJET)
-	r.build -o voir+ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta
+	s.compile -o voir+ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta_015
         
-voirca: $(OBJET)
-	s.compile -o voirca -debug -obj $(OBJET) /home/dormrb02/RMNLIB_working_copy/trunk/primitives/*.o -abi $(ABI) -librmn rmn_rc010
-
 voir__: $(OBJET)
 	s.compile -o voir__ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta
 
