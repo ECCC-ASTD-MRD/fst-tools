@@ -16,7 +16,7 @@ $(info OPTIMIZ is ${OPTIMIZ})
 
 VER = 6.19
 
-LIBRMN = 
+LIBRMN = rmn_014
 
 default: absolu
 
@@ -103,13 +103,10 @@ absolu: $(OBJECTS)
 	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn $(LIBRMN)
 	
 oldstuff: $(OBJECTS)
-	r.build -o editfst -obj $(OBJECTS) -abi $(ABI) -fstd89 -librmn rmnbeta
+	s.compile -o editfst -obj $(OBJECTS) -abi $(ABI) -fstd89 -librmn rmnbeta
 
 editfst+: $(OBJECTS)
-	r.build -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -abi $(ABI) -librmn rmnbeta_011
-
-editfst_gem_strato: $(OBJECTS)
-	r.build -o editfst_gem_strato -obj $(OBJECTS) -abi $(ABI) -librmn rmn_010
+	s.compile -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -abi $(ABI) -librmn rmnbeta_015
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
