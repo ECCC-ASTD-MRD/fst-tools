@@ -1,5 +1,6 @@
 !**s/p qqqintx  choisir le degre de l'interpolation
    subroutine qqqintx(ordre)
+   implicit none
    integer ordre
 !
 !auteur  Y.Chartier Dec 91

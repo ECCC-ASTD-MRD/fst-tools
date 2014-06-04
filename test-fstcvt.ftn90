@@ -2,6 +2,7 @@
 !**S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL 
 !
       program testfstcvt
+      implicit none
 
       character *12 cetiqet
       character *4 cnomvar

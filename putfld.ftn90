@@ -1,4 +1,5 @@
       subroutine putfld(fld, buf, iun,ibidon,iwrit,      ni,nj,nbrow,npkc,istamp)
+      implicit none
       integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
       real fld(ni, nj)
       real buf(ni, nj)
@@ -9,6 +10,7 @@
       end
       
       subroutine putfld1(fld, ni, iun)
+      implicit none
       integer ni, iun
       real fld(ni)
       

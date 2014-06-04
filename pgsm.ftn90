@@ -1,4 +1,5 @@
         program pgsm
+        implicit none
 
         call pgsm2
 
@@ -7,6 +8,7 @@
 
       
       character *128 function product_id_tag()
+      implicit none
       product_id_tag='$Id$'
       return
       end

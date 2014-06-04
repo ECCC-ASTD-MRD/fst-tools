@@ -19,6 +19,7 @@
       end
 
       subroutine pgsminitptr
+      implicit none
 
 #include "llccmm.cdk90"
 

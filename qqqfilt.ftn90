@@ -1,4 +1,5 @@
       subroutine qqqfilt(inout,weightlst,ntimes,verbose)
+      implicit none
       integer inout,weightlst(*),ntimes,verbose
       
 #include "qqqfilt.cdk90"

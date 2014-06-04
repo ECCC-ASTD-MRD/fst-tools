@@ -4596,6 +4596,7 @@
       
       
       integer function legvar(x)
+      implicit none
       legvar=0
       return
       end
@@ -7301,6 +7302,7 @@ implicit none
       return
       end
       subroutine putfld(fld, buf, iun,ibidon,iwrit,      ni,nj,nbrow,npkc,istamp)
+      implicit none
       integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
       real fld(ni, nj)
       real buf(ni, nj)
@@ -7311,6 +7313,7 @@ implicit none
       end
       
       subroutine putfld1(fld, ni, iun)
+      implicit none
       integer ni, iun
       real fld(ni)
       
@@ -7403,6 +7406,7 @@ implicit none
       return
       end
       subroutine qqqfilt(inout,weightlst,ntimes,verbose)
+      implicit none
       integer inout,weightlst(*),ntimes,verbose
       
 #include "qqqfilt.cdk90"
@@ -7981,6 +7985,7 @@ implicit none
 
 
    subroutine cvtr2i(rfld, ifld, ni, nj)
+   implicit none
    integer ni, nj
    real rfld(ni, nj)
    integer ifld(ni, nj)
@@ -8186,6 +8191,7 @@ implicit none
    return
    end!**s/p qqqintx  choisir le degre de l'interpolation
    subroutine qqqintx(ordre)
+   implicit none
    integer ordre
 !
 !auteur  Y.Chartier Dec 91
@@ -8634,6 +8640,7 @@ integer ezsetopt
       return
       end
       subroutine testseq
+      implicit none
 
       integer nigem, njgem, nigauss, njgauss
       parameter (nigem = 160)

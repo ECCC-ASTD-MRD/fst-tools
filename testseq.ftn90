@@ -1,4 +1,5 @@
       subroutine testseq
+      implicit none
 
       integer nigem, njgem, nigauss, njgauss
       parameter (nigem = 160)

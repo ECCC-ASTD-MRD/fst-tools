@@ -278,6 +278,7 @@
 
 
    subroutine cvtr2i(rfld, ifld, ni, nj)
+   implicit none
    integer ni, nj
    real rfld(ni, nj)
    integer ifld(ni, nj)
