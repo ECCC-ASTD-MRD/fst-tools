@@ -4596,7 +4596,6 @@
       
       
       integer function legvar(x)
-      implicit none
       legvar=0
       return
       end
@@ -7303,7 +7302,7 @@ implicit none
       end
       subroutine putfld(fld, buf, iun,ibidon,iwrit,      ni,nj,nbrow,npkc,istamp)
       implicit none
-      integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
+      integer iun, ibidon, iwrit, ni,nj,nbrow, npkc, istamp
       real fld(ni, nj)
       real buf(ni, nj)
       
@@ -7316,6 +7315,7 @@ implicit none
       implicit none
       integer ni, iun
       real fld(ni)
+      integer i
       
       write(iun) (fld(i), i=1,ni)
       
@@ -7989,7 +7989,7 @@ implicit none
    integer ni, nj
    real rfld(ni, nj)
    integer ifld(ni, nj)
-   integer i
+   integer i,j
 
    do j=1, nj
       do i=1, ni
@@ -8205,6 +8205,7 @@ implicit none
 !*
 character*8 op
 integer ezsetopt
+integer ier
 
    select case (ordre)
    case (100)
@@ -8642,9 +8643,12 @@ integer ezsetopt
       subroutine testseq
       implicit none
 
-      integer nigem, njgem, nigauss, njgauss
+      integer nigem, njgem, nigauss, njgauss, iun
       parameter (nigem = 160)
       parameter (njgem = 1)
+      integer npac,idat, ideet, npas, ni, nj, nk, ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp
+      integer ier, fnom
+      external fnom
 
       real champ(nigem,njgem)
       character*24 chaine
@@ -8653,12 +8657,12 @@ integer ezsetopt
       character*2 typvar, bidon1, grtyp, grref, cbidon1
       character*12 etiket, cbidon8
       
-
+      iun = 0
       ier = fnom(iun,'bofseq','SEQ+FTN+UNF',0)
 
       rewind(iun)
  10   read (iun,err=13) npac,idat, ideet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,               chaine
-      print *,  npac,idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,               chaine
+      print *,  npac,idat, ideet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, idatyp,               chaine
       read (iun) champ
       print *, champ
       goto 10
