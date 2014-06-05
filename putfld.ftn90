@@ -1,6 +1,6 @@
-      subroutine putfld(fld, buf, iun,ibidon,iwrit,      ni,nj,nbrow,npkc,istamp)
+      subroutine putfld(fld, buf, iun,ibidon,iwrit,ni,nj,nbrow,npkc,istamp)
       implicit none
-      integer iun, bidon, iwrit, ni,nj,nbrow, npck, istamp
+      integer iun, ibidon, iwrit, ni,nj,nbrow, npkc, istamp
       real fld(ni, nj)
       real buf(ni, nj)
       
@@ -13,6 +13,7 @@
       implicit none
       integer ni, iun
       real fld(ni)
+      integer i
       
       write(iun) (fld(i), i=1,ni)
       

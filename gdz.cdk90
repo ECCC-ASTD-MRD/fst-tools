@@ -1,10 +1,8 @@
       integer niz, njz, nkz
-      integer iaxex, iaxey
       integer ig1z, ig2z, ig3z, ig4z
       integer ig1ref, ig2ref, ig3ref, ig4ref
-      real axex(1), axey(1)
-
-      common /gdz/ niz, njz, nkz, iaxex, iaxey, ig1z, ig2z, ig3z, ig4z, ig1ref, ig2ref, ig3ref, ig4ref, axex, axey
+      real, pointer, dimension(:) :: axex, axey
+      common /gdz/ niz, njz, nkz, ig1z, ig2z, ig3z, ig4z, ig1ref, ig2ref, ig3ref, ig4ref, axex, axey
 
       character*1 grref
 

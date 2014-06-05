@@ -282,7 +282,7 @@
    integer ni, nj
    real rfld(ni, nj)
    integer ifld(ni, nj)
-   integer i
+   integer i,j
 
    do j=1, nj
       do i=1, ni

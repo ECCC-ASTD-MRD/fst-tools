@@ -6,13 +6,12 @@
 #include "gdz.cdk90"
       
       data niz, njz, nkz 	/0, 0, 0/
-      data iaxex, iaxey  	/0, 0 /
       data ig1ref, ig2ref, ig3ref, ig4ref /-1, -1, -1, -1/
       data ig1z,   ig2z,   ig3z,   ig4z   /-1, -1, -1, -1/
       data grref          /'Z'/
       
       integer  fstinf, fstprm, fstluk
-      external fstinf, fstprm, fstluk, memoirh, pgsmabt,messags
+      external fstinf, fstprm, fstluk, pgsmabt,messags
       
       character *12 citiky,citikx
       character *4 cnmvar1,cnmvar2
@@ -32,14 +31,12 @@
          return
       endif
 
-      if (iaxex .ne. 0) then
-         call memoirh(axex, iaxex, 0)
-         iaxex = 0
+      if (associated(axex)) then
+	 deallocate(axex)
       endif
       
-      if (iaxey .ne. 0) then
-         call memoirh(axey, iaxey, 0)
-         iaxey = 0
+      if (associated(axey)) then
+	 deallocate(axey)
       endif
 
       irecx = fstinf(iun, nix, njx, nkx, -1,' ',       ig1, ig2, ig3,'  ','>>  ')
@@ -83,16 +80,16 @@
       
 !     lecture des axes
       
-      call memoirh(axex, iaxex, nix)
-      call memoirh(axey, iaxey, njy)
+      allocate(axex(nix))
+      allocate(axey(niy))
       
-      ier = fstluk(axex(iaxex), irecx, nix, njx, nkx)
+      ier = fstluk(axex, irecx, nix, njx, nkx)
       if (ier .lt. 0) then
          print *, 'PROBLEME LECTURE ENREGISTREMENT >> '
          stop
       endif
       
-      ier = fstluk(axey(iaxey), irecy, niy, njy, nky)
+      ier = fstluk(axey, irecy, niy, njy, nky)
       if (ier .lt. 0) then
          print *, 'PROBLEME LECTURE ENREGISTREMENT ^^ '
          stop
