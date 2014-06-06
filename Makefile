@@ -34,14 +34,6 @@ VER = 7.7.3
 
 default: obj pgsm
 
-.c.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -optc "=$(CFLAGS)" -src $<
-.ftn90.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
-.f90.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
-
 OBJET = f_pgsm.o c_pgsm.o
 
 FICHIERS_CDK90 = \
