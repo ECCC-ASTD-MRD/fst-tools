@@ -27,7 +27,7 @@ MYLIB = rmn_014.a
 
 #include $(ALIBRMN)/include/makefile_suffix_rules.inc
 
-RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
+#RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
 VER = 7.7.3
