@@ -4,10 +4,10 @@
       subroutine scalair(cnom, iheur, nniv, niveaux)
 #include "impnone.cdk90"
 #include "defin.cdk90"
-      external ecritur, pgsmluk, fstinf, fstsui, memoir, fstprm, qaaqr, fstcvt,     fstsel, symetri, imprime, itrouve, messags, pgsmabt
-      external cvtr2i
+      external ecritur, pgsmluk, ipgsmluk, fstinf, fstsui, memoir, fstprm, qaaqr, fstcvt,     fstsel, symetri, imprime, itrouve, messags, pgsmabt
+      external cvtrfi,cvtifr
       external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
+      integer  pgsmluk, ipgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
 !      integer diesinf, dieslir, diesisincache, res
       integer ezgdef_fmem, ezqkdef, ezsint, ezdefset
       logical skip
@@ -79,13 +79,14 @@
    character *2 ctypvar
    character *1 cigtyp
 
-   integer nniv, dateo, datev, i, nunv, itrouve, key, ii
+   integer nniv, dateo, datev, i, nunv, itrouve, key, ii, j
    integer niveaux(nniv), deet, ig1, ig2, ig3, ig4, iheur
    integer iprs, irec, iunit, jp1, jp2, jp3, ne, ni, nj, nk, total_keys, nrecs
    integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
    logical sym, symetri
    real fbidon
    real, dimension(:), allocatable :: ax, ay
+   integer, dimension(:,:), allocatable :: ifld_in, ifld_out
 
    real, dimension(:,:), pointer :: tmpout
 !
@@ -207,12 +208,18 @@
 
          skip = .false.
 
-         allocate(tmpif1(ni,nj))
-         key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
-
+	 allocate(tmpif1(ni,nj))
+        
 !
-         if (cdatyp .eq. 2 .or. cdatyp .eq. 4) then
-            call cvtr2i(tmpif1, tmpif1, ni, nj)
+         if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
+            allocate(ifld_in(ni, nj))
+            allocate(ifld_out(li, lj))
+	    key = ipgsmluk(ifld_in, irec, ni, nj, nk, cnomvar, cigtyp)
+!             print *, 'CDATYP=', cdatyp
+            call cvtrfi(tmpif1, ifld_in, ni, nj)
+         else
+	    key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
+!            print *, 'CDATYP=', cdatyp
          endif
 
          if (printen)  call imprime(cnomvar, tmpif1, ni, nj)
@@ -224,22 +231,21 @@
 !     ig3=lg3  ig4=lg4
 !
          if (.not.skip) then
-            if (cigtyp /= cgrtyp.or.cigtyp.eq.'Z'.or. &
+            if (cigtyp /= cgrtyp.or. &
                ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or. &
                li /= ni.or.lj /= nj) then
 !
 !     interpolation
 !
                allocate(tmpif2(li,lj))
-
                gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
                ier = ezdefset(gdout, gdin)
                ier = ezsint(tmpif2, tmpif1)
                tmpout => tmpif2
             else
                tmpout => tmpif1
-               if (message) write(6, 660) cnom
- 660  format(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a2)
+               if (message) write(6, 660) cnomvar
+ 660  format(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a4)
             endif
 !
 !
@@ -250,11 +256,19 @@
                cnomvar=cnomqr
             endif
 
+!            print *, 'Avant iecritur : cdatyp', cdatyp
+         if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
+!            print *, 'Avant iecritur : cdatyp', cdatyp
+            call cvtifr(ifld_out,tmpout,li,lj)
+            call iecritur(ifld_out, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            deallocate(ifld_in, ifld_out)
+         else
             call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
             if (associated(tmpif2)) then
                deallocate(tmpif2)
             endif
             deallocate(tmpif1)
+         endif
          endif
 99999    continue
 !
@@ -277,7 +291,7 @@
    end
 
 
-   subroutine cvtr2i(rfld, ifld, ni, nj)
+   subroutine cvtrfi(rfld, ifld, ni, nj)
    implicit none
    integer ni, nj
    real rfld(ni, nj)
@@ -292,4 +306,19 @@
    return
    end
 
+
+   subroutine cvtifr(ifld, rfld, ni, nj)
+   implicit none
+   integer ni, nj
+   integer ifld(ni, nj)
+   real rfld(ni, nj)
+   integer i,j
+
+   do j=1, nj
+      do i=1, ni
+         ifld(i, j) = nint(rfld(i, j))
+      enddo
+   enddo
+   return
+   end
 

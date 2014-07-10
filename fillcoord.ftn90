@@ -1,13 +1,13 @@
-      subroutine fillcoord(lat,lon,coord,ncoords)
+      subroutine fillcoord(lat,lon)
 #include "impnone.cdk90"
-      real lat(*),lon(*),coord(512,2)
-      integer ncoords
+#include "grilles.cdk90"
+      real lat(*),lon(*)
       
       integer i
 
       do i=1,ncoords
-         lat(i) = coord(i,1)
-         lon(i) = coord(i,2)
+         lat(i) = coordll(i,1)
+         lon(i) = coordll(i,2)
          enddo
       return
       end

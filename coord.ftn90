@@ -23,11 +23,11 @@
       
       
       do i=1,localncoords,2
-         if (i.lt.512) then
+         if (i.lt.nmaxcoords) then
             coordll(ncoords+i/2+1,1) = lescoords(i)
             coordll(ncoords+i/2+1,2) = lescoords(i+1)
          else
-            print *, '(COORD) TROP DE POINTS! MAX=512!!!'
+            print *, '(COORD) TROP DE POINTS! MAX=', nmaxcoords, ' !!!'
          endif
       enddo
       

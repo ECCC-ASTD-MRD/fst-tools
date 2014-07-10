@@ -10,11 +10,17 @@
       integer fstluk
 
 
-      integer ier,i
+      integer ier,i,j
 
       ier = fstluk(fld,key,ni,nj,nk)
 
-      if (ier.lt.0) then
+!          do j=1,nj
+!            do i=1,ni
+!              print *, i, j, fld(i,j)
+!            enddo
+!         enddo
+
+         if (ier.lt.0) then
         pgsmluk=ier
         return
       endif

@@ -6,15 +6,16 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
+LIBRMN = rmnbeta_015
 LIBRMN = rmn_014
 FFLAGS =
 
 CFLAGS =
 
-#OPTIMIZ =  -debug -O 0
+OPTIMIZ =  -debug -O 2
 #OPTIMIZ = -O 3 -fast
 #OPTIMIZ = -O 2 -fast
-OPTIMIZ = -O 2
+#OPTIMIZ = -O 2
 #OPTIMIZ_AIX = -optf='-qsimd=auto' -optc='-qsimd=auto' -O 2
 #OPTIMIZ_AIX = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
@@ -30,7 +31,7 @@ MYLIB = rmn_014.a
 #RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
-VER = 7.7.3
+VER = 7.8.0
 
 default: obj pgsm
 
@@ -50,8 +51,8 @@ ecritur.ftn90 epais.ftn90 fst_get_mask_key.ftn90 fillcoord.ftn90 grigaus.ftn90 g
 grillps.ftn90 grilstd.ftn90 griltp4.ftn90 gristdb.ftn90 gristereo.ftn90 gritp12.ftn90 grlalon.ftn90 \
 heure.ftn90 imprime.ftn90 initid.ftn90 initseq.ftn90 itrouve.ftn90 lastcol.ftn90 legvar.ftn90 \
 liraxez.ftn90 liren.ftn90 lopascm.ftn90 loupmir.ftn90 lrsmdes.ftn90 macpcp.ftn90 messags.ftn90 \
-metsym.ftn90 operat.ftn90 outlalo.ftn90 pairvct.ftn90 pgsm2.ftn90 pgsmabt.ftn90 pgsmlic.ftn90 \
-pgsmlir.ftn90 pgsmluk.ftn90 plmnmod.ftn90 prefiltre.ftn90 putfld.ftn90 qaaqr.ftn90 qqqecho.ftn90 \
+metsym.ftn90 operat.ftn90 outlalo.ftn90 pairvct.ftn90 pgsm2.ftn90 pgsmabt.ftn90 ipgsmlic.ftn90 pgsmlic.ftn90 \
+ipgsmlir.ftn90 pgsmlir.ftn90 ipgsmluk.ftn90 pgsmluk.ftn90 plmnmod.ftn90 prefiltre.ftn90 putfld.ftn90 qaaqr.ftn90 qqqecho.ftn90 \
 qqqfilt.ftn90 qqqform.ftn90 qqqident.ftn90 routines.ftn90 scalair.ftn90 scalair_msk.ftn90 \
 setintx.ftn90 setxtrap.ftn90 sorti.ftn90 stenfilt.ftn90 symetri.ftn90 testseq.ftn90 \
 uvect.ftn90 uvecteur_masque.ftn90 vdauv.ftn90 verlalo.ftn90
@@ -81,6 +82,9 @@ genlib: $(OBJET)
 
 pgsm: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN)
+
+pgsm-ezscint: f_pgsm.o c_pgsm.o 
+	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o c_ezscint.o f_ezscint.o -librmn $(LIBRMN)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER) $(OPTIMIZ_AIX) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN) -libsys mass
