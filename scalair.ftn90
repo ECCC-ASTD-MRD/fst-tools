@@ -9,7 +9,7 @@
       external liraxez
       integer  pgsmluk, ipgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
 !      integer diesinf, dieslir, diesisincache, res
-      integer ezgdef_fmem, ezqkdef, ezsint, ezdefset
+      integer ezgdef_fmem, ezqkdef, ezsint, ezdefset, ezgetopt
       logical skip
 !
 !auteur  p. sarrazin  dorval quebec fevrier 82 drpn
@@ -79,6 +79,7 @@
    character *2 ctypvar
    character *1 cigtyp
 
+   character*8 extrap_option
    integer nniv, dateo, datev, i, nunv, itrouve, key, ii, j
    integer niveaux(nniv), deet, ig1, ig2, ig3, ig4, iheur
    integer iprs, irec, iunit, jp1, jp2, jp3, ne, ni, nj, nk, total_keys, nrecs
@@ -190,6 +191,13 @@
             endif
             cycle
          endif
+         
+	 extrap_option = '        '
+	 ier = ezgetopt('extrap_degree', extrap_option)
+	 if (extrap_option(1:5) == 'abort') then
+            gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+            call chk_extrap(gdout, gdin, li, lj, ni, nj)
+	 endif
 !
 !   si la directive de champ emploi tout  champ(tout, tout) on doit faire
 !     attention pour les vecteurs u-v car l'interpolation serait scalaire

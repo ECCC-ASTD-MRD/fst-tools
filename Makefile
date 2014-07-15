@@ -6,16 +6,16 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-LIBRMN = rmnbeta_015
 LIBRMN = rmn_014
+LIBRMN = rmnbeta_015
 FFLAGS =
 
 CFLAGS =
 
-OPTIMIZ =  -debug -O 2
+#OPTIMIZ =  -debug -O 2
 #OPTIMIZ = -O 3 -fast
 #OPTIMIZ = -O 2 -fast
-#OPTIMIZ = -O 2
+OPTIMIZ = -O 2
 #OPTIMIZ_AIX = -optf='-qsimd=auto' -optc='-qsimd=auto' -O 2
 #OPTIMIZ_AIX = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
@@ -23,7 +23,6 @@ $(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = 
 
-MYLIB = rmn_014.a
 .PRECIOUS: $(LIBRMN) $(MALIB)
 
 #include $(ALIBRMN)/include/makefile_suffix_rules.inc
@@ -31,7 +30,7 @@ MYLIB = rmn_014.a
 #RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
-VER = 7.8.0
+VER = 7.8.1
 
 default: obj pgsm
 
@@ -45,7 +44,7 @@ champseq.cdk90  defin.cdk90    grilles.cdk90  lires.cdk90    pairs.cdk90   voir.
 charac.cdk90    dummys.cdk90   heures.cdk90   llccmm.cdk90   param.cdk90
 
 FICHIERS_FTN90 = \
-calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_hy.ftn90 chk_toctoc.ftn90 chkenrpos.ftn90 chk_userdate.ftn90 chmpdif.ftn90 comme.ftn90 \
+calcul.ftn90 champ.ftn90 champ_seq.ftn90 chk_extrap.ftn90 chk_hy.ftn90 chk_toctoc.ftn90 chkenrpos.ftn90 chk_userdate.ftn90 chmpdif.ftn90 comme.ftn90 \
 conlalo.ftn90 conver.ftn90 convs.ftn90 coord.ftn90 coupe.ftn90 coupzm.ftn90 ecrits.ftn90 \
 ecritur.ftn90 epais.ftn90 fst_get_mask_key.ftn90 fillcoord.ftn90 grigaus.ftn90 grigef.ftn90 grigrib.ftn90 grille2.ftn90 \
 grillps.ftn90 grilstd.ftn90 griltp4.ftn90 gristdb.ftn90 gristereo.ftn90 gritp12.ftn90 grlalon.ftn90 \
