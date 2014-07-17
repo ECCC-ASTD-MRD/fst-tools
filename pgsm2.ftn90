@@ -324,7 +324,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.8.0',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.8.1',  lfn(idx_date))
  !       print *, jdate
 
 !
