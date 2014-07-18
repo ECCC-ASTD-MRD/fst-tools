@@ -183,7 +183,7 @@ C*ENDIF
       IF (lvar .gt. 0) THEN
         iunexpv=0
 	ier = fnom(iunexpv,
-     %     ARMNLIB_var(1:lvar)//'/data/exception_vars_ok',
+     %     ARMNLIB_var(1:lvar)//'/exception_vars_ok',
      %     'SEQ+FTN+FMT+OLD+R/O',0)
         IF (ier .lt. 0) THEN
           print *,'$ARMNLIB_DATA/exception_vars file not found;'//
