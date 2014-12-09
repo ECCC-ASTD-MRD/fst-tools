@@ -42,6 +42,7 @@ C*DECK FSTCOMP
 * 027 V8.2 (M. Lepine, Nov  2012) En cas d'erreur, retourner un code d'erreur avec qqexit
 * 028 V8.3 (M. Lepine, Mars 2014) Utilisation du fichier $ARMNLIB/data/exception_vars
 * 029 V8.4 (M. Lepine, Juil 2014) Remettre ARMNLIB a la place de ARMNLIB_DATA
+* 030 V8.5 (M. Lepine, Dec  2014) Reload avec librmn_015.1
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -172,9 +173,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V8.4  * * *'
+         WRITE(6,*)'* * *  FSTCOMP V8.5  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V8.4', 'NON')
+         L = EXDB('FSTCOMP', 'V8.5', 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
