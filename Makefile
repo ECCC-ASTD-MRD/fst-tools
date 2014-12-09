@@ -19,8 +19,8 @@ DEFINE = -defines =-DFICHSTD98
 OPTIMIZ = -O 2
 $(info OPTIMIZ is ${OPTIMIZ})
 
-VER_C = 305
-VER_U = 304
+VER_C = 306
+VER_U = 305
 
 LIBRMN = 
 
