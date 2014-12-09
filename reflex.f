@@ -131,6 +131,7 @@
 *       M. Lepine, Fevrier 2010 - Terminer avec un code d erreur si le fichier intrant est inexistant (2.9)
 *       D. Bouhemhem, Nov 2013 - Rechargement avec librmn_013 (3.0)
 *       M. Lepine, Mars 2014 - Rechargement avec librmn_014 (3.1)
+*       D. BouhemhemM, Dec. 2014 - Rechargement avec librmn_015.1 (3.2)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
@@ -158,7 +159,7 @@
       INTEGER NSPLIT,nf
       INTEGER PRIDEF(2, 100), AUXDEF(2, 100), STAT(12)
       CHARACTER*4 CVRSN, CAPPL, suffix
-      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V3.1'/
+      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V3.2'/
       DATA LISTE /'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.',
      %'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.','OXSRT.','DATE',
      %'STATS','RSTR','ERRTOLR','MSGLVL','NSPLIT'/
