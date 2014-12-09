@@ -14,7 +14,7 @@ OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 $(info OPTIMIZ is ${OPTIMIZ})
 
-VER = 6.19
+VER = 6.20
 
 LIBRMN = rmn_014
 
