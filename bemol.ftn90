@@ -5,6 +5,7 @@ Program bemol
   ! Mai 2002
   ! Revision:Fev 2011,VL - to add 2nd remote destination for output
 
+  ! V2.06 - reload with librmn_015.1
 
   real a
 
@@ -79,7 +80,7 @@ Program bemol
 
 !--init program variables ---------------------------------------------
 
-  ier =exdb('BEMOL','v2.05','NON')
+  ier =exdb('BEMOL','v2.06','NON')
 
   call init_bemol_options
   call ccard(cle,def,val, nparams, ipos)
