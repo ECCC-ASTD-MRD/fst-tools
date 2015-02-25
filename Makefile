@@ -6,7 +6,7 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
-LIBRMN = rmn_015.1
+LIBRMN = rmn_015.2
 FFLAGS =
 
 CFLAGS =
@@ -29,7 +29,7 @@ CPPFLAGS =
 #RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
-VER = 7.8.2
+VER = 7.8.3
 
 default: obj pgsm
 

@@ -42,6 +42,7 @@
 !        6.8    - Support des grilles diese
 !        6.9    - Support des grilles T (stereographiques generalisees)
 !        7.8.2  - Reload avec librmn_015.1
+!        7.8.3  - D. Bouhmemhem, Fev 2015, Reload avec librmn_015.2
 !
 !langage   - fortran
 !
@@ -325,7 +326,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.8.2',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',' V7.8.3',  lfn(idx_date))
  !       print *, jdate
 
 !
