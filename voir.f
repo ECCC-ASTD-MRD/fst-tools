@@ -15,6 +15,7 @@
 *         98.30 - M. Lepine - mars 2014 - reload avec librmn_014
 *         98.31 - M. Lepine - juin 2014 - ajout de implicit none
 *         98.32 - M. Lepine - Dec  2014 - reload avec librmn_015.1
+*         98.33 - M. Lepine - Fev. 2015 - reload avec librmn_015.2
 
       implicit none
       integer, parameter :: ncle=4
@@ -65,7 +66,7 @@
          print *,'   Example #1: -style "ninjnk datev level"'       
          print *,'   Example #2: -style datev+level+ip1+notypv'
       else
-         ier = exdb('VOIR','V98.32','NON')
+         ier = exdb('VOIR','V98.33','NON')
 c         print *,'Debug+ ccard_arg(cles(1)) = ',
 c     %   trim(ccard_arg(cles(1)))
          ier = fnom(10,trim(ccard_arg(cles(1))),
