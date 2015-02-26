@@ -6,6 +6,7 @@ Program bemol
   ! Revision:Fev 2011,VL - to add 2nd remote destination for output
 
   ! V2.06 - reload with librmn_015.1
+  ! V2.07 - reload with librmn_015.2
 
   real a
 
