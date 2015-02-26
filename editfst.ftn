@@ -107,6 +107,7 @@
 *         B. Dugas         Correction dates etendues dans zap et copystx - v6.18 - Sept 2012
 *         M. Lepine        Reload avec librmn_014 - v6.19 - Mars 2014
 *         M. Lepine        Reload avec librmn_015.1 - v6.20 - Dec 2014
+*         M. Lepine        Reload avec librmn_015.2 - v6.21 - Fev 2015
 *
 *
 *LANGAGE  - FTN77
@@ -319,9 +320,9 @@
 
 *     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST','V6.20','NON')
+         I = EXDB('EDITFST','V6.21','NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   V6.20   ***'
+         WRITE(6,*)'***   E D I T F S T   V6.21   ***'
       ENDIF
 
 
