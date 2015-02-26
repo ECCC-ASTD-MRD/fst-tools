@@ -24,7 +24,7 @@
       data def /'void',    'void' /
       data val /'void',    'void' /
 
-      ier = exdb('FSTUNCOMPRESS','3.04',  'NON')
+      ier = exdb('FSTUNCOMPRESS','3.06',  'NON')
       rewrite_flag = .false.
       ipos = 0
       call ccard(cle,def,val, 2, ipos)
@@ -35,7 +35,7 @@
       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
       if (ier.lt.0) then
          print *, 'FSTUNCOMPRESS: INVALID INPUT FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTUNCOMPRESS','3.05',  'NON')
+         ier = exfin('FSTUNCOMPRESS','3.06',  'NON')
          call exit(13)
       endif
       ier = fstouv(iun_in,'RND')

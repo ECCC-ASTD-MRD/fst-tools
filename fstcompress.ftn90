@@ -27,7 +27,7 @@
       data def /'void',    'void', 'env', '-1' /
       data val /'void',    'void', 'env', '-1' /
 
-      ier = exdb('FSTCOMPRESS','3.06',  'NON')
+      ier = exdb('FSTCOMPRESS','3.07',  'NON')
 
       rewrite_flag = .false.
       ipos = 0
