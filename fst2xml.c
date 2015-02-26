@@ -11,6 +11,7 @@ Statut: Test
 Version: 004
 Version: 005, reload avec librmn_014
 Version: 006, reload avec librmn_015.1
+Version: 007, reload avec librmn_015.2
 */
 
 #define NCARMAX 256
