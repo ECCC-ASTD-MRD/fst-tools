@@ -21,7 +21,7 @@ CPPFLAGS =
 
 .PRECIOUS:
 
-VER = 6.4
+VER = 6.5
 
 LIBRMN = 
 
