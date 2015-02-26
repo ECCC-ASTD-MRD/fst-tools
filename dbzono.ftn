@@ -9,6 +9,7 @@
 *         003 D.Bouhemhem (nov12) Chargement avec rmn_013    (v3.5)
 *         004 M.Lepine    (mar14) Chargement avec rmn_014    (v3.6)
 *         005 M.Lepine    (dec14) Chargement avec rmn_015.1  (v3.7)
+*         006 M.Lepine    (fev15) Chargement avec rmn_015.2  (v3.8)
 *
 *LANGUAGE F77
 *
@@ -49,7 +50,7 @@
       IER = FNOM ( 6 , LFN(4) , 'SEQ' , 0 )                     
       ECHOZ = LFN(6).EQ.'OUI'                                  
 *                                                             
-      JUNK = EXDB ( 'DBZONO' , 'V3.7' ,  LFN(5) )            
+      JUNK = EXDB ( 'DBZONO' , 'V3.8' ,  LFN(5) )            
 *                                                           
 *                                                          
 *     INITIALISATION DU COMMON 'CTESCON'                       
