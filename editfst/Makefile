@@ -37,7 +37,7 @@ default: $(EDITFST)
 .c.o:
 	s.cc -c $(OPTIMIZ) $(CFLAGS) $<
 
-OBJECTS_SUPP= excdes_new.o fstd98.o
+OBJECTS_SUPP= excdes_new.o fstd98.o xdf98.o
 
 OBJECTS= configuration.o \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
@@ -47,12 +47,10 @@ OBJECTS= configuration.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
 	 weofile.o       zap.o
 
-$(LIB):$(OBJECTS)
+$(LIB): $(OBJECTS)
 	mkdir -p lib/$(EC_ARCH)
 	ar rcv $(LIB) $(OBJECTS)
 	rm -f $(OBJECTS)
-
-obj:$(OBJECTS)
 
 $(EDITFST): $(LIB) $(OBJECTS_SUPP)
 	echo "program edit_fst ; call editfst ; stop ; end" >bidon.f90
@@ -69,7 +67,7 @@ create_test_file:	create_test_file.f90
 	s.f90 $< -o $@ $(FFLAGS) -l$(LIBRMN)
 	rm -f test.fst
 
-tests: $(EDITFST) test.fst
+tests: test.fst
 	./run_tests.sh $(EDITFST) test.fst
 
 clean:
