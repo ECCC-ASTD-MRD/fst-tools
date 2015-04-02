@@ -18,6 +18,7 @@
 ! */
 !**S/R CRITSUP DEFIFIT LES CRITERES SUPLEMENTAIRES DE SELECTION
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
+      use ISO_C_BINDING
       use configuration
       IMPLICIT NONE 
       include 'excdes.inc'

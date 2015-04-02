@@ -18,7 +18,7 @@
 ! */
 !**PROGRAMME EDITFST - COPIE UNE PARTIE D'UN FICHIER STANDARD DANS UN 
 !                      AUTRE FICHIER DTANDARD.
-      PROGRAM EDITFST
+      subroutine EDITFST
 !****************************************
 !********    VERSION  'UNIX'    *********
 !****************************************
@@ -257,9 +257,11 @@
       integer junk
       LOGICAL     FASTIO
 !      character(len=*), parameter :: current_version="v 1.19"
-      character(len=*), parameter :: current_version=RELEASE
+      character(len=16) :: RELEASE
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
       character(len=4096), save :: PRINTR
+
+      include 'editfst.inc'
 
       call config_init   ! initialize values in module "configuration"
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
@@ -325,9 +327,9 @@
 
 !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST',current_version,'NON')
+         I = EXDB('EDITFST',trim(RELEASE),'NON')
       ELSE
-         WRITE(6,*)'***   E D I T F S T   '//current_version//'   ***'
+         WRITE(6,*)'***   E D I T F S T   '//trim(RELEASE)//'   ***'
       ENDIF
 
 

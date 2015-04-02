@@ -18,6 +18,7 @@
 ! */
 !** S/R SAUVDEZ CONTROLE LA PORTEE DES DIRECTIVES APRES COPIE
       SUBROUTINE SAUVDEZ
+      use ISO_C_BINDING
       use configuration
       IMPLICIT NONE 
       include 'excdes.inc'

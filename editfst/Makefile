@@ -1,6 +1,6 @@
 # check that a compiler architecture is defined
-ifeq "$(BASE_ARCH)" "$(EC_ARCH)"
-$(error FATAL: EC_ARCH is equal to BASE_ARCH, no compiler architecture is defined, ABORTING)
+ifeq "$(COMP_ARCH)" ""
+$(error FATAL: environment variable COMP_ARCH absent, no compiler architecture is defined, ABORTING)
 endif
 
 .SUFFIXES:
@@ -12,33 +12,32 @@ SHELL = /bin/bash
 COMPILE = compile
 
 #FFLAGS =
-FFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
+#FFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
 #CFLAGS =
-CFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
+#CFLAGS = -IEXTRAS/Localinclude -IEXTRAS/Localinclude/$(EC_ARCH) -LEXTRAS/Locallib/$(EC_ARCH)
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
 
-VER = 6.20
+include editfst.inc
 
 #LIBRMN = rmn_014
-LIBRMN = rmnbeta_016
+LIBRMN = rmn_015.2
 
-EDITFST = editfst_$(VER)-$(BASE_ARCH)
+LIB = lib/$(EC_ARCH)/libeditfst_$(RELEASE).a
+
+EDITFST = editfst_$(RELEASE)-$(BASE_ARCH)
 
 default: $(EDITFST)
-
-
-.F90.o:
-	s.f90 -c -DRELEASE="'$(VER)'" $(OPTIMIZ) $(FFLAGS) -src $<
 
 .f90.o:
 	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
 
 .c.o:
-	s.cc $(OPTIMIZ) $(CFLAGS) -c $<
+	s.cc -c $(OPTIMIZ) $(CFLAGS) $<
 
+OBJECTS_SUPP= excdes_new.o fstd98.o
 
 OBJECTS= configuration.o \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
@@ -48,10 +47,17 @@ OBJECTS= configuration.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
 	 weofile.o       zap.o
 
+$(LIB):$(OBJECTS)
+	mkdir -p lib/$(EC_ARCH)
+	ar rcv $(LIB) $(OBJECTS)
+	rm -f $(OBJECTS)
+
 obj:$(OBJECTS)
 
-$(EDITFST): $(OBJECTS)
-	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(OBJECTS) $(FFLAGS) -l$(LIBRMN)
+$(EDITFST): $(LIB) $(OBJECTS_SUPP)
+	echo "program edit_fst ; call editfst ; stop ; end" >bidon.f90
+	s.f90 bidon.f90 $(OBJECTS_SUPP) -o $@ $(FFLAGS) $(LIB) -l$(LIBRMN)
+	rm -f bidon.f90 $(OBJECTS_SUPP)
 
 all: $(EDITFST) test.fst
 
@@ -67,13 +73,7 @@ tests: $(EDITFST) test.fst
 	./run_tests.sh $(EDITFST) test.fst
 
 clean:
-#Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
-	-if [ "*.ftn" != "`echo *.ftn`" ] ; \
-	then \
-	for i in *.ftn ; \
-	do \
-	fn=`r.basename $$i '.ftn'`; \
-	rm -f $$fn.f; \
-	done \
-	fi
-	rm -f *.mod *.o $(EDITFST)  create_test_file test.fst
+	rm -f $(OBJECTS) *.mod
+
+distclean: clean
+	rm -f *.mod *.o $(EDITFST)  create_test_file test.fst $(LIB) bidon.f90
