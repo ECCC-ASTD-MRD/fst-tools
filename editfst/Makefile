@@ -48,6 +48,7 @@ OBJECTS= configuration.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
 	 weofile.o       zap.o
 
+obj:$(OBJECTS)
 
 $(EDITFST): $(OBJECTS)
 	s.f90 -o editfst_$(VER)-$(BASE_ARCH) $(OBJECTS) $(FFLAGS) -l$(LIBRMN)
