@@ -1,46 +1,59 @@
-*** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
-*
+!/* EDITFST - Collection of useful routines in C and FORTRAN
+! * Copyright (C) 1975-2014  Environnement Canada
+! *
+! * This library is free software; you can redistribute it and/or
+! * modify it under the terms of the GNU Lesser General Public
+! * License as published by the Free Software Foundation,
+! * version 2.1 of the License.
+! *
+! * This library is distributed in the hope that it will be useful,
+! * but WITHOUT ANY WARRANTY; without even the implied warranty of
+! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! * Lesser General Public License for more details.
+! *
+! * You should have received a copy of the GNU Lesser General Public
+! * License along with this library; if not, write to the
+! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+! * Boston, MA 02111-1307, USA.
+! */
+!** S/P ZAP - CHANGE LES ARGUMENTS DU LABEL A LA SORTIE
+!
       SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
-  
+      use configuration
       IMPLICIT NONE 
   
-      INTEGER  TV, NV, LBL(*), DATE, IP1, IP2, IP3
-*
-*AUTEURS
-*VERSION ORIGINALE Y. BOURASSA JUL 91
-*REVISION      001 "      "    JUL 92 COUPE DW DE DATE
-*              002 "      "    OCT 92 PADING DU LABEL
-*              003 B. Dugas    fev 12 valider date avec newdate
-*LANGUAGA FTN77
-*  
-*ARGUMENTS
-*ENTRE   TV   -  TYPEVAR 
-*  "     NV   -  NOMVAR  
-*  "     LBL  -  ETIKET  
-*  "     DATE -  DATE
-*  "     IP1  -  IP1 
-*  "     IP2  -  IP2
-*  "     IP3  -  IP3
-*
-#include "maxprms.cdk"
-#include "logiq.cdk"
-#include "fiches.cdk"
-#include "char.cdk"
-#include "desrs.cdk"
-*MODULE
-*  
+      INTEGER, intent(IN) ::  TV, NV, LBL(*), DATE, IP1, IP2, IP3
+!
+!AUTEURS
+!VERSION ORIGINALE Y. BOURASSA JUL 91
+!REVISION      001 "      "    JUL 92 COUPE DW DE DATE
+!              002 "      "    OCT 92 PADING DU LABEL
+!              003 B. Dugas    fev 12 valider date avec newdate
+!              004 M. Valin    fev 14 initialisation de LIS, intent 
+!LANGUAGA FTN77
+!  
+!ARGUMENTS
+!ENTRE   TV   -  TYPEVAR 
+!  "     NV   -  NOMVAR  
+!  "     LBL  -  ETIKET  
+!  "     DATE -  DATE
+!  "     IP1  -  IP1 
+!  "     IP2  -  IP2
+!  "     IP3  -  IP3
+!
+!MODULE
+!  
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR
       INTEGER,     EXTERNAL :: NEWDATE
-**
+!*
       INTEGER      IER,DAT1,DAT2,NDATE
       INTEGER      FSTCVT, ARGDOPE, I, LIS(10)
       CHARACTER *1 G
       CHARACTER *2 T
       CHARACTER *4 N
       CHARACTER *12 E
-      DATA         LIS/10*0/
 
-      ZA = .FALSE.
+      ZA = .FALSE.  ! initialize to do nothing values
       ZD = -1
       Z1 = -1
       Z2 = -1
@@ -79,7 +92,8 @@
          ENDIF
       ENDIF
    50 IF(LBL(1) .NE. -1) THEN
-         I = ARGDOPE(3, LIS, 10)
+         lis = 0
+         I = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ZE, LIS, I, LBL, 12)
          IF(ZE .NE. '????????????') THEN
             ZA = .TRUE.

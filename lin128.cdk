@@ -1,6 +1,0 @@
-      CHARACTER*8 LIN128
-#if defined (ALL64)
-      PARAMETER   (LIN128='(16A8)')
-#else
-      PARAMETER   (LIN128='(32A4)')
-#endif

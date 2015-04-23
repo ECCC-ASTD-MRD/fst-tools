@@ -1,8 +1,13 @@
+# check that a compiler architecture is defined
+ifeq "$(COMP_ARCH)" ""
+$(error FATAL: environment variable COMP_ARCH absent, no compiler architecture is defined, ABORTING)
+endif
+
 .SUFFIXES:
 
-.SUFFIXES : .ftn .cdk .c .o
+.SUFFIXES : .o .c .f90 .f .F90
 
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 COMPILE = compile
 
@@ -12,110 +17,58 @@ CFLAGS =
 
 OPTIMIZ = -O 2
 #OPTIMIZ = -debug
-$(info OPTIMIZ is ${OPTIMIZ})
 
-VER = 6.21
+include version.inc
 
-LIBRMN = rmn_015.2
+LIBRMN = rmn_Alpha_016
 
-default: absolu
+LIB = lib/$(EC_ARCH)/libeditfst_$(RELEASE).a
 
-include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
+EDITFST = editfst_$(RELEASE)-$(BASE_ARCH)
 
-OBJECTS= \
+default: $(EDITFST)
+
+.f90.o:
+	s.f90 -c $(OPTIMIZ) $(FFLAGS) $<
+
+.c.o:
+	s.cc -c $(OPTIMIZ) $(CFLAGS) $<
+
+#OBJECTS_SUPP= excdes_new.o fstd98.o xdf98.o
+
+OBJECTS= configuration.o \
 	 copystx.o 	 critsup.o 	 desire.o 	 dmpdes.o \
-	 editfst.o 	 entsort.o 	 exdes.o         fermes.o \
-	 fstnol.o        holacar.o       julhr.o 	 ouvred.o \
+	 editfst.o 	 fermes.o \
+	 fstnol.o        holacar.o       ouvred.o \
 	 ouvres.o        rewinds.o 	 sautsqi.o 	 sauvdez.o \
 	 select.o        setper.o 	 sqicopi.o 	 stdcopi.o \
-	 weofile.o       zap.o 	         ip1equiv.o
+	 weofile.o       zap.o
 
+$(LIB): $(OBJECTS)
+	mkdir -p lib/$(EC_ARCH)
+	ar rcv $(LIB) $(OBJECTS)
+	rm -f $(OBJECTS)
 
-FICHIERS= \
-	 copystx.f 	 critsup.f 	 desire.f 	 dmpdes.f \
-	 editfst.f 	 entsort.f 	 exdes.f    	 fermes.f \
-	 fstnol.f        holacar.f       julhr.f 	 ouvred.f \
-	 ouvres.f        rewinds.f 	 sautsqi.f 	 sauvdez.f \
-	 select.f 	 setper.f 	 sqicopi.f 	 stdcopi.f \
-	 weofile.f       zap.f
+$(EDITFST): $(LIB) $(OBJECTS_SUPP)
+	echo "program edit_fst ; call editfst ; stop ; end" >bidon.f90
+	s.f90 bidon.f90 $(OBJECTS_SUPP) -o $@ $(FFLAGS) $(LIB) -l$(LIBRMN)
+	rm -f bidon.f90 $(OBJECTS_SUPP)
 
+all: $(EDITFST) test.fst
 
+test.fst: create_test_file
+	./create_test_file
 
-FTNDECKS= \
-	 copystx.ftn 	 critsup.ftn 	 desire.ftn 	 dmpdes.ftn \
-	 editfst.ftn 	 entsort.ftn 	 exdes.ftn       fermes.ftn \
-	 fstnol.ftn      holacar.ftn	 julhr.ftn 	 ouvred.ftn \
-	 ouvres.ftn      rewinds.ftn	 sautsqi.ftn 	 sauvdez.ftn \
-	 select.ftn      setper.ftn      sqicopi.ftn 	 stdcopi.ftn \
-	 weofile.ftn     zap.ftn         ip1equiv.ftn
+create_test_file:	create_test_file.f90
+#	s.f90 $< $(EXTRA_OBJECTS) -o $@ $(FFLAGS) -l$(LIBRMN)
+	s.f90 $< -o $@ $(FFLAGS) -l$(LIBRMN)
+	rm -f test.fst
 
-
-COMDECKS= \
-	 char.cdk 	 desrs.cdk 	 fiches.cdk 	 key.cdk \
-	 lin128.cdk 	 logiq.cdk 	 maxprms.cdk 	 tapes.cdk 
-
-
-copystx.o:     copystx.ftn     maxprms.cdk     logiq.cdk       desrs.cdk       \
-               tapes.cdk       key.cdk         char.cdk        fiches.cdk
-critsup.o:     critsup.ftn     maxprms.cdk     desrs.cdk       logiq.cdk       \
-               char.cdk        fiches.cdk
-desire.o:      desire.ftn      maxprms.cdk     desrs.cdk       lin128.cdk      \
-               logiq.cdk       fiches.cdk      char.cdk
-dmpdes.o:      dmpdes.ftn      maxprms.cdk     logiq.cdk        desrs.cdk      \
-               fiches.cdk      char.cdk        maxprms.cdk
-editfst.o:     editfst.ftn     maxprms.cdk     tapes.cdk        fiches.cdk     \
-               logiq.cdk       desrs.cdk       key.cdk          char.cdk
-entsort.o:     entsort.ftn
-exdes.o:       exdes.ftn       maxprms.cdk     desrs.cdk        fiches.cdk
-fermes.o:      fermes.ftn      maxprms.cdk     desrs.cdk        key.cdk        \
-               char.cdk        tapes.cdk       fiches.cdk
-fstnol.o:      fstnol.ftn
-holacar.o:     holacar.ftn
-julhr.o:       julhr.ftn
-ouvred.o:      ouvred.ftn      maxprms.cdk     logiq.cdk        key.cdk        \
-               char.cdk        tapes.cdk       fiches.cdk
-ouvres.o:      ouvres.ftn      maxprms.cdk     logiq.cdk        key.cdk        \
-               char.cdk        tapes.cdk       fiches.cdk
-rewinds.o:     rewinds.ftn     lin128.cdk      maxprms.cdk      logiq.cdk      \
-               desrs.cdk       tapes.cdk       fiches.cdk       char.cdk
-sautsqi.o:     sautsqi.ftn     lin128.cdk      maxprms.cdk      tapes.cdk      \
-               logiq.cdk       char.cdk        fiches.cdk
-sauvdez.o:     sauvdez.ftn     maxprms.cdk     desrs.cdk        char.cdk       \
-               fiches.cdk
-select.o:      select.ftn      logiq.cdk       maxprms.cdk      fiches.cdk     \
-               desrs.cdk       tapes.cdk
-setper.o:      setper.ftn      maxprms.cdk     logiq.cdk        lin128.cdk     \
-               desrs.cdk       fiches.cdk
-sqicopi.o:     sqicopi.ftn     maxprms.cdk     logiq.cdk        lin128.cdk     \
-               fiches.cdk      desrs.cdk       char.cdk         tapes.cdk
-stdcopi.o:     stdcopi.ftn     lin128.cdk      maxprms.cdk     logiq.cdk       \
-               tapes.cdk       char.cdk        fiches.cdk
-weofile.o:     weofile.ftn     lin128.cdk      maxprms.cdk     logiq.cdk       \
-               fiches.cdk      char.cdk   
-zap.o:         zap.ftn         maxprms.cdk     fiches.cdk      logiq.cdk       \
-               desrs.cdk       char.cdk
-ip1equiv.o:    ip1equiv.ftn
-
-#absolu: $(OBJECTS)
-#	r.compile_034 -o editfst -obj $(OBJECTS) -abi $(ABI) -librmn rmn_012 -codebeta moduledate_711 c_baseio_714
-#	
-absolu: $(OBJECTS)
-	s.compile -o editfst_$(VER)-$(BASE_ARCH) -obj $(OBJECTS) -librmn $(LIBRMN)
-	
-oldstuff: $(OBJECTS)
-	s.compile -o editfst -obj $(OBJECTS) -abi $(ABI) -fstd89 -librmn rmnbeta
-
-editfst+: $(OBJECTS)
-	s.compile -o editfst+ -obj $(OBJECTS) ./Extra_obj/$(EC_ARCH)/*.o -abi $(ABI) -librmn rmnbeta_015
+tests: test.fst
+	./run_tests.sh $(EDITFST) test.fst
 
 clean:
-#Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
-	-if [ "*.ftn" != "`echo *.ftn`" ] ; \
-	then \
-	for i in *.ftn ; \
-	do \
-	fn=`r.basename $$i '.ftn'`; \
-	rm -f $$fn.f; \
-	done \
-	fi
-	rm *.o editfst_$(VER)-$(BASE_ARCH) 
+	rm -f $(OBJECTS) *.mod
+
+distclean: clean
+	rm -f *.mod *.o $(EDITFST)  create_test_file test.fst $(LIB) bidon.f90
