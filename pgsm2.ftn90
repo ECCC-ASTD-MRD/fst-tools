@@ -112,6 +112,30 @@
 	integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
 	integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
 	real dum
+        integer, parameter :: str_A=transfer("A   ",1)
+        integer, parameter :: str_P=transfer("P   ",1)
+        integer, parameter :: str_GZ=transfer("GZ  ",1)
+        integer, parameter :: str_TT=transfer("TT  ",1)
+        integer, parameter :: str_QQ=transfer("QQ  ",1)
+        integer, parameter :: str_QR=transfer("QR  ",1)
+        integer, parameter :: str_DD=transfer("DD  ",1)
+        integer, parameter :: str_PP=transfer("PP  ",1)
+        integer, parameter :: str_CC=transfer("CC  ",1)
+        integer, parameter :: str_WW=transfer("WW  ",1)
+        integer, parameter :: str_ES=transfer("ES  ",1)
+        integer, parameter :: str_DFGZ=transfer("DFGZ",1)
+        integer, parameter :: str_DFST=transfer("DFST",1)
+        integer, parameter :: str_DFPR=transfer("DFPR",1)
+        integer, parameter :: str_UV=transfer("UV  ",1)
+        integer, parameter :: str_VENT=transfer("VENT",1)
+        integer, parameter :: str_NUAG=transfer("NUAG",1)
+        integer, parameter :: str_F2=transfer("F2  ",1)
+        integer, parameter :: str_PN=transfer("PN  ",1)
+        integer, parameter :: str_P0=transfer("P0  ",1)
+        integer, parameter :: str_TS=transfer("TS  ",1)
+        integer, parameter :: str_TM=transfer("TM  ",1)
+        integer, parameter :: str_MT=transfer("MT  ",1)
+        integer, parameter :: str_WDUV=transfer("WDUV",1)
 
 
 !
@@ -182,29 +206,29 @@
 	data qlxcon(23) /'XYDIR'   /  qlxval(23) / gr_xydir /
 	data qlxcon(24) /'LLDIR'   /  qlxval(24) / gr_lldir /
 	data qlxcon(25) /'LLLIST'  /  qlxval(25) / gr_lllist/
-	data qlxcon(26) /'ANAL'    /  qlxval(26) / "A   "/
-	data qlxcon(27) /'PREV'    /  qlxval(27) / "P   "/
-	data qlxcon(28) /'Z'       /  qlxval(28) / "GZ  "/
-	data qlxcon(29) /'T'       /  qlxval(29) / "TT  "/
-	data qlxcon(30) /'Q'       /  qlxval(30) / "QQ  "/
-	data qlxcon(31) /'QR'      /  qlxval(31) / "QR  "/
-	data qlxcon(32) /'D'       /  qlxval(32) / "DD  "/
-	data qlxcon(33) /'PP'      /  qlxval(33) / "PP  "/
-	data qlxcon(34) /'CC'      /  qlxval(34) / "CC  "/
-	data qlxcon(35) /'W'       /  qlxval(35) / "WW  "/
-	data qlxcon(36) /'ES'      /  qlxval(36) / "ES  "/
-	data qlxcon(37) /'EPAIS'   /  qlxval(37) / "DFGZ"/
-	data qlxcon(38) /'MAC'     /  qlxval(38) / "DFST"/
-	data qlxcon(39) /'PCP'     /  qlxval(39) / "DFPR"/
-	data qlxcon(40) /'UV'      /  qlxval(40) / "UV  "/
-	data qlxcon(41) /'VENT'    /  qlxval(41) / "VENT"/
-	data qlxcon(42) /'NUAGES'  /  qlxval(42) / "NUAG"/
-	data qlxcon(43) /'ECM'     /  qlxval(43) / "F2  "/
-	data qlxcon(44) /'PNM'     /  qlxval(44) / "PN  "/
-	data qlxcon(45) /'PSURF'   /  qlxval(45) / "P0"  /
-	data qlxcon(46) /'TSRF'    /  qlxval(46) / "TS"  /
-	data qlxcon(47) /'TMER'    /  qlxval(47) / "TM  "/
-	data qlxcon(48) /'MT'      /  qlxval(48) / "MT  "/
+	data qlxcon(26) /'ANAL'    /  qlxval(26) / str_A/
+	data qlxcon(27) /'PREV'    /  qlxval(27) / str_P   /
+	data qlxcon(28) /'Z'       /  qlxval(28) / str_GZ  /
+	data qlxcon(29) /'T'       /  qlxval(29) / str_TT  /
+	data qlxcon(30) /'Q'       /  qlxval(30) / str_QQ  /
+	data qlxcon(31) /'QR'      /  qlxval(31) / str_QR  /
+	data qlxcon(32) /'D'       /  qlxval(32) / str_DD  /
+	data qlxcon(33) /'PP'      /  qlxval(33) / str_PP  /
+	data qlxcon(34) /'CC'      /  qlxval(34) / str_CC  /
+	data qlxcon(35) /'W'       /  qlxval(35) / str_WW  /
+	data qlxcon(36) /'ES'      /  qlxval(36) / str_ES  /
+	data qlxcon(37) /'EPAIS'   /  qlxval(37) / str_DFGZ/
+	data qlxcon(38) /'MAC'     /  qlxval(38) / str_DFST/
+	data qlxcon(39) /'PCP'     /  qlxval(39) / str_DFPR/
+	data qlxcon(40) /'UV'      /  qlxval(40) / str_UV  /
+	data qlxcon(41) /'VENT'    /  qlxval(41) / str_VENT/
+	data qlxcon(42) /'NUAGES'  /  qlxval(42) / str_NUAG/
+	data qlxcon(43) /'ECM'     /  qlxval(43) / str_F2  /
+	data qlxcon(44) /'PNM'     /  qlxval(44) / str_PN  /
+	data qlxcon(45) /'PSURF'   /  qlxval(45) / str_P0  /
+	data qlxcon(46) /'TSRF'    /  qlxval(46) / str_TS  /
+	data qlxcon(47) /'TMER'    /  qlxval(47) / str_TM  /
+	data qlxcon(48) /'MT'      /  qlxval(48) / str_MT  /
 	data qlxcon(49) /'VOISIN'  /  qlxval(49) /   100 /
 	data qlxcon(50) /'LINEAIR' /  qlxval(50) /     1 /
 	data qlxcon(51) /'CUBIQUE' /  qlxval(51) /     3 /
@@ -236,7 +260,7 @@
 	data qlxcon(77) /'NI'      /  qlxval(77) /     9 /
 	data qlxcon(78) /'NJ'      /  qlxval(78) /    10 /
 	data qlxcon(79) /'NK'      /  qlxval(79) /    11 /
-	data qlxcon(80) /'WDUV'    /  qlxval(80) /"WDUV" /
+	data qlxcon(80) /'WDUV'    /  qlxval(80) /str_WDUV/
 	data qlxcon(81) /'ON'      /  qlxval(81) /     1 /
 	data qlxcon(82) /'OFF'     /  qlxval(82) /     0 /
 	data qlxcon(83) /'VERBOSE' /  qlxval(83) /     1 /
