@@ -6,6 +6,8 @@ SHELL = /bin/sh
 
 CPP = /lib/cpp
 
+include version.inc
+
 LIBRMN = rmn_015.2
 FFLAGS =
 
@@ -20,7 +22,7 @@ OPTIMIZ = -O 2
 #OPTIMIZ_AIX = -optf='-qarch=pwr7 -qsimd=auto' -optc='-qarch=pwr7 -qsimd=auto' -O 2
 $(info OPTIMIZ is ${OPTIMIZ})
 
-CPPFLAGS = 
+CPPFLAGS =
 
 .PRECIOUS: $(LIBRMN) $(MALIB)
 
@@ -29,7 +31,7 @@ CPPFLAGS =
 #RPN_TEMPLATE_LIBS=/usr/local/env/armnlib/
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
-VER = 7.8.3
+VER = $(subst ",,$(PGSM_VERSION))
 
 default: obj pgsm
 
@@ -81,7 +83,7 @@ genlib: $(OBJET)
 pgsm: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o -librmn $(LIBRMN)
 
-pgsm-ezscint: f_pgsm.o c_pgsm.o 
+pgsm-ezscint: f_pgsm.o c_pgsm.o
 	s.compile -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -src bidon.ftn90 -obj f_pgsm.o c_pgsm.o c_ezscint.o f_ezscint.o -librmn $(LIBRMN)
 
 pgsm-AIX: f_pgsm.o c_pgsm.o
@@ -89,5 +91,5 @@ pgsm-AIX: f_pgsm.o c_pgsm.o
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
-	rm -f *.o *~ *.f *.f90 pgsm_$(VER)-$(BASE_ARCH) 
+	rm -f *.o *~ *.f *.f90 pgsm_$(VER)-$(BASE_ARCH)
 

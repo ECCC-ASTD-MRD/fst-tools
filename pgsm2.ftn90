@@ -43,6 +43,7 @@
 !        6.9    - Support des grilles T (stereographiques generalisees)
 !        7.8.2  - Reload avec librmn_015.1
 !        7.8.3  - D. Bouhmemhem, Fev 2015, Reload avec librmn_015.2
+!        7.8.4  - M. Valin, Avril 2015,fixed data statements, include version.inc
 !
 !langage   - fortran
 !
@@ -136,6 +137,7 @@
         integer, parameter :: str_TM=transfer("TM  ",1)
         integer, parameter :: str_MT=transfer("MT  ",1)
         integer, parameter :: str_WDUV=transfer("WDUV",1)
+        character(len=16) :: PGSM_VERSION
 
 
 !
@@ -339,6 +341,7 @@
 !           nequiv=nombre d'equivalence output de ccard
 !
 !
+      include 'version.inc'
 	nequiv=-1
 	lnkdiun = 0
    lnkdiun(1) = 1
@@ -350,7 +353,7 @@
 !
 !          imprime boite debut du programme
 !
-	jdate= exdb(' PGSM  ',' V7.8.3',  lfn(idx_date))
+	jdate= exdb(' PGSM  ',PGSM_VERSION,  lfn(idx_date))
  !       print *, jdate
 
 !
