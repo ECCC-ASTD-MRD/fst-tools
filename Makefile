@@ -91,5 +91,5 @@ pgsm-AIX: f_pgsm.o c_pgsm.o
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o
-	rm -f *.o *~ *.f *.f90 pgsm_$(VER)-$(BASE_ARCH)
+	rm -f *.o *~ *.f *.f90 pgsm_$(VER)-$(BASE_ARCH) f_pgsm.ftn90
 
