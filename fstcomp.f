@@ -80,6 +80,8 @@ C*DECK FSTCOMP
       character *30 string
       character *128 exception_vars
       character * 512 ARMNLIB_var
+      character * 16 RELEASE
+      character * 32 SUB_RELEASE
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
@@ -122,6 +124,8 @@ C      DEF1(8) = '-13'
 C      DEF2(8) = '-13'
 C*ENDIF
 *     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
+
+      include 'version.inc'
 
       I = -1
       CALL CCARD(CLE, DEF2, DEF1, 21, I)
@@ -174,9 +178,9 @@ C*ENDIF
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP V8.6  * * *'
+         WRITE(6,*)'* * *  FSTCOMP '//trim(RELEASE)//'  * * *'
       ELSE
-         L = EXDB('FSTCOMP', 'V8.6', 'NON')
+         L = EXDB('FSTCOMP', trim(RELEASE), 'NON')
       ENDIF
       L = FSTOPC('MSGLVL', DEF1(11), .FALSE.)
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -367,7 +371,7 @@ C*ENDIF
       GO TO 60
   40  CALL RCMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2,
-     X            EXCEPTION)
+     X            EXCEPTION, DATE, TYPVAR, NI, NJ, NK)
       GO TO 60
   50  CALL ICMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3, EXCEPTION)
@@ -404,8 +408,8 @@ C*ENDIF
          L = EXFIN('FSTCOMP', 'NORMAL', 'NON')
       ENDIF
 
-  600 FORMAT('  NOM    ETIKET        IP1',
-     X       '            IP2  IP3  E-REL-MAX',
+  600 FORMAT('  NOM    ETIKET           IP1',
+     X       '            IP2       IP3  E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY')
 
@@ -416,8 +420,8 @@ C*ENDIF
   603 FORMAT(2I6,A4,' -LES DIMENSIONS TROUVEES SONT',3I5,
      %       ' CHERCHE',3I5)
      
-  700 FORMAT('  NOM    ETIKET        IP1',
-     X       '           IP2  IP3  E-REL-MAX',
+  700 FORMAT('  NOM    ETIKET           IP1',
+     X       '            IP2       IP3  E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY     TOLERANCE')
 
@@ -428,14 +432,17 @@ C*DECK RCMP1D
 ***S/P RCMP1D  COMPARAISON DE DEUX CHAMPS REELS DE UNE DIMENSION
 *
       SUBROUTINE RCMP1D(A, B, N, IUN, NUMA, NUMB, NOMVAR, ETIKET, IP1,
-     X                  IP2, IP3, LIMITE, NBITS, PACK_ERR, EXCEPTION)
+     X                  IP2, IP3, LIMITE, NBITS, PACK_ERR, EXCEPTION,
+     x                  DATE, TYPVAR, NI, NJ, NK)
 
       IMPLICIT NONE
       INTEGER  N, IUN, LIMITE, NUMA, NUMB, IP1, IP2, IP3, NBITS
       INTEGER  PACK_ERR
+      INTEGER  NI, NJ, NK, DATE
       LOGICAL EXCEPTION
       CHARACTER*12 ETIKET
       CHARACTER*4 NOMVAR
+      CHARACTER*2 TYPVAR
       REAL     A(N), B(N), MAXABS, SUMABS, ERRABS
 *
 *AUTEURS  VERSION ORIGINALE (REALCMP)  M.VALIN DRPN 1987
@@ -462,8 +469,10 @@ C*DECK RCMP1D
       REAL*8    SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR,
      X          AA, BB, FN, ERRLIM, VARA, VARB, SAB
       REAL MIN_A, MAX_A, MIN_B, MAX_B, RANGE_A, RANGE_B, DEUX_EXP_NB
+      REAL ratio_max, ratio
       REAL ERR_UNIT
       integer nbdiff
+      EXTERNAL statfldx
 
       nbdiff = 0
       ERRLIM = 10.**LIMITE
@@ -477,6 +486,7 @@ C*DECK RCMP1D
       ERR    = 0.
       SUMABS = 0.
       MAXABS = 0.
+      ratio_max = 0.
       MIN_A = A(1)
       MAX_A = A(1)
       MIN_B = B(1)
@@ -491,9 +501,12 @@ C*DECK RCMP1D
          SA     = SA+AA
          SB     = SB+BB
          IF(AA .NE. BB) THEN
-!            write(6,888) 'Debug difference A vs B au point I=',i,aa,bb
+            if (aa .ne. 0.) ratio = (max(aa,bb) - min(aa,bb)) / aa * 100
+            if (ratio > ratio_max) ratio_max = ratio
+!            write(6,888) 'Debug difference A vs B au point I=',i,
+!     %       'AA, AA-BB=',aa,aa-bb
             nbdiff = nbdiff +1
- 888        format(a,i8,2x,e24.16,2x,e24.16)
+ 888        format(a,i8,2x,a,e14.7,2x,e14.7)
             ERRABS = ABS(AA-BB)
             SUMABS = SUMABS+ERRABS
             MAXABS = MAX(ERRABS,MAXABS)
@@ -565,17 +578,32 @@ C*DECK RCMP1D
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
       ENDIF
+ 
+      if ((nbdiff .ne. 0) .and. (PACK_ERR .gt. 0)) then
+        write(6,900) '  <Difference> Number of elements differing is',
+     %    nbdiff, ' out of ',n,
+     %    ' elements, Ratio = ',(float(nbdiff) / float(n)) * 100.0,'%'
+ 900    format(a,i7,a,i8,a,f10.4,a)
+        call statfldx(nomvar,typvar,ip1,ip2,ip3,date,etiket,A,ni,nj,nk)
+        call statfldx(nomvar,typvar,ip1,ip2,ip3,date,etiket,B,ni,nj,nk)
+        write(6,*) ' '
+!        write(6,901) 'Err_Max=',ratio_max
+! 901    format(a,e8.2,'%')
+!        write(6,889) 'Debug MIN_A, MAX_A, MIN_B - MIN_A = ',MIN_A,
+!     %                    MAX_A, MIN_B - MIN_A, MAX_B - MAX_A
+! 889    format(a,2x,e14.7,2x,e14.7,2x,e14.7,2x,e14.7)
+      endif
 
 *  600 FORMAT('  CLEA CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
 *     X       '  E-REL-MOY   VAR-A       C-COR         MOY-A',
 *     X       '         BIAIS      E-MAX      E-MOY')
-  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I5, 4(1X,1PE10.4),
+  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4) )
-  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I5, 3(1X,1PE10.4),
+  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE10.4),
      X       3(1X,1PE12.4), 2(1X,1PE10.4) )
-  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I5, 4(1X,1PE10.4),
+  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE10.4),
      X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
-  603 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I5, 3(1X,1PE10.4),
+  603 FORMAT(/' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE10.4),
      X       3(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
 
       RETURN
@@ -643,6 +671,6 @@ C*DECK ICMP1D
       END
       
       character *128 function product_id_tag()
-      product_id_tag='$Id$'
+      product_id_tag='$Id: fstcomp.f 178 2015-02-26 14:44:36Z armnlib $'
       return
       end

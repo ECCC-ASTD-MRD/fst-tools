@@ -1,6 +1,6 @@
 .SUFFIXES :
 
-.SUFFIXES : .ftn .f .c .o
+.SUFFIXES : .ftn .f .c .o .ftn90 
 
 SHELL = /bin/sh
 
@@ -15,7 +15,7 @@ $(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = 
 
-VER = 8.6
+include version.inc
 
 LIBRMN = 
 
@@ -25,15 +25,15 @@ include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
 FDECKS= fstcomp.f
 
-OBJET= fstcomp.o
+OBJET= fstcomp.o statfldx.o
 
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	s.compile -o fstcomp_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o fstcomp_$(subst ",,$(RELEASE))-$(BASE_ARCH) -obj $(OBJET) -librmn $(LIBRMN)
 
 fstcomp+: $(OBJET)
-	s.compile -o fstcomp+ -debug -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o fstcomp+ -debug -obj $(OBJET) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
@@ -45,4 +45,5 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm *.o fstcomp_$(VER)-$(BASE_ARCH)
+	rm -f *.o statfldx.f90 fstcomp_$(subst ",,$(RELEASE))-$(BASE_ARCH)
+	rm -rf .fo
