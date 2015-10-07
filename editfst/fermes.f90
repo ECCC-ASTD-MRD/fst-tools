@@ -33,7 +33,6 @@
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
       integer :: I, J
-      CHARACTER(len=128) :: DN
   
 !     TRAITEMENT DES FICHIERS SOURCES
       IF( OUVS ) THEN
@@ -61,13 +60,11 @@
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
       integer :: I
-      CHARACTER(len=128) :: DN
 !     TRAITEMENT DU FICHIER DESTINATION 
       if(dryrun) then  ! dry run, on ne fait rien
         OUVD = .FALSE.
         return
       endif
-      DN = ND
       IF( OUVD ) THEN    ! fichier destination ouvert
          IF( VD ) THEN   ! voir contenu du fichier destination
             I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
