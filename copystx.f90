@@ -59,7 +59,6 @@
       INTEGER      FSTLUK, FSTWEO, IG4, NBITS, NPAS
       integer      IP(4)
       integer      IP1,IP2,IP3 
-      character *128 string
       character(len=4) :: nomvar
       logical :: can_translate
       real :: p1, p2, p3

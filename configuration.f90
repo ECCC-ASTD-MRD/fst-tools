@@ -36,7 +36,7 @@ module configuration
       character *4   , save :: ZN, NOM, NOMS(10,NMD)
       character *6   , save :: ETAT='NORMAL'
       character *12  , save :: ZE, ETI, ETIS(10,NMD)
-      character *128 , save :: NS=' ', ND
+      character *4096 , save :: NS=' ', ND
       character *15  , save :: SNOM, DNOM
 
       integer, parameter :: NCCARDKEYS=146   ! dimension for program options (processed by ccard)

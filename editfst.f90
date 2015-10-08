@@ -416,6 +416,6 @@
       END 
       
       character *128 function product_id_tag()
-      product_id_tag='$Id: editfst.F90 116 2014-04-30 18:53:41Z armnlib $'
+      product_id_tag='$Id: editfst.F90 6.20 2015-10-07 18:53:41Z armnlib $'
       return
       end
