@@ -128,6 +128,10 @@
 !         M. Valin         refactoring, fold comdecks into a single module, rename to .F90  - v6.20 - Fev/Mar 2014
 !                          replacement of record selection logic. version 015 or newer is NEEDED for librmn
 !                          subroutine exdes no longer used
+!         M. Valin         new code using extended selection features from standard file package
+!                          rmnlib alpha 16 minimum - v7.0a - april 2015
+!         M. Lepine        Remplacement ou elimination des variables a 128 car. pour les noms de fichiers
+!                          v7.1a - oct 2015
 !
 !LANGAGE  - FTN77
 !
