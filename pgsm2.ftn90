@@ -44,6 +44,7 @@
 !        7.8.2  - Reload avec librmn_015.1
 !        7.8.3  - D. Bouhmemhem, Fev 2015, Reload avec librmn_015.2
 !        7.8.4  - M. Valin, Avril 2015,fixed data statements, include version.inc
+!        7.8.5  - M. Lepine, Nov 2015, verification des codes de retour de fnom
 !
 !langage   - fortran
 !

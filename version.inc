@@ -1,1 +1,1 @@
-      PGSM_VERSION = "7.8.4"
+      PGSM_VERSION = "7.8.5"

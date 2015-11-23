@@ -7,7 +7,7 @@
       implicit none
 
 
-      external fnom,memoir,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
+      external fnom,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
       external fstabt, fstlnk, exfin, pgsmof
       integer  fnom,fstnbr,fsteof,fstouv,fstvoi,fstapp,exfin,pgsmof
 !
@@ -115,6 +115,10 @@
                call pgsmabt
             endif
          endif
+         if (ier .lt. 0) then
+	   write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
+	   call pgsmabt
+	 endif
       else if (mode.eq.2) then
          write(6,*)         ' LES FICHIERS "MS" NE SONT PAS SUPPORTES DANS CETTE'
          write(6,*)         ' VERSION DE PGSM'
@@ -139,6 +143,10 @@
          if (message) write(6,*)         ' MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)'
          return
       endif
+      if (ier .lt. 0) then
+        write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
+	call pgsmabt
+      endif
 !
 !
       if (mode.eq.2) then
@@ -158,6 +166,10 @@
             endif
          else
             ier = fstouv(lnkdiun(idx_ozsrt), 'RND')
+         endif
+         if (ier .lt. 0) then
+           write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
+	   call pgsmabt
          endif
       endif
 !
