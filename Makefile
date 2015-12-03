@@ -15,7 +15,7 @@ $(info OPTIMIZ is ${OPTIMIZ})
 
 CPPFLAGS = 
 
-VER = 98.33
+VER = 99.00
 
 LIBRMN = 
 
@@ -31,14 +31,11 @@ OBJSUP=/users/dor/armn/lib/OBJ/*.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o voir_$(VER)-$(BASE_ARCH) -obj $(OBJET) -librmn $(LIBRMN)
         
 voir+: $(OBJET)
-	s.compile -o voir+ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta_015
+	s.compile -o voir+ -obj $(OBJET) -librmn rmn_Alpha_016
         
-voir__: $(OBJET)
-	s.compile -o voir__ -obj $(OBJET) -abi $(ABI) -librmn rmnbeta
-
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
 	-if [ "*.ftn" != "`echo *.ftn`" ] ; \
