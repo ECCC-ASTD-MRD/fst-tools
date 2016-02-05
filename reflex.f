@@ -133,6 +133,7 @@
 *       M. Lepine, Mars 2014 - Rechargement avec librmn_014 (3.1)
 *       D. BouhemhemM, Dec. 2014 - Rechargement avec librmn_015.1 (3.2)
 *       M. Lepine, Fev. 2015 - Rechargement avec librmn_015.2 (3.3)
+*       M. Lepine, Mars 2015 - Retourner un code d'erreur facultatif si le fichier est endommage (3.4)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
@@ -153,34 +154,41 @@
 *
 *     MESSLV  NIVEAU DE TOLERANCE POUR LES MESSAGES
 
-      CHARACTER*8 LISTE(17), PROG, STATUS, VERSION
-      CHARACTER*256 DEF(17), VAL(17)
+      CHARACTER*8 LISTE(18), PROG, STATUS
+      character(len=16) :: RELEASE
+      CHARACTER*256 DEF(18), VAL(18)
+      LOGICAL ERREXIT
       INTEGER I, IER, IER2, ISTAMP, FICHIN, FICHOUT ,IPOS, N1024,
      % LNGR
       INTEGER NSPLIT,nf
       INTEGER PRIDEF(2, 100), AUXDEF(2, 100), STAT(12)
       CHARACTER*4 CVRSN, CAPPL, suffix
-      DATA PROG, STATUS, VERSION /'REFLEX','O.K.','V3.3'/
+      DATA PROG, STATUS /'REFLEX','O.K.'/
       DATA LISTE /'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.',
      %'IXENT.','IXENT.','IXENT.','IXENT.','IXENT.','OXSRT.','DATE',
-     %'STATS','RSTR','ERRTOLR','MSGLVL','NSPLIT'/
+     %'STATS','RSTR','ERRTOLR','MSGLVL','NSPLIT','ERREXIT'/
       DATA DEF   /' '   ,' '   ,' '   ,' '   ,' '   ,' ',' '   ,' '
-     %   ,' '   ,' '   ,' ','OPRUN','OUI','OUI','ERROR','ERROR','1'/
+     %   ,' '   ,' '   ,' ','OPRUN','OUI','OUI','ERROR','ERROR','1',
+     %   'OUI'/
       DATA VAL   /' '   ,' '   ,' '   ,' '   ,' '   ,' ',' '   ,' '
-     %   ,' '   ,' '   ,' ','NON','NON','NON','ERROR','ERROR','1'  /
+     %   ,' '   ,' '   ,' ','NON','NON','NON','ERROR','ERROR','1',
+     %   'NON'/
+
+      include 'version.inc'
+     
 *
 *        RECUPERATION DES PARAMETRES D'APPEL
 *
-
+      ERREXIT = .false.
       IPOS = -1
       CALL CCARD(LISTE,DEF,VAL,17,IPOS)
 *       DEBUT D'EXECUTION
 
-      ISTAMP = EXDB(PROG,VERSION,VAL(12))
+      ISTAMP = EXDB(PROG,RELEASE,VAL(12))
 *
 *       INITIALISER LES NIVEAUX DE TOLERANCE ET DE MESSAGES
 *
-
+      if (val(18) .eq. 'OUI') ERREXIT = .true.
       IER = XDFOPT('ERRTOLR',VAL(15),-1)
       IER = XDFOPT('MSGLVL',VAL(16),-1)
       read(val(17),'(I)') nsplit
@@ -292,6 +300,7 @@ c      print *,'Debug+ apres XDFUSE'
                   IER = FNOM(FICHIN,VAL(I),'RND+R/O',0)
                   IF(( IER.EQ. 0))THEN
                      IER = QDFDIAG(FICHIN)
+                     if ((IER .lt. 0) .and. ERREXIT) status = 'ERREUR'
                   ELSE
                      WRITE(6,5000) VAL(I)
                      STATUS = 'ERREUR'
@@ -314,6 +323,6 @@ c      print *,'Debug+ apres XDFUSE'
       END
       
       character *128 function product_id_tag()
-      product_id_tag='$Id$'
+      product_id_tag='$Id: reflex.f 46 2015-02-25 21:21:49Z armnlib $'
       return
       end
