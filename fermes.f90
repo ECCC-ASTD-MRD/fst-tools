@@ -65,7 +65,6 @@
         OUVD = .FALSE.
         return
       endif
-      DN = ND
       IF( OUVD ) THEN    ! fichier destination ouvert
          IF( VD ) THEN   ! voir contenu du fichier destination
             I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
