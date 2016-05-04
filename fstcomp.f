@@ -44,6 +44,8 @@ C*DECK FSTCOMP
 * 029 V8.4 (M. Lepine, Juil 2014) Remettre ARMNLIB a la place de ARMNLIB_DATA
 * 030 V8.5 (M. Lepine, Dec  2014) Reload avec librmn_015.1
 * 031 V8.6 (M. Lepine, Fev  2015) Reload avec librmn_015.2
+* 031 V8.7a (M. Lepine, Mars  2016) Reload avec librmn_Alpha_016
+* 032 V8.7a (M. Lepine, Avril  2016) Ajout de l'option pour ignorer la verification de grille
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -58,14 +60,14 @@ C*DECK FSTCOMP
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
       CHARACTER*4  NOMVAR, NOMVAB
-      CHARACTER*8  CLE(21)
+      CHARACTER*8  CLE(22)
       CHARACTER*12 ETIKET, ETIKB
       CHARACTER*12 NOMA, NOMB, NOMC
       CHARACTER*40  NA, NB
-      CHARACTER*128 DEF1(21), DEF2(21), NOMD
+      CHARACTER*128 DEF1(22), DEF2(22), NOMD
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT,
-     X        P1, P2, P3, TN ,T, EXCEPTION
+     X        P1, P2, P3, TN ,T, TG, EXCEPTION
       INTEGER KA, KB, N1, N2, X1, X2, LIMITE, I, J, K, L, N, MX,
      X        DATE, DEET, NPAS, NI, NJ, NK, IP1, IP2, IP3,
      X        IG1, IG2, IG3, IG4, IB1, IB2, IB3, IB4, SWA, LNG, DLTF,
@@ -94,15 +96,15 @@ C*DECK FSTCOMP
 
       DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI',
      X           'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',
-     X           'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR' /
+     X           'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG' /
 
       DATA DEF1 /'A', 'B', '$OUT', 'NON', 'NON', 'NON', 'NON', '-7',
      X           'NON', 'NON', 'WARNIN', 'NON', 'NON', 'NON', 'NON',
-     X           'NON', 'NON', 'NON', 'NON', 'X', '0'/
+     X           'NON', 'NON', 'NON', 'NON', 'X', '0', 'NON'/
 
       DATA DEF2 /'A', 'B', '$OUT', 'SQI', 'SQI', 'FTN', 'FTN', '-7',
      X           'OUI', 'OUI', 'INFORM', 'OUI', 'VA',  'VB',  'OUI',
-     X           'OUI', 'OUI', 'OUI', 'OUI', 'X', '1'/
+     X           'OUI', 'OUI', 'OUI', 'OUI', 'X', '1', 'OUI'/
 
       DATA       N, NOMVAB, TYPVAB, ETIKB, IDATE, IP1B, IP2B, IP3B
      X         / 0, ' ',    ' ',    ' ',   4*-1/
@@ -128,7 +130,7 @@ C*ENDIF
       include 'version.inc'
 
       I = -1
-      CALL CCARD(CLE, DEF2, DEF1, 21, I)
+      CALL CCARD(CLE, DEF2, DEF1, 22, I)
       DO 1 I=4,11
          CALL LOW2UP(DEF1(I), DEF1(I))
     1    CONTINUE
@@ -173,6 +175,8 @@ C*ENDIF
       P2 = DEF1(17) .EQ. 'NON'
       P3 = DEF1(18) .EQ. 'NON'
       TN = DEF1(19) .EQ. 'NON'
+      TG = DEF1(22) .EQ. 'NON'
+      print *,'Debug TG=',TG
       DI = DEF1(11) .EQ. 'INFORM'
       LN = DEF1(12) .EQ. 'OUI'
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
@@ -344,11 +348,13 @@ C*ENDIF
      X           IB2, IB3, IB4, SWA, LNG, DLTF, UBC, EX1, EX2, EX3)
 
 *     VERIFICATION DES PARAMETRES DE LA GRILLE
-      IF((GRTYPA.NE. GRTYPB) .OR. (IG1.NE.IB1) .OR. (IG2.NE.IB2) .OR.
-     X   (IG3.NE.IB3) .OR. (IG4.NE.IB4)) THEN
-         WRITE(6,602) NA, GRTYPA, IG1, IG2, IG3, IG4,
-     X                NB, GRTYPB, IB1, IB2, IB3, IB4
-         GOTO 60
+      IF (TG) THEN
+        IF((GRTYPA.NE. GRTYPB) .OR. (IG1.NE.IB1) .OR. (IG2.NE.IB2) .OR.
+     X     (IG3.NE.IB3) .OR. (IG4.NE.IB4)) THEN
+           WRITE(6,602) NA, GRTYPA, IG1, IG2, IG3, IG4,
+     X                  NB, GRTYPB, IB1, IB2, IB3, IB4
+           GOTO 60
+        ENDIF
       ENDIF
 
       IF(NBIT2 .NE. NBITS) PRINT*,'NBITSA=',NBITS,' NBITSB=',NBIT2
@@ -415,8 +421,8 @@ C*ENDIF
 
 
   601 FORMAT(' PAS TROUVE ',A4,' ',A2,' IP123=', 3I8, I10,' DANS ',A40)
-  602 FORMAT(' ',A40,' GRTYP IG1@4=', A1,1X, 4I4,/
-     X       ' ',A40,' GRTYP IG1@4=', A1,1X, 4I4)
+  602 FORMAT(' ',A40,' GRTYP IG1@4=', A1,1X, 4I6,/
+     X       ' ',A40,' GRTYP IG1@4=', A1,1X, 4I6)
   603 FORMAT(2I6,A4,' -LES DIMENSIONS TROUVEES SONT',3I5,
      %       ' CHERCHE',3I5)
      

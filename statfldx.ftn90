@@ -114,11 +114,13 @@
 ! On essaie de detecter la presence de Nan
 #ifdef AIX 
       if (moy /= moy) then
+         print *, '**** NaN detected'
 #endif
 #ifdef AMD64
       if (isnan(moy)) then
-#endif
          print *, '**** NaN detected'
+      endif
+#endif
          do k=1,nk
             do j=1,nj
                do i=1,ni
@@ -135,7 +137,6 @@
                enddo
             enddo
          enddo
-      endif
 
  20 format(' ','**** NaN at grid point(', i4.4,',',i4.4,',',i3.3,')')
 ! 
