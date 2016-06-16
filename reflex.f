@@ -134,6 +134,7 @@
 *       D. BouhemhemM, Dec. 2014 - Rechargement avec librmn_015.1 (3.2)
 *       M. Lepine, Fev. 2015 - Rechargement avec librmn_015.2 (3.3)
 *       M. Lepine, Mars 2015 - Retourner un code d'erreur facultatif si le fichier est endommage (3.4)
+*       M. Lepine, Juin 2016 - Correction a un format pour gfortran (3.4.1)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
@@ -191,7 +192,7 @@
       if (val(18) .eq. 'OUI') ERREXIT = .true.
       IER = XDFOPT('ERRTOLR',VAL(15),-1)
       IER = XDFOPT('MSGLVL',VAL(16),-1)
-      read(val(17),'(I)') nsplit
+      read(val(17),'(I10)') nsplit
       if (nsplit .gt. 1) ier = XDFOPT('STRIPING',' ',nsplit)
 c      print *,'Debug+ apres appels a XDFOPT'
 *
