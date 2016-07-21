@@ -1,6 +1,6 @@
 .SUFFIXES :
 
-.SUFFIXES : .ftn .f .c .o
+.SUFFIXES : .f90 .ftn .f .c .o
 
 SHELL = /bin/sh
 
