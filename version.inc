@@ -1,2 +1,2 @@
-      RELEASE = "7.2a"
-      SUB_RELEASE = "rmnlib alpha 16"
+      RELEASE = "7.3b"
+      SUB_RELEASE = "rmnlib beta 16"
