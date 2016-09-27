@@ -132,6 +132,9 @@
 !                          rmnlib alpha 16 minimum - v7.0a - april 2015
 !         M. Lepine        Remplacement ou elimination des variables a 128 car. pour les noms de fichiers
 !                          v7.1a - oct 2015
+!         M. Valin         Correction d'un bug de logique dans sauvdez - v7.2a - aout 2016
+!         M. Lepine        Elimination des espaces blancs a l'impression - v7.3b - sept 2106
+!         M. Lepine        Remettre l'initialisation du package convip en mode newstyle - v7.4b - sept 2016
 !
 !LANGAGE  - FTN77
 !

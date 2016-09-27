@@ -47,6 +47,7 @@
 !Revision 014   M. Valin  - Fev  14 - mode dryrun, nouveau traitement IP1/2/3
 !                         - Mai  14 - remplacement de la logique de selection
 !Revision 015   M. Lepine - Sep  16 - elimination des espaces blancs a l'impression
+!Revision 016   M. Lepine - Sep  16 - dump_request_table en mode debug seulement
 !
 !LANGAGE  - FTN77
       integer, dimension ( : ), pointer, save :: buftemp => NULL() ! CHAMP pour lire ce qu'on doit copier, (LONGUEUR INITIALE = 0)
@@ -88,7 +89,7 @@
 !     BONNE  = .TRUE. SI LA DATE DU PREMIER ENREGISTREMENT ACCEPTABLE 
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
-      call Dump_Request_table()
+      IF( DEBUG ) call Dump_Request_table()
       nrecords = 0
 
    10 BONNE  = .FALSE.

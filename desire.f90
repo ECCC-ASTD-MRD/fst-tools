@@ -179,6 +179,7 @@
       integer, intent(OUT), dimension(*) :: newip
 !
 !AUTEUR M. Valin - fev 2014 (d'apres ancien sous-programme ip1_to_newip1)
+!Revision 001  M. Lepine - sept 2106 Remettre l'initialisation du package convip en mode newstyle
 !
 !LANGUAGE Fortran 90
 !  
@@ -190,10 +191,22 @@
 !
 !
 !*  
-      integer :: i, kindp
+      integer :: i, kindp, dummyip
       character(len=12) :: dummy
-      real :: p
+      real :: p, dummyp
+      logical :: initdone
+      data initdone /.false./
+      save initdone
 
+
+      dummyip = 0
+      dummyp = 0.
+      kindp =0
+      if (.not. initdone) then
+         call convip_plus(dummyip,dummyp,kindp,0,dummy,.false.)   ! initialisation de convip au mode newstyle
+         initdone = .true.
+      endif
+                                                                    
       nnewip = 0
       i = 1
       do while (i <= nip)
