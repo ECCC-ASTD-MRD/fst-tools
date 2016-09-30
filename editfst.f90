@@ -135,6 +135,7 @@
 !         M. Valin         Correction d'un bug de logique dans sauvdez - v7.2a - aout 2016
 !         M. Lepine        Elimination des espaces blancs a l'impression - v7.3b - sept 2106
 !         M. Lepine        Remettre l'initialisation du package convip en mode newstyle - v7.4b - sept 2016
+!         M. Valin         Correction du traitement des desire/exclure dans excdes_new - v7.5b - sept 2016
 !
 !LANGAGE  - FTN77
 !
