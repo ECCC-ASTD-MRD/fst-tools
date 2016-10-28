@@ -136,6 +136,7 @@
 !         M. Lepine        Elimination des espaces blancs a l'impression - v7.3b - sept 2106
 !         M. Lepine        Remettre l'initialisation du package convip en mode newstyle - v7.4b - sept 2016
 !         M. Valin         Correction du traitement des desire/exclure dans excdes_new - v7.5b - sept 2016
+!         M. Valin         Correction du traitement des selections avec delta dans excdes_new - v7.6b - oct 2016
 !
 !LANGAGE  - FTN77
 !
