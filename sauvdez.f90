@@ -29,6 +29,8 @@
 !REVISION      002 -   M. Valin mai 2014 utilisation des fonctions des fichiers standard pour
 !                                        la gestion des requetes
 !REVISION      003 -   M. Valin aout 2016 correction d'un bug de logique 
+!REVISION      004 -   M. Lepine nov 2016 corrections, remettre le compteur de directives a zero
+!                                         ainsi que le compteur d'enregistrement 
 !
 !LANGUAGE   - FTN77 
 !
@@ -56,5 +58,7 @@
         enddo
       ENDIF
   
+      NREQ = 0
+      COPIES = 0
       RETURN
       END 
