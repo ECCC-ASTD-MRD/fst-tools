@@ -46,6 +46,7 @@ C*DECK FSTCOMP
 * 031 V8.6 (M. Lepine, Fev  2015) Reload avec librmn_015.2
 * 031 V8.7a (M. Lepine, Mars  2016) Reload avec librmn_Alpha_016
 * 032 V8.7a (M. Lepine, Avril  2016) Ajout de l'option pour ignorer la verification de grille
+* 033 V8.8 (M. Lepine, Dec  2016) Ajout de statistiques additionnelles
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS

@@ -1,2 +1,2 @@
-      RELEASE = "8.8a"
-      SUB_RELEASE = "rmnlib alpha 16"
+      RELEASE = "8.8"
+      SUB_RELEASE = "16.0"
