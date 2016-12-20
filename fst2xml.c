@@ -38,6 +38,7 @@ fst2xml_(int argc, char **argv)
   int ier, ip1, ip2, ip3, ig1, ig2, ig3, ig4;
   int  dateo, datev, datyp, deet,nbits, npak, npas,swa, lng;
   int dltf, ubc, extra1, extra2, extra3;
+  int isallocated, multi;
     
   char etiket[16], nomvar[8], typvar[4], grtyp[2];
   char xmldateo[32], xmldatev[32];
@@ -125,6 +126,10 @@ fst2xml_(int argc, char **argv)
             &datyp, &ip1, &ip2, &ip3, typvar, nomvar, etiket,
             grtyp, &ig1, &ig2, &ig3, &ig4, &swa, &lng, &dltf,
             &ubc, &extra1, &extra2, &extra3);
+    if (nbits > 32) 
+      multi = 2;
+    else
+      multi = 1;
 
     xmlconvip(xmlip1, ip1);
     nhours = (double) npas * deet / 3600.0;
@@ -183,7 +188,8 @@ fst2xml_(int argc, char **argv)
       case 6:
       case 133:
       case 134:
-        fld = (float *) malloc(ni * nj * nk * sizeof(float));
+        fld = (float *) malloc(ni * nj * nk * sizeof(float) * multi);
+        isallocated = 1;
         ier = c_fstluk(fld, key, &ni, &nj, &nk);
           for (i = 0; i < ni * nj * nk; i++)
             {
@@ -199,7 +205,8 @@ fst2xml_(int argc, char **argv)
         case 4:
         case 130:
         case 132:
-          ifld = (int *) malloc(ni * nj * nk * sizeof(int));
+          ifld = (int *) malloc(ni * nj * nk * sizeof(int) * multi);
+	  isallocated = 2;
           ier = c_fstluk(ifld, key, &ni, &nj, &nk);
             for (i = 0; i < ni * nj * nk; i++)
               {
@@ -210,11 +217,29 @@ fst2xml_(int argc, char **argv)
                 }
               }
         break;
-        }
+  
+        default:
+	  fprintf(stderr,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",datyp,nomvar);
+	  isallocated = 0;
+
+	break;
+      }
       fprintf(xmlfd, "\t\t%s\n", "</values>");
       fprintf(xmlfd, "\t\t%s\n", "</fstdata>");
       fprintf(xmlfd, "%s\n", "</fstrecord>");
-      free(fld);
+      
+      switch (isallocated)
+        {
+          case 0:
+	    break;
+          case 1:
+	    free(fld);
+            break;
+          case 2:
+            free(ifld);
+            break;
+       }
+
       key = c_fstsui(iun, &ni, &nj, &nk);
     } while (key >= 0);
   
