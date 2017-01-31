@@ -18,6 +18,9 @@
 *Version 6.3   M. Lepine    - Mars 2014 - Compilation avec librmn_014
 *Version 6.4   M. Lepine    - Dec  2014 - Compilation avec librmn_015.1
 *Version 6.5   M. Lepine    - Fev  2015 - Compilation avec librmn_015.2
+*Version 6.6   M. Lepine    - Jan  2017 - Eviter le traitement des
+*      enregistrements '!!' qui contiennent un melange entiers, reels et
+*      caracteres 
 *
 *LANGUAGE:  fortran 77
 *
@@ -60,6 +63,10 @@
      *        datyp, ip1, ip2, ip3, typvar, nomvar, etiket2, grtyp, 
      *        ig1, ig2, ig3, ig4, swa, lng, dltf, ubc, 
      *        extra1, extra2, extra3)
+         if (nomvar .eq. '!!') then
+           WRITE(6,*)' **   SKIPPING RECORD "!!", CAN''T PROCESS  **'
+           goto 20
+         endif
          ier = fstluk(buf,key,ni,nj,nk)
 
          if (datyp.eq.2.or.datyp.eq.4) then
@@ -72,7 +79,7 @@
          call statfld4(nomvar,typvar,ip1,ip2,ip3,date0,etiket2,buf,
      $        ni,nj,nk)
 
-         key = fstsui(iun,ni,nj,nk)
+ 20      key = fstsui(iun,ni,nj,nk)
          deallocate(buf)
 *     call memoirh(buf,ibuf,0)
          goto 10
