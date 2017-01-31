@@ -47,6 +47,8 @@ C*DECK FSTCOMP
 * 031 V8.7a (M. Lepine, Mars  2016) Reload avec librmn_Alpha_016
 * 032 V8.7a (M. Lepine, Avril  2016) Ajout de l'option pour ignorer la verification de grille
 * 033 V8.8 (M. Lepine, Dec  2016) Ajout de statistiques additionnelles
+* 034 V8.9 (M. Lepine, Jan  2017) Eviter le traitement des enregistrements '!!' qui contiennent
+*                                 un melange d'entiers, reels et caracteres
 *
 *OBJET(FSTCOMP)
 *     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
@@ -177,7 +179,6 @@ C*ENDIF
       P3 = DEF1(18) .EQ. 'NON'
       TN = DEF1(19) .EQ. 'NON'
       TG = DEF1(22) .EQ. 'NON'
-      print *,'Debug TG=',TG
       DI = DEF1(11) .EQ. 'INFORM'
       LN = DEF1(12) .EQ. 'OUI'
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
@@ -288,7 +289,7 @@ C*ENDIF
      X           IP1, IP2, IP3, TYPVAR, NOMVAR, ETIKET, GRTYPA,
      X           IG1, IG2, IG3, IG4, SWA, LNG, DLTF, UBC, EX1,
      X           EX2, EX3)
-
+      IF (NOMVAR == '!!') GOTO 35
 *     SI LA DATE EST A CONSIDERER
       IF( TD ) THEN
          IF(DATE .EQ. 0) THEN
@@ -375,6 +376,8 @@ C*ENDIF
       GO TO (40, 50, 30) TABLO(mod(DATYPA,128),mod(DATYPB,128))
   30  WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',DATYPA,
      X                                    ' DATYPB=',DATYPB
+      GO TO 60
+  35  WRITE(6,*)' **   SKIPPING RECORD "!!", CAN''T COMPARE  **' 
       GO TO 60
   40  CALL RCMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2,
