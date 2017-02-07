@@ -135,6 +135,7 @@
 *       M. Lepine, Fev. 2015 - Rechargement avec librmn_015.2 (3.3)
 *       M. Lepine, Mars 2015 - Retourner un code d'erreur facultatif si le fichier est endommage (3.4)
 *       M. Lepine, Juin 2016 - Correction a un format pour gfortran (3.4.1)
+*       D. Bouhemhem, Fev. 2017 - incremeter le nombre de clefs dans ccard (3.4.2)
 *
 *MODULES
       INTEGER EXDB, EXFIN, FNOM, longueur
@@ -182,7 +183,7 @@
 *
       ERREXIT = .false.
       IPOS = -1
-      CALL CCARD(LISTE,DEF,VAL,17,IPOS)
+      CALL CCARD(LISTE,DEF,VAL,18,IPOS)
 *       DEBUT D'EXECUTION
 
       ISTAMP = EXDB(PROG,RELEASE,VAL(12))
