@@ -138,6 +138,7 @@
 !         M. Valin         Correction du traitement des desire/exclure dans excdes_new - v7.5b - sept 2016
 !         M. Valin         Correction du traitement des selections avec delta dans excdes_new - v7.6b - oct 2016
 !         M. Lepine        Correction dans sauvdez, remettre le compteur NREQ a zero - v7.7 - nov 2016
+!         M. Valin         Bug fix pour le cas desire avec tous les arguments a -1 - v7.8 - sept 2017
 !
 !LANGAGE  - FTN77
 !

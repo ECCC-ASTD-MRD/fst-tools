@@ -32,6 +32,7 @@
 !Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
 !Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
 !                           mar  14 - interface avec la selection par le logiciel fstd 
+!                           sept 17 - bug fix pour le cas desire avec tous les arguments a -1
 !     LANGUAGE FTN90
 !  
 !ARGUMENTS
@@ -133,6 +134,10 @@
   100       CONTINUE
          IF( DEBUG ) PRINT*,'NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
          status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
+      ELSE
+        REQN(NREQ) = 1
+        noms(1,nreq) = '    '
+        status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
       ENDIF
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
          REQT(NREQ) = ARGDIMS(1)
