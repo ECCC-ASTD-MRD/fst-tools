@@ -98,7 +98,7 @@
       lip1 = ip1(1)
       if (argdims(4) > 1) then
          p = transfer(ip1(1), p)
-         call convip(lip1, p, -1*ip1(2)-1000, 2, string, .false.)
+         call convip_plus(lip1, p, -1*ip1(2)-1000, 2, string, .false.)
       endif
 
       ier = fstcvt(      nom,    type,  letiket,  igtyp,       cnomvar, ctypvar, cetiqet, cigtyp, .true.)

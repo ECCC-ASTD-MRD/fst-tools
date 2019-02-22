@@ -124,7 +124,9 @@
       if (listniv(ntitems, 1) > 1000000 .and. listniv(ntitems,2)  < 0) then
          do i=1,argdims(2),2
             p = transfer(listniv(ntitems,i), p)
-            call convip(listniv(ntitems, i/2+1), p, -1*listniv(ntitems, (i+1))-1000, ip1style, string, .false.)
+            call convip_plus(listniv(ntitems, i/2+1), p, &
+                             -1*listniv(ntitems, (i+1))-1000, &
+                             ip1style, string, .false.)
          enddo
          nitems2(ntitems) = argdims(2)/2
       endif

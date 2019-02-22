@@ -144,7 +144,9 @@
          if (ip1tab(1) > 1000000 .and. ip1tab(2) < 0) then
             do i=1,num1,2
                p = transfer(ip1tab(i), p)
-               call convip(lcl_ip1tab(i/2+1), p, -1*ip1tab(i+1)-1000, ip1style, string, .false.)
+               call convip_plus(lcl_ip1tab(i/2+1), p, &
+                                -1*ip1tab(i+1)-1000, &
+                                ip1style, string, .false.)
             enddo
             num1 = num1 / 2
             nloop = nloop / 2
