@@ -57,7 +57,7 @@ C*DECK FSTCOMP
 *MODULES
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
-     X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip,
+     X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip_plus,
      %         fstopl, ip1_all, qqexit, longueur
 *
       CHARACTER*1  GRTYPA, GRTYPB
@@ -318,7 +318,7 @@ C*ENDIF
           IP1B = IP1
           EXCEPTION = .TRUE.
         ELSE
-          call convip(ip1,level,kind,-1,string,.false.)
+          call convip_plus(ip1,level,kind,-1,string,.false.)
           IP1B = IP1_ALL(level,kind)
           EXCEPTION = .FALSE.
         ENDIF
@@ -565,7 +565,7 @@ C*DECK RCMP1D
       IF (EXCEPTION) THEN
         WRITE(level,'(i5)') ip1
       ELSE
-        CALL convip(ip1,rlevel,kind,-1,level,.true.)
+        CALL convip_plus(ip1,rlevel,kind,-1,level,.true.)
       ENDIF
       ERR_UNIT = RANGE_A / DEUX_EXP_NB
       
@@ -664,7 +664,7 @@ C*DECK ICMP1D
       IF (EXCEPTION) THEN
         WRITE(level,'(i5)') ip1
       ELSE
-        CALL convip(ip1,rlevel,kind,-1,level,.true.)
+        CALL convip_plus(ip1,rlevel,kind,-1,level,.true.)
       ENDIF
       IF (MD .EQ. 0) THEN
          WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3
