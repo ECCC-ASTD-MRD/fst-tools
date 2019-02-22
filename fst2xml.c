@@ -263,7 +263,7 @@ void xmlconvip(char xmlip1[], int ip1)
   lip1 = ip1;
   for (i = 0; i < 32; i++) xmlip1[i]='\0';
 
-  f77name(convip)(&lip1, &niveau, &kind, &mode, xmlip1, &flag, l );
+  f77name(convip_plus)(&lip1, &niveau, &kind, &mode, xmlip1, &flag, l );
   xmlip1[31] = '\0';
   nettoyer(xmlip1);
   
