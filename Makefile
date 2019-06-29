@@ -10,9 +10,9 @@ CFLAGS =
 OPTIMIZ = -O 2
 $(info OPTIMIZ is ${OPTIMIZ})
 
-REV = 3.3
+REV = 3.4
 
-LIBRMN = rmn_015.2
+LIBRMN = rmn
 
 default: absolu
 
@@ -31,7 +31,7 @@ OBJECTS= reflex.o
 FICHIERS= reflex.f
 
 absolu: $(OBJECTS) 
-	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) -abi $(ABI) -librmn $(LIBRMN)
+	s.compile -o reflex_$(REV)-$(BASE_ARCH) -obj $(OBJECTS) $(OPTIMIZ) -librmn $(LIBRMN)
 
 clean:
 #Faire le grand menage. On enleve tous les fichiers sources\ninutiles et les .o 
