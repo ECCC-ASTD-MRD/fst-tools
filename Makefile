@@ -30,7 +30,7 @@ OBJET= fstcomp.o statfldx.o
 FICHIERS = $(FDECKS)
 
 absolu: $(OBJET)
-	s.compile -o fstcomp_$(subst ",,$(RELEASE))-$(BASE_ARCH) -obj $(OBJET) -librmn $(LIBRMN)
+	s.compile -o fstcomp_$(subst ",,$(RELEASE))-$(BASE_ARCH) -obj $(OBJET) $(OPTIMIZ) -librmn $(LIBRMN)
 
 fstcomp+: $(OBJET)
 	s.compile -o fstcomp+ -debug -obj $(OBJET) -librmn $(LIBRMN)
