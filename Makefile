@@ -28,13 +28,13 @@ LIBRMN =
 default: fststat 
 
 .ftn.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .f90.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
+	s.compile $(OPTIMIZ) -opt "=$(FFLAGS)" -src $<
 
 .c.o:
-	s.compile -abi $(ABI) $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
+	s.compile $(OPTIMIZ) -opt "=$(CFLAGS)" -src $<
 
 FTNDECKS=  fststat.ftn fststatm.ftn statfld4.ftn
 
@@ -46,7 +46,7 @@ obj: $(OBJECTS)
 #Produire les fichiers objets (.o) pour tous les fichiers
 
 fststat: $(OBJECTS)
-	s.compile  -obj $(OBJECTS) -o $@_$(VER)-$(BASE_ARCH) -librmn $(LIBRMN)
+	s.compile -obj $(OBJECTS) -o $@_$(VER)-$(BASE_ARCH) $(OPTIMIZ) -librmn $(LIBRMN)
 
 fststat+: $(OBJECTS)
 	r.build -obj $(OBJECTS) -o $@ -librmn rmnbeta
