@@ -249,7 +249,7 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
   nig = grd[igrd].nix;
   njg = grd[igrd].njy;
 
-  memset(buffer, NULL, sizeof(float)*nig*njg);
+  memset(buffer, 0, sizeof(float)*nig*njg);
 /*  for (i=0; i < nig*njg; i++)
     {
     buffer[i] = 0.0;
@@ -283,7 +283,7 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
       starty = ig4t;
       if (nbits > 32)
          {
-         tuile = (double *) malloc(nit*njt*sizeof(double));
+         tuile = (float *) malloc(nit*njt*sizeof(double));
          ier = c_fstluk(tuile, liste[i], &nit, &njt, &nkt);
          f77name(fillgrid8)(buffer,tuile,&nig,&njg,&nit,&njt,&startx,&starty);
          if (startx == 1 && ((startx - 1) + nit) < nig)

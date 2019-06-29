@@ -42,7 +42,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
    iun_outs[3] = ucfs;
 
    flist = (_Fldlst *)malloc(*nkeys * sizeof(_Fldlst));
-   memset (grd, NULL , 256 * sizeof(_Diese));
+   memset (grd, 0 , 256 * sizeof(_Diese));
    for (i=0; i < *nkeys; i++)
       {
       flist[i].tuiles = (_Tuile *)malloc(sizeof(_Tuile) * 128);
@@ -52,7 +52,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
    lng_flist = 0;
    for (i=0; i < *nkeys; i++)
       {
-      memset(&fstrec, (int)NULL, sizeof(_Fld));
+      memset(&fstrec, (int)0, sizeof(_Fld));
       strcpy(fstrec.nomvar, "    ");
       strcpy(fstrec.typvar, "  ");
       strcpy(fstrec.etiket, "            ");
@@ -450,7 +450,7 @@ void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, 
    nt = tx * ty;
 
    flist.masque = malloc(sizeof(int)*nt);
-   memset(flist.masque, NULL, nt*sizeof(int));
+   memset(flist.masque, 0, nt*sizeof(int));
    flist.tuilesPresentes = malloc(sizeof(int)*nt);
    flist.tuilesAbsentes = malloc(sizeof(int)*nt);
 
