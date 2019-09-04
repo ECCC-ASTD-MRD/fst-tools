@@ -76,8 +76,8 @@ c
       endif
 c
       ikind = wkoffit(ptvar(1))
-c      write(*,*) 'IKIND = ',ikind
-      if(ikind .ne. 33 .and. ikind .ne. 1) call qqexit(1)
+c      write(*,*) 'IKIND ====== ',ikind
+      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) call qqexit(1)
 c     ------ Initialisation des clefs de recherche -----
 c
       if (ptvar(2) .ne. '-1') then
