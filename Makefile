@@ -19,10 +19,10 @@ DEFINE = -defines =-DFICHSTD98
 OPTIMIZ = -O 2
 $(info OPTIMIZ is ${OPTIMIZ})
 
-VER_C = 307
-VER_U = 306
+VER_C = 308
+VER_U = 307
 
-LIBRMN = 
+LIBRMN = rmn
 
 default: fstcompress fstuncompress
 
