@@ -1,2 +1,2 @@
-      RELEASE = "7.8"
-      SUB_RELEASE = "16.2.2"
+      RELEASE = "7.9"
+      SUB_RELEASE = "19.2"
