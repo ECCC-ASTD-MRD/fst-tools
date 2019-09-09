@@ -17,7 +17,7 @@ CPPFLAGS =
 
 include version.inc
 
-LIBRMN = 
+LIBRMN = rmn
 
 default: absolu
 
