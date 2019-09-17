@@ -20,7 +20,7 @@ OPTIMIZ = -O 2
 
 include version.inc
 
-LIBRMN = rmn_Alpha_016
+LIBRMN = rmn
 
 LIB = lib/$(EC_ARCH)/libeditfst_$(RELEASE).a
 

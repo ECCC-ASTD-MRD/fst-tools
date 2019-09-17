@@ -46,6 +46,8 @@
 !Revision 013   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
 !Revision 014   M. Valin  - Fev  14 - mode dryrun, nouveau traitement IP1/2/3
 !                         - Mai  14 - remplacement de la logique de selection
+!Revision 015   M. Lepine - Sep  16 - elimination des espaces blancs a l'impression
+!Revision 016   M. Lepine - Sep  16 - dump_request_table en mode debug seulement
 !
 !LANGAGE  - FTN77
       integer, dimension ( : ), pointer, save :: buftemp => NULL() ! CHAMP pour lire ce qu'on doit copier, (LONGUEUR INITIALE = 0)
@@ -59,7 +61,6 @@
       INTEGER      FSTLUK, FSTWEO, IG4, NBITS, NPAS
       integer      IP(4)
       integer      IP1,IP2,IP3 
-      character *128 string
       character(len=4) :: nomvar
       logical :: can_translate
       real :: p1, p2, p3
@@ -88,7 +89,7 @@
 !     BONNE  = .TRUE. SI LA DATE DU PREMIER ENREGISTREMENT ACCEPTABLE 
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
-      call Dump_Request_table()
+      IF( DEBUG ) call Dump_Request_table()
       nrecords = 0
 
    10 BONNE  = .FALSE.
@@ -207,9 +208,9 @@
             IF(K .LT. 15) THEN
                I = FSTWEO(3, K)
                IF(I.EQ.0 .AND. (DIAG .OR. DEBUG)) THEN
-                  WRITE(6,*)'EOF LOGIQUE ',K,' AJOUTEE AU FICHIER',ND
+                  WRITE(6,*)'EOF LOGIQUE ',K,' AJOUTEE AU FICHIER',TRIM(ND)
                ELSEIF(I .NE. 0) THEN
-                  WRITE(6,*)'IMPOSSIBLE D''ECRIRE UNE MARQUE DE ', 'NIVEAU ',K,' DANS ', ND
+                  WRITE(6,*)'IMPOSSIBLE D''ECRIRE UNE MARQUE DE ', 'NIVEAU ',K,' DANS ', TRIM(ND)
                   call qqexit(31)
                ENDIF
             ENDIF
@@ -222,14 +223,14 @@
       IF(DSEQ .AND. EOF.GT.0) THEN           ! le fichier destination est sequentiel
          I = FSTWEO(3, EOF)
          IF(I.EQ.0 .AND. (DIAG .OR. DEBUG)) THEN
-            WRITE(6,*)' MARQUE DE NIVEAU',K,' ECRITE DANS ', ND
+            WRITE(6,*)' MARQUE DE NIVEAU',K,' ECRITE DANS ', TRIM(ND)
          ELSEIF(I .NE. 0) THEN
-            WRITE(6,*)' IMPOSSIBLE D''ECRIRE UNE MARQUE DE NIVEAU', K,' DANS ', ND
+            WRITE(6,*)' IMPOSSIBLE D''ECRIRE UNE MARQUE DE NIVEAU', K,' DANS ', TRIM(ND)
             call qqexit(32)
          ENDIF
       ENDIF
   
-  180 WRITE(6,*) COPIES,' ENREGISTREMENT(S) COPIES DANS ', ND
+  180 WRITE(6,*) COPIES,' ENREGISTREMENT(S) COPIES DANS ', TRIM(ND)
 !      WRITE(6,*) nrecords,' ENREGISTREMENT(S) LUS DANS ', NS
 
       IF (COPIES .LT. NRECMIN) THEN

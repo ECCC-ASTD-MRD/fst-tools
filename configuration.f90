@@ -21,22 +21,22 @@ module configuration
 !
       implicit none
       integer, private :: i
-      integer, PARAMETER :: NMR=12, NMS=25, NME=20, NMN=40, NMM=10, NMD=20
+      integer, PARAMETER :: NMR=12, NMS=25, NME=20, NMN=40, NMM=10, NMD=50, NML=50
       character(len=*), parameter :: LIN128 = '(32A4)'
 !
 ! NOTE:
 !     le nombre maximum de valeurs dans une liste de desiderata
-!     est limite (hardcoded) a 10 ( a corriger eventuellement)
+!     est limite (hardcoded) a NML=10 ( a corriger eventuellement)
 !
 ! GTYS, TYPS, NOMS, ETIS : tables utilisee pour stocker les requetes
 !     GTYS sert pour critere supplementaire type de grille
 !
       character *1   , save :: GTY, GTYPS=' ', GTYS(NMD)
-      character *2   , save :: ZT, TYP, TYPS(10,NMD)
-      character *4   , save :: ZN, NOM, NOMS(10,NMD)
+      character *2   , save :: ZT, TYP, TYPS(NML,NMD)
+      character *4   , save :: ZN, NOM, NOMS(NML,NMD)
       character *6   , save :: ETAT='NORMAL'
-      character *12  , save :: ZE, ETI, ETIS(10,NMD)
-      character *128 , save :: NS=' ', ND
+      character *12  , save :: ZE, ETI, ETIS(NML,NMD)
+      character *4096 , save :: NS=' ', ND
       character *15  , save :: SNOM, DNOM
 
       integer, parameter :: NCCARDKEYS=146   ! dimension for program options (processed by ccard)
@@ -90,6 +90,8 @@ module configuration
                        INTERAC=.false., ZA=.false., DRYRUN=.false.,     &
                        FIXD=.false., ECR, SSEQ=.false., VS=.false.,     &
                        OUVS=.false., DSEQ, VD, OUVD=.false.
+      integer, save :: max_requetes_exdes = 0
+      integer, save :: max_nlist_exdes = 0
 contains
 subroutine config_init  ! initialisation des tableaux 
   req     = 0

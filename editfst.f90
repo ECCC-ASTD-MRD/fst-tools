@@ -22,8 +22,10 @@
 !****************************************
 !********    VERSION  'UNIX'    *********
 !****************************************
+      use ISO_C_BINDING
       use configuration
       IMPLICIT NONE 
+      include 'excdes.inc'
 !
 !         AUTEURS                                         DATE   VERSION
 !         VERSION ORIGINALE (COPYSTD) C. THIBEAULT  -     FEV. 83
@@ -128,6 +130,18 @@
 !         M. Valin         refactoring, fold comdecks into a single module, rename to .F90  - v6.20 - Fev/Mar 2014
 !                          replacement of record selection logic. version 015 or newer is NEEDED for librmn
 !                          subroutine exdes no longer used
+!         M. Valin         new code using extended selection features from standard file package
+!                          rmnlib alpha 16 minimum - v7.0a - april 2015
+!         M. Lepine        Remplacement ou elimination des variables a 128 car. pour les noms de fichiers
+!                          v7.1a - oct 2015
+!         M. Valin         Correction d'un bug de logique dans sauvdez - v7.2a - aout 2016
+!         M. Lepine        Elimination des espaces blancs a l'impression - v7.3b - sept 2106
+!         M. Lepine        Remettre l'initialisation du package convip en mode newstyle - v7.4b - sept 2016
+!         M. Valin         Correction du traitement des desire/exclure dans excdes_new - v7.5b - sept 2016
+!         M. Valin         Correction du traitement des selections avec delta dans excdes_new - v7.6b - oct 2016
+!         M. Lepine        Correction dans sauvdez, remettre le compteur NREQ a zero - v7.7 - nov 2016
+!         M. Valin         Bug fix pour le cas desire avec tous les arguments a -1 - v7.8 - sept 2017
+!         M. Valin         augmentation des limites v7.10 - sept 2019
 !
 !LANGAGE  - FTN77
 !
@@ -265,6 +279,10 @@
       include 'version.inc'
 
       call config_init   ! initialize values in module "configuration"
+      max_requetes_exdes = Select_get_MAX_requetes()
+      max_nlist_exdes = Select_get_MAX_Nlist()
+!       print *,'INFO: max requetes =',max_requetes_exdes
+!       print *,'INFO: max listes =',max_nlist_exdes
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b
@@ -416,6 +434,6 @@
       END 
       
       character *128 function product_id_tag()
-      product_id_tag='$Id: editfst.F90 116 2014-04-30 18:53:41Z armnlib $'
+      product_id_tag='$Id: editfst.F90 6.20 2015-10-07 18:53:41Z armnlib $'
       return
       end

@@ -28,6 +28,9 @@
 !REVISION      001 -   Y. BOURASSA AVR 92 ANNULE LE ZAP SI SAUV=0
 !REVISION      002 -   M. Valin mai 2014 utilisation des fonctions des fichiers standard pour
 !                                        la gestion des requetes
+!REVISION      003 -   M. Valin aout 2016 correction d'un bug de logique 
+!REVISION      004 -   M. Lepine nov 2016 corrections, remettre le compteur de directives a zero
+!                                         ainsi que le compteur d'enregistrement 
 !
 !LANGUAGE   - FTN77 
 !
@@ -43,14 +46,19 @@
 !     editfst numerote ses jeux de criteres a partir de 1
 !     les fichiers standard les numerotent a partir de 0
 !     d'ou le sauv -1 (compatibilite arriere des directives)
-      IF( SAUV-1 .LT. 0) THEN
+      IF( SAUV .LE. 0) THEN
          NP = 1  ! simuler directive ZAP(-1) en mettant NP (nombre de parametres READLX) a 1
          CALL ZAP( -1 )
-         RETURN
+         do N=0,MAX_REQUETES-1   ! on annulle TOUTES les requetes
+           status = f_requetes_reset(N,0,0,0,0,0,0,0)  ! annuller le jeu de criteres N
+         enddo
+      ELSE
+        do N=0,min(SAUV-2,MAX_REQUETES-1)  ! on annulle editfst 1 a sauv -1  ( 0 a sauv -2 pour le code C)
+          status = f_requetes_reset(N,0,0,0,0,0,0,0)  ! annuller le jeu de criteres N
+        enddo
       ENDIF
-      do N=SAUV,MAX_REQUETES-1
-        status = f_requetes_reset(N,0,0,0,0,0,0,0)  ! annuller le jeu de criteres N
-      enddo
   
+      NREQ = 0
+      COPIES = 0
       RETURN
       END 
