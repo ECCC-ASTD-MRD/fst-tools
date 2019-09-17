@@ -1,0 +1,20 @@
+      COMMON/DESRS/  NREQ, SAUV, DESEXC(NMD), SATISF(NMD),
+     X               NEXC, SUP(8,NMD), NIS, NJS, NKS,
+     X               IG1S, IG2S, IG3S, IG4S, REQN(NMD), REQT(NMD),
+     X               REQE(NMD), Z1, Z2, Z3, ZD
+! si REQ(11,...) = -1
+!     REQ(1,...)  valeur de depart
+!     REQ(2,...)  valeur de fin
+!     REQ(3,...)  delta
+! sinon  REQ(11,...) = nombre de valeurs a utiliser
+!     REQ(1:REQ(11,...),....) liste des valeurs recherchees
+!     req(,1,) IP1
+!     req(,2,) IP2
+!     req(,3,) IP3
+!     req(,4,) DATE
+      COMMON /DESRS8/ JOURS(4),REQ(11,4,NMD)
+      integer *8     REQ, JOURS
+      INTEGER        NREQ, SAUV, DESEXC, SATISF, NEXC,  SUP, NIS, 
+     X               NJS, NKS, IG1S, IG2S, IG3S, IG4S, REQN, REQT, REQE,
+     X               Z1, Z2, Z3, ZD
+

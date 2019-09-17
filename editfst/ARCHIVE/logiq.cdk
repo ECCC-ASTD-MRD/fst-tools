@@ -1,0 +1,4 @@
+      COMMON/LOGIQ/  SCRI, XPRES, ESAIS, DM1, DEBUG, SELEC, BOX, DIAG,
+     x               INTERAC, ZA, DRYRUN
+      LOGICAL        SCRI, XPRES, ESAIS, DM1, DEBUG, SELEC, BOX, DIAG,
+     x               INTERAC, ZA, DRYRUN

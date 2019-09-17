@@ -1,0 +1,6 @@
+      integer, parameter :: NCCARDKEYS=146
+      COMMON /KEY/   KLE, DEF1, DEF2, PRINTR
+      CHARACTER*4096 ,dimension(:), pointer:: DEF1,     DEF2
+      CHARACTER*4096 PRINTR
+      character *8 def1b(NCCARDKEYS), def2b(NCCARDKEYS), kle(NCCARDKEYS)
+
