@@ -21,7 +21,7 @@ CPPFLAGS = -DX_WGL
 
 .PRECIOUS: $(RECLIB)
 
-VER = 008
+VER = 009
 
 LIBRMN = rmn
 
