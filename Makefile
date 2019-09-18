@@ -8,7 +8,7 @@ CPP = /lib/cpp
 
 include version.inc
 
-LIBRMN = rmn_015.2
+LIBRMN = rmn
 FFLAGS =
 
 CFLAGS =
