@@ -61,7 +61,6 @@
       max_requetes_exdes =  min(NMD,max_requetes_exdes)
       excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. max_requetes_exdes) THEN
-!         IF(DIAG .OR. DEBUG)
          PRINT*,'** MAXIMUM DE',max_requetes_exdes,' REQUETES ATTEINT **' 
          RETURN
       ENDIF
@@ -69,13 +68,11 @@
       do i = 1, 7
         lima(i) = min(lima(i),max_nlist_exdes)
       enddo
-!       lima = [10, 10, 10, 10, 10, 10, 10]
       do i = 1, 7
-!         print *,'argdims',argdims(i),lima(i),limc(i)
         if (argdims(i) .gt. lima(i)) then
-	  PRINT*, '** MAXIMUM DE',lima(i)," ELEMENTS POUR L'ARGUMENT DE SELECTION '",limc(i),"' ATTEINT"
-	  PRINT *,'** SEULS LES ',lima(i),' PREMIERS ELEMENTS SERONT CONSIDERES'
-	  PRINT *,'** VEUILLEZ UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE'
+          PRINT*, '** MAXIMUM DE',lima(i)," ELEMENTS POUR L'ARGUMENT DE SELECTION '",limc(i),"' ATTEINT"
+          PRINT *,'** SEULS LES ',lima(i),' PREMIERS ELEMENTS SERONT CONSIDERES'
+          PRINT *,'** VEUILLEZ UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE'
         endif
       enddo
   
