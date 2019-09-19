@@ -47,12 +47,12 @@ OBJECTS= configuration.o \
 $(LIB): $(OBJECTS)
 	mkdir -p lib/$(EC_ARCH)
 	ar rcv $(LIB) $(OBJECTS)
-	rm -f $(OBJECTS)
+#	rm -f $(OBJECTS)
 
 $(EDITFST): $(LIB) $(OBJECTS_SUPP)
 	echo "program edit_fst ; call editfst ; stop ; end" >bidon.f90
 	s.f90 bidon.f90 $(OBJECTS_SUPP) -o $@ $(FFLAGS) $(LIB) -l$(LIBRMN)
-	rm -f bidon.f90 $(OBJECTS_SUPP)
+	rm -f bidon.f90
 
 all: $(EDITFST) test.fst
 
