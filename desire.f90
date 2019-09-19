@@ -66,6 +66,9 @@
          RETURN
       ENDIF
       lima = [NML, NML, 10, NML, NML, NML, NML]
+      do i = 1, 7
+        lima(i) = min(lima(i),max_nlist_exdes)
+      enddo
 !       lima = [10, 10, 10, 10, 10, 10, 10]
       do i = 1, 7
 !         print *,'argdims',argdims(i),lima(i),limc(i)
