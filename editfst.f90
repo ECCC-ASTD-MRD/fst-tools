@@ -22,8 +22,10 @@
 !****************************************
 !********    VERSION  'UNIX'    *********
 !****************************************
+      use ISO_C_BINDING
       use configuration
       IMPLICIT NONE 
+      include 'excdes.inc'
 !
 !         AUTEURS                                         DATE   VERSION
 !         VERSION ORIGINALE (COPYSTD) C. THIBEAULT  -     FEV. 83
@@ -139,6 +141,7 @@
 !         M. Valin         Correction du traitement des selections avec delta dans excdes_new - v7.6b - oct 2016
 !         M. Lepine        Correction dans sauvdez, remettre le compteur NREQ a zero - v7.7 - nov 2016
 !         M. Valin         Bug fix pour le cas desire avec tous les arguments a -1 - v7.8 - sept 2017
+!         M. Valin         augmentation des limites v7.10 - sept 2019
 !
 !LANGAGE  - FTN77
 !
@@ -276,6 +279,10 @@
       include 'version.inc'
 
       call config_init   ! initialize values in module "configuration"
+      max_requetes_exdes = Select_get_MAX_requetes()
+      max_nlist_exdes = Select_get_MAX_Nlist()
+!       print *,'INFO: max requetes =',max_requetes_exdes
+!       print *,'INFO: max listes =',max_nlist_exdes
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b

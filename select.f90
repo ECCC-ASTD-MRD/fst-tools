@@ -30,6 +30,7 @@
 !         006 Mario Lepine     Mars 2003 correction valeur hybrid
 !         006 Mario Lepine     Nov  2005 remplacement de fstabt par qqexit
 !         007 Michel Valin     Fev  2014 ajout de constantes pour les "kind" ip
+!         008 Michel Valin     Sept 2019 avortement en cas d'erreur readlx
 !
 !LANGUAGE FTN77
 !
@@ -111,7 +112,7 @@
   
       CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete READLX
   
-      IF(DUMY .LT. 0) THEN
+      IF(KERR .NE. 0) THEN
          WRITE(6,*)'  **************************************'
          WRITE(6,*)' *                                      *'
          WRITE(6,*)'*     ERREUR(S) DANS LES DIRECTIVES      *'

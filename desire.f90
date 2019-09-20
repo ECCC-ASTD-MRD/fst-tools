@@ -23,7 +23,8 @@
       use configuration
       IMPLICIT NONE 
   
-      INTEGER, intent(IN) ::  DATE(10), IP1(20), IP2(10), IP3(10), TC(10), NV(10), LBL(30)
+      INTEGER, intent(IN) ::  DATE(NML), IP1(NML), IP2(NML), IP3(NML)
+      INTEGER, intent(IN) ::  TC(NML), NV(NML), LBL(30)
 !     AUTEUR YVON R. BOURASSA JAN 86
 !              "  "      "    OCT 90 VERSION QLXINS
 !              "  "      "    FEV 91 BUG DECODING ETIKET
@@ -33,16 +34,17 @@
 !Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
 !                           mar  14 - interface avec la selection par le logiciel fstd 
 !                           sept 17 - bug fix pour le cas desire avec tous les arguments a -1
+!                           sept 19 - augmenter les limites (listes et requetes)
 !     LANGUAGE FTN90
 !  
 !ARGUMENTS
-!  ENT    TC   -  1 A 10 TYPES DE CHAMPS ( 1 CARACTERE )
-!   "     NV   -  1 A 10 NOMS DE VARIABLES ( 1 @A2 CARACTERES )
+!  ENT    TC   -  1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
+!   "     NV   -  1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
 !   "     LBL  -  1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
-!   "     DATE -  1 A 10 DATES OU INTERVALLE AVEC SAUT
-!   "     IP1  -  1 A 10 IP1    "      "      "    "
-!   "     IP2  -  1 A 10 IP2    "      "      "    "
-!   "     IP3  -  1 A 10 IP3    "      "      "    "
+!   "     DATE -  1 A NML DATES OU INTERVALLE AVEC SAUT
+!   "     IP1  -  1 A NML IP1    "      "      "    "
+!   "     IP2  -  1 A NML IP2    "      "      "    "
+!   "     IP3  -  1 A NML IP3    "      "      "    "
 !
 !MODULES
       EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, HOLACAR
@@ -50,24 +52,29 @@
 !*  
       INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, LIS(10)
 !      DATA     LIS/10*0/
-      integer  newip1(10), newip2(10), newip3(10), nip1, nip2, nip3
+      integer  newip1(NML), newip2(NML), newip3(NML), nip1, nip2, nip3
       integer :: status
-      integer excdes_de
+      integer excdes_de, lima(7)
+      character(len=6) :: limc(7)
 
+      limc = ["TYPVAR","NOMVAR","ETIKET","DATE  ","IP1   ","IP2   ","IP3   "]
+      max_requetes_exdes =  min(NMD,max_requetes_exdes)
       excdes_de = EXCDES_DESIRE
-   10 IF(NREQ .EQ. NMD) THEN
-!         IF(DIAG .OR. DEBUG)
-         PRINT*,'** LE MAXIMUM DE',NMD,' REQUETES DEJA ATEINT **' 
+   10 IF(NREQ .EQ. max_requetes_exdes) THEN
+         PRINT*,'** MAXIMUM DE',max_requetes_exdes,' REQUETES ATTEINT **' 
          RETURN
       ENDIF
-      if ((argdims(1) .gt. 10) .or. (argdims(2) .gt. 10) .or.   &
-          (argdims(3) .gt. 10) .or. (argdims(4) .gt. 10) .or.   &
-          (argdims(5) .gt. 10) .or. (argdims(6) .gt. 10) .or.   &
-          (argdims(7) .gt. 10)) then
-         PRINT*, '** MAXIMUM DE 10 ELEMENTS POUR UN ARGUMENT DE SELECTION **' 
-         PRINT *,'** SEULS LES 10 PREMIERS ELEMENTS SERONT TRAITES        **'
-         PRINT *,'** UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE **'
-      endif
+      lima = [NML, NML, 10, NML, NML, NML, NML]
+      do i = 1, 7
+        lima(i) = min(lima(i),max_nlist_exdes)
+      enddo
+      do i = 1, 7
+        if (argdims(i) .gt. lima(i)) then
+          PRINT*, '** MAXIMUM DE',lima(i)," ELEMENTS POUR L'ARGUMENT DE SELECTION '",limc(i),"' ATTEINT"
+          PRINT *,'** SEULS LES ',lima(i),' PREMIERS ELEMENTS SERONT CONSIDERES'
+          PRINT *,'** VEUILLEZ UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE'
+        endif
+      enddo
   
 !     COMPTER LES DIRECTIVES DESIRE/EXCLURE
       IF(excdes_de == EXCDES_EXCLURE) NEXC = NEXC + 1   ! compteur pour "exclure"
@@ -88,17 +95,17 @@
       IF( DEBUG ) PRINT*,'REQUETE # ',NREQ
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
-         call ip_to_newip(ip3,newip3,argdims(7),nip3)  ! transformer les paires p/kind en ip
+         call ip_to_newip(ip3,newip3,min(lima(7),argdims(7)),nip3)  ! transformer les paires p/kind en ip
          status = Select_ip3(nreq, excdes_de, newip3, nip3)   ! selecteur ip1 fstd98
          IF( DEBUG ) PRINT*,'IP3 =',(REQ(I,3,NREQ),I=1,11)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
-         call ip_to_newip(ip2,newip2,argdims(6),nip2)  ! transformer les paires p/kind en ip
+         call ip_to_newip(ip2,newip2,min(lima(6),argdims(6)),nip2)  ! transformer les paires p/kind en ip
          status = Select_ip2(nreq, excdes_de, newip2, nip2)   ! selecteur ip2 fstd98
          IF( DEBUG ) PRINT*,'IP2 =',(REQ(I,2,NREQ),I=1,11)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
-         call ip_to_newip(ip1,newip1,argdims(5),nip1)  ! transformer les paires p/kind en ip
+         call ip_to_newip(ip1,newip1,min(lima(5),argdims(5)),nip1)  ! transformer les paires p/kind en ip
          status = Select_ip1(nreq, excdes_de, newip1, nip1)   ! selecteur ip3 fstd98
          IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
       ENDIF
@@ -115,7 +122,7 @@
              ENDIF
            ENDIF
          else  ! directive date normale, sans COMMUNE
-           status = Select_date(nreq,excdes_de,date,ARGDIMS(4))
+           status = Select_date(nreq,excdes_de,date,min(lima(4),ARGDIMS(4)))
            IF( DEBUG ) print *,'calling Select_date with',date(1:ARGDIMS(4))
          endif
          IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
@@ -128,7 +135,7 @@
          status = Select_etiquette(nreq,excdes_de,etis(1,nreq),REQE(NREQ),12)
       ENDIF
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
-         REQN(NREQ) = ARGDIMS(2)
+         REQN(NREQ) = min(lima(2),ARGDIMS(2))
          DO 100 J=1, ARGDIMS(2)
             I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY, .TRUE.)
   100       CONTINUE
@@ -140,7 +147,7 @@
         status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
       ENDIF
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
-         REQT(NREQ) = ARGDIMS(1)
+         REQT(NREQ) = min(lima(1),ARGDIMS(1))
          DO 120 J=1, ARGDIMS(1)
             I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY, .TRUE.)
   120       CONTINUE
