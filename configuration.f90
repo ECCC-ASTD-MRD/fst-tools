@@ -23,6 +23,7 @@ module configuration
       integer, private :: i
       integer, PARAMETER :: NMR=12, NMS=25, NME=20, NMN=40, NMM=10, NMD=50, NML=50
       character(len=*), parameter :: LIN128 = '(32A4)'
+      logical, save :: strict_mode = .false.
 !
 ! NOTE:
 !     le nombre maximum de valeurs dans une liste de desiderata
@@ -39,23 +40,23 @@ module configuration
       character *4096 , save :: NS=' ', ND
       character *15  , save :: SNOM, DNOM
 
-      integer, parameter :: NCCARDKEYS=146   ! dimension for program options (processed by ccard)
+      integer, parameter :: NCCARDKEYS=147   ! dimension for program options (processed by ccard)
       character(len=8), dimension(NCCARDKEYS), save ::    &
       kle = (/ 'NNN     ', 'D:      ', 'EOF     ', 'SSEQ    ', 'DSEQ    ', 'VD      ', &
                'NOBOX   ', 'DIAG    ', 'ECR     ', 'I.      ', 'L.      ', 'K       ', &
                'M       ', 'T       ', 'C       ', 'SS      ', 'DS      ', 'V       ', &
                'N       ', 'VS      ', 'E       ', 'F       ', 'SF      ', 'DF      ', &
-               'NRECMIN ',('S:      ',i = 1,120),  'DRYRUN  ' /),                      &
+               'NRECMIN ',('S:      ',i = 1,120),  'DRYRUN  ', 'STRICT' /),                      &
       def1b=(/ 'OUI     ', '        ', '0       ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', '$IN     ', '$OUT    ', 'FATALE  ', &
                'ERRORS  ', 'FATALE  ', '-1      ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', 'OUI     ', 'NON     ', 'NON     ', &
-               '-1      ',('        ',i = 1,120),  '        '/),                       &
+               '-1      ',('        ',i = 1,120),  '        ', 'NON'    /),                       &
       def2b=(/ 'OUI     ', '        ', '0       ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', '$IN     ', '$OUT    ', 'ERRORS  ', &
                'INFORM  ', 'ERRORS  ', '-1      ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', &
-               '-1      ',('        ',i = 1,120),  'DRYRUN  '/)
+               '-1      ',('        ',i = 1,120),  'DRYRUN  ', 'OUI'    /)
 !
 ! REQ : table utilisee pour stocker les requetes
       integer, save :: JOURS(4),REQ(11,4,NMD)

@@ -112,7 +112,7 @@
   
       CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete READLX
   
-      IF(KERR .NE. 0) THEN
+      IF(KERR .NE. 0 .and. strict_mode) THEN
          WRITE(6,*)'  **************************************'
          WRITE(6,*)' *                                      *'
          WRITE(6,*)'*     ERREUR(S) DANS LES DIRECTIVES      *'

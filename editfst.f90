@@ -275,8 +275,17 @@
       character(len=32) :: SUB_RELEASE
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
       character(len=4096), save :: PRINTR
+!      character(len=78), dimension(2):: MSG_ABT
+!      character(len=78), dimension(4):: MSG_000
 
       include 'version.inc'
+
+!      MSG_ABT(1) = "Erreur(s) de syntaxe dans les directives"
+!      MSG_ABT(2) = "Syntax error(s) in directives"
+!      MSG_000(1) = "Mode strict non actif, les erreurs de syntaxe seront ignorees"
+!      MSG_000(2) = "L'option -strict est suggeree"
+!      MSG_000(3) = "Strict mode not active, syntax errors will be ignored"
+!      MSG_000(4) = "The -strict option is suggested"
 
       call config_init   ! initialize values in module "configuration"
       max_requetes_exdes = Select_get_MAX_requetes()
@@ -296,6 +305,7 @@
 !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
       I    = -111
       CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
+
       def1b = def1
       READ(DEF1(3), '(I2)') EOF                                 ! -eof
       READ(DEF1(15),'(I8)') LIMITE                              ! -c
@@ -350,7 +360,9 @@
       ELSE
          WRITE(6,*)'***   E D I T F S T   '//trim(RELEASE)//'   ***'
       ENDIF
+      strict_mode = DEF1(147) .eq. 'OUI'
 
+!     IF (DEF1(147) .ne. "OUI") CALL BOXED_MESSAGE(6, MSG_000, 4)
 
       IF( DIAG ) THEN
          I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
@@ -429,7 +441,8 @@
             WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
          ENDIF
       ENDIF
-      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
+!      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
+!      IF(ETAT .EQ. 'ABORT') CALL boxed_message(6, MSG_ABT, 2)
       STOP
       END 
       
