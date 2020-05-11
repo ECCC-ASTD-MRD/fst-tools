@@ -441,7 +441,7 @@
             WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
          ENDIF
       ENDIF
-!      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
+      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
 !      IF(ETAT .EQ. 'ABORT') CALL boxed_message(6, MSG_ABT, 2)
       STOP
       END 
