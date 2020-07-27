@@ -38,7 +38,8 @@
 *
 **
       integer i,j,k
-      real sum,moy,var,rmin,rmax
+      real*8 sum,moy,var
+      real rmin,rmax
       integer imin,jmin,kmin,imax,jmax,kmax,kind,dat2,dat3
       CHARACTER*15 Level
       REAL      rlevel
