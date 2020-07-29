@@ -14,8 +14,8 @@ $(info OPTIMIZ is ${OPTIMIZ})
 FFLAGS = 
 .PRECIOUS:
 
-VER = 2.09
-VERZC = 2.5
+VER = 2.9.0
+VERZC = 2.5.0
 
 LIBRMN = rmn
 
