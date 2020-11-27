@@ -23,7 +23,7 @@
 *MODULES
       external ccard,fstlnk      
       
-      character*128 cle(40),def(40),val(40)
+      character*1024 cle(40),def(40),val(40)
       data cle /40*'fst:'/
       data def /40*'scrap'/
       data val /40*'scrap'/

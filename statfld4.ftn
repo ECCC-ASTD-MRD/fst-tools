@@ -103,12 +103,12 @@ C      write(6,10) nomvar,typvar,level,ip1,ip2,ip3,date,etiket,
       write(6,10) nomvar,typvar,level,ip2,ip3,date,etiket,
      $     moy,var,imin,jmin+(kmin-1)*nj,rmin,
      $     imax,jmax+(kmax-1)*nj,rmax
-C 10   format (' ',a4,1x,a2,1x,a15,' (',i9,') ',i4,1x,i3,1x,i9,1x,a12,1x,
+C 10   format (' ',a4,1x,a2,1x,a15,' (',i9,') ',i9,1x,i3,1x,i9,1x,a12,1x,
  10   format (' ',a4,1x,a2,1x,a15,1x,i4,1x,i3,1x,i9,1x,a12,1x,
-     $     ' Mean:',e12.6,' StDev:',e12.6,
-     $     '  Min:[(',i3,',',i3,'):',
-     $     e10.4,']',' Max:[(',i3,',',i3,'):',
-     $     e10.4,']')
+     $     ' Mean:',e13.6,' StDev:',e13.6,
+     $     '  Min:[(',i5,',',i5,'):',
+     $     e11.4,']',' Max:[(',i5,',',i5,'):',
+     $     e11.4,']')
 c
 c----------------------------------------------------------------
       return

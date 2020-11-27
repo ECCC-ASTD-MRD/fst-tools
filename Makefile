@@ -21,7 +21,7 @@ CPPFLAGS =
 
 .PRECIOUS:
 
-VER = 6.7.0
+VER = 6.8.0
 
 LIBRMN = 
 
