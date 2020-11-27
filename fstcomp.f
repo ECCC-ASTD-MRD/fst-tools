@@ -67,7 +67,7 @@ C*DECK FSTCOMP
       CHARACTER*12 ETIKET, ETIKB
       CHARACTER*12 NOMA, NOMB, NOMC
       CHARACTER*40  NA, NB
-      CHARACTER*128 DEF1(22), DEF2(22), NOMD
+      CHARACTER*1024 DEF1(22), DEF2(22), NOMD
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT,
      X        P1, P2, P3, TN ,T, TG, EXCEPTION
@@ -419,9 +419,9 @@ C*ENDIF
       ENDIF
 
   600 FORMAT('  NOM    ETIKET           IP1',
-     X       '            IP2       IP3  E-REL-MAX',
-     X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
-     X       '        BIAIS      E-MAX      E-MOY')
+     X       '            IP2       IP3   E-REL-MAX',
+     X       '   E-REL-MOY   VAR-A        C-COR        MOY-A',
+     X       '        BIAIS       E-MAX       E-MOY')
 
 
   601 FORMAT(' PAS TROUVE ',A4,' ',A2,' IP123=', 3I8, I10,' DANS ',A40)
@@ -607,14 +607,14 @@ C*DECK RCMP1D
 *  600 FORMAT('  CLEA CLEB NOM  ETIKET    IP1 IP2 IP3  E-REL-MAX',
 *     X       '  E-REL-MOY   VAR-A       C-COR         MOY-A',
 *     X       '         BIAIS      E-MAX      E-MOY')
-  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE10.4),
-     X       2(1X,1PE12.4), 2(1X,1PE10.4) )
-  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE10.4),
-     X       3(1X,1PE12.4), 2(1X,1PE10.4) )
-  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE10.4),
-     X       2(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
-  603 FORMAT(/' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE10.4),
-     X       3(1X,1PE12.4), 2(1X,1PE10.4), 2X, 1PE10.4 )
+  600 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE11.4),
+     X       2(1X,1PE12.4), 2(1X,1PE11.4) )
+  601 FORMAT(' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE11.4),
+     X       3(1X,1PE12.4), 2(1X,1PE11.4) )
+  602 FORMAT(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X,1PE11.4),
+     X       2(1X,1PE12.4), 2(1X,1PE11.4), 2X, 1PE11.4 )
+  603 FORMAT(/' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE11.4),
+     X       3(1X,1PE12.4), 2(1X,1PE11.4), 2X, 1PE11.4 )
 
       RETURN
       END
