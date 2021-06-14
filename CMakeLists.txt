@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 #----- Append EC specific module path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/cmake_rpn)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 include(ec_init)           # Initialise compilers and ec specific functions
 ec_git_version()           # Get version from git state
@@ -19,6 +20,9 @@ include(CTest)
 add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMAND})
 
 include(ec_compiler_presets)
+
+include(orgmanpages)
+orgmanpages_add_man_target()
 
 find_package(RMN)
 

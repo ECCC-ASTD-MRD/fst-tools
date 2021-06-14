@@ -1,0 +1,78 @@
+#+TITLE: pgsm
+* NAME
+pgsm is a utility designed to perform horizontal interpolations and basic arithmetic operations on RPN standard files. 
+* SYNOPSIS
+
+#+begin_src 
+pgsm -iment input1 input2 ... input40 -ozsrt output -i directives -l listing -date
+pgsm -iment input1... -ozsrt output >/dev/null <<ENDPGSM
+#+end_src
+
+see section DIRECTIVES for more on the parameter of ~-i~.
+
+* OPTIONS
+** ~-iment NAME~
+name[s] of RPN standard files (random) to be used as source for fields and grid; required. A maximum of 40 files is currently allowed. 
+** ~-ozsrt NAME~
+name of RPN standard file (random) to be used as output for fields and grid; required. 
+** ~-i NAME~
+name of directives file; defaults to "stdin". In a shell script, directives may also be included after the call to pgsm by using the "here document" syntax: <<ENDPGSM on the calling line and ENDPGSM by itself as the last directive. Of course ENDPGSM is only an example and may be anything provided it does not appear elsewhere between the calling and the last lines. See example. 
+** ~-l NAME~
+name of output file for messages and diagnostics; defaults to "stdout". Equivalent to ">". May be sent to /dev/null if directives are debugged already. 
+** ~-date oprun|oui|non~
+Obsolete. Kept for backward compatibility. Date is now used only in the information messages printed at the beginning and end of the program. 
+
+
+* DESCRIPTION
+PGSM can:
+
+- Interpolate data on various geographical projections, compressed or not.
+- Interpolate wind components UU and VV with respect to the scale and orientation of the output grid.
+- Perform symmetric or antisymmetric extrapolations from an hemispheric grid.
+- Compute thicknesses between 2 levels.
+- Compute precipitation amounts between 2 forecast hours.
+- Extract low, mid and high clouds.
+- Perform mathematical operations on one field or more.
+- Compute latitudes and longitudes from the X-Y coordinates of a grid.
+- Read navigational records of latitudes-longitudes (grid type Y) or grid coordinates (grid type Z) in an input or output file and interpolate values from these coordinates. 
+
+* DIRECTIVES
+
+See [[https://wiki.cmc.ec.gc.ca/wiki/RPN-SI/RpnUtilities/pgsm/directives]]
+
+* CONFIGURATION
+
+The ~$HOME/.config/repos.yml~ file should look like
+
+#+begin_src yaml
+repos:
+  a-repo:
+    path: "/path/to/a-repo"
+  b-repo:
+    path: "/path/to/b-repo"
+#+end_src
+
+If the ~-generate-config~ is passed, instead of printing the report, ~repos~
+will look for git repositories in ~$PWD~ and print on STDOUT the contents of the
+corresponding ~$HOME/.config/repos.yml~ file.
+
+#+begin_src yaml
+cd ${somewhere}
+repos -generate-config > ~/.config/repos.yml
+cd ${somewhere_else}
+repos -generate-config >> ~/.config/repos.yml
+#+end_src
+
+The config file is meant to prioritize ease of editing by humans.  Rather than
+managing the config file fully automatically, we give the human pieces that they
+can use to manage their config file.
+
+* BUGS
+The accompanying script =repos_completion.bash= defines autocomplete and the
+~rcd~ that takes a repo name.  It uses the ~repos~ executable.  If there is no
+~$HOME/.config/repos.yml~, the ~rcd~ shell function will not work.
+
+* AUTHOR
+RPN-SI
+* COPYRIGHT
+Environnement Canada
