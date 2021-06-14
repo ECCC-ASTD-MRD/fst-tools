@@ -6,7 +6,7 @@ stages:
 before_script:
   # Force color CMake output even when output is not TTY
   - export CLICOLOR_FORCE=true
-  - source ~sici000/ci-admin-bundle/eccc-setup-intel.sh
+  - source ~sici000/ci-admin-bundle/environments/eccc-setup-intel.sh
 
 build_cmake:
   stage: build
