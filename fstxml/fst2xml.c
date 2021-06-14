@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <rpnmacros.h>
+#include <fnom.h>
 
 /*
 fst2xml : Convertisseur de fichier standard RPN version 2000 a XML
@@ -23,7 +24,7 @@ void xmlconvip(char xmlip1[], int ip1);
 void xmlconvdate(char xmldate[], int dateo);
 void nettoyer(char chaine[]);
 
-fst2xml_(int argc, char **argv)
+int fst2xml(int argc, char **argv)
 {
 
   char fstFile[256], xmlFile[256];
