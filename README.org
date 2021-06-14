@@ -11,6 +11,10 @@ cmake .. -DCMAKE_INSTALL_PREFIX=${your_choice}
 
 - CMake 3.16+
 
+Note: =cmake_rpn= is included as a submodule.  Please clone with the
+=--recursive= flag or run =git submodule update --init --recursive= in the
+git repo after having cloned.
+
 ** CMC
 
 The following script will load the proper build environment at CMC for using
