@@ -1,0 +1,28 @@
+      logical valid,vvent,wdvent,seldat
+      integer userdate,date2,date3,dateval,etikent(3),nwetike
+      common /dates/ valid,vvent,wdvent,seldat,userdate,date2,date3,dateval,etikent,nwetike
+
+      character*4 cnomqq,cnomqr,cnommt
+      common /cdates/ cnomqq, cnomqr, cnommt
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /dates  / valid,date,etikent (2)
+!           logical valid
+!           integer date,etikent
+!
+!           valid  -validation de la date (oui=.true.)
+!           date   -etampe du cmc 10 chiffres entiers
+!                  ex : 1010182003
+!                       1 = jour de la semaine 1=dimanche
+!                      01 = mois de l annee 1=janvier
+!                      01 = jour du mois 01 a 31
+!                      82 = annee 2 derniers chiffres 82=1982
+!                      00 = heure (gmt) de la run 00-06-12-18z
+!                       3 = numero de la run  0-1-2-3....
+!           etikent  -mot de 10 caracteres max de 20 seulement les
+!                  dix premiers seront utulises defaut -1
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

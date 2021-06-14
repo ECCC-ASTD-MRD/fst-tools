@@ -1,0 +1,11 @@
+      integer function pgsminf()
+      implicit none
+      
+      integer fstinf
+      external fstinf
+
+      key = FSTINF(iun, NI, NJ, NK, datev, etiket, ip1, ip2, ip3, typvar, nomvar)
+      
+      return
+      end
+      

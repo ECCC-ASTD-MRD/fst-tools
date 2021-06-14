@@ -1,0 +1,16 @@
+   integer noenrg,numero,nbrow,numdel,istart
+   common/enrege/ noenrg,numero,nbrow,numdel,istart
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /enrege / noenrg,numero,nbrow,numdel
+!
+!           noenrg -nombre d'enregistrement pour le fichier de sortie
+!                   utiliser par fichier ms
+!           numero -numero du premier record sur fichier ms
+!           nbrow  -control rangee aux frontieres (voir putfld)
+!           numdel -accroissement entre chaque record a partir de numero
+!
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

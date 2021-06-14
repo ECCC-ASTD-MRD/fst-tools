@@ -1,0 +1,63 @@
+   integer li,lj,lg1,lg2,lg3,lg4,ixlat,ixlon,ixlatg,ixlong,ngr,ncoords
+   real clatmin,clatmax,clonmin,clonmax,dgrwxy
+   integer gdin, gdout, masque
+
+   integer gr_a, gr_b, gr_g, gr_ps, gr_tape4, gr_latlon, gr_tape1, gr_tape2, gr_xylis, gr_xydir, gr_lldir, gr_lllist, &
+      gr_grib, gr_stereo, gr_comme, gr_stations, gr_gem, gr_gef
+   integer nmaxcoords
+
+   parameter (gr_a         = 1)
+   parameter (gr_latlon    = 2)
+   parameter (gr_ps        = 3)
+   parameter (gr_tape4     = 4)
+   parameter (gr_g         = 5)
+   parameter (gr_b         = 6)
+   parameter (gr_tape1     = 7)
+   parameter (gr_tape2     = 8)
+   parameter (gr_xylis     = 9)
+   parameter (gr_xydir    = 10)
+   parameter (gr_lldir    = 11)
+   parameter (gr_lllist   = 12)
+   parameter (gr_grib     = 10)
+   parameter (gr_stereo   = 13)
+   parameter (gr_comme    = 12)
+   parameter (gr_stations = 14)
+   parameter (gr_gem      = 15)
+   parameter (gr_gef      = 15)
+   parameter (nmaxcoords  = 100000)
+
+   real coordll(nmaxcoords,2)
+   common /grilles / li, lj, lg1, lg2, lg3, lg4, gdin, gdout, ixlat, ixlon,ngr, clatmin,clatmax,clonmin,clonmax, &
+      dgrwxy,ixlatg,ixlong,ncoords,coordll,masque
+
+   character*1 cgrtyp, cgtypxy
+   common /cgrille/ cgrtyp, cgtypxy
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /grilles/li, lj, grtyp, lg1, lg2, lg3, lg4, ixlat, ixlon
+!           integer grtyp
+!
+!           li     -nombre de points est-ouest sur fichier de sortie
+!           lj     -nombre de points nord-sud (fichier de sortie)
+!           grtyp  -type de grille fichier de sortie
+!           lg1    -descripteur de grille(sortie)
+!           lg2    -ps - lg1 position j du pole
+!           lg2          lg2 position i du pole
+!           lg3          lg3 dgrw*100
+!                        lg4 d60 hetometre(0-36000)
+!                  -lat,lon - lg1 dlat*100
+!                             lg2 dlon*100
+!                             lg3 (90-lat)*100 0=pole sud
+!                             lg4 (lon*100) (0-36000) longitude coin
+!                  -gaussien - lg1 = 1 hemisphere nord
+!                              lg1 = 2 hemisphere sud
+!                              lg1 - 0 globale
+!           ixlat  -pointeur dans lcm table de latitudes
+!           ixlon  -pointeur dans lcm table de longitudes
+!           ixlatg -pointeur dans lcd table de latitudes  tournees (grille E)
+!           ixlong -pointeur dans lcd table de longitudes tournees (grille E)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

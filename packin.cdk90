@@ -1,0 +1,13 @@
+      integer npack,npack_orig
+      common/packin/npack,npack_orig
+!
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /packin /npack
+!           npack  -compaction du data sur fichier de sortie
+!                   utiliser par putfld
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!
+#endif
+!

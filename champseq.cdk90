@@ -1,0 +1,11 @@
+      integer nmaxlist1,nmaxlist2,wait,go
+
+      parameter (nmaxlist1=16,nmaxlist2=16)
+      parameter (wait=0,go=1)
+      character*2 listnom(nmaxlist1,nmaxlist2)
+      integer listniv(nmaxlist1,nmaxlist2)
+      integer ntitems,nitems1(nmaxlist1),nitems2(nmaxlist2)
+
+      common /seq/  ntitems,nitems1,nitems2
+      common /cseq/ listnom
+      

@@ -1,0 +1,26 @@
+      integer function pgsmprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1,      ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3,      ig4, swa, lng, dltf, ubc, extra1, extra2, extra3)
+
+      implicit none
+      integer key, dateo, deet, npas, ni, nj, nk, nbits, datyp 
+      integer ip1, ip2, ip3, ig1, ig2, ig3, ig4, ier
+      integer swa, lng, dltf, ubc, extra1, extra2, extra3
+
+      character *1  grtyp
+      character *4  nomvar
+      character *2  typvar
+      character *12 etiket
+      
+#include "lires.cdk90"
+      integer fstprm
+      external fstprm
+      
+      ier = fstprm(key, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1,      ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3,      ig4, swa, lng, dltf, ubc, extra1, extra2, extra3)
+
+      if (grtyp.eq.'#'.and.diese.eq.1) then
+
+      endif
+
+         ier = pgsmprm
+
+      return
+      end

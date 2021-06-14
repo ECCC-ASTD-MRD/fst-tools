@@ -1,0 +1,11 @@
+      integer      lnkdiun(990),niun,inputmod
+      integer      sequentiel,random, ntotal_keys
+      integer idx_ozsrt, idx_isll, idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v
+      integer iun_isll, isll_input
+
+      parameter (sequentiel=1,random=2)
+
+      common /lnkflds/ lnkdiun, niun,inputmod, ntotal_keys, idx_ozsrt, idx_isll, &
+             idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v, &
+             iun_isll, isll_input
+

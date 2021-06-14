@@ -1,0 +1,27 @@
+      integer nnoms,maxnoms,nsym,nsymm
+      logical ssym(maxnom)
+      common /symnom/ nnoms,maxnoms,nsym,nsymm,ssym
+
+      character*4 noms(maxnom)
+      common /csymnom/ noms
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /symnom /nnoms, maxnoms,noms(maxnom),ssym(maxnom),nsym,nsymm
+!
+!           nnoms  -initialiser pgsm nnoms=0 utiliser dans metsym
+!                   compteur pour table de symetri
+!           maxnoms-change de nom a cause du define maxnoms=maxnom
+!                   initialiser dans pgsm
+!           noms   - table contenant les noms des variables symetrique
+!           ssym   -table de correspondance avec table noms
+!                   ex: noms(1)=lcar(gz) alors ssym(1)=.true.
+!                   geopotentiel est symetrique
+!           nsym   -valeur transferre dans nsymm cause readlx
+!           nsymm  -nombre d'arguments dans la directive metsym
+!                   nsymm doit etre egal a deux
+!
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

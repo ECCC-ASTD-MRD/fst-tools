@@ -1,0 +1,10 @@
+   character cdumnom*4, cdumtyp*2, cdumetk*12, cdumgtp*1
+   common /cdummys/ cdumnom, cdumtyp, cdumetk, cdumgtp
+
+   integer dumnom, dumtyp, dumetk, dumgtp
+   common /dummys/  dumnom, dumtyp, dumetk, dumgtp
+!
+#if defined (doc)
+#endif
+!
+!

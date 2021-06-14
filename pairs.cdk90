@@ -1,0 +1,15 @@
+      integer npair,npairuv
+      common/pair/npair,npairuv
+
+      character*24 paire(npairmx)
+      common/cpair/paire
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!            - bloc /pair/ npair,paire(5,npairmx)
+!                    integer npair,paire
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

@@ -1,0 +1,166 @@
+!
+!**S/P GRITP12   LIRE LAT LONG DE CHAQUE PT D'UNE GRILLE TYPE "Y" OU "Z"
+!
+      subroutine gritp12(it,ip1,ip2,ip3)
+#include "impnone.cdk90"
+      integer it,ip1,ip2,ip3
+!
+!AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
+!
+!LANGAGE - RATFOR
+!
+!OBJET(GRITP12)
+!          LIRE UN REC DE LAT ET UN REC DE LONG
+!          POUR LA GRILLE DE TYPE "Y" OU "Z".
+!          Y = LISTE DE LAT-LON(NI,NJ) OU X-Y(NI,NJ)
+!          Z = COLONNE DE LAT(NJ) OU RANGEE DE LONG(NI)
+!              OU COLONNE DE Y(NJ)   RANGEE DE X(NI)
+!          COORDONNEE X,Y SONT POLAIRE STEREOGRAPHIQUE
+!
+!
+!
+!LIBRAIRIES
+!         -SOURCE  ARMNSRC,DRPN
+!         -OBJET   PGSMLIB,ID=ARMNPJS.
+!
+!------------------------------------------------------
+!
+      external pgsmabt,memoir,fstprm,cigaxg,messags,fstcvt 
+      external imprime,ecritur,fstopc,fstinf,fstlir,conlal2
+      integer fstprm,fstopc,fstinf,fstlir,fstcvt 
+
+      integer ezqkdef, ezgdef,ezgfstp, ezgxprm, gdgaxes, gdll
+      external ezqkdef, ezgdef,ezgfstp, ezgxprm, gdgaxes, gdll, ecritur
+!
+
+#include "llccmm.cdk90"
+#include "indptr.cdk90"
+#include "packin.cdk90"
+#include "grilles.cdk90"
+#include "lires.cdk90"
+#include "voir.cdk90"
+#include "tp12ig.cdk90"
+
+      character *12 etikx
+      character *4 nomx
+      character *2 ctpvrla,ctpvrlo,cgtyplo,cgtypla
+      character*2 grref
+
+      
+      integer swa, lng, dltf, ubc, extra1, extra2, extra3
+
+      integer iunit,irecla,ireclo,ni,nj,nk
+      integer dateo, deet, npas, nix,njx,nkx
+      integer numla,numlo,ier,iopc
+      integer ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
+      integer ip1x, ip2x, ip3x
+
+      character*4 nomvarx, nomvary
+      character*12  etiketx, etikety
+      character*2   typvarx, typvary
+      integer nix, njx, niy, njy, nkx, nky
+      integer dateox, deetx,npasx, nbitsx, datypx
+!     
+      real pidum,pjdum,d60dum
+      integer lip1, lip2, lip3
+
+!     
+!     
+      if (it.eq.8) then
+         iunit=2
+      else
+         iunit=1
+      endif
+!
+!  VERIFICATION DES PARAMETRES DES 2 RECORDS
+!  SI LU SUR UNIT 1 ON ECRIT LES 2 RECORDS SUR UNIT 2
+!
+
+      if (it.ne.11) then
+         if (it.ne.8) then
+            call chkenrpos(1,2,ip1,ip2,ip3)
+         endif
+         ireclo = fstinf(2, nix, njx, nkx, -1, '        ', ip1, ip2, ip3, ' ', '>>')
+         irecla = fstinf(2, niy, njy, nky, -1, '        ', ip1, ip2, ip3, ' ', '^^')
+
+         if (ireclo.lt.0.or.irecla.lt.0) then
+            print *, '<gritp12> enregistrements positionnels absents!'
+            print *, '          impossible de continuer...'
+            call exit(13)
+         endif
+
+         ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx,         datypx, lip1, lip2, lip3, typvarx, nomx, etikx,         grref, ig1ref, ig2ref, ig3ref, ig4ref,          swa, lng, dltf, ubc, extra1, extra2, extra3)
+         li = nix
+         lj = njy
+         
+         gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,iunit)
+      else
+         nix = ncoords
+         niy = ncoords
+         njx = 1
+         njy = 1
+         cgrtyp = 'Y'
+         cgtypxy= 'L'
+         nomvarx = '^^'
+         nomvary = '>>'
+         etikety= 'NORDSUD'
+         etiketx = 'ESTOUEST'
+         typvarx = 'C'
+         typvary = 'C'
+         ip1x = ip1
+         ip2x = ip2
+         ip3x = ip3
+         deetx= 0
+         npasx= 0
+         dateox = 017901000
+         li = ncoords
+         lj = 1
+         call cxgaig('L',ig1la,ig2la,ig3la,ig4la,0.,0.,1.0,1.0)
+         call cxgaig('L',ig1lo,ig2lo,ig3lo,ig4lo,0.,0.,1.0,1.0)
+         npack = -32
+      endif
+         
+!     
+!     INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
+!     
+      allocate(tmplon(li*lj))
+      allocate(tmplat(li*lj))
+      
+      if (cgtypxy.eq.'E') then
+         allocate(tmplong(li*lj))
+         allocate(tmplatg(li*lj))
+      endif
+!     
+!     
+!     
+!     
+      if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.) 
+!     
+      if (it.eq.11) then
+         call fillcoord(tmplat,tmplon,coordll,ncoords)
+         gdout = ezgdef(nix,njx,cgrtyp,cgtypxy,ig1la,ig2la,         ig3la,ig4la,tmplon,tmplat)
+      else
+         ier = gdgaxes(gdout, tmplon, tmplat)
+      endif
+
+      ier = ezgxprm(gdout,li,lj,cgrtyp,      ig1,ig2,ig3,ig4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
+!     
+      if (printen)  call imprime(nomvary,tmplat,niy,njy)
+      if (printen)  call imprime(nomvarx,tmplon,nix,njx)
+
+!     
+!     CALCUL LATITUDES LONGITUDES  DU TYPE "Z" OU "Y"
+!     
+      if (cgrtyp.eq.'Z') then
+         ier = gdll(gdout,tmplat,tmplon)
+      endif
+      
+      if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'
+      if (printen)  call imprime(nomvarx,tmplat,niy,njy)
+      if (printen)  call imprime(nomvary,tmplon,nix,njx)
+!     
+      
+      return
+      end 
+      
+      
