@@ -1,19 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <rmnlib.h>
 
+
 /* Cette fonction verifie si le repertoire $TMPDIR existe.
  * Si oui, la fonction retourne sans problemes
  * Si non, on fait un "putenv(TMPDIR=/tmp/)
  * */
-
-int f77name(chk_tmpdir)(void)
-  {
-  return chk_tmpdir();
-  }
 
 int chk_tmpdir(void)
   {
@@ -44,7 +41,7 @@ int chk_tmpdir(void)
    fprintf(stderr, "    **************************************************************\n");
     exit(-13);
     }
-   res = strcat(tmpdir, (char *)getenv("TMPDIR"));
+   char *strcat_result = strcat(tmpdir, (char *)getenv("TMPDIR"));
 //    printf("%s\n", tmpdir);
    }
   return 0;

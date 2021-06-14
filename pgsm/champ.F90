@@ -83,12 +83,12 @@
 !
 !
    if (inputmod == SEQUENTIEL) then
-	   print *,'***************************************************'
-	   print *,'* ON NE PEUT UTILISER LA DIRECTIVE "CHAMP"        *'
-	   print *,'* AVEC UN FICHIER D ENTREE SEQUENTIEL             *'
-	   print *,'*                                                 *'
-	   print *,'* UTILISEZ PLUTOT LA DIRECTIVE "CHAMP_SEQ"        *'
-	   print *,'***************************************************'
+      print *,'***************************************************'
+      print *,'* ON NE PEUT UTILISER LA DIRECTIVE "CHAMP"        *'
+      print *,'* AVEC UN FICHIER D ENTREE SEQUENTIEL             *'
+      print *,'*                                                 *'
+      print *,'* UTILISEZ PLUTOT LA DIRECTIVE "CHAMP_SEQ"        *'
+      print *,'***************************************************'
       return
    endif
 

@@ -15,6 +15,8 @@ if("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local")
 endif()
 
 # configure_file(version.in.inc version.inc @ONLY)
+include(CTest)
+add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMMAND})
 
 include(ec_compiler_presets)
 
@@ -26,3 +28,4 @@ add_subdirectory(fstcompress)
 add_subdirectory(fstinfo)
 add_subdirectory(fststat)
 add_subdirectory(fstxml)
+add_subdirectory(pgsm)

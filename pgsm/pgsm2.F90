@@ -95,6 +95,15 @@
 #include "champseq.cdk90"
 #include "styles.cdk90"
 
+! Source on C-Fortran Interop
+!    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
+! following snippet from
+!    https://stackoverflow.com/questions/17845931/calling-c-function-subroutine-in-fortran-code
+INTERFACE
+SUBROUTINE chk_tmpdir() BIND(C)
+END SUBROUTINE chk_tmpdir
+END INTERFACE
+
 	character *8 qlxcon(128),qlxlcon(4)
 	integer      qlxval(128)
 	integer      qlxlval(4)

@@ -1,5 +1,6 @@
       subroutine setxtrap(val)
 #include "impnone.cdk90"
+#include "defin.cdk90"
 
       integer val
 
@@ -23,7 +24,7 @@
 
       op = 'EXTRAP'
 
-      if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum       .and. val .ne. abort .and. val .ne. oui) then
+      if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum .and. val .ne. abort .and. val .ne. oui) then
          v = 'VALEUR'
          ier = ezsetval('extrap_value', rval)
          ier = ezsetopt('extrap_degree', 'value')
