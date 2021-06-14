@@ -1,0 +1,52 @@
+cat <<EOFDIR1 > $TMPDIR/dir1
+* EXCLURE( TYPVAR, NOMVAR, 'ETIKET', DATE, IP1, IP2, IP3)
+exclure(-1,['GZ','UU','VV'],-1,-1,-1,-1,-1)
+end
+EOFDIR1
+cat <<EOFDIR2 > $TMPDIR/dir2
+* DESIRE ( TYPVAR, NOMVAR, 'ETIKET', DATE, IP1, IP2, IP3)
+exclure('A',['UU','VV'],'FGGE3B',-1,850,-1,-1)
+desire('A',['UU','VV'],'FGGE3B',[12179120,@,12279120,DELTA,24],[100,@,1000])
+end
+EOFDIR2
+#
+echo ' '
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo '%                   test fichier source vide                          %'
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo ' '
+editfst -s pasla -d bozo -i 0
+#
+echo ' '
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo '%                   test directive exclure seule                      %'
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo ' '
+editfst -s anal -d new_std -i $TMPDIR/dir1 -m inform
+#
+echo ' '
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo '%                   test plusieurs fichiers sources                   %'
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo ' '
+editfst -s anal new_std -d merge12 -i 0 -e -m inform
+#
+echo ' '
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo '%            test plusieurs directives (destination SQI)              %'
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo ' '
+editfst -s anal -ds -d new_stdsqi -i $TMPDIR/dir2 -m inform
+#
+echo ' '
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo '%            test interactif (fichier source SQI)                     %'
+echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+echo ' '
+#editfst -ss -s new_stdsqi
+#
+# menage
+#
+rm merge12 new_std new_stdsqi $TMPDIR/dir1 $TMPDIR/dir2
+
+
