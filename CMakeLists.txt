@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/cmake_rpn)
 include(ec_init)           # Initialise compilers and ec specific functions
 ec_git_version()           # Get version from git state
 
-project(pgsm C Fortran)
+project(fst-tools C Fortran)
 set(PROJECT_VERSION ${GIT_VERSION} CACHE STRING "Define the version of PGSM that will be baked into the various artifacts of this build")
 
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local")
@@ -29,3 +29,4 @@ add_subdirectory(fstinfo)
 add_subdirectory(fststat)
 add_subdirectory(fstxml)
 add_subdirectory(pgsm)
+add_subdirectory(voir)
