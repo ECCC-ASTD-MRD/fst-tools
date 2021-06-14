@@ -12,7 +12,6 @@ c
       integer pndateo,pndatprinto,pndatev,pndatprintv,pntimeo
       integer pntimev,pndeet,pnnpas,pnnbits
       integer pndatyp, pnip1,pnip2,pnip3
-
       integer pnig1,pnig2,pnig3,pnig4,pnswa,pnlng,pndltf,pnubc,pnextra1
       integer pnextra2,pnextra3
 c
@@ -34,9 +33,9 @@ c
       data ptcle /'izfst.','datev.','vdatev.','etiket.','ip1.','ip2.'
      &     ,'ip3.','typvar.','nomvar.','otxt.','del.','champs.'/
       data ptvar /'bidon','-1','-1',' ','-1','-1','-1',' ',' ','fstlist'
-     &     ,':','0'/ 
+     &     ,':','0'/
       data ptdefvar /'bidon','-1','-1',' ','-1','-1','-1',' ',' '
-     &     ,'fstlist',':','1'/ 
+     &     ,'fstlist',':','1'/
       data pnfstsrc /11/
 c
       call ccard(ptcle,ptdefvar,ptvar,12,-1)
@@ -77,7 +76,8 @@ c
 c
       ikind = wkoffit(ptvar(1))
 c      write(*,*) 'IKIND ====== ',ikind
-      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) call qqexit(1)
+      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) call qqex
+     %it(1)
 c     ------ Initialisation des clefs de recherche -----
 c
       if (ptvar(2) .ne. '-1') then
@@ -152,19 +152,6 @@ c
       call qqexit(0)
       stop
       end
-
-
-
-
-
-
-
-
-
-
-
-
-      
       character *128 function product_id_tag()
       product_id_tag='$Id$'
       return

@@ -22,3 +22,5 @@ find_package(RMN)
 
 add_subdirectory(editfst)
 add_subdirectory(fstcomp)
+add_subdirectory(fstcompress)
+add_subdirectory(fstinfo)
