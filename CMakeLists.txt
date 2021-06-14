@@ -16,7 +16,7 @@ endif()
 
 # configure_file(version.in.inc version.inc @ONLY)
 include(CTest)
-add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMMAND})
+add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMAND})
 
 include(ec_compiler_presets)
 

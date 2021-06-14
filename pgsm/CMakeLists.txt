@@ -45,7 +45,7 @@ install(TARGETS pgsm)
 ######################## TESTING ###################################
 
 # Unit test executable
-add_executable(test_pgsm test_f_pgsm.c)
+add_executable(test_pgsm test.f90)
 target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
 target_link_libraries(test_pgsm PRIVATE pgsmlib ${RMN_LIBRARIES})
 add_test(NAME test_pgsm COMMAND test_pgsm)
