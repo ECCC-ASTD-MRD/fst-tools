@@ -6,7 +6,11 @@ stages:
 before_script:
   # Force color CMake output even when output is not TTY
   - export CLICOLOR_FORCE=true
-  - source ~sici000/ci-admin-bundle/environments/eccc-setup-intel.sh
+  - export ORDENV_SITE_PROFILE=20210129
+  - export ORDENV_COMM_PROFILE=eccc/20210309
+  - export ORDENV_GROUP_PROFILE=eccc/cmc/1.9.4
+  - set +e ; . /fs/ssm/main/env/ordenv-boot-20201118.sh ; set -e
+  - source SETUP.sh
 
 build_cmake:
   stage: build
@@ -15,6 +19,7 @@ build_cmake:
     - cd build
     - cmake .. -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-site
     - make
+    - make check
     - make install
   artifacts:
     paths:
