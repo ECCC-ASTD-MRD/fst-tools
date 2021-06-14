@@ -1,0 +1,21 @@
+
+* Build and install
+
+#+begin_src
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=${your_choice}
+#+end_src
+
+* Build dependencies at CMC
+
+- CMake 3.16+
+
+** CMC
+
+The following script will load the proper build environment at CMC for using
+the intel compiler.
+
+#+begin_src
+source ~sici000/ci-admin-bundle/environments/eccc-setup-intel-19.0.3.199-20210614.sh
+#+end_src
