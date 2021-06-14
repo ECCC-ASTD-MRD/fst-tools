@@ -21,3 +21,4 @@ include(ec_compiler_presets)
 find_package(RMN)
 
 add_subdirectory(editfst)
+add_subdirectory(fstcomp)
