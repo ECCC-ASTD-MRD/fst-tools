@@ -1,0 +1,21 @@
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+stages:
+  - build
+
+before_script:
+  # Force color CMake output even when output is not TTY
+  - export CLICOLOR_FORCE=true
+  - source ~sici000/ci-admin-bundle/eccc-setup-intel.sh
+
+build_cmake:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-site
+    - make
+    - make install
+  artifacts:
+    paths:
+      - install-site
