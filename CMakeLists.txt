@@ -34,3 +34,4 @@ add_subdirectory(fststat)
 add_subdirectory(fstxml)
 add_subdirectory(pgsm)
 add_subdirectory(voir)
+

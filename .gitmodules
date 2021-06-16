@@ -1,3 +1,6 @@
 [submodule "cmake/cmake_rpn"]
 	path = cmake/cmake_rpn
 	url = ../cmake_rpn
+[submodule "librmn"]
+	path = librmn
+	url = ../librmn
