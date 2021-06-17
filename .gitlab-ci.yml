@@ -21,16 +21,16 @@ build_intel:
     paths:
       - install-site
 
-build_intel:
-  stage: build
-  script:
-    - source ~/ci-admin-bundle/environments/eccc-setup-gnu.sh
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-site-gnu
-    - make
-    - make check
-    - make install
-  artifacts:
-    paths:
-      - install-site-gnu
+# build_gnu:
+#   stage: build
+#   script:
+#     - source ~/ci-admin-bundle/environments/eccc-setup-gnu.sh
+#     - mkdir build
+#     - cd build
+#     - cmake .. -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-site-gnu
+#     - make
+#     - make check
+#     - make install
+#   artifacts:
+#     paths:
+#       - install-site-gnu
