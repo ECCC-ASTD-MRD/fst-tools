@@ -26,6 +26,7 @@ orgmanpages_add_man_target()
 
 find_package(RMN)
 
+add_subdirectory(bemol)
 add_subdirectory(editfst)
 add_subdirectory(fstcomp)
 add_subdirectory(fstcompress)
