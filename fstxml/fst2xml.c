@@ -25,7 +25,7 @@ void xmlconvdate(char xmldate[], int dateo);
 void nettoyer(char chaine[]);
 
 
-int f77name(fst2xml)(int argc, char **argv)
+int fst2xml(int argc, char **argv)
 {
 
   char fstFile[256], xmlFile[256];

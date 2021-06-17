@@ -135,7 +135,7 @@ static void trimright(char *string);
 extern void c_ccard(char **argv, int argc, char **cle, char val[][256],
 		    char **def, int n, int *npos);
 
-void f77name(xml2fst)(int argc, char **argv)
+void xml2fst(int argc, char **argv)
 {
   char fstFile[256], xmlFile[256];
   char encoding[16];
