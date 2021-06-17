@@ -1,0 +1,16 @@
+
+For compiling and finding rmn_012!!!!!
+And rmn_012 needs codebeta moduledate_711 to correct a bug in incdatr,newdate..
+And rmn_012 needs codebeta c_baseio_714 to correct a bug in c_baseio for x86-64
+
+IBM(AIX)
+. r.ssmuse.dot Xlf12; . r.ssmuse.dot rmnlib-dev
+
+Erg(Linux)/Lorentz(Linux_x86-64)
+. r.ssmuse.dot pgi9xx; . r.ssmuse.dot rmnlib-dev
+
+For co all decks:
+svn co svn://mrbsvn/utils/fstd/bemol/trunk
+
+for listing all decks:
+svn list svn://mrbsvn/utils/fstd/bemol/trunk
