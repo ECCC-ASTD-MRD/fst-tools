@@ -48,10 +48,10 @@
 !*
       INTEGER      IER,DAT1,DAT2,NDATE
       INTEGER      FSTCVT, ARGDOPE, I, LIS(10)
-      CHARACTER *1 G
-      CHARACTER *2 T
-      CHARACTER *4 N
-      CHARACTER *12 E
+      CHARACTER(len=1) G
+      CHARACTER(len=2) T
+      CHARACTER(len=4) N
+      CHARACTER(len=12) E
 
       ZA = .FALSE.  ! initialize to do nothing values
       ZD = -1

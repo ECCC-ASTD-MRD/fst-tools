@@ -41,7 +41,7 @@
       real*8 sum,moy,var
       real rmin,rmax
       integer imin,jmin,kmin,imax,jmax,kmax,kind,dat2,dat3
-      CHARACTER*15 Level
+      CHARACTER(len=15) Level
       REAL      rlevel
 c--------------------------------------------------------------------
 c

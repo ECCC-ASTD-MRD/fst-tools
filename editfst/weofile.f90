@@ -49,7 +49,7 @@
 !
 !*
       INTEGER       ARGDIMS, FSTWEO, OUVRED, L, M
-      CHARACTER*128 DN
+      CHARACTER(len=128) DN
 
       M = 1
       GO TO(30, 20, 10) NP

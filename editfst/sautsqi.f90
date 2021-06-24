@@ -49,9 +49,9 @@
 !*
       INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL
       INTEGER       I, J, K, L, M
-      CHARACTER*128 CLE
-      CHARACTER*15  SORTE, TAPE
-      CHARACTER*3   DND
+      CHARACTER(len=128) CLE
+      CHARACTER(len=15)  SORTE, TAPE
+      CHARACTER(len=3)   DND
 
       DND   = 'SEQ'
       SORTE = 'STD+SEQ+OLD'

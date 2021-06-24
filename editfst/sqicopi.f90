@@ -50,7 +50,7 @@
       INTEGER       FSTINF,  FSTEOF, ARGDIMS, OUVRED, NI, NJ, NK
       INTEGER       N, M, I, J
       INTEGER       PRE, CSD,  POS
-      CHARACTER*128 DD
+      CHARACTER(len=128) DD
   
 !     INITIALISATION
       SNOM = 'STD+SEQ+OLD'

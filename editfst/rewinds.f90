@@ -43,8 +43,8 @@
 !
 !*
       INTEGER       ARGDIMS, FSTRWD, I
-      CHARACTER*15  T
-      CHARACTER*128 DN
+      CHARACTER(len=15)  T
+      CHARACTER(len=128) DN
   
 !     DECODE LE TYPE DE FICHIER (DOIT ETRE SEQ.)
       IF(NP .EQ. 2) THEN

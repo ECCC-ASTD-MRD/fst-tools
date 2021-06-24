@@ -47,7 +47,7 @@
 !*
       INTEGER       IOPDATM, ARGDIMS, DTG(14), I, K
       EQUIVALENCE   (K, DTG(14))
-      CHARACTER*128 C
+      CHARACTER(len=128) C
 
          print *,'PERIODE',jours
 !     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE 
