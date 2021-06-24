@@ -5,6 +5,7 @@
 #include <diese.h>
 #include <diese_funct.h>
 #include <diese_var_e.h>
+#include "bemol_opt.h"
 
 void c_diesFillMissingTiles(int igrd, float *fld, _Fldlst flist, int fill_mode, int *ni_start, int *nj_start, int *ni_end, int *nj_end, int *nig, int *njg);
 
