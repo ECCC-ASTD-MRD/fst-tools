@@ -1,21 +1,21 @@
       program fcmain
-        use ISO_C_BINDING
+        use iso_c_binding
         implicit none
 
-        integer(C_INT) :: nargs
+        integer(c_int) :: nargs
         integer :: i, length, status
         character(len=4096) :: argument
         character(len=1), dimension(:), pointer :: arg1
         type(C_PTR), dimension(:), pointer :: argv
         type(C_PTR) :: argtab
         interface
-          function c_main(nargs,argv) result(status) &
+          function c_main(nargs,argv) result(c_status) &
                   BIND(C,name='fst2xml')
           import
           implicit none
-          integer, intent(IN), value :: nargs
+          integer(c_int), intent(IN), value :: nargs
           type(C_PTR), intent(IN), value :: argv
-          integer :: status
+          integer(c_int) :: c_status
           end function c_main
         end interface
 
