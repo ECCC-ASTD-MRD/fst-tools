@@ -34,6 +34,9 @@ target_link_libraries(editfstlib PUBLIC ${RMN_LIBRAIRES})
 # Needed for version.inc
 target_include_directories(editfstlib PRIVATE ${CMAKE_BINARY_DIR})
 
+# FIX FOR GNU BUILD : NOT LEGIT
+target_include_directories(editfstlib PRIVATE /fs/ssm/eccc/mrd/rpn/libs/19.7.0/ubuntu-18.04-amd64-64/include/Linux_x86-64/gnu-7.4.0)
+
 add_executable(editfst main.F90)
 target_link_libraries(editfst PRIVATE editfstlib ${RMN_LIBRARIES})
 

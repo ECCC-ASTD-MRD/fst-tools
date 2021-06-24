@@ -38,7 +38,7 @@ module configuration
       character(len=6)  , save :: ETAT='NORMAL'
       character(len=12) , save :: ZE, ETI, ETIS(NML,NMD)
       character(len=4096), save :: NS=' ', ND
-      character(len=15) , save :: SNOM, DNOM
+      character(len=19) , save :: SNOM, DNOM
 
       integer, parameter :: NCCARDKEYS=147   ! dimension for program options (processed by ccard)
       character(len=8), dimension(NCCARDKEYS), save ::    &

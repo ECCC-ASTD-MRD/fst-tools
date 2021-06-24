@@ -107,7 +107,7 @@
          ENDIF
       ENDIF
       IF( DIAG .OR. DEBUG ) THEN
-         TAPE = CLE
+         TAPE = CLE(1:)
          WRITE(6,600) I, LEVEL, J, TAPE
   600    FORMAT(' SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
       ENDIF       

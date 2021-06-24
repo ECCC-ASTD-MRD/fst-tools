@@ -56,9 +56,9 @@ C*DECK FSTCOMP
 *
 *MODULES
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, FNOM,
-     X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
-     X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip_plus,
-     %         fstopl, ip1_all, qqexit, longueur
+     X       FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
+     X       FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip_plus,
+     %       fstopl, ip1_all, qqexit, longueur
 *
       CHARACTER(len=1)  GRTYPA, GRTYPB
       CHARACTER(len=2)  TYPVAR, TYPVAB
