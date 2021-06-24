@@ -1,0 +1,32 @@
+
+
+void f77name(init_bemol_options)();
+void f77name(bemol_set_grtyp_out)(char grtyp,F2Cl lng);
+void f77name(bemol_set_user_domain)(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
+void f77name(bemol_set_iun_in)(int *iun);
+void f77name(bemol_set_iun_dst)(int *iun);
+void f77name(bemol_set_iun_cfs)(int *iun);
+void f77name(bemol_set_iun_core)(int *iun);
+void f77name(bemol_set_iun_coarse)(int *iun);
+void f77name(bemol_set_verbose_level)(int *verbose_level);
+void f77name(bemol_set_nbits)(int *nbits);
+void f77name(bemol_set_compression)(int *compression_code);
+void f77name(bemol_set_fill_mode)(int *fill_mode);
+void f77name(bemol_set_avgfactor)(int *avg_factor);
+void f77name(bemol_set_ig3core)(int *ig3core);
+void f77name(bemol_set_ig3coarse)(int *ig3coarse);
+void bemol_get_grtyp_out(char *grtyp);
+int bemol_get_user_domain(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
+void bemol_get_verbose_level(int *verbose_level);
+int f77name(bemol_get_compression_code)(int *compression_code);
+void bemol_get_compression_code(int *compression_code);
+void bemol_get_fill_mode(int *fill_mode);
+void bemol_get_avgfactor(int *avg_factor);
+void bemol_get_ig3core(int *ig3core);
+void bemol_get_ig3coarse(int *ig3coarse);
+void bemol_get_nbits(int *nbits);
+void bemol_get_iun_in(int *iun);
+void bemol_get_iun_dst(int *iun);
+void bemol_get_iun_cfs(int *iun);
+void bemol_get_iun_core(int *iun);
+void bemol_get_iun_coarse(int *iun);
