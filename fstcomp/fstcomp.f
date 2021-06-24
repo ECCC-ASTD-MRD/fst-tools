@@ -195,7 +195,7 @@ C*ENDIF
       lvar = LONGUEUR(ARMNLIB_var)
       IF (lvar .gt. 0) THEN
         iunexpv=0
-	ier = fnom(iunexpv,
+      ier = fnom(iunexpv,
      %     ARMNLIB_var(1:lvar)//'/data/exception_vars_ok',
      %     'SEQ+FTN+FMT+OLD+R/O',0)
         IF (ier .lt. 0) THEN

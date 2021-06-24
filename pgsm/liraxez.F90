@@ -5,7 +5,7 @@
       
 #include "gdz.cdk90"
       
-      data niz, njz, nkz 	/0, 0, 0/
+      data niz, njz, nkz /0, 0, 0/
       data ig1ref, ig2ref, ig3ref, ig4ref /-1, -1, -1, -1/
       data ig1z,   ig2z,   ig3z,   ig4z   /-1, -1, -1, -1/
       data grref          /'Z'/
@@ -32,11 +32,11 @@
       endif
 
       if (associated(axex)) then
-	 deallocate(axex)
+          deallocate(axex)
       endif
-      
+
       if (associated(axey)) then
-	 deallocate(axey)
+          deallocate(axey)
       endif
 
       irecx = fstinf(iun, nix, njx, nkx, -1,' ',       ig1, ig2, ig3,'  ','>>  ')

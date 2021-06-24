@@ -102,29 +102,29 @@
 !               call exit(13)
                call pgsmabt
             elseif (ier == 0) then
-	            grille_z = .true.
-	         else
-	            grille_u = .true.
-!	         endif
-         endif
+                grille_z = .true.
+            else
+                grille_u = .true.
+!               endif
+            endif
 
-         if (mode.eq.1) then
-	         if (grille_z) then
+            if (mode.eq.1) then
+                if (grille_z) then
                ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
                irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
                cgrtyp = 'Z'
                gdout = ezqkdef(nix,njy,cgrtyp,ip1,ip2,ip3,0,iunit)
-            endif
-	    
-	         if (grille_u) then
+           endif
+
+           if (grille_u) then
                irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
                cgrtyp = 'U'
-	            ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu,etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
-	            gdout = ezqkdef(niu,nju,cgrtyp,lip1,lip2,lip3,0,iunit)
-	            ier = ezgxprm(gdout, nix, njy, cgrtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
-            endif
-	    
-	         li = nix
+               ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu,etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+               gdout = ezqkdef(niu,nju,cgrtyp,lip1,lip2,lip3,0,iunit)
+               ier = ezgxprm(gdout, nix, njy, cgrtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+           endif
+
+           li = nix
             lj = njy
             lg1 = ig1
             lg2 = ig2

@@ -136,7 +136,7 @@
          allocate(tmplat(li,lj))
       else
          print *, 'avant gritp12', igg1, igg2, igg3
-	 if (iunit == 1) then
+      if (iunit == 1) then
             call gritp12(7,igg1,igg2,igg3)
          else
             call gritp12(8,igg1,igg2,igg3)

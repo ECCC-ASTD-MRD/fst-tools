@@ -156,7 +156,9 @@
 !     *            IN    ig4_   : grid descriptor 4 of ">>" and "^^"*
 !     *                                                             *
 !     ***************************************************************
-      subroutine wstdfxy (xpos, ypos, iun, dateo, deet, npas, ni, nj,  	                  ip1, ip2, ip3, etiket, grtyp_, ig1_,                     ig2_, ig3_, ig4_)
+      subroutine wstdfxy (xpos, ypos, iun, dateo, deet, npas, ni, nj, &
+                 ip1, ip2, ip3, etiket, grtyp_, ig1_,                 &
+                 ig2_, ig3_, ig4_)
       implicit none
       integer fstecr
       integer ni, nj

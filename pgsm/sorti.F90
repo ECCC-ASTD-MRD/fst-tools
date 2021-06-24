@@ -116,9 +116,9 @@
             endif
          endif
          if (ier .lt. 0) then
-	   write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	   call pgsmabt
-	 endif
+             write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
+             call pgsmabt
+         endif
       else if (mode.eq.2) then
          write(6,*)         ' LES FICHIERS "MS" NE SONT PAS SUPPORTES DANS CETTE'
          write(6,*)         ' VERSION DE PGSM'
@@ -145,7 +145,7 @@
       endif
       if (ier .lt. 0) then
         write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	call pgsmabt
+      call pgsmabt
       endif
 !
 !
@@ -169,7 +169,7 @@
          endif
          if (ier .lt. 0) then
            write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	   call pgsmabt
+           call pgsmabt
          endif
       endif
 !

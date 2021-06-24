@@ -26,8 +26,6 @@ orgmanpages_add_man_target()
 
 find_package(RMN)
 
-add_compile_options(-Wno-unused-variable -Werror=tabs)
-
 add_subdirectory(bemol)
 add_subdirectory(editfst)
 add_subdirectory(fstcomp)

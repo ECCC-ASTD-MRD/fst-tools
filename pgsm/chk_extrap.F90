@@ -27,8 +27,8 @@
   
   do j=1,lj
      do i=1,li
-	if (xdest(i,j)<0.5.or.xdest(i,j)>(r_ni+0.5)) outside = .true.
-	if (ydest(i,j)<0.5.or.ydest(i,j)>(r_nj+0.5)) outside = .true.
+      if (xdest(i,j)<0.5.or.xdest(i,j)>(r_ni+0.5)) outside = .true.
+      if (ydest(i,j)<0.5.or.ydest(i,j)>(r_nj+0.5)) outside = .true.
      enddo
   enddo
   

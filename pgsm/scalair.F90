@@ -192,12 +192,12 @@
             cycle
          endif
          
-	 extrap_option = '        '
-	 ier = ezgetopt('extrap_degree', extrap_option)
-	 if (extrap_option(1:5) == 'abort') then
-            gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
-            call chk_extrap(gdout, gdin, li, lj, ni, nj)
-	 endif
+         extrap_option = '        '
+         ier = ezgetopt('extrap_degree', extrap_option)
+         if (extrap_option(1:5) == 'abort') then
+             gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+             call chk_extrap(gdout, gdin, li, lj, ni, nj)
+         endif
 !
 !   si la directive de champ emploi tout  champ(tout, tout) on doit faire
 !     attention pour les vecteurs u-v car l'interpolation serait scalaire
@@ -216,17 +216,17 @@
 
          skip = .false.
 
-	 allocate(tmpif1(ni,nj))
-        
+         allocate(tmpif1(ni,nj))
+
 !
          if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
             allocate(ifld_in(ni, nj))
             allocate(ifld_out(li, lj))
-	    key = ipgsmluk(ifld_in, irec, ni, nj, nk, cnomvar, cigtyp)
+            key = ipgsmluk(ifld_in, irec, ni, nj, nk, cnomvar, cigtyp)
 !             print *, 'CDATYP=', cdatyp
             call cvtrfi(tmpif1, ifld_in, ni, nj)
          else
-	    key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
+             key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
 !            print *, 'CDATYP=', cdatyp
          endif
 
