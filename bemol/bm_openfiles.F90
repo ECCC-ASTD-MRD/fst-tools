@@ -4,7 +4,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucfs, ucore, 
 #include "bm_param_f90.h"
 
   integer nbrecs
-  character*256 val(*), def(*)
+  character(len=256) val(*), def(*)
   integer tol
   integer lnkdiun(*)
   integer nf

@@ -65,10 +65,10 @@
 !
 !---------------------------------------------------------------
 
-   character*12 cetiket,cetike
-   character*4 cnomvar,cnom1,cnom2, cnom3
-   character*1 cigtyp
-   character*2 ctypvar
+   character(len=12) cetiket,cetike
+   character(len=4) cnomvar,cnom1,cnom2, cnom3
+   character(len=1) cigtyp
+   character(len=2) ctypvar
 
    integer i,j
    integer jp1,jp2,jp3,liljt,ni,nj,nk,npar

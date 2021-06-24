@@ -4,10 +4,10 @@
 #include "impnone.cdk90"
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev,ig1,ig2,ig3,ig4
       integer ifld(ni,nj,nk)
-      character*12 etiket
-      character*4 nomvar
-      character*2 typvar
-      character*1 grtyp
+      character(len=12) etiket
+      character(len=4) nomvar
+      character(len=2) typvar
+      character(len=1) grtyp
       external fstlir
       integer fstlir
 

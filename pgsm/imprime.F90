@@ -53,7 +53,7 @@
 #include "ecrires.cdk90"
 !
       integer i,j,ni,nj,njff,niff,niifs,njjfs
-      character*4 cnom
+      character(len=4) cnom
       real champ(ni,nj)
 
       niff=nif

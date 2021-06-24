@@ -71,10 +71,10 @@
 !       integer ig1, ig2, ig3, ig4
 !       integer iun, datyp(nrows)
 !       integer npas, deet, dateo
-!       character *4 nomvar(nrows)
-!       character *4 typvar(nrows)
-!       character *4 grtyp
-!       character *12 etiket
+!       character(len=4) nomvar(nrows)
+!       character(len=4) typvar(nrows)
+!       character(len=4) grtyp
+!       character(len=12) etiket
 !       integer ierr, ier, S
 !       integer L, iflt(nrows)
 !       integer list(L)
@@ -167,8 +167,8 @@
 
       integer i
 
-      character *4 grtyp_
-      character *12 etiket
+      character(len=4) grtyp_
+      character(len=12) etiket
       integer ierr, iun
       npak = -24
       datyp = 1

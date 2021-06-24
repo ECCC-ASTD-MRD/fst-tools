@@ -31,10 +31,10 @@
 #include "voir.cdk90"
 
 
-   character *12 cetiket
-   character *4 cnom,cnomvar,cnomx
-   character *2 ctypvar
-   character *1 cigtyp
+   character(len=12) cetiket
+   character(len=4) cnom,cnomvar,cnomx
+   character(len=2) ctypvar
+   character(len=1) cigtyp
 
    integer nniv, i, nunv, itrouve, ii
    integer niveaux(512), deet, ig1, ig2, ig3, ig4, iheur

@@ -53,10 +53,10 @@
 #include "styles.cdk90"
 !
 !
-      character *12 cetiqet
-      character *4 cnomvar
-      character *2 ctypvar
-      character*1 cigtyp
+      character(len=12) cetiqet
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cigtyp
       integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv(2),nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa
       integer iopc
@@ -64,7 +64,7 @@
       external argdims
       integer lniv
       real p
-      character*8 string
+      character(len=8) string
 !
       iunit=1
       iip3=ip3

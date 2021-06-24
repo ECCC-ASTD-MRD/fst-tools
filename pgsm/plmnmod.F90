@@ -68,10 +68,10 @@
 #include "styles.cdk90"
 
 !
-      character*12 cetike,cetiket
-      character*4 cnomvar, cnumve
-      character*2 ctypvar,ctypve
-      character*1 cigtyp,cigtye
+      character(len=12) cetike,cetiket
+      character(len=4) cnomvar, cnumve
+      character(len=2) ctypvar,ctypve
+      character(len=1) cigtyp,cigtye
 !
       integer type,etiqet(3),nom,aa,letiqet(3)
       integer idat,idate,ideete,if1,ig1e,ig2e,ig3e,ig4e
@@ -82,7 +82,7 @@
       external argdims
       integer lniv
       real p
-      character*8 string
+      character(len=8) string
 !
 !    AA  MULTIPLICATEUR POUR AJOUTER OU SOUSTRAIRE
 !

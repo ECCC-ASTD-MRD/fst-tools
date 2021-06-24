@@ -42,10 +42,10 @@
 #include "tp12ig.cdk90"
 #include "lnkflds.cdk90"
 
-      character *12 etikx
-      character *4 nomx
-      character *2 ctpvrla,ctpvrlo,cgtyplo,cgtypla
-      character*2 grref
+      character(len=12) etikx
+      character(len=4) nomx
+      character(len=2) ctpvrla,ctpvrlo,cgtyplo,cgtypla
+      character(len=2) grref
 
 
       integer i
@@ -57,9 +57,9 @@
       integer ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
       integer ip1x, ip2x, ip3x
 
-      character*4 nomvarx, nomvary, nomu
-      character*12  etiketx, etikety, etiku
-      character*2   typvarx, typvary, typvaru
+      character(len=4) nomvarx, nomvary, nomu
+      character(len=12)  etiketx, etikety, etiku
+      character(len=2)   typvarx, typvary, typvaru
       integer nix, njx, niu, niy, njy, nju, nkx, nky, nku
       integer dateox, deetx,npasx, nbitsx, datypx
       integer dateou, deetu,npasu, nbitsu, datypu

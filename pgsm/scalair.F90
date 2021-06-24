@@ -74,12 +74,12 @@
 #include "voir.cdk90"
 
 
-   character *12 cetiket
-   character *4 cnom, cnomvar, cnomx
-   character *2 ctypvar
-   character *1 cigtyp
+   character(len=12) cetiket
+   character(len=4) cnom, cnomvar, cnomx
+   character(len=2) ctypvar
+   character(len=1) cigtyp
 
-   character*8 extrap_option
+   character(len=8) extrap_option
    integer nniv, dateo, datev, i, nunv, itrouve, key, ii, j
    integer niveaux(nniv), deet, ig1, ig2, ig3, ig4, iheur
    integer iprs, irec, iunit, jp1, jp2, jp3, ne, ni, nj, nk, total_keys, nrecs

@@ -80,10 +80,10 @@
 #include "gdz.cdk90"
 #include "styles.cdk90"
 !
-      character*12 cetiket
-      character*4 cnoment, cnomsrt
-      character*2 ctypvar
-      character*1 cigtyp
+      character(len=12) cetiket
+      character(len=4) cnoment, cnomsrt
+      character(len=2) ctypvar
+      character(len=1) cigtyp
 
       integer ig1,ig2,ig3,ig4,irec1,irec2
       integer jp1,jp2,jp3,jp01,jp02,jp03,jp11,jp12,jp13,ni,nj,nk,nn
@@ -97,7 +97,7 @@
       logical symetri,sym
       integer iunit, chkenrpos
       real fbidon, p
-      character*8 string
+      character(len=8) string
       integer npts
 
       real, dimension(:),allocatable :: lclif1, lclif2

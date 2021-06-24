@@ -7,10 +7,10 @@
       integer liste(256)
       logical rewrit
       
-      character *12 cetiket
-      character *4 cnomvar,cnomx
-      character *2 ctypvar
-      character *1 cigtyp
+      character(len=12) cetiket
+      character(len=4) cnomvar,cnomx
+      character(len=2) ctypvar
+      character(len=1) cigtyp
       
       integer dateo,datev,i
       integer deet,ig1,ig2,ig3,ig4

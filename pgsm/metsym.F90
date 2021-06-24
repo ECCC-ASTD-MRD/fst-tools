@@ -42,42 +42,7 @@
 !
   
       logical sym
-      character*4 cnom 
-!     
-!     sauve nsym dans nsymm a cause readlx qui remet a zero      nsymm = nsym 
-!
-      if (nnoms.lt.maxnoms) then
-         nnoms = nnoms + 1
-         ssym(nnoms) = sym
-         noms(nnoms) = cnom
-      else
-         if (message) then
-            write(6,*)            'PLUS DE PLACE DANS LES TABLES DE SYMETRIE(METSYM)'
-         endif
-      endif
-      
-      return 
-      end
-!**   S/P METSYM   MISE A JOUR DES TABLES DE SYMETRIE
-!     
-      subroutine metsym(nom,sym) 
-#include "impnone.cdk90"
-      external cmetsym
-!
-!AUTEUR  P.SARRAZIN  FEVRIER 82  DRPN DORVAL  P.Q. CANADA
-!
-!REVISION 4.0.2
-!   SEPARATION DE METSYM EN 2 PARTIES, L'UNE AVEC LE NOM STORE DANS UN ENTIER,
-!      L'AUTRE AVEC LE NOM STORE DANS UNE CHAINE DE CARACTERES
-!   Y. CHARTIER DRPN DORVAL QUEBEC
-!LANGAGE RATFOR
-!
-!OBJET(METSYM)
-!          INTERFACE A LA ROUTINE "CMETSYM"
-!
-      integer nom
-      logical sym
-      character*2 cnom
+      character(len=2) cnom
       
       write(cnom, '(A4)') nom
       write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom 

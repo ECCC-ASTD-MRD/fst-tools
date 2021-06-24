@@ -15,10 +15,10 @@
       integer ier,ier1, ier2, yy_key, ax_key, ay_key
       logical yinyang_grid
 
-      character*2 typvarx, typvary, grtyp, grref
-      character*12 etikx, etiky
-      character*4 nomx, nomy
-      character*24 chaine
+      character(len=2) typvarx, typvary, grtyp, grref
+      character(len=12) etikx, etiky
+      character(len=4) nomx, nomy
+      character(len=24) chaine
       integer  cdatyp
       integer dateo, deet, npas, nbits,datyp, ig1, ig2, ig3,      ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3, npak
 

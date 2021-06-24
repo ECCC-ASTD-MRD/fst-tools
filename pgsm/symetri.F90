@@ -45,7 +45,7 @@
 !
 !
       integer  i
-      character*4 cnom
+      character(len=4) cnom
 !
       symetri = .true.
 !

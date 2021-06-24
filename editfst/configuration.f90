@@ -32,13 +32,13 @@ module configuration
 ! GTYS, TYPS, NOMS, ETIS : tables utilisee pour stocker les requetes
 !     GTYS sert pour critere supplementaire type de grille
 !
-      character *1   , save :: GTY, GTYPS=' ', GTYS(NMD)
-      character *2   , save :: ZT, TYP, TYPS(NML,NMD)
-      character *4   , save :: ZN, NOM, NOMS(NML,NMD)
-      character *6   , save :: ETAT='NORMAL'
-      character *12  , save :: ZE, ETI, ETIS(NML,NMD)
-      character *4096 , save :: NS=' ', ND
-      character *15  , save :: SNOM, DNOM
+      character(len=1)  , save :: GTY, GTYPS=' ', GTYS(NMD)
+      character(len=2)  , save :: ZT, TYP, TYPS(NML,NMD)
+      character(len=4)  , save :: ZN, NOM, NOMS(NML,NMD)
+      character(len=6)  , save :: ETAT='NORMAL'
+      character(len=12) , save :: ZE, ETI, ETIS(NML,NMD)
+      character(len=4096), save :: NS=' ', ND
+      character(len=15) , save :: SNOM, DNOM
 
       integer, parameter :: NCCARDKEYS=147   ! dimension for program options (processed by ccard)
       character(len=8), dimension(NCCARDKEYS), save ::    &

@@ -15,13 +15,13 @@
 
       real, allocatable, dimension(:) :: buf
       integer, allocatable, dimension(:) :: iibuf
-      character *12 etiket
-      character *4 nomvar
-      character*2 typvar
-      character *1 grtyp
+      character(len=12) etiket
+      character(len=4) nomvar
+      character(len=2) typvar
+      character(len=1) grtyp
 
-      character*512 cle(4)
-      character*512 def(4),val(4)
+      character(len=512) cle(4)
+      character(len=512) def(4),val(4)
 
       data cle /'fstin:', 'fstout:', 'level', 'nbits'/
       data def /'void',    'void', 'env', '-1' /

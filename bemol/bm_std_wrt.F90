@@ -8,10 +8,10 @@ subroutine bm_std_wrt(udst, champ, nistart, njstart, niend, njend, &
   real champ(nistart:niend, njstart:njend)
   real, dimension(:,:), allocatable :: rchamp
   real, dimension(:), allocatable :: rax, ray
-  character*4 nomvar
-  character*2 typvar
-  character*12 etiket
-  character*1 grtyp, grref, lgrtyp
+  character(len=4) nomvar
+  character(len=2) typvar
+  character(len=12) etiket
+  character(len=1) grtyp, grref, lgrtyp
   integer dateo, deet, datyp, usr_datyp, npas, ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
 
   integer keyax, keyay, ier, compression_code

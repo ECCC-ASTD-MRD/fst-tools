@@ -84,18 +84,18 @@
 !
 !-----------------------------------------------------------------
 !
-      character *24 chaine
-      character *12 cetiket, cetksrt
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cgtyp
+      character(len=24) chaine
+      character(len=12) cetiket, cetksrt
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cgtyp
 
 
-      character*12 letiksrt
-      character*4 lnomvar
-      character*2 ltypsrt
+      character(len=12) letiksrt
+      character(len=4) lnomvar
+      character(len=2) ltypsrt
 
-      character*72 form1,form2
+      character(len=72) form1,form2
 
       integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet
       real fld(ni,nj,nk)
@@ -302,18 +302,18 @@
 !
 !-----------------------------------------------------------------
 !
-      character *24 chaine
-      character *12 cetiket, cetksrt
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cgtyp
+      character(len=24) chaine
+      character(len=12) cetiket, cetksrt
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cgtyp
 
 
-      character*12 letiksrt
-      character*4 lnomvar
-      character*2 ltypsrt
+      character(len=12) letiksrt
+      character(len=4) lnomvar
+      character(len=2) ltypsrt
 
-      character*72 form1,form2
+      character(len=72) form1,form2
 
       integer i, npac,idat,idatv,npas,ni,nj,nk,ip1,ip2,ip3,deet, datev
       integer fld(ni,nj,nk)

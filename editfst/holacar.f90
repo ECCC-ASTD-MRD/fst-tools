@@ -42,7 +42,7 @@
       EXTERNAL qqexit
       INTEGER  :: I, J, K, L
       integer, parameter :: NCW = 4  ! stocke dans des entiers a 32 bits par readlx
-      character *12 temp12
+      character(len=12)temp12
       INTEGER  X, Y
 
 !     PASSE DE HOLLERITH A CARACTERES

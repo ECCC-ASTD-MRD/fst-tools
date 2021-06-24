@@ -13,10 +13,10 @@
       integer  fstinf, fstprm, fstluk
       external fstinf, fstprm, fstluk, pgsmabt,messags
       
-      character *12 citiky,citikx
-      character *4 cnmvar1,cnmvar2
-      character *2 ctpvry,ctpvrx
-      character *1 cgtypx,cgtypy
+      character(len=12) citiky,citikx
+      character(len=4) cnmvar1,cnmvar2
+      character(len=2) ctpvry,ctpvrx
+      character(len=1) cgtypx,cgtypy
       
       integer irecy,irecx
       integer idatt,idett,npas,niy,njy,nky,jjp1,jjp2,jjp3

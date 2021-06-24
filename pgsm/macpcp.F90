@@ -64,10 +64,10 @@
 #include "packin.cdk90"
 #include "gdz.cdk90"
 !
-      character *12 cetike,cetiket
-      character *4 cnomvar, cnom
-      character *1 cigtyp
-      character *2 ctypvar
+      character(len=12) cetike,cetiket
+      character(len=4) cnomvar, cnom
+      character(len=1) cigtyp
+      character(len=2) ctypvar
 
       real valeur
       real fbidon

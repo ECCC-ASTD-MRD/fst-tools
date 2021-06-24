@@ -55,10 +55,10 @@
 #include "heures.cdk90"
 #include "styles.cdk90"
 !
-      character*12 etiket
-      character*4 nomvar
-      character*2 typvar
-      character*1 cigtyp
+      character(len=12) etiket
+      character(len=4) nomvar
+      character(len=2) typvar
+      character(len=1) cigtyp
 
       integer ig1,ig2,ig3,ig4,irec,iunit
       integer num1,num2,num3,nloop,deet
@@ -66,7 +66,7 @@
       integer ni,nj,nk,nbits,datyp,swa, lng, dltf, ubc, extra1, extra2, extra3
       integer argdims
       logical symetri,sym,heureok,ip3ok,processed
-      character*8 string
+      character(len=8) string
       real p
 
       real fbidon

@@ -61,10 +61,10 @@
 #include "styles.cdk90"
 #include "lnkflds.cdk90"
 
-      character *12 cetiqet
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cigtyp
+      character(len=12) cetiqet
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cigtyp
 
       integer i
       integer nom,npac,idat,ip1(2),ip2,ip3,igtyp,imprim,npkc
@@ -77,7 +77,7 @@
       external argdims
       integer lip1
       real p
-      character*8 string
+      character(len=8) string
 
 !-----------------------------------------------------------------
 !

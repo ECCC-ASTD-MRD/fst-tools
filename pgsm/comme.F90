@@ -50,11 +50,11 @@
 #include "blancs.cdk90"
 !
 !
-      character *12 cetiqet
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cigtyp
-      character *4 cbidon
+      character(len=12) cetiqet
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cigtyp
+      character(len=4) cbidon
       integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,num1,type
       integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa
       integer iopc, bidon,i

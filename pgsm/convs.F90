@@ -39,7 +39,7 @@
 !
       external fstcvt
       integer  nom,i,ier, fstcvt
-      character*4 cnom, cnoma
+      character(len=4) cnom, cnoma
       real bas,ecart,facteur,haut
 !
       write(cnom,'(A4)') nom

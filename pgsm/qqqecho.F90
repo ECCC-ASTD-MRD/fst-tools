@@ -7,8 +7,8 @@
       integer chaine(20)
       integer i,j,longueur,iun
 
-      character*80 message
-      character*16 form
+      character(len=80) message
+      character(len=16) form
 
       longueur = argdims(1)
 

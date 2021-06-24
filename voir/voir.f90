@@ -22,13 +22,13 @@
       integer, parameter :: ncle=5
       integer fnom,fstouv,fstvoi,fstfrm,exdb,exfin
       external fnom,fstouv,fstvoi,fstnbr,ccard,c_init_appl_var_table
-      character *8192 ccard_arg, filename
+      character(len=8192) ccard_arg, filename
       external exdb,exfin,ccard_arg
       integer ipos,ier,n
 
-      character * 8 cles(ncle)
-      character * 12 status
-      character * 128 val(ncle), def(ncle)
+      character(len=8) cles(ncle)
+      character(len=12) status
+      character(len=128) val(ncle), def(ncle)
       character(len=*), parameter :: VERSION='99.00'
       data cles / 'IMENT:','SEQ','STYLE','MOREHELP','V' /
       data def / '/dev/null','SEQ' ,'NINJNK+DATEV+LEVEL+IP1+GRIDINFO','MOREHELP',VERSION/
@@ -92,7 +92,7 @@
       stop
       end
       
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id: voir.f90 2014-01-30 08:00:00Z armnlib $'
       return
       end

@@ -78,7 +78,7 @@
    integer kinds(30)
 
    integer nom(2)
-   character*8 cnom, string
+   character(len=8) cnom, string
    real p
 !
 !

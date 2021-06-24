@@ -104,7 +104,7 @@ SUBROUTINE chk_tmpdir() BIND(C)
 END SUBROUTINE chk_tmpdir
 END INTERFACE
 
-	character *8 qlxcon(128),qlxlcon(4)
+	character(len=8) qlxcon(128),qlxlcon(4)
 	integer      qlxval(128)
 	integer      qlxlval(4)
 

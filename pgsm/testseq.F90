@@ -10,11 +10,11 @@
 
 
       real champ(nigem,njgem)
-      character*24 chaine
+      character(len=24) chaine
       
-      character*4 nomvar, cbidon2
-      character*2 typvar, bidon1, grtyp, grref, cbidon1
-      character*12 etiket, cbidon8
+      character(len=4) nomvar, cbidon2
+      character(len=2) typvar, bidon1, grtyp, grref, cbidon1
+      character(len=12) etiket, cbidon8
       
       iun = 0
       ier = fnom(iun,'bofseq','SEQ+FTN+UNF',0)

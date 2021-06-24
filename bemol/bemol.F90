@@ -22,10 +22,10 @@ Program bemol
   integer  exdb, exfin, fnom, fstouv, fclos, fstinf, fstfrm, fstinl, fstluk, fstprm, fstsui, fstecr, fstlir, fstopi, fstnbr
   external exdb, exfin, fnom, fstouv, fclos, fstinf, fstfrm, fstinl, fstluk, fstprm, fstsui, fstecr, fstlir, fstopi, fstnbr
 
-  character*4 nomvar,nomvarx
-  character*2 typvar, typvarx
-  character*12 etiket, etiketx
-  character *1 grtyp, grref
+  character(len=4) nomvar,nomvarx
+  character(len=2) typvar, typvarx
+  character(len=12) etiket, etiketx
+  character(len=1) grtyp, grref
 
   integer i,ip1,ip2,ip3,ip1x, ip2x, ip3x
 
@@ -39,11 +39,11 @@ Program bemol
   integer diesisincache,diesinf, dieslir, dies_process_flds
 
   !
-  character * 32   cle(nparams)
-  character * 256 def(nparams), val(nparams)
-  character * 256 nfich(120)
-  character * 1   custom_grtyp
-  character * 8   user_grtyp
+  character(len=32)   cle(nparams)
+  character(len=256) def(nparams), val(nparams)
+  character(len=256) nfich(120)
+  character(len=1)   custom_grtyp
+  character(len=8)   user_grtyp
   integer lnkdiun(120)
   integer nbfich
   integer keyax, keyay
@@ -52,7 +52,7 @@ Program bemol
   integer fill_code, custom_ni_start, custom_ni_end, custom_ni, custom_nj_start, custom_nj_end, custom_nj
   integer make_dst, make_core, make_coarse
   logical oktowrite
-  character*8 quiet_mode
+  character(len=8) quiet_mode
 
   real*8 deltat
 
@@ -375,7 +375,7 @@ end program bemol
 
 
 
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id$'
       return
       end

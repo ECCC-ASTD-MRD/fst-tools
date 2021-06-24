@@ -38,7 +38,7 @@
 !
       integer ni,nj,i,k,j
       real z(ni,nj)
-      character*4 cnom
+      character(len=4) cnom
 !     
       if ( nomb .eq. 0 ) return
       

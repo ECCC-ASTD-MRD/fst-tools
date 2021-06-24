@@ -55,17 +55,17 @@
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime, fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
 !
-      character *12 cetiket
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cigtyp
+      character(len=12) cetiket
+      character(len=4) cnomvar
+      character(len=2) ctypvar
+      character(len=1) cigtyp
       integer etiqet(3),idat,ihr,iip3,ip3,irec1,iunit,niv(2),nom,num1,type
       integer inomb,i,j,iopc,lniv
       integer cnbits,cdatyp,cswa, clng,cdltf,cubc,extra1,extra2,extra3
       integer argdims, letiket(3)
       external argdims
       real p
-      character*8 string
+      character(len=8) string
 !
       iunit=1
       iip3=ip3

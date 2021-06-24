@@ -8,10 +8,10 @@ subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, &
   real ax(nig)
   real ay(nig)
   real champ(nig, njg)
-  character*4 nomvar
-  character*2 typvar
-  character*12 etiket
-  character*1 grtyp, grref, lgrtyp
+  character(len=4) nomvar
+  character(len=2) typvar
+  character(len=12) etiket
+  character(len=1) grtyp, grref, lgrtyp
   integer dateo, datyp, deet, npas, ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
 
   integer keyax, keyay, ier

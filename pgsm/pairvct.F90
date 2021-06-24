@@ -57,8 +57,8 @@
 !
 !
       integer nomusag(2),varuu,varvv,varmodule,vardir
-      character*8 cnomusr
-      character*4 cvaruu, cvarvv, ccontrl, cvarwd
+      character(len=8) cnomusr
+      character(len=4) cvaruu, cvarvv, ccontrl, cvarwd
       integer i, nw
       integer argdims
       

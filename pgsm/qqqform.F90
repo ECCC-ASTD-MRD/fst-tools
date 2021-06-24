@@ -8,7 +8,7 @@
 
       integer i,j,longueur
 
-      character*80 chaine
+      character(len=80) chaine
 
       longueur = argdims(1)
 

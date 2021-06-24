@@ -10,15 +10,15 @@
       external fstinf,fstprm,fstecr,ccard,fstinl,fstouv,fnom,fstluk,exdb,exfin,fstsui,fstfrm
 
       real, allocatable, dimension(:) :: buf
-      character *12 etiket
-      character *4 nomvar
+      character(len=12) etiket
+      character(len=4) nomvar
 
-      character *1 grtyp
-      character*2 typvar
+      character(len=1) grtyp
+      character(len=2) typvar
 
 
-      character*512 cle(2)
-      character*512 def(2),val(2)
+      character(len=512) cle(2)
+      character(len=512) def(2),val(2)
 
       data cle /'fstin.', 'fstout.' /
       data def /'void',    'void' /
@@ -104,7 +104,7 @@
       stop
       end
 
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id$'
       return
       end

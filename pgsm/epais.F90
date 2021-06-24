@@ -52,10 +52,10 @@
 #include "packin.cdk90"
 #include "gdz.cdk90"
 !
-   character *12 cetiket
-   character *4 cnomvar
-   character *2 ctypvar
-   character*1 cigtyp
+   character(len=12) cetiket
+   character(len=4) cnomvar
+   character(len=2) ctypvar
+   character(len=1) cigtyp
 
    real fbidon
    integer iunit

@@ -4,8 +4,8 @@
 #include "impnone.cdk90"
       integer key,ni,nj,nk
       integer, dimension(ni,nj) :: ifld
-      character*4 nomvar
-      character*1 grtyp
+      character(len=4) nomvar
+      character(len=1) grtyp
       external fstluk
       integer fstluk
 

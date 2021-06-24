@@ -85,7 +85,7 @@
       integer ipr26,ipr27,ipr28,ipr29,ipr30
       integer iunit,nparm,i
 !     
-      character*8 cjcoup
+      character(len=8) cjcoup
 !     
 !     initialiser nivospr
 !     

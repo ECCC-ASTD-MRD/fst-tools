@@ -25,7 +25,7 @@
 #include "llccmm.cdk90"
 #include "grilles.cdk90"
 !
-      character*1 gtyout
+      character(len=1) gtyout
       real xg(20)
       integer nni,nnj,ihm,hem,ier,npts
       integer ig1,ig2,ig3,ig4
