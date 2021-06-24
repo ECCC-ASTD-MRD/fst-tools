@@ -2,7 +2,7 @@
       logical ssym(maxnom)
       common /symnom/ nnoms,maxnoms,nsym,nsymm,ssym
 
-      character*4 noms(maxnom)
+      character(len=4) noms(maxnom)
       common /csymnom/ noms
 !
 !

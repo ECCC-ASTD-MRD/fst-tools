@@ -1,7 +1,7 @@
       integer npair,npairuv
       common/pair/npair,npairuv
 
-      character*24 paire(npairmx)
+      character(len=24) paire(npairmx)
       common/cpair/paire
 !
 !

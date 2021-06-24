@@ -4,10 +4,10 @@
       common /accum/ nni,nnj,nnk,idatt,jpp1,jpp2,jpp3,ideet,npas,igg1,igg2,igg3,igg4,if0,icnt,unefois,once
 
 
-      character*12 cetik
-      character*2 ctypv
-      character*1 cigty
-      character*4 cnumv
+      character(len=12) cetik
+      character(len=2) ctypv
+      character(len=1) cigty
+      character(len=4) cnumv
       common /caccum/ cetik, ctypv, cigty, cnumv
 
 !

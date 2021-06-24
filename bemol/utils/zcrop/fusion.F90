@@ -21,12 +21,12 @@
       integer low_i, low_j, high_i, high_j
 
       real, allocatable, dimension(:,:) :: pilote, agregat, fusion
-      character *12 etiket
-      character *4 nomvar
-      character *1 grtyp, typvar
+      character(len=12) etiket
+      character(len=4) nomvar
+      character(len=1) grtyp, typvar
 
-      character*128 cle(3)
-      character*128 def(3),val(3)
+      character(len=128) cle(3)
+      character(len=128) def(3),val(3)
 
       data cle /'pilote.', 'agregat.', 'fusion.'/
       data def /'void',    'void',  'void' /

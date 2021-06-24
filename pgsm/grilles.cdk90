@@ -30,7 +30,7 @@
    common /grilles / li, lj, lg1, lg2, lg3, lg4, gdin, gdout, ixlat, ixlon,ngr, clatmin,clatmax,clonmin,clonmax, &
       dgrwxy,ixlatg,ixlong,ncoords,coordll,masque
 
-   character*1 cgrtyp, cgtypxy
+   character(len=1) cgrtyp, cgtypxy
    common /cgrille/ cgrtyp, cgtypxy
 !
 !

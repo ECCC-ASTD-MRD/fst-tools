@@ -2,7 +2,7 @@
       integer userdate,date2,date3,dateval,etikent(3),nwetike
       common /dates/ valid,vvent,wdvent,seldat,userdate,date2,date3,dateval,etikent,nwetike
 
-      character*4 cnomqq,cnomqr,cnommt
+      character(len=4) cnomqq,cnomqr,cnommt
       common /cdates/ cnomqq, cnomqr, cnommt
 !
 !

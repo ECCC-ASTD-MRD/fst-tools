@@ -2,7 +2,7 @@
       real ecarts,facts,bass,hauts
       common/tabls/ncon,nomb,ecarts(256),facts(256),bass(256),hauts(256)
 
-      character*4 nomss(256)
+      character(len=4) nomss(256)
       common /ctabls/ nomss
 !
 !

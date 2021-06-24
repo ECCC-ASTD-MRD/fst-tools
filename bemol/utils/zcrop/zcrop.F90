@@ -19,12 +19,12 @@
   real xmin, xmax, ymin, ymax
 
   real, allocatable, dimension(:) :: ax, ay, new_ax, new_ay
-  character *12 etiket
-  character *4 nomvar
-  character *1 grtyp, typvar
+  character(len=12) etiket
+  character(len=4) nomvar
+  character(len=1) grtyp, typvar
 
-  character*128 cle(13)
-  character*128 def(13),val(13)
+  character(len=128) cle(13)
+  character(len=128) def(13),val(13)
 
   data cle /'src.',  'dst.', 'ip1', 'ip2', 'ip3', 'imin', 'imax', 'jmin', 'jmax',  'xmin', 'xmax', 'ymin', 'ymax' /
   data def /'void',  'void', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
