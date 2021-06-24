@@ -8,7 +8,7 @@
       implicit none
 ! 
       integer minx,maxx,miny,maxy,lnk,F_i0,F_j0,F_k0,F_in,F_jn,F_kn,F_no
-      character*(*) F_nv_S , F_from_S
+      character(len=*) F_nv_S , F_from_S
       real F_field(minx:maxx,miny:maxy,lnk)
 !
 !author

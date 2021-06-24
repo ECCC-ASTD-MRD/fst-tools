@@ -82,11 +82,11 @@ C*DECK FSTCOMP
       integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
       integer lvar, iunexpv
       real Level
-      character *30 string
-      character *128 exception_vars
-      character * 512 ARMNLIB_var
-      character * 16 RELEASE
-      character * 32 SUB_RELEASE
+      character(len=30) string
+      character(len=128) exception_vars
+      character(len=512) ARMNLIB_var
+      character(len=16) RELEASE
+      character(len=32) SUB_RELEASE
       REAL *8 NHOURS
 
       COMMON/BUFR/ BUF(1)
@@ -680,7 +680,7 @@ C*DECK ICMP1D
       RETURN
       END
       
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id: fstcomp.f 178 2015-02-26 14:44:36Z armnlib $'
       return
       end

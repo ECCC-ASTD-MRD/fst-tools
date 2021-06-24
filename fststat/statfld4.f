@@ -4,10 +4,10 @@
       subroutine statfld4(nomvar,typvar,ip1,ip2,ip3,date,etiket,
      $     f,ni,nj,nk) 
       implicit none
-      character*4 nomvar
-      character*2 typvar
+      character(len=4) nomvar
+      character(len=2) typvar
       integer ip1,ip2,ip3,date
-      character*12 etiket
+      character(len=12) etiket
 * 
       integer ni,nj,nk
       real f(ni,nj,nk) 

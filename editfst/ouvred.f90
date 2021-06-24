@@ -21,7 +21,7 @@
       use configuration
       IMPLICIT      NONE
       INTEGER       OUVRED
-      CHARACTER*(*) DN
+      CHARACTER(len=*) DN
   
 !ARGUMENTS
 !SORTIE OUVRED - >=0 DIMENSION DU FICHIER OUVERT

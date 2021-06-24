@@ -23,7 +23,7 @@
 *MODULES
       external ccard,fstlnk      
       
-      character*1024 cle(40),def(40),val(40)
+      character(len=1024) cle(40),def(40),val(40)
       data cle /40*'fst:'/
       data def /40*'scrap'/
       data val /40*'scrap'/
@@ -33,9 +33,9 @@
       logical flag
       
       integer date,ip1,ip2,ip3
-      character*12 etiket
-      character*4 nomvar
-      character*2 typvar
+      character(len=12) etiket
+      character(len=4) nomvar
+      character(len=2) typvar
 
       integer i,ipos,nf,level
       integer ni,nj,nk
@@ -100,7 +100,7 @@
       
       
       
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id$'
       return
       end

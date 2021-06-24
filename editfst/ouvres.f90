@@ -20,7 +20,7 @@
       SUBROUTINE OUVRES( DN ) 
       use configuration
       IMPLICIT      NONE
-      CHARACTER*(*) DN(120)
+      CHARACTER(len=*) DN(120)
   
 !ARGUMENTS
 ! ENTREE DN    -  LISTE DES NOMS DE FICHIER SOURCE

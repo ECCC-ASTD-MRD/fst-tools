@@ -4,9 +4,9 @@
      $     etiket, ip1, ip2, ip3,typvar, nomvar)
       implicit none
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev
-      character*12 etiket
-      character*2 typvar
-      character*4 nomvar
+      character(len=12) etiket
+      character(len=2) typvar
+      character(len=4) nomvar
       
 *
 *AUTHOR   Yves Chartier                      July 1993
@@ -37,7 +37,7 @@
 *MODULES
       external fstinf,fstprm,fstluk,fstsui,fstopl
       integer ier,fstprm,fstinf,fstsui,fstluk,fstopl
-      character*1 grtyp
+      character(len=1) grtyp
       integer i
       
       integer key, date0, deet, npas, nbits, datyp 
@@ -51,7 +51,7 @@
 
       real, allocatable, dimension(:) :: buf
       
-      character*12 etiket2
+      character(len=12) etiket2
       key = fstinf(iun, ni, nj, nk,  datev, etiket, 
      $     ip1,ip2,ip3,typvar,nomvar)
 

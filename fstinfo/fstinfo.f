@@ -21,14 +21,14 @@ c
 c
       real*8 prtmp8
 c
-      character*1 ptgrtyp,ptdel
-      character*2 pttypvar
-      character*4 ptnomvar
-      character*12 ptetiket
+      character(len=1) ptgrtyp,ptdel
+      character(len=2) pttypvar
+      character(len=4) ptnomvar
+      character(len=12) ptetiket
 c
       character(len=8) :: cltimev
-      character*8 ptcle(12)
-      character*4096 ptvar(12), ptdefvar(12)
+      character(len=8) ptcle(12)
+      character(len=4096) ptvar(12), ptdefvar(12)
 c
       data ptcle /'izfst.','datev.','vdatev.','etiket.','ip1.','ip2.'
      &     ,'ip3.','typvar.','nomvar.','otxt.','del.','champs.'/
@@ -152,7 +152,7 @@ c
       call qqexit(0)
       stop
       end
-      character *128 function product_id_tag()
+      character(len=128) function product_id_tag()
       product_id_tag='$Id$'
       return
       end
