@@ -1,7 +1,7 @@
       program fstcompress
       implicit none
-      integer iun_in,iun_out,key1,iun_out2
-      integer ier, ipos, ni1,nj1,nk1,fstvoi,fstfrm,n
+      integer iun_in,iun_out,key1
+      integer ier, ipos, ni1,nj1,nk1,fstvoi,fstfrm
       integer dateo,deet,npas,ni,nj,nk,nbits,datyp,ip1,ip2,ip3
       integer ig1,ig2,ig3,ig4,swa,lng,dltf,ubc
       integer extra2,extra3,datev
