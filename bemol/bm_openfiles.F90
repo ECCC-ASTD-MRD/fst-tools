@@ -15,14 +15,14 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucfs, ucore, 
   integer ni, nj, nk, fstopi
   external fnom, fstouv, fstnbr, fstopi
   logical flag
-  
-  
+
+
   nf = 1
 33 if (val(nf).ne.def(nf)) then
      nf = nf +1
      goto 33
   endif
-  
+
   nf = nf -1
   do  i=1, nf
      ier = fnom(lnkdiun(i),val(i),'STD+RND+OLD+REMOTE+R/O',0)
@@ -33,7 +33,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucfs, ucore, 
         call qqexit(13)
      endif
   enddo
-  
+
   tol = 10
   flag = .false.
   ier = fstopi('TOLRNC', tol, flag)
@@ -47,14 +47,14 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucfs, ucore, 
         print *, '**********************************************'
         call qqexit(13)
      endif
-     
+
      nrecs = fstnbr(lnkdiun(i))
      nbrecs = nbrecs + nrecs
   enddo
-  
+
   tol = 6
   ier = fstopi('TOLRNC', tol, flag)
-  call fstlnk(lnkdiun, nf)   
+  call fstlnk(lnkdiun, nf)
   usrc = lnkdiun(1)
 
   if (val(cle_dst) /= 'SCRAP') then
@@ -110,7 +110,7 @@ subroutine bm_openfiles(nbrecs, val, def, lnkdiun, nf, usrc, udst, ucfs, ucore, 
   else
      ucore = -1
   endif
-  
+
   return
-  
+
 end subroutine bm_openfiles

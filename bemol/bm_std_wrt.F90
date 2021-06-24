@@ -2,7 +2,7 @@ subroutine bm_std_wrt(udst, champ, nistart, njstart, niend, njend, &
                       nomvar, typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, datyp, nbits, &
                       grtyp, ig1, ig2, ig3, ig4)
   implicit none
-  
+
   integer udst
   integer nistart, njstart, niend, njend, nig, njg
   real champ(nistart:niend, njstart:njend)
@@ -20,11 +20,11 @@ subroutine bm_std_wrt(udst, champ, nistart, njstart, niend, njend, &
   integer nbits, nkg, ip1, ip2, ip3
   integer i,j,ni, nj, nk
   integer rni_start, rni_end, rni, rnj_start, rnj_end, rnj
-  
-  
+
+
   nig = niend - nistart + 1
   njg = njend - njstart + 1
-    
+
   nkg = 1
 
   if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+'.or.nomvar.eq.'HT') then

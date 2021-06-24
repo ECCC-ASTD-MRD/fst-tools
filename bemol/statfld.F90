@@ -1,4 +1,4 @@
-!**s/r statfld - calcule la moyenne, la variance, le minimum et 
+!**s/r statfld - calcule la moyenne, la variance, le minimum et
 !                le maximum d un champs et imprime le resultat.
 !
       subroutine statfld (F_field, F_nv_S, F_no, F_from_S, &
@@ -6,7 +6,7 @@
                          F_i0,F_j0,F_k0,F_in,F_jn,F_kn)
 !
       implicit none
-! 
+!
       integer minx,maxx,miny,maxy,lnk,F_i0,F_j0,F_k0,F_in,F_jn,F_kn,F_no
       character(len=*) F_nv_S , F_from_S
       real F_field(minx:maxx,miny:maxy,lnk)
@@ -20,8 +20,8 @@
 !object
 !     calcule et imprime: la moyenne    (moy)
 !                         la variance   (var)
-!                         le minimum et le maximum du champ f   
-! 
+!                         le minimum et le maximum du champ f
+!
 !arguments
 !  Name        I/O                 Description
 !----------------------------------------------------------------
@@ -67,7 +67,7 @@
             end do
          end do
       end do
-      
+
       moy = sum / float(itot*jtot*ktot)
 !
 ! ** On calcule la variance
@@ -113,11 +113,11 @@
             end do
          end do
       end do
-!       
+!
 ! ** On imprime
-! 
+!
       write(Lun_out,98) F_no,F_nv_S,moy,var,imin,jmin,kmin,min, &
-                 imax,jmax,kmax,max,F_from_S 
+                 imax,jmax,kmax,max,F_from_S
  98   format (i4,a4,' Mean:',e14.7,' Var:',e14.7,' Min:[(',i3,',',i3,',',i3,')', &
              e14.7,']',' Max:[(',i3,',',i3,',',i3,')', e14.7,']',a6)
 !
@@ -178,10 +178,10 @@
             end do
          end do
       end do
-!       
+!
 ! ** On imprime
-! 
-      write(Lun_out,99) F_no,F_nv_S,moyd,vard,imin,jmin,kmin,mind, imax,jmax,kmax,maxd,F_from_S 
+!
+      write(Lun_out,99) F_no,F_nv_S,moyd,vard,imin,jmin,kmin,mind, imax,jmax,kmax,maxd,F_from_S
  99   format (i4,a4,' Mean:',e22.14,' Var:',e22.14,/,' Min:[(',i3,',',i3,',',i3,')',e22.14,']',' Max:[(',i3,',',i3,',',i3,')',e22.14,']',a6)
       call hpdeallc (pabuf1,err,1)
 !
@@ -189,4 +189,4 @@
 !
 !----------------------------------------------------------------
       return
-      end 
+      end

@@ -33,7 +33,7 @@
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
       integer :: I, J
-  
+
 !     TRAITEMENT DES FICHIERS SOURCES
       IF( OUVS ) THEN
          IF(NFSO .GT. 1) I = FSTUNL( )  ! unlink
@@ -46,7 +46,7 @@
       ENDIF
       RETURN
       END
-  
+
 !** S/R FERMED FERME  LE FICHIER DESTINATION
       SUBROUTINE FERMED
       use configuration
@@ -60,7 +60,7 @@
 !*
       INTEGER, external :: FSTVOI, FSTFRM, FSTRWD, FSTUNL, FSTOPC, FCLOS
       integer :: I
-!     TRAITEMENT DU FICHIER DESTINATION 
+!     TRAITEMENT DU FICHIER DESTINATION
       if(dryrun) then  ! dry run, on ne fait rien
         OUVD = .FALSE.
         return
@@ -81,5 +81,5 @@
          OUVD = .FALSE.
       ENDIF
       RETURN
-  
-      END 
+
+      END

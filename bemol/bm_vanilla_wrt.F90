@@ -1,8 +1,8 @@
-subroutine bm_vanilla_wrt(udst, champ, nig, njg, & 
+subroutine bm_vanilla_wrt(udst, champ, nig, njg, &
                       nomvar, typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, datyp, nbits, &
                       grtyp, ig1, ig2, ig3, ig4)
   implicit none
-  
+
   integer udst
   integer nig,njg
   real champ(nig, njg)
@@ -19,13 +19,13 @@ subroutine bm_vanilla_wrt(udst, champ, nig, njg, &
   integer ni, nj, nk, compression_code, usr_datyp
 
   nkg = 1
-  
+
   if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+') then
      rewrite_flag = .true.
   else
      rewrite_flag = .false.
   endif
-  
+
   call bemol_get_compression_code(compression_code)
   if (compression_code == -1) then
      usr_datyp = datyp
@@ -63,11 +63,11 @@ subroutine bm_vanilla_wrt(udst, champ, nig, njg, &
   return
 end subroutine bm_vanilla_wrt
 
-subroutine bm_vanilla_wrt8(udst, champ, nig, njg, & 
+subroutine bm_vanilla_wrt8(udst, champ, nig, njg, &
                       nomvar, typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, datyp, nbits, &
                       grtyp, ig1, ig2, ig3, ig4)
   implicit none
-  
+
   integer udst
   integer nig,njg
   real*8 champ(nig, njg)
@@ -84,13 +84,13 @@ subroutine bm_vanilla_wrt8(udst, champ, nig, njg, &
   integer ni, nj, nk, compression_code, usr_datyp
 
   nkg = 1
-  
+
   if (nomvar.eq.'HY'.or.nomvar.eq.'+HY+') then
      rewrite_flag = .true.
   else
      rewrite_flag = .false.
   endif
-  
+
   call bemol_get_compression_code(compression_code)
   if (compression_code == -1) then
      usr_datyp = datyp

@@ -20,7 +20,7 @@
       SUBROUTINE SAUVDEZ
       use ISO_C_BINDING
       use configuration
-      IMPLICIT NONE 
+      IMPLICIT NONE
       include 'excdes.inc'
 !
 !AUTEURS
@@ -28,11 +28,11 @@
 !REVISION      001 -   Y. BOURASSA AVR 92 ANNULE LE ZAP SI SAUV=0
 !REVISION      002 -   M. Valin mai 2014 utilisation des fonctions des fichiers standard pour
 !                                        la gestion des requetes
-!REVISION      003 -   M. Valin aout 2016 correction d'un bug de logique 
+!REVISION      003 -   M. Valin aout 2016 correction d'un bug de logique
 !REVISION      004 -   M. Lepine nov 2016 corrections, remettre le compteur de directives a zero
-!                                         ainsi que le compteur d'enregistrement 
+!                                         ainsi que le compteur d'enregistrement
 !
-!LANGUAGE   - FTN77 
+!LANGUAGE   - FTN77
 !
       EXTERNAL FSTCVT, ZAP
 !
@@ -57,8 +57,8 @@
           status = f_requetes_reset(N,0,0,0,0,0,0,0)  ! annuller le jeu de criteres N
         enddo
       ENDIF
-  
+
       NREQ = 0
       COPIES = 0
       RETURN
-      END 
+      END

@@ -9,11 +9,11 @@
 
     Auteurs: Djamel Bouhemhem, Yves Chartier
     Statut: Alpha
-                                                                                  
+
     To compile,
     make xml2generic
-    
-    To run, 
+
+    To run,
     ./xml2generic < file.xml
                                                                                                   */
 /* -----------------------------------------------------------------------------------------------*/
@@ -67,7 +67,7 @@ static struct Flag
     ParseProperty *parser;          /* parsing method */
 } flags[] =
 {
-  {"?xml",               SkipTag}, 
+  {"?xml",               SkipTag},
   {"rpn-standard-file",  SkipTag},
   {"fstrecord",          SkipTag},
   {"nomvar",             ParseString},
@@ -175,7 +175,7 @@ Bool IsWhite(uint c)
 }
 
 /* -----------------------------------------------------------------------------------------------*/
-/* read next character from input file */ 
+/* read next character from input file */
 static unsigned GetC(FILE *fp)
 {
     if (fp)
@@ -391,14 +391,14 @@ if(strcmp(option, "ip1") == 0)
       ip1 = number;
 #ifdef DEBUG
       fprintf(stderr, "setIntVar(char *option), tag: \"%s\", with value = \"%d\" \n", option, number);
-#endif      
+#endif
   }
 else if(strcmp(option, "ip2") == 0)
   {
     ip2 = number;
 #ifdef DEBUG
     fprintf(stderr, "setIntVar(char *option), tag: \"%s\", with value = \"%d\" \n", option, number);
-#endif      
+#endif
   }
 
 else if(strcmp(option, "ip3") == 0)
@@ -477,7 +477,7 @@ void setStringVar(char *option, char *buf)
         strcpy(nomvar, ">>");
         }
 #ifdef DEBUG
-      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" \n", option, nomvar);      
+      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" \n", option, nomvar);
 #endif
     }
 
@@ -639,7 +639,7 @@ void ParseValues(char *option)
   if (c == '<' || c == '/')
     delim = c;
 
-  while (i < MAX_SIZE1 && c != EOF && c != '<') /* keep reading characters from opening tag "<opening_tag>" 
+  while (i < MAX_SIZE1 && c != EOF && c != '<') /* keep reading characters from opening tag "<opening_tag>"
               until closing tag "</closing_tag>"  */
     {
         /* treat  \r\n   \r  or  \n as line ends */
@@ -714,7 +714,7 @@ void ParseValues(char *option)
 
 /* -----------------------------------------------------------------------------------------------*/
 /* depending on data type, an array of values
-  will be extratced from data buffer using space token 
+  will be extratced from data buffer using space token
   that separate numbers */
 void extract_data(char *buf, int datatype)
 {
@@ -896,17 +896,17 @@ void InitConfig(void)
 char * strtrim(char *s)
 {
 
-#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n')) 
+#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n'))
   char *p = s;
 
   for(p = s; *p; p++);	/* Find end of string */
 
 
-  for(p--; p>=s; p--) 
+  for(p--; p>=s; p--)
     {
-    if(SPACE(*p)) 
+    if(SPACE(*p))
       *p = 0;	        /* Zap trailing blanks */
-    else 
+    else
     break;
     }
 
@@ -925,7 +925,7 @@ char * strtrim(char *s)
 
 /* -----------------------------------------------------------------------------------------------*/
 void ParseConfigFile()
-{ 
+{
     char name[256];
     const char *fname;
     PList *entry;
@@ -957,7 +957,7 @@ void ParseConfigFile()
 
     if(c == '<' || c == '/' || c == '>') /* New today */
       {
-      AdvanceChar();  
+      AdvanceChar();
       }
 
     while (c != '>' && c != '<' && c != EOF && i < 200)
@@ -968,7 +968,7 @@ void ParseConfigFile()
 
     name[i] = '\0';
 
-#ifdef DEBUG	  
+#ifdef DEBUG
     if(strstr(name, "           ") == NULL)
       fprintf(stderr, "ParseConfigFile(), tag found: \"%s\" \n", name);
 #endif
@@ -987,9 +987,9 @@ void ParseConfigFile()
             exit(0);
         }
 
-      else if(strstr(name, "           ") != NULL) 
+      else if(strstr(name, "           ") != NULL)
         {
-        entry = NULL;     /* don't parse white space */        
+        entry = NULL;     /* don't parse white space */
         }
       else
         {

@@ -22,20 +22,20 @@
 !      use convert_ip123
 !      use format_ip123_kind
        use configuration
-      IMPLICIT NONE 
+      IMPLICIT NONE
        include 'convert_ip123.inc'
        include 'excdes.inc'
-  
+
 !AUTEURS
 !         - C. THIBEAULT  FEV 83
 !         - Y. BOURASSA   FEV 86
-!           "     "       NOV 89 INGORER LISTE OU GANGE DE RECORDS 
+!           "     "       NOV 89 INGORER LISTE OU GANGE DE RECORDS
 !           "     "              CORRIGE BUG QUAND EXPRESS = .TRUE.
-!           "     "       OCT 90 ACCEPTE FICHIERS STD89. 
+!           "     "       OCT 90 ACCEPTE FICHIERS STD89.
 !           "     "       NOV 90 SI MIX DE DESIRE ET EXCLURE, EXCLURE
 !                                LES ENREGISTREMENTS DESIRES SEULEMENT.
 !           "     "       JUL 91 VERSION ZAPPER
-!           "     "       NOV 91 TESTING DES PARAMETRES DE SELECTION DANS 
+!           "     "       NOV 91 TESTING DES PARAMETRES DE SELECTION DANS
 !                                UN ORDRE DIFFERENT
 !           "     "       JAN 92 BUG PREMIERE ALLOCATION MEMOIRE
 !Revision 009   M. Lepine - mars 98 - extensions pour fstd98
@@ -60,7 +60,7 @@
       INTEGER      FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC
       INTEGER      FSTLUK, FSTWEO, IG4, NBITS, NPAS
       integer      IP(4)
-      integer      IP1,IP2,IP3 
+      integer      IP1,IP2,IP3
       character(len=4) :: nomvar
       logical :: can_translate
       real :: p1, p2, p3
@@ -68,7 +68,7 @@
       character (len=2) :: strkind1, strkind2, strkind3
       integer :: nrecords
       integer :: date_1, date_2
-  
+
       LOGICAL      FIRSTP, BONNE, OK
       interface ! can IP1/2/3 for variable 'name' be translated to value/kind ?
         function fstcantranslate(name) result (yesno) BIND(C,name='FstCanTranslateName')
@@ -80,13 +80,13 @@
       integer, save :: NM=0
 !      DATA         NM, IST / 0, 0/
 
-      OK     = .NOT.FIXD .AND. .NOT.DM1 
+      OK     = .NOT.FIXD .AND. .NOT.DM1
 !     OK     = .TRUE. UNE DATE DANS LES DESIRES ET ENREGISTREMENTS
 !                     PAS NECESSAIREMENT VALIDES EN MEME TEMP
 !     DM1    = .TRUE. PAS DE DATES DANS LES DESIRES
-!     FIXD   = .TRUE. LES ENREGISTREMENTS DU FICHIER SOURCE SONT TOUS 
+!     FIXD   = .TRUE. LES ENREGISTREMENTS DU FICHIER SOURCE SONT TOUS
 !                     VALIDES EN MEME TEMPS.
-!     BONNE  = .TRUE. SI LA DATE DU PREMIER ENREGISTREMENT ACCEPTABLE 
+!     BONNE  = .TRUE. SI LA DATE DU PREMIER ENREGISTREMENT ACCEPTABLE
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
       IF( DEBUG ) call Dump_Request_table()
@@ -105,14 +105,14 @@
                  IG3, IG4, SWA, LNG, DLFT, UBC, VALID, XTRA2, XTRA3)
 !
       IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
-         WRITE(6,*)'IMPOSSIBLE DE COPIER ENREGISTREMENT NO.',IREC,' NBITS =',NBITS 
+         WRITE(6,*)'IMPOSSIBLE DE COPIER ENREGISTREMENT NO.',IREC,' NBITS =',NBITS
          GO TO 140
       ENDIF
       nrecords = nrecords + 1
       write(nomvar,'(A4)')NOM
       can_translate = (0 /= fstcantranslate(nomvar))   ! est-ce qu'on peut traduire ip1/2/3 pour cette variable ?
 
-      IF(FIRSTP .OR. OK) THEN 
+      IF(FIRSTP .OR. OK) THEN
          IP(4) = VALID   ! date valid
          IF(DEBUG .AND. FIRSTP) WRITE(6,*)'ENRG. #1 DATE ORIG = ',DATE,' VALID =',IP(4)
          FIRSTP = .FALSE.
@@ -218,7 +218,7 @@
 !        DEVONS-NOUS CONTINUER PASSE LE EOF RENCONTRE DANS SOURCE?
          IF(LEOF .LT. MEOF) GO TO 10
       ENDIF
-  
+
 !     DOIT-ON ECRIRE UN EOF AVANT DE FERMER?
       IF(DSEQ .AND. EOF.GT.0) THEN           ! le fichier destination est sequentiel
          I = FSTWEO(3, EOF)
@@ -229,7 +229,7 @@
             call qqexit(32)
          ENDIF
       ENDIF
-  
+
   180 WRITE(6,*) COPIES,' ENREGISTREMENT(S) COPIES DANS ', TRIM(ND)
 !      WRITE(6,*) nrecords,' ENREGISTREMENT(S) LUS DANS ', NS
 
@@ -240,5 +240,5 @@
       ENDIF
 
       RETURN
-  
-      END 
+
+      END

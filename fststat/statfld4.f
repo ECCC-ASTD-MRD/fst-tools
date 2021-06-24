@@ -1,29 +1,29 @@
-***s/r statfld4 - calcule la moyenne, la variance, le rminimum et 
+***s/r statfld4 - calcule la moyenne, la variance, le rminimum et
 *                le maximum d'un champs et imprime le resultat.
 *
       subroutine statfld4(nomvar,typvar,ip1,ip2,ip3,date,etiket,
-     $     f,ni,nj,nk) 
+     $     f,ni,nj,nk)
       implicit none
       character(len=4) nomvar
       character(len=2) typvar
       integer ip1,ip2,ip3,date
       character(len=12) etiket
-* 
+*
       integer ni,nj,nk
-      real f(ni,nj,nk) 
+      real f(ni,nj,nk)
 *
 *OBJECT
 *     calcule et imprime: la moyenne    (moy)
 *                         la variance   (var)
 *                         le minimum et le maximum
-*     du champ f   
-* 
+*     du champ f
+*
 *     arguments:
 *         - f       - champ sur lequel on veut faire des statistiques
 *         - n       - dimensions du champ f
 *         - champ   - identification du champ
-*         - no      - compteur 
-*         - from    - identification du module d'ou on fait l'appel 
+*         - no      - compteur
+*         - from    - identification du module d'ou on fait l'appel
 *
 *METHOD
 *
@@ -96,9 +96,9 @@ c
       CALL convip_plus(ip1,rlevel,kind,-1,level,.true.)
 *      call newdate(date,dat2,dat3,-3);
 *      print *,'Debug date=',date,dat2,dat3/100
-c       
+c
 c ** On imprime
-c 
+c
 C      write(6,10) nomvar,typvar,level,ip1,ip2,ip3,date,etiket,
       write(6,10) nomvar,typvar,level,ip2,ip3,date,etiket,
      $     moy,var,imin,jmin+(kmin-1)*nj,rmin,
@@ -112,4 +112,4 @@ C 10   format (' ',a4,1x,a2,1x,a15,' (',i9,') ',i9,1x,i3,1x,i9,1x,a12,1x,
 c
 c----------------------------------------------------------------
       return
-      end 
+      end

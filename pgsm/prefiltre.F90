@@ -17,6 +17,6 @@
 !          call statfld4 (fld,nomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0,0)
         endif
       endif
-      
+
       return
       end

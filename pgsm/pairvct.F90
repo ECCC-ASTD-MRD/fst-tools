@@ -1,22 +1,22 @@
 !
 !**S/P PAIRVCT  REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
 !
-      subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir) 
-      implicit none 
+      subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir)
+      implicit none
 !
 !AUTEUR P. SARRAZIN DORVAL QUE CANADA FEV 87
 !
 !REVISION 4.0.2
 !   CONVERSION DES VARIABLES HOOLERITH EN CARACTERE
 !REVISION 5.6.1
-!   INCLUSION DE LA VARIABLE WD - DIRECTION DU VENT Y.Chartier - Aout 1996  
+!   INCLUSION DE LA VARIABLE WD - DIRECTION DU VENT Y.Chartier - Aout 1996
 !
 !LANGAGE RATFOR
 !
 !OBJET(PAIRVCT)
 !          REMPLACE OU AJOUTE DANS LA TABLE PAIRE DU COMMON/PAIR/..
 !          POUR REFERENCE PAR L'USAGER QUI PERMET CERTAINES INTERPOLATIONS
-!          DE VARIABLES PAIRES. 2 SETS DE VARIABLES PAIRES INITIALISE 
+!          DE VARIABLES PAIRES. 2 SETS DE VARIABLES PAIRES INITIALISE
 !          DANS PGSM UU,VV  US,VS.
 !
 !LIBRAIRIES
@@ -42,7 +42,7 @@
 !         - 'VERIFIER NOMBRE D ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
 !           'PAIRES DEJA INITIALISE'
 !           'PAIRES("VENT","UU","VV","UV")
-!           'PAIRES("UV","UU","VV","0") 
+!           'PAIRES("UV","UU","VV","0")
 !           'PAIRES("VENTUVS","US","VS","UV")
 !           'PAIRES("UVS","UU","VV","0")
 !
@@ -61,12 +61,12 @@
       character(len=4) cvaruu, cvarvv, ccontrl, cvarwd
       integer i, nw
       integer argdims
-      
+
       external fstcvt
       integer  fstcvt
-      
+
       if (npairuv.lt.3.or.npairuv.gt.5) then
-         write(6,*)'  VERIFIER ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)' 
+         write(6,*)'  VERIFIER ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
          write(6,*)' PAIRES DEJA INITIALISEES'
          write(6,*)' PAIRES("VENT","UU","VV","UV")'
          write(6,*)' PAIRES("UV","UU","VV","0")'
@@ -76,27 +76,27 @@
       endif
 !
 !   VERIFI SI NOM EXISTE DANS LA TABLE SI OUI ON REMPLACE
-!   SI NON ON AJOUTE SI LA TABLE N'EST PAS PLEINE 
+!   SI NON ON AJOUTE SI LA TABLE N'EST PAS PLEINE
 !
-      nw = min(argdims(1), 2) 
+      nw = min(argdims(1), 2)
       write (cnomusr, 100) (nomusag(i), i=1,nw)
  100  format(2a4)
-      
+
       write (cvaruu, 200) varuu
       write (cvarvv, 200) varvv
       write (ccontrl, 200) varmodule
       write (cvarwd, 200) vardir
  200  format(a4)
-      
+
       if (varmodule.eq.0) ccontrl = '??'
       if (vardir.eq.0) cvarwd = '??'
-      
+
       write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl, cvarwd
-      
+
       call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
       return
-      end 
-  
+      end
+
 !**S/P PAIRVC2  REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
       subroutine pairvc2(cnomusr,cvaruu,cvarvv,ccontrl,cvarwd)
 !
@@ -111,7 +111,7 @@
 !     OBJET(PAIRVCT)
 !          REMPLACE OU AJOUTE DANS LA TABLE PAIRE DU COMMON/PAIR/..
 !          POUR REFERENCE PAR L'USAGER QUI PERMET CERTAINES INTERPOLATIONS
-!          DE VARIABLES PAIRES. 2 SETS DE VARIABLES PAIRES INITIALISE 
+!          DE VARIABLES PAIRES. 2 SETS DE VARIABLES PAIRES INITIALISE
 !          DANS PGSM UU,VV  US,VS.
 !
 !LIBRAIRIES
@@ -137,7 +137,7 @@
 !         - 'VERIFIER NOMBRE D ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
 !           'PAIRES DEJA INITIALISE'
 !           'PAIRES("VENT","UU","VV","UV")
-!           'PAIRES("UV","UU","VV","0") 
+!           'PAIRES("UV","UU","VV","0")
 !           'PAIRES("VENTUVS","US","VS","UV")
 !           'PAIRES("UVS","UU","VV","0")
 !
@@ -150,12 +150,12 @@ implicit none
 #include "defin.cdk90"
 #include "pairs.cdk90"
 !
-      character cnomusr*8, cvaruu*4 , cvarvv*4 , ccontrl*4 , cvarwd*4 
+      character cnomusr*8, cvaruu*4 , cvarvv*4 , ccontrl*4 , cvarwd*4
       integer np
       logical remplac
-!     
+!
 !   VERIFI SI NOM EXISTE DANS LA TABLE SI OUI ON REMPLACE
-!   SI NON ON AJOUTE SI LA TABLE N'EST PAS PLEINE 
+!   SI NON ON AJOUTE SI LA TABLE N'EST PAS PLEINE
 !
       remplac=.false.
       do np=1,npair
@@ -169,7 +169,7 @@ implicit none
             write (6, *) 'PAIRE(NP): ', paire(np)
          endif
       enddo
-!     
+!
       if (remplac)  go to 1000
 !
 !   SI ON N'A PAS REMPLACE DANS LA TABLE ON AJOUTE
@@ -181,17 +181,17 @@ implicit none
          return
       endif
 !
-      paire(np)( 1: 8) = cnomusr 
-      paire(np)( 9:12) = cvaruu 
-      paire(np)(13:16) = cvarvv 
-      paire(np)(17:20) = ccontrl 
+      paire(np)( 1: 8) = cnomusr
+      paire(np)( 9:12) = cvaruu
+      paire(np)(13:16) = cvarvv
+      paire(np)(17:20) = ccontrl
       paire(np)(21:24) = cvarwd
       write (6, *) 'PAIRE(NP): ', paire(np)
-      return 
+      return
 !
 !
  1000 write(6,*)'  2 VARIABLES PAIRES REMPLACEES '
-!     
-      return 
+!
+      return
       end
 

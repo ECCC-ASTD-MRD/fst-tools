@@ -1,8 +1,8 @@
-subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, & 
+subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, &
                       nomvar, typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, datyp, nbits, &
                       grtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
   implicit none
-  
+
   integer udst
   integer nig,njg
   real ax(nig)
@@ -26,7 +26,7 @@ subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, &
   integer xc1, xc2, yc1, yc2, nicore, njcore
   integer findlowcoreindex, findhighcoreindex
   external findlowcoreindex, findhighcoreindex;
-  
+
   xc1 = findlowcoreindex(ax, nig)
   xc2 = findhighcoreindex(ax, nig)
   yc1 = findlowcoreindex(ay, njg)
@@ -51,20 +51,20 @@ subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, &
         aycore(j) = ay(j+yc1-1)
      enddo
 
-     
+
      ier = FSTECR(axcore, axcore, -32, udst, dateo, deet, npas, nicore, 1, 1, &
           ig1, ig2, ig3, 'X ', '>>  ', etiket, grref, &
           ig1ref, ig2ref, ig3ref, ig4ref, 5, .true.)
-     
+
      ier = FSTECR(aycore, aycore, -32, udst, dateo, deet, npas, 1, njcore, 1, &
           ig1, ig2, ig3, 'X ', '^^  ', etiket, grref, &
           ig1ref, ig2ref, ig3ref, ig4ref, 5, .true.)
-     
+
      deallocate(axcore)
      deallocate(aycore)
 
   endif
-  
+
   call bemol_get_compression_code(compression_code)
   if (compression_code == -1) then
      usr_datyp = datyp
@@ -95,7 +95,7 @@ subroutine bm_core_wrt(udst, champ, ax, ay, nig, njg, &
   if (lgrtyp.eq.'#') then
      lgrtyp = 'Z'
   endif
-     
+
 
   ier = FSTECR(zcore, zcore, -nbits, udst, dateo, deet, npas, nicore, njcore, &
        1, ip1, ip2, ip3, typvar, nomvar, etiket, lgrtyp, &

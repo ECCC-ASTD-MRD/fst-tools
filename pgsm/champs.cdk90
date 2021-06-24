@@ -1,6 +1,6 @@
       integer champpr,nchamp,nchmp,npar
       common / champs/ nchamp, nchmp, npar,champpr(MXCHAMP)
-!     
+!
 #if defined (doc)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !         - bloc /champs / nchamp, nchmp

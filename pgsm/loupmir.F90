@@ -25,7 +25,7 @@
 !                  NOMBRE EST (MAXIMUM) LA MOITIE DU NOMBRE DES POINTS
 !
 !APPEL
-!     - VIA GRILLE,COUPZM,LIREN,EPAISUR 
+!     - VIA GRILLE,COUPZM,LIREN,EPAISUR
 !     - CALL LOUPMIR(SORTIE,ENTRE,NOMBRE)
 !     - CALL LOUPTRA(SORTIE,ENTRE,NOMBRE)
 !     - CALL LOUPIN1(SORTIE,ENTRE,NOMBRE)
@@ -39,7 +39,7 @@
 !
       real sortie(1),entre(1)
       integer nombre,nombpl1,i
-!     
+!
 !            TRANSFER LA MOITIE DU CHAMP DANS L'AUTRE
 !
 !
@@ -48,20 +48,20 @@
       do i=1,nombre
          sortie(i + nombre) = entre(nombpl1 - i)
       enddo
-!     
+!
       return
-!     
+!
 !------------------------------------------------------------
 !
       entry louptra(sortie,entre,nombre)
 !
 !
-!              TRANSFER CHAMP 
+!              TRANSFER CHAMP
 !
       do i=1,nombre
          sortie(i)=entre(i)
       enddo
-!     
+!
       return
 !-------------------------------------------------------------
 !
@@ -73,7 +73,7 @@
        do i=1,nombre
           sortie(i)=1.0
        enddo
-!     
+!
        return
 !-----------------------------------------------------------
 !
@@ -85,6 +85,6 @@
        do i=1,nombre
           sortie(i)=entre(i) - sortie(i)
        enddo
-!     
+!
        return
        end

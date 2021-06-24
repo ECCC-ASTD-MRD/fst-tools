@@ -18,6 +18,6 @@
          j = 4*(i-1)+1
          write(qcform(j:j+3),'(a4)') theform(i)
       enddo
-      
+
       return
       end

@@ -33,21 +33,21 @@ wordint ftnstrclean(str,lenstr)
 wordint lenstr;
 {
    wordint i, j, iinit, jinit;
-   
+
    iinit = 0;
    i = iinit;
    while (str[i] == ' ' && i < lenstr)
      i++;
-   
+
    if (i != iinit)
      strcpy(str, str+i);
-   
+
    jinit = lenstr-1;
    j = jinit;
-   
+
    while (str[j] == ' ' && j >= 0)
      j--;
-   
+
    if (j != jinit)
      str[j+1] = '\0';
 

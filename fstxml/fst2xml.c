@@ -32,26 +32,26 @@ int fst2xml(int argc, char **argv)
   char encoding[16];
   char format[32];
   int ok, iun, key, tokens_per_line;
-  
-  char *liste[5], lcl_liste[5][256], *def[5], lcl_def[5][16], val[5][256]; 
+
+  char *liste[5], lcl_liste[5][256], *def[5], lcl_def[5][16], val[5][256];
   int i, n, npos, nptsRLE;
   int ni, nj, nk;
-  
+
   int ier, ip1, ip2, ip3, ig1, ig2, ig3, ig4;
   int  dateo, datev, datyp, deet,nbits, npak, npas,swa, lng;
   int dltf, ubc, extra1, extra2, extra3;
   int isallocated, multi;
-    
+
   char etiket[16], nomvar[8], typvar[4], grtyp[2];
   char xmldateo[32], xmldatev[32];
   char xmlip1[32], xmlip2[32], xmlip3[32];
   double nhours;
-  
+
   float *fld;
   int *ifld;
 
   FILE *xmlfd;
-  
+
   strcpy(lcl_liste[0], "fst.");
   strcpy(lcl_liste[1], "xml.");
   strcpy(lcl_liste[2], "encoding.");
@@ -76,16 +76,16 @@ int fst2xml(int argc, char **argv)
   def[3] = (char *) lcl_def[3];
   def[4] = (char *) lcl_def[4];
 
-  
-  
+
+
   for (i = 0; i < 5; i++)
     {
     strcpy(val[i], def[i]);
     }
-  
+
   npos = 0;
   c_ccard(argv, argc, (char **) liste, val, (char **) def, 5, &npos);
-    
+
   strcpy(fstFile, val[0]);
   strcpy(xmlFile, val[1]);
   strcpy(encoding, val[2]);
@@ -123,12 +123,12 @@ int fst2xml(int argc, char **argv)
     strcpy(nomvar, "    ");
     strcpy(typvar, "  ");
     strcpy(grtyp, " ");
-    
+
     ier = c_fstprm(key, &dateo, &deet, &npas, &ni, &nj, &nk, &nbits,
             &datyp, &ip1, &ip2, &ip3, typvar, nomvar, etiket,
             grtyp, &ig1, &ig2, &ig3, &ig4, &swa, &lng, &dltf,
             &ubc, &extra1, &extra2, &extra3);
-    if (nbits > 32) 
+    if (nbits > 32)
       multi = 2;
     else
       multi = 1;
@@ -138,11 +138,11 @@ int fst2xml(int argc, char **argv)
     f77name(incdatr)(&datev, &dateo, &nhours);
     xmlconvdate(xmldateo, dateo);
     xmlconvdate(xmldatev, datev);
-    
+
     etiket[12] = '\0';
     nomvar[4] = '\0';
     typvar[2] = '\0';
-    
+
     /*---------------------------------------------------------------*/
     fprintf(xmlfd, "%s\n", "<fstrecord>");
     fprintf(xmlfd, "\t%s%s%s\n", "<nomvar>", nomvar, "</nomvar>");
@@ -172,7 +172,7 @@ int fst2xml(int argc, char **argv)
     fprintf(xmlfd, "\t\t%s%d%s\n", "<extra1>", extra1, "</extra1>");
     fprintf(xmlfd, "\t\t%s%d%s\n", "<extra2>", extra2, "</extra2>");
     fprintf(xmlfd, "\t\t%s%d%s\n", "<extra3>", extra3, "</extra3>");
-    
+
     fprintf(xmlfd, "\t\t%s%s%s\n", "<level>", xmlip1, "</level>");
     fprintf(xmlfd, "\t\t%s%s%s\n", "<date-of-origin>", xmldateo, "</date-of-origin>");
     fprintf(xmlfd, "\t\t%s%s%s\n", "<date-of-validity>", xmldatev, "</date-of-validity>");
@@ -202,7 +202,7 @@ int fst2xml(int argc, char **argv)
               }
             }
       break;
-        
+
         case 2:
         case 4:
         case 130:
@@ -219,7 +219,7 @@ int fst2xml(int argc, char **argv)
                 }
               }
         break;
-  
+
         default:
 	  fprintf(stderr,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",datyp,nomvar);
 	  isallocated = 0;
@@ -229,7 +229,7 @@ int fst2xml(int argc, char **argv)
       fprintf(xmlfd, "\t\t%s\n", "</values>");
       fprintf(xmlfd, "\t\t%s\n", "</fstdata>");
       fprintf(xmlfd, "%s\n", "</fstrecord>");
-      
+
       switch (isallocated)
         {
           case 0:
@@ -244,7 +244,7 @@ int fst2xml(int argc, char **argv)
 
       key = c_fstsui(iun, &ni, &nj, &nk);
     } while (key >= 0);
-  
+
   fprintf(xmlfd, "%s\n", "</rpn-standard-file>");
   fclose(xmlfd);
   ier = c_fstfrm(iun);
@@ -268,7 +268,7 @@ void xmlconvip(char xmlip1[], int ip1)
   f77name(convip_plus)(&lip1, &niveau, &kind, &mode, xmlip1, &flag, l );
   xmlip1[31] = '\0';
   nettoyer(xmlip1);
-  
+
 }
 
 
@@ -276,7 +276,7 @@ void xmlconvdate(char xmldate[], int dateo)
 {
   int ldateo, yyyymmdd, hhmmssss, mode;
   int yyyy, month, day, hour, minutes, sec, fracsec;
-  
+
   mode = -3;
   ldateo = dateo;
 

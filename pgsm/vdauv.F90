@@ -9,7 +9,7 @@
 !AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
 !
 !OBJET(VDAUV)
-!         AVEC LA DIRECTION ET LA VITESSE DU VENT CALCUL LES VECTEURS 
+!         AVEC LA DIRECTION ET LA VITESSE DU VENT CALCUL LES VECTEURS
 !         U ET V. UTILISATION DE LA LONGITUDE
 !
 !ARGUMENTS
@@ -20,7 +20,7 @@
 !   IN     NOMBRE  - NOMBRE DE POINTS DANS LES DEUX CHAMPS
 !
 !APPEL
-!     - VIA UVECTUR 
+!     - VIA UVECTUR
 !     - CALL VDAUV(SRTENTU,SRTENTV,CLONG,DGTORD,NOMBRE)
 !
 #include "grilles.cdk90"
@@ -43,9 +43,9 @@
             srtentu(i)=u
             srtentv(i)=v
          enddo
-!     
+!
 !     SI LE TYPE DE GRILLE GRTYPXY= "N" HEM NORD
-!     
+!
       else if (cgtypxy.eq.'N') then
          do i=1,nombre
             angle=dgtord*(dgrwxy + srtentv(i))
@@ -60,5 +60,5 @@
          call pgsmabt
       endif
       return
-      end 
-      
+      end
+

@@ -1,16 +1,16 @@
-!     
+!
 !**   S/P  CONVER, PLMNMOD ECART AU CHAMP ET MULTIPLIER PAR FACTEUR
-!     
+!
 !     AUTEUR P.SARRAZIN MAI 82 DRPN DORVAL QUEBEC CANADA
-!     
+!
       subroutine conver(z, ni, nj, cnom)
 #include "impnone.cdk90"
-!     
+!
 !LANGAGE RATFOR
 !
 !OBJET(CONVER)
 !          AUGMENTE UN CHAMP D UNE VALEUR UNIFORME (ECARTS) ET
-!          MULTIPLIER PAR UN FACTEUR APPROPRIE ELIMINE LES VALEURS TROP PETITES 
+!          MULTIPLIER PAR UN FACTEUR APPROPRIE ELIMINE LES VALEURS TROP PETITES
 !          OU TROP GRANDES PREDETERMINEES
 !
 !LIBRAIRIES
@@ -24,7 +24,7 @@
 !  IN     NOM - NOM DE LA VARIABLE DU CHAMP A MODIFIER
 !
 !APPEL   VIA CALL
-!        CALL CONVER(CHAMP,NI,NJ,NOM)  APPELLE DANS ECRITUR 
+!        CALL CONVER(CHAMP,NI,NJ,NOM)  APPELLE DANS ECRITUR
 !
 !  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
@@ -39,9 +39,9 @@
       integer ni,nj,i,k,j
       real z(ni,nj)
       character(len=4) cnom
-!     
+!
       if ( nomb .eq. 0 ) return
-      
+
       k = 0
       do i = 1,nomb
          if (cnom .eq. nomss(i)) then
@@ -50,14 +50,14 @@
          endif
       enddo
  10   continue
-      
+
       if ( k .eq. 0 ) return
-!     
+!
       do j=1,nj
          do i=1,ni
             z(i,j) = amax1(bass(k),amin1(hauts(k),(z(i,j) +             ecarts(k))*facts(k)))
          enddo
       enddo
-!     
-      return 
+!
+      return
       end

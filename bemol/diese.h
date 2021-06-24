@@ -34,7 +34,7 @@ typedef struct
   char etikety[16];
 
   char grref[4];
-  
+
   wordint ntuiles_total;
   wordint ntuiles_x, ntuiles_y;
   wordint initialized;
@@ -43,7 +43,7 @@ typedef struct
   _Tuile *tuiles;
   float *ax, *ay;
   } _Diese;
-  
+
 typedef struct
   {
   wordint key,ip1, ip2, ip3, dateo;
@@ -56,7 +56,7 @@ typedef struct
   char etiket[16];
   char grtyp[4];
   } _Fld;
-  
+
 typedef struct
   {
   _Fld fldinfo;

@@ -1,17 +1,17 @@
       subroutine chk_toctoc(lu_in, lu_out)
       implicit none
-      
+
       integer lu_in, lu_out
       external fstinl,fstprm, fstecr, fstluk, fstinf, fstopl
       integer fstinl, fstprm, fstecr, fstluk, fstinf, fstopl
       integer liste(256)
       logical rewrit
-      
+
       character(len=12) cetiket
       character(len=4) cnomvar,cnomx
       character(len=2) ctypvar
       character(len=1) cigtyp
-      
+
       integer dateo,datev,i
       integer deet,ig1,ig2,ig3,ig4
       integer irec,irec_out,ip1,ip2,ip3,ni,nj,nk,nrecs,ier,npas
@@ -29,9 +29,9 @@
          if (irec_out < 0) then
              ier=fstluk(hydata, irec, ni, nj, nk)
              ier = fstecr(hydata,hydata,-nbits,lu_out,dateo,deet,npas,            ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,            cigtyp,ig1,ig2,ig3,ig4,cdatyp,rewrit )
-         endif 
+         endif
       enddo
-         
+
 
       return
       end

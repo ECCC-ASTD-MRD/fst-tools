@@ -26,7 +26,7 @@
  *   Michel Valin  -  Mars 2014                                              *
  *                                                                           *
  *Objet                                                                      *
- *   Definir pour le logiciel des fichiers standards des criteres            * 
+ *   Definir pour le logiciel des fichiers standards des criteres            *
  *   supplementaires de selection en plus de ceux utilises par fstinf.       *
  *                                                                           *
  *   Les criteres de selection a la desire/exclure de editfst peuvent        *
@@ -83,7 +83,7 @@ enum cquoica {unused,entier, reel, deb_fin_entier, deb_fin_reel, deb_fin_entier_
 
 #define DESIRE 1
 #define EXCLURE -1
-              
+
 #define READLX_DELTA -3
 #define READLX_RANGE -2
 
@@ -158,7 +158,7 @@ int fst_reactivate_filters(){
 }
 
 /* put the contents of the request table in text format
- * 
+ *
  * use_header != 0   : print separators, otherwise produce "csv" type output
  * filename != NULL  : write output into that file, without separators (ignore use_header)
  * filename == NULL  : output to stdout
@@ -224,7 +224,7 @@ void WriteRequestTable(int use_header, char *filename)
       }
       if(Requests[i].in_use_supp){
         fprintf(outfile,"%2d, '%c', ",i,Requests[i].exdes == DESIRE ? 'D' : 'E');
-        fprintf(outfile,"'Xtra      ', 'value ',  8%s %d, %d, %d, %d, %d, %d, %d, '%c'\n",sep, 
+        fprintf(outfile,"'Xtra      ', 'value ',  8%s %d, %d, %d, %d, %d, %d, %d, '%c'\n",sep,
                 Requests[i].nis,Requests[i].njs,Requests[i].nks,
                 Requests[i].ig1s,Requests[i].ig2s,Requests[i].ig3s,Requests[i].ig4s,Requests[i].grdtyps);
       }
@@ -711,7 +711,7 @@ int ReadRequestTable(char *filename)
   s2[0]='\000';
   s3[0]='\000';
   nvalues=0;
-  
+
   sscanf(line,"%d",&dirset);
   if(dirset==0) {fclose(input) ; return(0); }
   cptr=line;
@@ -729,7 +729,7 @@ int ReadRequestTable(char *filename)
   if(s3[0] == 'r') rvd = RANGE;
   if(s3[0] == 'd') rvd = DELTA;
   dex = s1[0] == 'D' ? DESIRE : EXCLURE ;
-  
+
   cptr=fgets(line,sizeof(line),input);
   cptr = line;
 //  fprintf(stderr,"reading data\n");
@@ -867,7 +867,7 @@ return 0; /*CHC/NRC*/
  *****************************************************************************/
 int C_filtre_desire()
 {
-  
+
   if(package_not_initialized) RequetesInit();
   bundle_nb++;
   desire_exclure = 1;
@@ -889,7 +889,7 @@ return 0; /*CHC/NRC*/
  *****************************************************************************/
 int C_filtre_exclure()
 {
-  
+
   if(package_not_initialized) RequetesInit();
   bundle_nb++;
   desire_exclure = 0;
@@ -1038,7 +1038,7 @@ int C_fstmatch_parm(int handle, int datevalid, int ni, int nj, int nk,
 //fprintf(stderr,"matching request set %d\n",set_nb);
     Supplements:
       if (Requests[set_nb].in_use_supp) {   /* les criteres supplementires sont globaux */
-        if( (Requests[set_nb].ig1s != ig1 && Requests[set_nb].ig1s != -1) 
+        if( (Requests[set_nb].ig1s != ig1 && Requests[set_nb].ig1s != -1)
         ||  (Requests[set_nb].ig2s != ig2 && Requests[set_nb].ig2s != -1)
         ||  (Requests[set_nb].ig3s != ig3 && Requests[set_nb].ig3s != -1)
         ||  (Requests[set_nb].ig4s != ig2 && Requests[set_nb].ig4s != -1)
@@ -1200,7 +1200,7 @@ int C_fstmatch_parm(int handle, int datevalid, int ni, int nj, int nk,
         dbprint(stddebug,"Debug C_fst_match_req fin requete %s satisfaite, handle=%d \n",desire_exclure,handle);
         Requests[set_nb].hit++ ;                                    /* add one to this request's hit count */
         return((Requests[set_nb].exdes == DESIRE) ? set_nb+1 : 0 );  /* requete desire satisfaite */
-      }      
+      }
     /* Next:                  verifier le prochain desire/exclure */
 
   } /* end for */
@@ -1455,7 +1455,7 @@ int f77name(f_filtre_exclure)()
 /*CHC/NRC*/
 	return C_filtre_exclure();
 }
-  
+
 int f77name(f_fst_match_req)(int *handle)
 {
   return(C_fstmatch_req(*handle));
@@ -1599,10 +1599,10 @@ int Directive_ip123(int argc , char **argv,char cmd_strt,  void *func(), char *P
 /*  for (i=0;i<=argc;i++)
     printf("argument # %d-->%s<-- \n",i,argv[i]); */
 
-  set_nb = bundle_nb;    
-	des_exc = desire_exclure;  
+  set_nb = bundle_nb;
+	des_exc = desire_exclure;
   if ((strncasecmp(argv[1],"asis",3) == 0) || (strncasecmp(argv[1],"telquel",3) == 0))
-  	kind = -1;    
+  	kind = -1;
   else if ((strncasecmp(argv[1],"height",3) == 0) || (strncasecmp(argv[1],"hauteur",3) ==0))
   	kind = 0;
   else if (strncasecmp(argv[1],"sigma",3) == 0)
@@ -1612,18 +1612,18 @@ int Directive_ip123(int argc , char **argv,char cmd_strt,  void *func(), char *P
   else if (strncasecmp(argv[1],"arbitraire",3) == 0)
   	kind = 3;
   else if ((strncasecmp(argv[1],"ground",3) == 0) || (strncasecmp(argv[1],"sol",3) ==0))
-  	kind = 4;    
+  	kind = 4;
   else if (strncasecmp(argv[1],"hybride",3) == 0)
   	kind = 5;
   else if (strncasecmp(argv[1],"theta",3) == 0)
-  	kind = 6;   
+  	kind = 6;
   else if ((strncasecmp(argv[1],"temps",3) == 0) || (strncasecmp(argv[1],"time",3) == 0))
   	kind = 10;
   else if (strncasecmp(argv[1],"galchen",3) == 0)
   	kind = 21;
-  else if (strncasecmp(argv[1],"kind_",5) == 0) 
+  else if (strncasecmp(argv[1],"kind_",5) == 0)
     kind = atoi(argv[1]+5);
-  else {                            
+  else {
   	printf("Directive_ip123 error: unknown kind =%s\n",argv[1]);
     kind = -1;
     }
@@ -1664,7 +1664,7 @@ int Directive_ip123(int argc , char **argv,char cmd_strt,  void *func(), char *P
         n++;
         }
       }
-    if (range) nelm = -2;  
+    if (range) nelm = -2;
     func(set_nb,des_exc,list_reel,nelm,kind);
   }
 
@@ -1687,7 +1687,7 @@ int Directive_dates(int argc , char **argv,char cmd_strt,  void *func(int set_nb
 
   for (i=0;i<=argc;i++)
     printf("argument # %d-->%s<-- \n",i,argv[i]);
-	
+
   set_nb = bundle_nb;
   des_exc = desire_exclure;
   delta = 0.0;
@@ -1712,7 +1712,7 @@ int Directive_dates(int argc , char **argv,char cmd_strt,  void *func(int set_nb
         printf("delta=%f\n",delta);
         break;
         }
-      else { 
+      else {
         list_entier[n] = atoi(argv[i+offset]);
         printf("list_entier[%d]=%d\n",n,list_entier[n]);
         n++;
@@ -1760,7 +1760,7 @@ int Directive_datev(int argc , char **argv,char cmd_strt,  void *func(), char *P
   }
   else {
   	printf("Directive_datev error: visual date format list must contain an even number of date elements\n");
-    return(-1);  
+    return(-1);
   }
 
   range = 0;
@@ -1768,13 +1768,13 @@ int Directive_datev(int argc , char **argv,char cmd_strt,  void *func(), char *P
   for (i=0; i<nelm; i++) {
     if ((i == 2) && (strncasecmp(argv[i+offset],"to",2) == 0))
       range = 1;
-    else {  
+    else {
       if ((i == 5) && (range)) {
         sscanf(argv[i+offset],"%f",&delta);
         printf("delta=%f\n",delta);
         break;
         }
-      else { 
+      else {
         yyyymmdd = atoi(argv[i+offset]);
         hhmmss =   atoi(argv[i+1+offset]);
         f77name(newdate)(&stamp,&yyyymmdd,&hhmmss,&mode);
@@ -1789,7 +1789,7 @@ int Directive_datev(int argc , char **argv,char cmd_strt,  void *func(), char *P
   if (range)
     nelm = -2;
   else
-    nelm = j;  
+    nelm = j;
   /* func(set_nb,des_exc,list_entier,nelm,delta); */
   Xc_Select_date(set_nb,des_exc,list_entier,nelm);
   return(0);

@@ -37,15 +37,15 @@
          if (yy_key.ge.0) then
             chkenrpos = 1
          endif
-         
+
          if (chkenrpos == 1 .and. ax_key >= 0) then
             if (yy_key > ax_key.or.yy_key > ay_key) then
                chkenrpos = 0
             endif
          endif
-         
+
          if (chkenrpos >= 0) then
-            return   
+            return
          endif
       endif
 
@@ -63,22 +63,22 @@
       else
          chkenrpos = 0
       endif
-      
+
       if (yy_key.ge.0) then
          chkenrpos = 1
-         yinyang_grid = .true.   
+         yinyang_grid = .true.
       endif
-      
+
       if (chkenrpos == 1 .and. ax_key >= 0) then
          if (yy_key > ax_key.or.yy_key > ay_key) then
             chkenrpos = 0
             yinyang_grid = .false.
          endif
       endif
-      if (chkenrpos == -1) then        
+      if (chkenrpos == -1) then
          return
       endif
-      
+
       if (yinyang_grid) then
          ier = fstprm(yy_key, dateo, deet, npas, ni1, nj1, nk1, nbits,      datyp, lip1, lip2, lip3, typvarx, nomx, etikx,      grref, ig1ref, ig2ref, ig3ref, ig4ref,       swa, lng, dltf, ubc, extra1, extra2, extra3)
 
@@ -106,6 +106,6 @@
          deallocate(ax)
          deallocate(ay)
       endif
-      
+
       return
       end

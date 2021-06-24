@@ -7,7 +7,7 @@
 
       external argdims
       integer argdims
-      
+
       integer i,localncoords
 
 
@@ -20,8 +20,8 @@
       if (mode.eq.0) then
          ncoords = 0
       endif
-      
-      
+
+
       do i=1,localncoords,2
          if (i.lt.nmaxcoords) then
             coordll(ncoords+i/2+1,1) = lescoords(i)
@@ -30,9 +30,9 @@
             print *, '(COORD) TROP DE POINTS! MAX=', nmaxcoords, ' !!!'
          endif
       enddo
-      
+
       ncoords = ncoords+localncoords/2
 
       return
       end
-         
+

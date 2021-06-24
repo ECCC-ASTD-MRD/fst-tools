@@ -1,7 +1,7 @@
-!     
+!
 !**S/P QAAQR   CALCUL TOURBILLON RELATIF
 !
-      subroutine qaaqr(qaqr, li, lj, xlat) 
+      subroutine qaaqr(qaqr, li, lj, xlat)
 #include "impnone.cdk90"
 !
 !AUTEUR  P. SARRAZIN DORVAL QUEBEC JUIN 83 DRPN
@@ -18,7 +18,7 @@
 !         -OBJET   PGSMLIB,ID=ARMNPJS.
 !
 !ARGUMENTS
-!  IN OUT QAQR  CHAMP CONTENANT TOURBILLON ABSOLU 
+!  IN OUT QAQR  CHAMP CONTENANT TOURBILLON ABSOLU
 !  IN     LI    NOMBRE DE POINTS SUR UNE RANGEE DU CHAMP QAQR
 !  IN     LJ    NOMBRE DE POINTS DANS UNE COLONNE DU CHAMP QAQR
 !  IN     XLAT  LATITUDE POUR CHAQUE POINT DU CHAMP QAQR
@@ -27,7 +27,7 @@
 !         -VIA ROUTINE SCALAIR
 !         CALL QAAQR(QAQR, LI, LJ, XLAT)
 !
-!MESSAGES 
+!MESSAGES
 !          -AUCUN
 !
 !IMPLICITES
@@ -43,7 +43,7 @@
 !  rotation de la terre 7.292*1.e-5
 
       degarad = 3.1415926535/180.
-      omega2= 2*7.292*1.e-5  
+      omega2= 2*7.292*1.e-5
 !
 !
       do j= 1,lj
@@ -52,6 +52,6 @@
          enddo
       enddo
 !
-      return 
+      return
       end
-      
+

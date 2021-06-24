@@ -1,7 +1,7 @@
 !**   S/P ITROUVE VERIFIER DANS LA LISTE(NOMBRE) SI IVARIA EXISTE
-!     
+!
       integer function itrouve(liste,nombre,ivaria)
-  
+
 !AUTEUR P. SARRAZIN RPN DORVAL FEV 81
 !
 !LANGAGE RATFOR
@@ -20,20 +20,20 @@
 !
 ! --------------------------------------------------------------------
 !
-  
+
 #include "impnone.cdk90"
 !
 !
       integer liste(1),nombre,ivaria,ntr
-      
-      itrouve=0  
-!  #  defense contre index de zero 
-      if (nombre.le.0)  return  
-      
+
+      itrouve=0
+!  #  defense contre index de zero
+      if (nombre.le.0)  return
+
       do ntr=1,nombre
          if (ivaria.eq.liste(ntr)) itrouve=ntr
       enddo
-      
-      return 
+
+      return
       end
-      
+

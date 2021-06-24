@@ -29,7 +29,7 @@ int c_findLowCoreIndex(float ax[], int ni)
 {
   int is,isref;
   float dx, dxref;
-  
+
   is = ni/2;
   dxref = ax[is] - ax[is-1];
   dx = ax[is-1] - ax[is-2];

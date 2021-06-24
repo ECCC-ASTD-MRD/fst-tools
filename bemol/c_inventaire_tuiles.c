@@ -16,7 +16,7 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
   char nomvar[5], typvar[2], etiket[13];
   wordint nix, njx, nkx, niy, njy, nky, nig, njg;
   char grtyp[2];
-  wordint ip1, ip2, ip3; 
+  wordint ip1, ip2, ip3;
   wordint liste[1024], infon;
   double delta_t;
   wordint i, j, ii, jj, n, found;
@@ -24,12 +24,12 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
   wordint startx, starty, tile_index;
   _Tuile *inputTiles;
   static wordint status = 0;
-  
+
   if (grd[igrd].initialized == 1)
     {
     return status;
     }
-    
+
   grd[igrd].ntuiles_total = 0;
   grd[igrd].ntuiles_x = 0;
   grd[igrd].ntuiles_y = 0;
@@ -37,7 +37,7 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
   grd[igrd].lim_y = (wordint *) calloc(nb_tuiles+1, sizeof(wordint));
   inputTiles = (_Tuile *) calloc(nb_tuiles, sizeof(_Tuile));
 
-  
+
   for (i=0; i < nb_tuiles; i++)
     {
     tile_index = grd[igrd].ntuiles_total;
@@ -69,7 +69,7 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
       grd[igrd].ntuiles_x++;
       grd[igrd].lim_x[ii] = tuiles[i].ni_start+tuiles[i].ni;
       }
-/* -------------------------------------------------------------------*/     
+/* -------------------------------------------------------------------*/
     jj = 0;
     while (jj < grd[igrd].ntuiles_y && tuiles[i].nj_start != grd[igrd].lim_y[jj])
       {
@@ -91,15 +91,15 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
       grd[igrd].ntuiles_y++;
       grd[igrd].lim_y[jj] = tuiles[i].nj_start+tuiles[i].nj;
       }
-  /* -------------------------------------------------------------------*/     
+  /* -------------------------------------------------------------------*/
    }
-    
+
    qsort(grd[igrd].lim_x, grd[igrd].ntuiles_x, sizeof(int), &compare_ints);
    qsort(grd[igrd].lim_y, grd[igrd].ntuiles_y, sizeof(int), &compare_ints);
-    
+
    grd[igrd].ntuiles_x--;
    grd[igrd].ntuiles_y--;
-   if (grd[igrd].ntuiles_total != ((grd[igrd].ntuiles_x)*(grd[igrd].ntuiles_y))) 
+   if (grd[igrd].ntuiles_total != ((grd[igrd].ntuiles_x)*(grd[igrd].ntuiles_y)))
     {
     fprintf(stderr, "\n***************************************************\n");
     fprintf(stderr, "************************************************   \n");
@@ -123,7 +123,7 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
       grd[igrd].tuiles[n].nj = grd[igrd].lim_y[j+1]-grd[igrd].lim_y[j];
       }
     }
-       
+
    for (j=0; j < grd[igrd].ntuiles_y; j++)
     {
     for (i=0; i < grd[igrd].ntuiles_x; i++)
@@ -146,7 +146,7 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
         }
       }
     }
-  
+
    for (j=0; j < grd[igrd].ntuiles_y; j++)
     {
     for (i=0; i < grd[igrd].ntuiles_x; i++)
@@ -168,13 +168,13 @@ int c_inventaire_tuiles(int igrd, _Tuile *tuiles, int nb_tuiles)
     }
     grd[igrd].initialized = 1;
     return status;
-   } 
+   }
 
 int diesGetTileIndex(int igrd, int nistart, int njstart, int ni, int nj)
   {
   int i = 0;
   int found = 0;
-  
+
   while (i < grd[igrd].ntuiles_x*grd[igrd].ntuiles_y && !found)
     {
     if (nistart == grd[igrd].tuiles[i].ni_start && njstart == grd[igrd].tuiles[i].nj_start && ni == grd[igrd].tuiles[i].ni && nj == grd[igrd].tuiles[i].nj)
@@ -194,5 +194,5 @@ int diesGetTileIndex(int igrd, int nistart, int njstart, int ni, int nj)
     {
     return i;
     }
-    
+
   }

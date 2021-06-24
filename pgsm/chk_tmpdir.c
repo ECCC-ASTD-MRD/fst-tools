@@ -17,7 +17,7 @@ int chk_tmpdir(void)
   char tmpdir[512];
   struct stat le_buffer;
   int res;
-  
+
   strcpy(tmpdir, "");
   strcat(tmpdir, (char *)getenv("TMPDIR"));
 //   printf("%s\n", tmpdir);
@@ -46,5 +46,5 @@ int chk_tmpdir(void)
    }
   return 0;
   }
-  
-  
+
+

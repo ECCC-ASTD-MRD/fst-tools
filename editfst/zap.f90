@@ -20,8 +20,8 @@
 !
       SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
       use configuration
-      IMPLICIT NONE 
-  
+      IMPLICIT NONE
+
       INTEGER, intent(IN) ::  TV, NV, LBL(*), DATE, IP1, IP2, IP3
 !
 !AUTEURS
@@ -29,20 +29,20 @@
 !REVISION      001 "      "    JUL 92 COUPE DW DE DATE
 !              002 "      "    OCT 92 PADING DU LABEL
 !              003 B. Dugas    fev 12 valider date avec newdate
-!              004 M. Valin    fev 14 initialisation de LIS, intent 
+!              004 M. Valin    fev 14 initialisation de LIS, intent
 !LANGUAGA FTN77
-!  
+!
 !ARGUMENTS
-!ENTRE   TV   -  TYPEVAR 
-!  "     NV   -  NOMVAR  
-!  "     LBL  -  ETIKET  
+!ENTRE   TV   -  TYPEVAR
+!  "     NV   -  NOMVAR
+!  "     LBL  -  ETIKET
 !  "     DATE -  DATE
-!  "     IP1  -  IP1 
+!  "     IP1  -  IP1
 !  "     IP2  -  IP2
 !  "     IP3  -  IP3
 !
 !MODULE
-!  
+!
       EXTERNAL     FSTCVT, ARGDOPE, HOLACAR
       INTEGER,     EXTERNAL :: NEWDATE
 !*
@@ -60,7 +60,7 @@
       Z3 = -1
       ZT = '??'
       ZN = '????'
-      ZE = '????????????' 
+      ZE = '????????????'
 
       GO TO(70, 60, 50, 40, 30, 20, 10) NP
    10 IF(IP3 .NE. -1) THEN
@@ -114,9 +114,9 @@
             IF( DEBUG ) WRITE(6,*)' ZTYP= -',ZT,' -'
          ENDIF
       ENDIF
-     
-      RETURN 
-      END 
+
+      RETURN
+      END
 
 
 

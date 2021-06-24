@@ -20,20 +20,20 @@
 !                LES CARACTERES PASSES VIA DIRECTIVES READLX (STOCKES DANS DES ENTIERS)
 
       SUBROUTINE HOLACAR(LABEL, LIST, NL, STRING, NC)
-  
-      IMPLICIT   NONE 
+
+      IMPLICIT   NONE
       INTEGER, intent(IN) ::   NL, LIST(NL), STRING(NL*3), NC
       CHARACTER(len=*), intent(OUT) :: LABEL(NL)
 !
 !AUTEUR   -   Y. BOURASSA  - AVR 91
-!REVISION 001 "      "     - JAN 92 
+!REVISION 001 "      "     - JAN 92
 !Revision 002   M. Lepine - mars 98 - extensions pour fstd98
 !Revision 003   M. Lepine - Nov  05 - remplacement de fstabt par qqexit
 !Revision 004   M. Valin  - Mars 14 - menage et suppression de l'option entiers 64 bits
 !LANGAGE  - FTN77
 !
 !ARGUMENTS
-!SORTIE   - LABEL   - ETIKETTES 
+!SORTIE   - LABEL   - ETIKETTES
 !ENTREE   - LIST    - CHAMP RETOURNEE PAR ARGDOPE. (readlx)
 !   "     - NL      - DIMENSION DE LABEL ET LIST (nombre de strings a decoder).
 !   "     - STRING  - CHAINE DE CARACTERES A DECODER.(tasse dans des entiers)
@@ -60,10 +60,10 @@
          J = (I+NCW-1)/NCW             ! nombre de mots de 32 bits
          WRITE(temp12, '(3A4)') (STRING(J),J=L,L+J-1)
          LABEL(K) = temp12(1:I)
-   10    CONTINUE 
+   10    CONTINUE
 
       RETURN
-      END 
+      END
 
 
 

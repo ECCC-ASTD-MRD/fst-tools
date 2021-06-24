@@ -1,7 +1,7 @@
       subroutine qqqfilt(inout,weightlst,ntimes,verbose)
       implicit none
       integer inout,weightlst(*),ntimes,verbose
-      
+
 #include "qqqfilt.cdk90"
 
       integer i,j,l,sum
@@ -25,13 +25,13 @@
         return
       endif
 
-      
+
       fltoggle(inout)=.true.
       if (argdims(2).le.1) then
          fltoggle(inout)=.false.
          return
       endif
-      
+
       fltwgtlng(inout)=argdims(2)
       fltntimes(inout)=ntimes
       fltverb(inout)=verbose

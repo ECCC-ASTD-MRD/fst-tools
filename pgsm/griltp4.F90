@@ -1,4 +1,4 @@
-!     
+!
 !**S/P GRILTP4   LIRE LAT LONG DE CHAQUE PT D'UNE GRILLE TYPE "X" OU "Y"
 !
       subroutine griltp4(nni,nnj,ip1,ip2,ip3)

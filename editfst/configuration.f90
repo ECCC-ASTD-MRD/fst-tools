@@ -94,7 +94,7 @@ module configuration
       integer, save :: max_requetes_exdes = 0
       integer, save :: max_nlist_exdes = 0
 contains
-subroutine config_init  ! initialisation des tableaux 
+subroutine config_init  ! initialisation des tableaux
   req     = 0
   jours   = 0
   desexc  = 0   ! ni desire, ni exclure

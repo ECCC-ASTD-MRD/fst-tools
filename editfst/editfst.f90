@@ -16,7 +16,7 @@
 ! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ! * Boston, MA 02111-1307, USA.
 ! */
-!**PROGRAMME EDITFST - COPIE UNE PARTIE D'UN FICHIER STANDARD DANS UN 
+!**PROGRAMME EDITFST - COPIE UNE PARTIE D'UN FICHIER STANDARD DANS UN
 !                      AUTRE FICHIER DTANDARD.
       subroutine EDITFST
 !****************************************
@@ -24,25 +24,25 @@
 !****************************************
       use ISO_C_BINDING
       use configuration
-      IMPLICIT NONE 
+      IMPLICIT NONE
       include 'excdes.inc'
 !
 !         AUTEURS                                         DATE   VERSION
 !         VERSION ORIGINALE (COPYSTD) C. THIBEAULT  -     FEV. 83
-!         Y.BOURASSA/ M.VALIN (EDITSTD)                   JUL. 86 1.3 
-!         BOURASSA         CORRECTION DANS SEQCOPY        FEV. 87 1.4 
-!         VALIN            AJOUT DE FASTIO                FEV. 87 1.5 
-!         BOURASSA         DIRECTIVE "CRITSUP"            OCT. 89 1.6 
-!            "             DIRECTIVE "EXCLURE"            OCT. 89 1.6 
-!            "             ACCEPTE "OPDATE"               JAN. 90 1.7 
-!            "             NEWEDIT VERSION UNIX/CRAY      JUL. 90 1.8 
-!            "             VERSION EDITFST (CRAY/UNIX)    NOV. 90 2.0 
-!            "             QLXINS, FICHIERS FST..ETC. 
-!            "             CORRECTION DANS COPISEQ        DEC. 90 2.1 
-!            "             OPTION IMAGE                   JAN. 91 2.2 
-!            "             ARGDOPE DES ETIKETS            MAR. 91 2.3 
+!         Y.BOURASSA/ M.VALIN (EDITSTD)                   JUL. 86 1.3
+!         BOURASSA         CORRECTION DANS SEQCOPY        FEV. 87 1.4
+!         VALIN            AJOUT DE FASTIO                FEV. 87 1.5
+!         BOURASSA         DIRECTIVE "CRITSUP"            OCT. 89 1.6
+!            "             DIRECTIVE "EXCLURE"            OCT. 89 1.6
+!            "             ACCEPTE "OPDATE"               JAN. 90 1.7
+!            "             NEWEDIT VERSION UNIX/CRAY      JUL. 90 1.8
+!            "             VERSION EDITFST (CRAY/UNIX)    NOV. 90 2.0
+!            "             QLXINS, FICHIERS FST..ETC.
+!            "             CORRECTION DANS COPISEQ        DEC. 90 2.1
+!            "             OPTION IMAGE                   JAN. 91 2.2
+!            "             ARGDOPE DES ETIKETS            MAR. 91 2.3
 !            "             LEGERE MODIF DANS PRINT        AVR. 91 2.31
-!            "                "     "   SNOM-DNOM         MAI. 91 2.4  
+!            "                "     "   SNOM-DNOM         MAI. 91 2.4
 !            "             DIRECTIVE ZAP                  JUL. 91 2.5
 !            "             LINQUAGE DES FICHIERS SOURCES  OCT. 91 2.6
 !            "             ACCELERATION DU TRIAGE         NOV. 91 2.7
@@ -50,21 +50,21 @@
 !                          CHANHE APPEL A CCARD & HOLACAR JAN. 92 2.8
 !            "             FIX BUG 1e  ALLOCATION MEMOIRE JAN. 92 2.9
 !            "             AJOUTE +OLD AU FICHIER SOURCE  MAR. 92 3.0
-!                          ACCES A $IN VERSION CRAY       
+!                          ACCES A $IN VERSION CRAY
 !                          APPEL A LOW2UP APRES CCARD
-!                          OUVRE SOURCES AVEC FSTNOL 
+!                          OUVRE SOURCES AVEC FSTNOL
 !            "             PERMET FICHIERS FTN SUR UNIX
 !            "             NEUTRALISE LA CLE NPD          MAR. 92 3.1
 !            "             FIX BUG DANS EXDES             AVR. 92 3.2
 !            "             (SAUVDEZ=0) ZAP(-1) APRES COPIEMAI. 93 3.3
-!                          QLXINX POUR TYPE=2    
-!                          MODIF DANS EXDES (RANGE INVERSE) 
-!                          FIX BUG DANS STDCIPI/WEOFILE 
-!                          OUVRE LES 1 @ 15 INPUTS QUI EXTSTENT  
+!                          QLXINX POUR TYPE=2
+!                          MODIF DANS EXDES (RANGE INVERSE)
+!                          FIX BUG DANS STDCIPI/WEOFILE
+!                          OUVRE LES 1 @ 15 INPUTS QUI EXTSTENT
 !                          ENDIQUE L'ETAT DU PGM. A LA SORTIE
 !                          EVITE LES ABORTS EN MODE INTERACTIF
 !            "             CORRECTION FASTIO              JAN. 94 3.4
-!                          PASSAGE DE 15 FICHIERS D'ENTREE A 35    
+!                          PASSAGE DE 15 FICHIERS D'ENTREE A 35
 !            "             BUG FIX DATA NUMERO D'UNITES   JUIL 94 3.5
 !            "             BUG FIX FICHIER SEQ EXISTANT   JUIL 94 3.6
 !            "             BUG FIX LIMITE FICHIER SEQ     AVR. 95 3.7
@@ -84,7 +84,7 @@
 !         M. Lepine        Reload, bug fix c_fnom  - mars 1999 - v5.4
 !         M. Lepine        Menage des if defined - mars 2000 - v5.5
 !         M. Lepine        Reload pour datev (fstd89) - oct 2000 - v5.6
-!         M. Lepine        Possibilite d'appel a convip pour les ip1 
+!         M. Lepine        Possibilite d'appel a convip pour les ip1
 !                          + fichier source read only - juil 2001 - v5.7
 !         M. Lepine        Julhr en julsec - oct 2001 - v5.8
 !         M. Lepine        fichier de sortie R/W obligatoire - Dec 2001 - v5.81
@@ -102,12 +102,12 @@
 !         M. Lepine        Reload avec librmn_x, bug fix requete ip1=0.0 - Fev 2005 - v5.93
 !         M. Lepine        Bug fix reconnaissance des ip1 reel - Mars 2005 - v5.94
 !         M. Lepine        Utilisation optionnelle des fichiers remote - Mars 2005 - v5.95
-!         M. Lepine        Reload pour bugfix datev de excdes, librmnbeta - Mars 2005 v5.96 
+!         M. Lepine        Reload pour bugfix datev de excdes, librmnbeta - Mars 2005 v5.96
 !         M. Lepine        Reload pour bugfix longueur fstecr mode image, librmnbeta - Avril 2005 v5.97
-!         M. Lepine        De 35 fichiers d'entree a 120, Juillet 2005 - v5.98 
+!         M. Lepine        De 35 fichiers d'entree a 120, Juillet 2005 - v5.98
 !         M. Lepine        Remplacement de tous les fstabt par qqexit - v5.99
 !         M. Lepine        Reload avec librmn_rc008.a - v6.00
-!         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006 
+!         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006
 !         M. Lepine        Bug fix longeur fstluk,fstecr datyp=6 mode image - v6.02 - Avril 2006
 !         M. Lepine        Reload avec librmn_008 - v6.03 - Aout 2006
 !         M. Lepine        Reload avec librmnbeta,nouveau compresseurs IEEE - v6.04 - Oct 2006
@@ -154,7 +154,7 @@
 !                   -d (nom  du  fichier  destination)
 !                   -i (nom  du  fichier  stdinp)
 !                   -l (nom  du  fichier  stdout)
-!                   -ss               ( s=sequentiel sqi)         
+!                   -ss               ( s=sequentiel sqi)
 !                   -sf               ( s=sequentiel fortran)
 !                   -ds               ( d=sequentiel sqi)
 !                   -df               ( d=sequentiel fortran)
@@ -171,11 +171,11 @@
 !           FICHIERS (25@39 = SOURCE) (3 = DESTINATION)
 !#include "maxprms.cdk"
 !               NMR = MAXIMUM DE REGIONS
-!               NMS =    "     " SCORES 
-!               NME =    "     " ETAPES 
+!               NMS =    "     " SCORES
+!               NME =    "     " ETAPES
 !               NMN =    "     " NIVEAUX
 !               NMM =    "     " MODELES
-!               NMD =    "     " DESIRES/EXCLURES 
+!               NMD =    "     " DESIRES/EXCLURES
 !#include "tapes.cdk"
 !     - MEOF       - LEVEL D'EOF LOGIQUE A NE PAS PASSER
 !     - COPIES     - NOMBRE D'AJOUTS AU FICHIER DESTINATION EN USAGE
@@ -211,7 +211,7 @@
 !     - DM1        -    "    " PAS DE DATES DANS LES DESIRES
 !     - DEBUG      -    "    " EN MODE DEBUG
 !     - DRYRUN     -    "    " EN MODE DRYRUN
-!     - SELEC      -    "    " FICHIER DE DIRECTIVE PRESENT 
+!     - SELEC      -    "    " FICHIER DE DIRECTIVE PRESENT
 !     - BOX        -    "    " LA CLE NOBOX PAS DANS LA SEQUENSE D'APPEL
 !     - DIAG       -    "    " DIAGNOSTIQUES SERONT A IMPRIMER
 !     - INTERC     -    "    " EN MODE INTERACTIF
@@ -220,18 +220,18 @@
 !     - JOURS      - PERIODE A UTILISER PAR DESIRE/EXCLURE
 !     - NREQ       - NOMBRE DE DIRECTIVES DESIRE/EXCLURE RENCONTREES
 !     - SAUV       -    "    "     "      A CONSERVER APRES COPIE
-!     - NEXC       -    "    "     "      EXCLURE 
+!     - NEXC       -    "    "     "      EXCLURE
 !     - DESEXC(I)  - =0 (POUR EXCLURE),    =-1 (POUR DESIRE)
 !     - SATISF(I)  - 0 = DIRECTIVE INSATISFAITE
 !     - REQ        - TABLEAU DES DESIRES/EXCLURES DE L'USAGER.
 !     - SUP        - TABLEAU DES CLES SUPLEMENTAIRES.
-!     - NIS        - CRITERE SUPLEMENTAIRE DE CELECTION # 1 
-!     - NJS        -    "          "        "     "     # 2 
-!     - NKS        -    "          "        "     "     # 3 
-!     - IG1S       -    "          "        "     "     # 4 
-!     - IG2S       -    "          "        "     "     # 5 
-!     - IG3S       -    "          "        "     "     # 6 
-!     - IG4S       -    "          "        "     "     # 7 
+!     - NIS        - CRITERE SUPLEMENTAIRE DE CELECTION # 1
+!     - NJS        -    "          "        "     "     # 2
+!     - NKS        -    "          "        "     "     # 3
+!     - IG1S       -    "          "        "     "     # 4
+!     - IG2S       -    "          "        "     "     # 5
+!     - IG3S       -    "          "        "     "     # 6
+!     - IG4S       -    "          "        "     "     # 7
 !     - REQN       - NOMBRE DE NOMVAR/REQUETE
 !     - REQT       - NOMBRE DE TYPVAR/REQUETE
 !     - REQE       - NOMBRE D'ETIKET/REQUETE
@@ -249,14 +249,14 @@
 !     - NS         - DN DU FICHIER SOURCE
 !     - ND         -  "  "    "    DESTINATION
 !     - SNOM       - TYPE  PASSE A FNOM FICHIER SOURCE
-!     - DNOM       -   "     "   "   "     "    DESTINATION 
+!     - DNOM       -   "     "   "   "     "    DESTINATION
 !     - ZE         - CARACTERES DE L'ETIQUETTE A ZAPPER SI DIFFERENT DE '????????'
 !     - ZG         - TYPE DE GRILLE A ZAPPER
 !     - ETI        - ETIQUETTE TEMPORAIRE
 !     - ETIS       - ETIQUETTES DES DESIRES/EXCLURES
 !     - ZT         - CARACTERE DU TYPEVAR A ZAPPER SI DIFFERENT DE '?'.
 !     - TYP        - TYPE DE GRILLE
-!     - TYPS       - TYPE DE GRILLEDES DES DESIRES/EXCLURES 
+!     - TYPS       - TYPE DE GRILLEDES DES DESIRES/EXCLURES
 !     - GTY        - TYPE DE GRILLE (SOURCE)
 !     - GTYS       - TYPE DE GRILLE DES CRITERES SUPLEMENTAIRES
 !     - GTYPS      - TYPE DE GRILLE DES CRITERES SUPLEMENTAIRES
@@ -301,8 +301,8 @@
       enddo
       SAUV = 0
       CALL SAUVDEZ
-  
-!     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
+
+!     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL.
       I    = -111
       CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
 
@@ -316,7 +316,7 @@
       VS     = (DEF1(20).EQ.'OUI')                              ! -vs   voir source
       BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON')   ! -nobox , -n
       ECR    = (DEF1(9) .EQ.'OUI')  .OR.  (DEF1(21).EQ.'OUI')   ! -ecr , -e
-      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i 
+      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i
 !
 !     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
 !
@@ -328,7 +328,7 @@
       DEBUG  = (DEF1(13)  .EQ.'DEBUG')       ! -m  (non par defaut)
       DRYRUN  = (DEF1(146)  .EQ.'DRYRUN')    ! -dryrun  (non par defaut)
       FASTIO = (DEF1(22).EQ.'OUI')           ! -f  (oui par defaut)
-      DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
+      DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM')
       IF((DEF1(16).NE.'NON') .OR.    &  ! -ss , source is sequential sqi
          (DEF1(4).NE.'NON')  .OR.    &  ! -sseq , source is sequential
          (DEF1(23).NE.'NON') ) THEN    ! -ss -sseq -sf
@@ -396,9 +396,9 @@
             GO TO 30
          ENDIF
       ENDIF
-   
+
 !     OUVRE LE FICHIER DESTINATION
-      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )   ! -d 
+      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )   ! -d
 
 !     LIRE UN JEU DE DIRECTIVES
 
@@ -444,8 +444,8 @@
       IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
 !      IF(ETAT .EQ. 'ABORT') CALL boxed_message(6, MSG_ABT, 2)
       STOP
-      END 
-      
+      END
+
       character(len=128) function product_id_tag()
       product_id_tag='$Id: editfst.F90 6.20 2015-10-07 18:53:41Z armnlib $'
       return

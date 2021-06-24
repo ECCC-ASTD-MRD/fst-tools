@@ -27,7 +27,7 @@
       else
          write(qcsepar,'(a1)') separateur
       endif
-      
+
       do i=1,16
          qitems(i) = 0
       enddo
@@ -42,6 +42,6 @@
             qitems(i) = items(i)
          enddo
       endif
-      
+
       return
       end

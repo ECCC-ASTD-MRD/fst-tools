@@ -1,7 +1,7 @@
   integer nmax, nparams, cle_dst, cle_cfs, cle_core, cle_coarse, cle_missing, cle_nbits, &
     cle_ig3core, cle_ig3coarse, cle_compression, cle_avg, cle_quiet, lu_src, lu_dst, lu_cfs,lu_core, lu_coarse, &
     cle_nistart, cle_niend, cle_ni, cle_njstart, cle_njend, cle_nj, cle_grtyp
-    
+
   parameter (nmax = 524288)
   parameter (cle_dst         = 121)
   parameter (cle_cfs         = 122)
@@ -21,7 +21,7 @@
   parameter (cle_njend     = 136)
   parameter (cle_nj        = 137)
   parameter (cle_grtyp     = 138)
-    
+
   parameter (nparams       = 138)
 
   parameter (lu_src    = 10)
@@ -33,10 +33,10 @@
 ! Fill codes
 
   integer abort, minimum, maximum, missing
-  
+
   parameter (abort       = 13)
   parameter (minimum     =  1)
   parameter (maximum     =  2)
-  parameter (missing     =  3) 
+  parameter (missing     =  3)
 
-    
+

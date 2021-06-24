@@ -1,5 +1,5 @@
 !**S/P PGSMLIR
-!     
+!
       integer function pgsmlir(fld,iun,ni,nj,nk,datev,etiket,      ip1,ip2,ip3,typvar,nomvar,grtyp)
 #include "impnone.cdk90"
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev,ig1,ig2,ig3,ig4
@@ -13,7 +13,7 @@
 
 
       integer ier,i
-      
+
       ier = fstlir(fld,iun,ni,nj,nk,datev,etiket,ip1,ip2,ip3,typvar,nomvar)
 
       if (ier.lt.0) then
@@ -23,6 +23,6 @@
 
       call prefiltre(fld,ni,nj,nomvar,grtyp)
       pgsmlir=ier
-      return 
+      return
       end
-      
+

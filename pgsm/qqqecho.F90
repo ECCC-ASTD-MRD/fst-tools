@@ -18,7 +18,7 @@
          j = 4*(i-1)+1
          write(message(j:j+3),'(a4)') chaine(i)
       enddo
-      
+
       iun = 2
       call pgsmecho(iun, message,longueur*4)
 

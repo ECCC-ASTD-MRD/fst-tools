@@ -1,5 +1,5 @@
 !
-      subroutine lastcol(sortie,valeur,istart,ifini,incre) 
+      subroutine lastcol(sortie,valeur,istart,ifini,incre)
 #include "impnone.cdk90"
 !
 !AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
@@ -35,8 +35,8 @@
 !
       real sortie(1),valeur
       integer istart,ifini,incre,i
-!     
-!         INITIALISE LA DERNIERE COLONNE DU CHAMP 
+!
+!         INITIALISE LA DERNIERE COLONNE DU CHAMP
 !
       do i=istart,ifini,incre
          sortie(i)=valeur
@@ -52,8 +52,8 @@
       do i=istart,ifini,incre
          sortie(i)=amax1(sortie(i),valeur)
       enddo
-!     
+!
       return
       end
-      
-      
+
+

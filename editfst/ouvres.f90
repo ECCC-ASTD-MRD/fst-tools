@@ -17,11 +17,11 @@
 ! * Boston, MA 02111-1307, USA.
 ! */
 !** S/R OUVRES OUVRE UN FICHIER SOURCE
-      SUBROUTINE OUVRES( DN ) 
+      SUBROUTINE OUVRES( DN )
       use configuration
       IMPLICIT      NONE
       CHARACTER(len=*) DN(120)
-  
+
 !ARGUMENTS
 ! ENTREE DN    -  LISTE DES NOMS DE FICHIER SOURCE
 !
@@ -58,20 +58,20 @@
          OUVS = .TRUE.
          NS   = DN(1)
          IF( VS ) THEN
-            IF( SSEQ ) I = FSTRWD( SOURCES ) 
+            IF( SSEQ ) I = FSTRWD( SOURCES )
             IF( INDEX(SNOM,'FTN') .GT. 0) THEN
                I = FSTVOI(SOURCES, 'SEQ')
             ELSE
                I = FSTVOI(SOURCES, 'STD')
             ENDIF
-            IF( SSEQ ) I = FSTRWD( SOURCES ) 
+            IF( SSEQ ) I = FSTRWD( SOURCES )
          ENDIF
       ELSE
          CALL FERMES
       ENDIF
-      
+
       RETURN
-      END 
+      END
 
 
 

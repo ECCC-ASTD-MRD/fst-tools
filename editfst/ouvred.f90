@@ -17,12 +17,12 @@
 ! * Boston, MA 02111-1307, USA.
 ! */
 !**   FUNCTION OUVRE UN FICHIER DESTINATION
-      FUNCTION OUVRED( DN ) 
+      FUNCTION OUVRED( DN )
       use configuration
       IMPLICIT      NONE
       INTEGER       OUVRED
       CHARACTER(len=*) DN
-  
+
 !ARGUMENTS
 !SORTIE OUVRED - >=0 DIMENSION DU FICHIER OUVERT
 !                <0  ERREUR DE FNOM PAS OUVERT
@@ -66,7 +66,7 @@
          ENDIF
          RETURN
       ENDIF
-  
+
 !     SI DEJA OUVERT COMME SOURCE, ERREUR FATALE
       IF(DN.EQ.NS .AND. OUVS) THEN
          PRINT*,'  **************************************'
@@ -115,4 +115,4 @@
       ENDIF
 
       RETURN
-      END 
+      END

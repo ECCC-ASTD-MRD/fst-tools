@@ -62,7 +62,7 @@ static struct Flag
     ParseProperty *parser;          /* parsing method */
 } flags[] =
 {
-  {"?xml",               SkipTag}, 
+  {"?xml",               SkipTag},
   {"rpn-standard-file",  SkipTag},
   {"fstrecord",          SkipTag},
   {"fstprm",             SkipTag},
@@ -96,7 +96,7 @@ static struct Flag
   {"level",              ParseInt},
   {"values",             ParseValues},
   {"fstdata",            SkipTag},
-  
+
   /* this must be the final entry */
   {0,  0}
 };
@@ -140,10 +140,10 @@ void xml2fst(int argc, char **argv)
   char fstFile[256], xmlFile[256];
   char encoding[16];
   char format[32];
-    
-  char *liste[4], lcl_liste[4][256], *def[4], lcl_def[4][256], val[4][256]; 
+
+  char *liste[4], lcl_liste[4][256], *def[4], lcl_def[4][256], val[4][256];
   int i, npos;
-  
+
   strcpy(lcl_liste[0], "xml.");
   strcpy(lcl_liste[1], "fst.");
   strcpy(lcl_liste[2], "encoding.");
@@ -155,7 +155,7 @@ void xml2fst(int argc, char **argv)
   liste[2] = &lcl_liste[2][0];
   liste[3] = &lcl_liste[3][0];
 
-  
+
   strcpy(lcl_def[0], "bidon.xml");
   strcpy(lcl_def[1], "bidon.fst");
   strcpy(lcl_def[2], "ascii");
@@ -166,16 +166,16 @@ void xml2fst(int argc, char **argv)
   def[2] = &lcl_def[2][0];
   def[3] = &lcl_def[3][0];
 
-    
+
   for (i = 0; i < 4; i++)
     {
       strcpy(val[i], def[i]);
     }
-  
+
   npos = 0;
- 
+
   c_ccard(argv, argc, &liste[0], val, &def[0], 4, &npos);
-    
+
   strcpy(xmlFile, val[0]);
   strcpy(fstFile, val[1]);
   strcpy(encoding, val[2]);
@@ -186,15 +186,15 @@ void xml2fst(int argc, char **argv)
 #endif
 
   iun = 1;
-  
+
   c_fnom(iun, fstFile, "RND+R/W", 0);
   ier = c_fstouv(iun, "RND");
-  
+
   if (0 == strcmp(val[1], def[1]))
     {
       ier = c_fstopc("MSGLVL", "FATALE", 0);
     }
-    
+
   else
     {
       ParseConfigFile(xmlFile); /* start parsing xml file to fst file */
@@ -235,7 +235,7 @@ Bool IsWhite(uint c)
     return no;
 }
 
-/* read next character from input file */ 
+/* read next character from input file */
 static unsigned GetC(FILE *fp)
 {
     if (fp)
@@ -247,7 +247,7 @@ static unsigned GetC(FILE *fp)
       {
         return EOF;
       }
- 
+
     if (*config_text)
       {
         return *config_text++;
@@ -261,7 +261,7 @@ static unsigned hash(char *s)
     unsigned hashval;
     for (hashval = 0; *s != '\0'; s++)
         hashval = toupper(*s) + 31*hashval;
-   
+
     return hashval % HASHSIZE;
 }
 
@@ -318,20 +318,20 @@ static int NextProperty()
       /* skip to end of line */
       while (c != '\n' && c != '\r' && c != EOF)
 	c = (uint)GetC(fin);
-      
+
       /* treat  \r\n   \r  or  \n as line ends */
       if (c == '\r')
 	c = (uint)GetC(fin);
-      
+
       if (c == '\n')
 	c = (uint)GetC(fin);
 
     }while (IsWhite(c));  /* line continuation? */
-  
+
    while (IsWhite(c) || c == '\t' || c == '<' || c == '/')
    {
      AdvanceChar();
-     
+
    }
 
 #ifdef DEBUG
@@ -348,7 +348,7 @@ void ParseInt(char *option)
     Bool digits = no;
 
     SkipWhite();
-    
+
     if(strlen(option) > 1)
       {
 	if(c == '>')
@@ -360,7 +360,7 @@ void ParseInt(char *option)
 	    digits = yes;
 	    AdvanceChar();
 	  }
-	
+
 	if (!digits && (strcmp(option, "level") != 0))
 	  ReportBadArgument(option);
       }
@@ -377,7 +377,7 @@ void ParseInt(char *option)
 void write_to_fstFile()
 {
   float work[10];
-  
+
 #ifdef DEBUG
   fprintf(stderr, "************** c_fstecr args are: **********************\n");
   fprintf(stderr, "nomvar = %s\n", nomvar);
@@ -418,7 +418,7 @@ void write_to_fstFile()
     {
       fprintf(stderr, "****** Writing int values to fst file\n");
       ier = c_fstecr(intdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
-      
+
       if(intdata)
 	free(intdata);
 
@@ -431,7 +431,7 @@ void write_to_fstFile()
 
       if(floatdata)
 	free(floatdata);
-      
+
     }
   else if(datyp == CHR)
     {
@@ -443,7 +443,7 @@ void write_to_fstFile()
 	{
 	  chardata = "abcedef";
 	  ier = c_fstecr(chardata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
-	  
+
 	  /* free(chardata); */
 	}
 
@@ -470,19 +470,19 @@ void setIntVar(char *option, int number)
      ip2 = number;
 
    }
- 
+
  else if(strcmp(option, "ip3") == 0)
    ip3 = number;
- 
+
  else if(strcmp(option, "ni") == 0)
    ni = number;
- 
+
  else if(strcmp(option, "nj") == 0)
    nj = number;
- 
+
  else if(strcmp(option, "nk") == 0)
    nk = number;
- 
+
  else if(strcmp(option, "dateo") == 0)
    {
      dateo = number;
@@ -490,45 +490,45 @@ void setIntVar(char *option, int number)
 
  else if(strcmp(option, "deet") == 0)
    deet = number;
- 
+
  else if(strcmp(option, "ig1") == 0)
    ig1 = number;
- 
+
  else if(strcmp(option, "ig2") == 0)
    ig2 = number;
- 
+
  else if(strcmp(option, "ig3") == 0)
    ig3 = number;
- 
+
  else if(strcmp(option, "ig4") == 0)
    ig4 = number;
- 
+
   else if(strcmp(option, "nbits") == 0)
     nbits = -number;
- 
+
   else if(strcmp(option, "datyp") == 0)
     datyp = number;
- 
+
  else if(strcmp(option, "swa") == 0)
    swa = number;
- 
+
  else if(strcmp(option, "lng") == 0)
    lng = number;
- 
+
  else if(strcmp(option, "npas") == 0)
    npas = number;
- 
+
  else if(strcmp(option, "npak") == 0)
    {
      npak = number;
    }
- 
+
 }
 
 /* set string type variables */
 void setStringVar(char *option, char *buf)
 {
-  
+
   if(strcmp(option, "nomvar") == 0)
     {
       nomvar = (char *)malloc(strlen(buf));
@@ -537,7 +537,7 @@ void setStringVar(char *option, char *buf)
       if(strstr(buf, ">") != null)
 	{
 	  nomvar = ">>";
-	  
+
 	  trimright(nomvar);
 	  fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
 
@@ -547,14 +547,14 @@ void setStringVar(char *option, char *buf)
       fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
 #endif
     }
-  
+
   else if(strcmp(option, "typvar") == 0)
     {
       typvar = (char *)malloc(strlen(buf));
 
       memcpy(typvar, buf, strlen(buf));
     }
-  
+
   else if(strcmp(option, "etiket") == 0)
     {
       etiket = (char *)malloc(strlen(buf));
@@ -565,7 +565,7 @@ void setStringVar(char *option, char *buf)
 
   else if(strcmp(option, "grtyp") == 0)
     {
-     
+
       grtyp = (char *)malloc(strlen(buf));
 
       memcpy(grtyp, buf, strlen(buf));
@@ -580,7 +580,7 @@ void setStringVar(char *option, char *buf)
       fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with datatype \"%d\" \n", option, datyp);
 #endif
       extract_data(values, datyp);
-      
+
     }
 
 }
@@ -595,8 +595,8 @@ void ParseString(char *option)
   int i = 0;
   unsigned delim = 0;
   Bool waswhite = yes;
- 
-  /* initialize buffer to empty string */ 
+
+  /* initialize buffer to empty string */
   for (i = 0; i < MAX_SIZE; i++)
     {
       buf[i] = ' ';
@@ -637,7 +637,7 @@ void ParseString(char *option)
 
       if (c == delim && delim != '\0')
 	break;
-      
+
       if (IsWhite(c))
         {
 	  if (waswhite)
@@ -645,7 +645,7 @@ void ParseString(char *option)
 	      AdvanceChar();
 	      continue;
             }
-	  
+
 	  c = ' ';
         }
       else
@@ -666,18 +666,18 @@ void ParseString(char *option)
       AdvanceChar();
 
     }
-  
+
   buf[i] = '\0';
 #ifdef DEBUG
-  fprintf(stderr, "ParseString(char *option), option = \"%s\", buf = >%s< \n", option, buf); 
+  fprintf(stderr, "ParseString(char *option), option = \"%s\", buf = >%s< \n", option, buf);
 #endif
   if(strlen(buf) >= 1 && strcmp(buf, "\0") != 0 && strcmp(buf, "    ") != 0)
     {
       setStringVar(option, buf);
     }
-  
 
-  
+
+
 #if 0
   if (i == 0)
     ReportBadArgument(option);
@@ -693,9 +693,9 @@ void ParseValues(char *option)
   int i = 0;
   unsigned delim = 0;
   Bool waswhite = yes;
-  
+
   SkipWhite();
-    
+
 #ifdef DEBUG
   fprintf(stderr, "ParseValues(char *option), option = \"%s\"\n", option);
   fprintf(stderr, "ParseValues(char *option), nomvar: \"%s\" \n", nomvar);
@@ -707,34 +707,34 @@ void ParseValues(char *option)
 
   if (c == '<' || c == '/')
     delim = c;
-  
-  while (i < MAX_SIZE1 && c != EOF && c != '<') /* keep reading characters from opening tag "<opening_tag>" 
+
+  while (i < MAX_SIZE1 && c != EOF && c != '<') /* keep reading characters from opening tag "<opening_tag>"
 						   until closing tag "</closing_tag>"  */
     {
         /* treat  \r\n   \r  or  \n as line ends */
       if (c == '\r')
         {
 	  AdvanceChar();
-	  
+
 	  if (c != '\n' && !IsWhite(c))
 	    {
 	      break;
 	    }
         }
-      
+
       if (c == '\n')
         {
  	  AdvanceChar();
-	  
+
 	  if (!IsWhite(c) && c != '-') /* don't skip minus sign, it's part of number */
 	    {
 	      break;
 	    }
         }
-      
+
       if (c == delim && delim != '\0')
 	break;
-      
+
       if (IsWhite(c))
         {
 	  if (waswhite)
@@ -742,24 +742,24 @@ void ParseValues(char *option)
 	      AdvanceChar();
 	      continue;
             }
-	  
+
 	  c = ' ';
         }
       else
 	waswhite = no;
-      
+
       /* New */
       if(c == '>')
 	{
 	  AdvanceChar();
 	}
       /* New */
-      
+
       buf[i++] = c; /* cumulate charcters into buf */
       AdvanceChar();
-      
+
     }
-  
+
   buf[i] = '\0';
 
   if(i > 0)
@@ -769,16 +769,16 @@ void ParseValues(char *option)
     {
       setStringVar(option, buf);
     }
-  
+
 #if 0
     if (i == 0)
       ReportBadArgument(option);
 #endif
-    
+
 }
 
 /* depending on data type, an array of values
-   will be extratced from data buffer using space token 
+   will be extratced from data buffer using space token
    that separate numbers */
 void extract_data(char * buf, int datatype)
 {
@@ -840,7 +840,7 @@ void extract_data(char * buf, int datatype)
 	  fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%12.4f\"\n", i, floatdata[i]);
 	}
 #endif
-      
+
     }
   else if(datatype == CHR)
     {
@@ -864,10 +864,10 @@ void extract_data(char * buf, int datatype)
 	}
     }
 
-  
+
   while((token = strtok(null, delimiters)) != null)
     {
-      
+
       if(datatype == INTN)
 	{
 	  intdata[++i] = atoi(token);
@@ -888,7 +888,7 @@ void extract_data(char * buf, int datatype)
 	      fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%10.4f\"\n", i, floatdata[i]);
 	    }
 #endif
-	
+
 	}
 
       else if(datatype == CHR)
@@ -975,7 +975,7 @@ static PList *install(char *name, ParseProperty *parser)
 
         if (np == null )
             return null;
-	
+
         hashval = hash(name);
 	np->name = name;
 	np->next = hashtable[hashval];
@@ -991,11 +991,11 @@ static PList *install(char *name, ParseProperty *parser)
 void InitConfig(void)
 {
     struct Flag *p;
-   
+
     if (!initialized)
     {
         initialized = yes;
-    
+
         for(p = flags; p->name != null; ++p)
 	  {
 	    install(p->name, p->parser);
@@ -1008,21 +1008,21 @@ void InitConfig(void)
 
 char * strtrim(char *s)
 {
- 
-#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n')) 
+
+#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n'))
   char *p = s;
- 
+
   for(p = s; *p; p++);	/* Find end of string */
 
- 
-  for(p--; p>=s; p--) 
+
+  for(p--; p>=s; p--)
     {
-      if(SPACE(*p)) 
+      if(SPACE(*p))
 	*p = 0;	        /* Zap trailing blanks */
-      else 
+      else
 	break;
     }
-  
+
   while(s != null)
     {
       while((*s == ' ') || (*s == '\t') || (*s == '\n'))
@@ -1045,7 +1045,7 @@ void ParseConfigFile(char *file)
     PList *entry;
 
     /* setup property name -> parser table*/
-    
+
     InitConfig();
 
 #ifdef SUPPORT_GETPWNAM
@@ -1057,9 +1057,9 @@ void ParseConfigFile(char *file)
 
 #ifdef DEBUG
     if(fname != null)
-      fprintf(stderr, "ParseConfigFile(), File name received as argument \"%s\"\n", fname); 
+      fprintf(stderr, "ParseConfigFile(), File name received as argument \"%s\"\n", fname);
     else
-      fprintf(stderr, "ParseConfigFile(), File name received as argument is null \n"); 
+      fprintf(stderr, "ParseConfigFile(), File name received as argument is null \n");
 #endif
 
     /* open the file and parse its contents */
@@ -1069,15 +1069,15 @@ void ParseConfigFile(char *file)
     {
       config_text = null;
       AdvanceChar();  /* first char */
-      
+
       while (c != EOF)
         {
-	  
+
 	  /* // starts a comment */
 	  while (c == '/')
 	    {
 	      NextProperty();
-	      
+
 	      if(c == '<')
 		{
 #ifdef DEBUG
@@ -1086,21 +1086,21 @@ void ParseConfigFile(char *file)
 		  break;
 		}
 	    }
-	  
+
 	  i = 0;
-	  
+
 	  if(c == '<' || c == '/' || c == '>') /* New today */
 	    {
 	      AdvanceChar();
-	      
+
 	    }
-	  
+
 	  while (c != '>' && c != '<' && c != EOF && i < 200)
             {
 	      name[i++] = (char)c;
 	      AdvanceChar();
             }
-	  
+
 	  name[i] = '\0';
 	  if(strstr(name, "           ") == null);
 	    /* fprintf(stderr, "ParseConfigFile(), tag found: \"%s\" \n", name); */
@@ -1108,7 +1108,7 @@ void ParseConfigFile(char *file)
 	  if(strlen(name) > 1)
 	    {
 	      char *delim = "/";
-	     	      
+
 	      if(strstr(name, delim) != null && strcmp(name, "/fstrecord") != 0)
 		{
 		  entry = null;
@@ -1118,12 +1118,12 @@ void ParseConfigFile(char *file)
 		  else
 		    exit(0);
 		}
-	      
-	      else if(strstr(name, "           ") != null) 
+
+	      else if(strstr(name, "           ") != null)
 		{
-		  entry = null;     /* don't parse white space */        
+		  entry = null;     /* don't parse white space */
 		}
-	      
+
 	      else
 		{
 		  entry = lookup(name);
@@ -1141,7 +1141,7 @@ void ParseConfigFile(char *file)
 		{
 		  entry->parser(name);
 		}
-	      
+
             }
 	  else
 	    {
@@ -1160,7 +1160,7 @@ void ParseConfigFile(char *file)
 		NextProperty();
 	    }
         }
-	
+
         fclose(fin);
     }
 }

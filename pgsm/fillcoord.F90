@@ -2,7 +2,7 @@
 #include "impnone.cdk90"
 #include "grilles.cdk90"
       real lat(*),lon(*)
-      
+
       integer i
 
       do i=1,ncoords

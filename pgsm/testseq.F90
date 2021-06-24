@@ -11,11 +11,11 @@
 
       real champ(nigem,njgem)
       character(len=24) chaine
-      
+
       character(len=4) nomvar, cbidon2
       character(len=2) typvar, bidon1, grtyp, grref, cbidon1
       character(len=12) etiket, cbidon8
-      
+
       iun = 0
       ier = fnom(iun,'bofseq','SEQ+FTN+UNF',0)
 
@@ -27,5 +27,5 @@
       goto 10
 
  13   continue
-      stop 
+      stop
       end

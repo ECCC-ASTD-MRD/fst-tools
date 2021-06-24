@@ -1,16 +1,16 @@
 ***s/p fststat
 *
-      subroutine fststat(iun, NI, NJ, NK, datev, 
+      subroutine fststat(iun, NI, NJ, NK, datev,
      $     etiket, ip1, ip2, ip3,typvar, nomvar)
       implicit none
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev
       character(len=12) etiket
       character(len=2) typvar
       character(len=4) nomvar
-      
+
 *
 *AUTHOR   Yves Chartier                      July 1993
-* 
+*
 *REVISION 001  M. Lepine - Mars 2002 - ajout du mode reduction 32 pour IEEE a 64 bits
 *REVISION 002  M. Lepine - Juin 2003 - remplacement de memoirh
 *
@@ -20,7 +20,7 @@
 *Version 6.5   M. Lepine    - Fev  2015 - Compilation avec librmn_015.2
 *Version 6.6   M. Lepine    - Jan  2017 - Eviter le traitement des
 *      enregistrements '!!' qui contiennent un melange entiers, reels et
-*      caracteres 
+*      caracteres
 *
 *LANGUAGE:  fortran 77
 *
@@ -28,19 +28,19 @@
 *
 *FILES
 *     tape1: TSF file
-*     tape10-49: RPN standard files 
+*     tape10-49: RPN standard files
 *
-*ARGUMENTS 
+*ARGUMENTS
 *
-*IMPLICIT     
+*IMPLICIT
 *
 *MODULES
       external fstinf,fstprm,fstluk,fstsui,fstopl
       integer ier,fstprm,fstinf,fstsui,fstluk,fstopl
       character(len=1) grtyp
       integer i
-      
-      integer key, date0, deet, npas, nbits, datyp 
+
+      integer key, date0, deet, npas, nbits, datyp
       integer swa, lng, dltf, ubc
       integer ig1, ig2, ig3, ig4, extra1, extra2, extra3
 
@@ -50,9 +50,9 @@
       equivalence (rtemp,itemp)
 
       real, allocatable, dimension(:) :: buf
-      
+
       character(len=12) etiket2
-      key = fstinf(iun, ni, nj, nk,  datev, etiket, 
+      key = fstinf(iun, ni, nj, nk,  datev, etiket,
      $     ip1,ip2,ip3,typvar,nomvar)
 
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -60,8 +60,8 @@
 *         call memoirh(buf,ibuf,ni*nj*nk)
          allocate(buf(ni*nj*nk))
          ier = fstprm(key, date0, deet, npas, ni, nj, nk, nbits,
-     *        datyp, ip1, ip2, ip3, typvar, nomvar, etiket2, grtyp, 
-     *        ig1, ig2, ig3, ig4, swa, lng, dltf, ubc, 
+     *        datyp, ip1, ip2, ip3, typvar, nomvar, etiket2, grtyp,
+     *        ig1, ig2, ig3, ig4, swa, lng, dltf, ubc,
      *        extra1, extra2, extra3)
          if (nomvar .eq. '!!') then
            WRITE(6,*)' **   SKIPPING RECORD "!!", CAN''T PROCESS  **'
@@ -84,10 +84,10 @@
 *     call memoirh(buf,ibuf,0)
          goto 10
       endif
-      
-      return 
+
+      return
       end
 
 
-      
-      
+
+

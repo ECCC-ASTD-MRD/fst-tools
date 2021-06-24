@@ -1,6 +1,6 @@
 !
 !**S/P MESSAGS  IMPRIME MESSAGE SUR UNE PAGE COMPLETE
-      subroutine messags(ni) 
+      subroutine messags(ni)
 #include "impnone.cdk90"
 !
 !LANGAGE RATFOR
@@ -14,23 +14,23 @@
 !
 !ARGUMENTS
 !  IN     NI  - NOMBRE DE LONGITUDES DANS LE RECORD DU FICHIER D'ENTRE
-!     
+!
       integer ni
-      write(6,600) 
+      write(6,600)
  600  format(1h1)
-      write(6,*)'**************************************************' 
+      write(6,*)'**************************************************'
       write(6,*)'*                                                '
       write(6,*)'*                    ATTENTION                   '
       write(6,*)'*                                                '
       write(6,*)'*          NOMBRE DE LONGITUDES                  '
       write(6,*)'*          DOIT-ETRE PAIR                        '
-      write(6,*)'*          POUR UNE GRILLE GAUSSIENNE   # LONG=',ni 
+      write(6,*)'*          POUR UNE GRILLE GAUSSIENNE   # LONG=',ni
       write(6,*)'*                                                '
       write(6,*)'*          GARBAGE IN   GARBAGE OUT     OUCH  ?? '
       write(6,*)'*                                                '
-      write(6,*)'**************************************************' 
-      write(6,600) 
-!     
+      write(6,*)'**************************************************'
+      write(6,600)
+!
       return
       end
-      
+

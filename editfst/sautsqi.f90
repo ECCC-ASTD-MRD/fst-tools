@@ -17,15 +17,15 @@
 ! * Boston, MA 02111-1307, USA.
 ! */
 !** S/R SAUTSQI
-!        POSITIONNE LE FICHIER SEQUENTIEL DN 
+!        POSITIONNE LE FICHIER SEQUENTIEL DN
 !        A UN CERTAIN NIVEAU D'EOF LOGIQUE
       SUBROUTINE SAUTSQI(DN, LEV, NL)
       use configuration
-  
+
       IMPLICIT   NONE
-        
+
       INTEGER    DN(*), LEV, NL
-  
+
 !ARGUMENTS
 !  ENTRE    - DN    - DATASET NAME DU FICHIER DESTINATION A POSITIONNER
 !    "      - LEVEL - NIVEAU DE EOF LIGIQUE RECHERCHE [1]
@@ -41,10 +41,10 @@
 !         006       M. Lepine   Nov 05 Remplacement de fstabt par qqexit
 !         007       M. Valin    Mai 14 Remplacement des comdecks par un module
 !
-!LANGUAGE   - FTN77 
+!LANGUAGE   - FTN77
 !
-!MODULES  
-      EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 
+!MODULES
+      EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit
 !
 !*
       INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL
@@ -66,7 +66,7 @@
       ELSE
          I = 1
       ENDIF
-  
+
       WRITE(CLE, LIN128) (DN(M), M=1,ARGDIMS(1))
       IF(CLE.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM, DND) .EQ. 0) THEN
@@ -80,7 +80,7 @@
             ENDIF
          ENDIF
          J = 3
-      ELSEIF(CLE.EQ.NS .AND. OUVS) THEN 
+      ELSEIF(CLE.EQ.NS .AND. OUVS) THEN
          IF(INDEX(SNOM, DND) .EQ. 0) THEN
             WRITE(6,*)'PROBLEME AVEC FICHIER S= ', NS
             WRITE(6,*)'DEJA OUVERT AVEC   TYPE= ', SNOM
@@ -110,10 +110,10 @@
          TAPE = CLE(1:)
          WRITE(6,600) I, LEVEL, J, TAPE
   600    FORMAT(' SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
-      ENDIF       
+      ENDIF
 !     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
    10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 10
-      M = FSTEOF(J) 
+      M = FSTEOF(J)
       IF(M.LT.1 .OR. M.GT.15) THEN
          PRINT*,' MAUVAISE MARQUE DE FIN DE FICHIER =',M,' RENCONTREE DANS TAPE=',J
          CALL qqexit(64)
@@ -126,11 +126,11 @@
       ENDIF
       IF(J .EQ. SOURCES(1)) LEOF = M
       RETURN
-  
+
 !**   SAUTSEQ OUVRE LE FICHIER 2 (SEQUENTIEL 'SEQ+FTN')
       ENTRY SAUTSEQ(DN, LEV, NL)
       DND   = 'FTN'
       SORTE = 'STD+SEQ+FTN+OLD'
       GO TO 1
-  
-      END 
+
+      END

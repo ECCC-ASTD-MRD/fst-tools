@@ -1,6 +1,6 @@
 !
 !**S/P  VERLALO  VERIFI LONGITUDE ET LATITUDE
-!     
+!
       subroutine verlalo(clat,clon,nombre)
 #include "impnone.cdk90"
       integer nombre
@@ -21,7 +21,7 @@
 !   IN    CLON   - CHAMP DE LONGITUDES
 !   IN    NOMBRE - NOMBRE DE POINTS DANS LES CHAMPS CLAT/CLON
 !
-!-------------------------------------------------------------------- 
+!--------------------------------------------------------------------
       external pgsmabt,messags
 !
 !

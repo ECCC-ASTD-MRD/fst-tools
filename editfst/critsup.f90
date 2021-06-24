@@ -20,7 +20,7 @@
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
       use ISO_C_BINDING
       use configuration
-      IMPLICIT NONE 
+      IMPLICIT NONE
       include 'excdes.inc'
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
 !
@@ -30,11 +30,11 @@
 !Revision 003   M. Lepine - Nov 2002 - passage du bon type d'arguments pour fstcvt
 !Revision 004   M. Valin  - Mai 2014 - remplacement des cdk par un module
 !
-!LANGAGE      FTN77 
+!LANGAGE      FTN77
 !
 !ARGUMENTS
 ! ENTRE     - NI,NJ,NK - DIMENSIONS DE LA GRILLE
-! ENTRE     - GRID     - TYPE DE GRILLE 
+! ENTRE     - GRID     - TYPE DE GRILLE
 ! ENTRE     - IG1@AG4  - DESCRIPTEURS DE LA GRILLE
 !
 !OBJET(CRITSUP)
@@ -52,7 +52,7 @@
       CHARACTER(len=2) TV
       CHARACTER(len=4) NV
       CHARACTER(len=12) LBL
-  
+
 !     DESACTIVAGE DES CRITERES EN FONCRION
       IG4S = -1
       IG3S = -1
@@ -62,7 +62,7 @@
       NKS  = -1
       NJS  = -1
       NIS  = -1
-  
+
 !     RECUPERATION DES CRITERES FOURNIS PAR LA DIRECTIVE
       GO TO (8, 7, 6, 5, 4, 3, 2, 1) NP   ! la valeur de NP vient de READLX
     1 IG4S = IG4
@@ -80,13 +80,13 @@
       ELSE
          IF( DEBUG ) THEN
             IF( SCRI ) THEN
-               PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION MODIFIES' 
+               PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION MODIFIES'
             ELSE
                PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION ACTIVES'
             ENDIF
          ENDIF
          SCRI = .TRUE.  ! on a des criteres supplementaires
       ENDIF
-  
+
       RETURN
-      END 
+      END

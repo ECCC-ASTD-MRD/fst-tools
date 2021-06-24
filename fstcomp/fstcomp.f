@@ -31,10 +31,10 @@ C*DECK FSTCOMP
 * 019 V7.1 (M. Lepine, Oct  2004) Ajout datatype compresse (>128) et datatype 6
 * 020 V7.2 (M. Lepine, Fev  2005) Reload avec librmn_x
 * 021 V7.3 (M. Lepine, Mars 2005) Ajout de la fonctionnalite des fichiers remote
-* 022 V7.4 (M. Lepine, Fev  2006) Appel a ip1_all 
-* 023 V7.5 (M. Lepine, Mai  2006) Reload, bug fix float_packer 
+* 022 V7.4 (M. Lepine, Fev  2006) Appel a ip1_all
+* 023 V7.5 (M. Lepine, Mai  2006) Reload, bug fix float_packer
 * 024 V7.6 (Y. Chartier, Oct. 2006) Reload pour compresseur point flottant
-* 025 V7.7 (M. Lepine, Fev. 2007) Comparaison avec l'erreur du a l'algorithme de compaction 
+* 025 V7.7 (M. Lepine, Fev. 2007) Comparaison avec l'erreur du a l'algorithme de compaction
 * 026 V7.8 (M. Lepine, Juin 2007) Reload avec librmn_009
 * 027 V7.9 (M. Lepine, Avr. 2010) Correction pour affichage de facteur de correlation negatif
 * 028 V8.0 (M. Lepine, Juin 2011) Variables d'exception au convip du IP1
@@ -138,8 +138,8 @@ C*ENDIF
          CALL LOW2UP(DEF1(I), DEF1(I))
     1    CONTINUE
       READ(DEF1(8), '(I8)') LIMITE
-      READ(DEF1(21),'(I8)') PACK_ERR 
-      
+      READ(DEF1(21),'(I8)') PACK_ERR
+
       VA = DEF1(13) .NE. 'NON'
       IF(VA .AND. (DEF1(13).NE.'VA')) DEF1(1) = DEF1(13)
       VB = DEF1(14) .NE. 'NON'
@@ -206,7 +206,7 @@ C*ENDIF
         ENDIF
       ENDIF
 *      print *,'Debug exception_vars=',exception_vars
-      
+
 *     SI A=RND & B=SEQ CHANGE [A POUR B] & [B POUR A]
       IF((BF.OR.BS) .AND. .NOT.(AF.OR.AS)) THEN
          NOMD    = DEF1(1)
@@ -267,7 +267,7 @@ C*ENDIF
       ENDIF
 
 *     ECRIRE L'ENTETE DE PAGE
-      IF (PACK_ERR .eq. 0) THEN      
+      IF (PACK_ERR .eq. 0) THEN
          WRITE(6,600)
       ELSE
          WRITE(6,700)
@@ -377,7 +377,7 @@ C*ENDIF
   30  WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',DATYPA,
      X                                    ' DATYPB=',DATYPB
       GO TO 60
-  35  WRITE(6,*)' **   SKIPPING RECORD "!!", CAN''T COMPARE  **' 
+  35  WRITE(6,*)' **   SKIPPING RECORD "!!", CAN''T COMPARE  **'
       GO TO 60
   40  CALL RCMP1D(XX1, XX2, N, 6, KA, KB, NOMVAR, ETIKB,
      X            IP1, IP2, IP3, LIMITE, MIN(NBITS,NBIT2), PACK_ERR2,
@@ -429,13 +429,13 @@ C*ENDIF
      X       ' ',A40,' GRTYP IG1@4=', A1,1X, 4I6)
   603 FORMAT(2I6,A4,' -LES DIMENSIONS TROUVEES SONT',3I5,
      %       ' CHERCHE',3I5)
-     
+
   700 FORMAT('  NOM    ETIKET           IP1',
      X       '            IP2       IP3  E-REL-MAX',
      X       '  E-REL-MOY    VAR-A      C-COR        MOY-A',
      X       '        BIAIS      E-MAX      E-MOY     TOLERANCE')
 
-     
+
       STOP
       END
 C*DECK RCMP1D
@@ -568,7 +568,7 @@ C*DECK RCMP1D
         CALL convip_plus(ip1,rlevel,kind,-1,level,.true.)
       ENDIF
       ERR_UNIT = RANGE_A / DEUX_EXP_NB
-      
+
       IF ((ERRMAX .LE. ERRLIM) .and. (PACK_ERR .eq.0)) THEN
          WRITE(IUN,600) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
@@ -578,7 +578,7 @@ C*DECK RCMP1D
            WRITE(IUN,602) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS, PACK_ERR*ERR_UNIT
-         ELSE       
+         ELSE
             WRITE(IUN,603) NOMVAR, ETIKET, level, IP2, IP3,
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS, PACK_ERR*ERR_UNIT
@@ -588,7 +588,7 @@ C*DECK RCMP1D
      X                  ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR,
      X                  MAXABS, SUMABS
       ENDIF
- 
+
       if ((nbdiff .ne. 0) .and. (PACK_ERR .gt. 0)) then
         write(6,900) '  <Difference> Number of elements differing is',
      %    nbdiff, ' out of ',n,
@@ -679,7 +679,7 @@ C*DECK ICMP1D
 
       RETURN
       END
-      
+
       character(len=128) function product_id_tag()
       product_id_tag='$Id: fstcomp.f 178 2015-02-26 14:44:36Z armnlib $'
       return

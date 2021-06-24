@@ -6,7 +6,7 @@
 !     * Arguments :                                                 *
 !     *            IN /  ni    : x dimension of data                *
 !     *            IN /  nj    : y dimension of data                *
-!     *            IN /  Npass : nombre de passes pour le filtrage  * 
+!     *            IN /  Npass : nombre de passes pour le filtrage  *
 !     *            IN /  list  : list des nombres de filtre        *
 !     *            IN /  L     : dimension de la list              *
 !     *         IN/OUT/  slab  : les donnees a filtrer              *
@@ -14,7 +14,7 @@
 !     ***************************************************************
       subroutine filtre (slab, NI, NJ, nrows, Npass, list, L)
       implicit none
-      
+
       integer NI, NJ, nrows
       integer l,list(L)
       real slab(NI ,NJ)
@@ -25,9 +25,9 @@
       integer Npass, pass
       integer nb_elem, lng_list, istart, iend
       real sum
-    
+
       real result1(ni), result2(nj)
- 
+
       nb_elem = (l+1)/2
       istart = -nb_elem + 1
       iend = nb_elem -1
@@ -62,7 +62,7 @@
                slab(I,J) = result1(I)
             enddo
          enddo
-         
+
          do I=1, NI
             do J=2, NJ-1
                temp=0
@@ -77,8 +77,8 @@
             enddo
          enddo
       enddo
-      
+
       return
       end
-      
+
 

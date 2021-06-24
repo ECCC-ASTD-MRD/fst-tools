@@ -191,7 +191,7 @@
             endif
             cycle
          endif
-         
+
          extrap_option = '        '
          ier = ezgetopt('extrap_degree', extrap_option)
          if (extrap_option(1:5) == 'abort') then

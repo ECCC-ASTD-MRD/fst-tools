@@ -1,9 +1,9 @@
 #+TITLE: pgsm
 * NAME
-pgsm is a utility designed to perform horizontal interpolations and basic arithmetic operations on RPN standard files. 
+pgsm is a utility designed to perform horizontal interpolations and basic arithmetic operations on RPN standard files.
 * SYNOPSIS
 
-#+begin_src 
+#+begin_src
 pgsm -iment input1 input2 ... input40 -ozsrt output -i directives -l listing -date
 pgsm -iment input1... -ozsrt output >/dev/null <<ENDPGSM
 #+end_src
@@ -12,15 +12,15 @@ see section DIRECTIVES for more on the parameter of ~-i~.
 
 * OPTIONS
 ** ~-iment NAME~
-name[s] of RPN standard files (random) to be used as source for fields and grid; required. A maximum of 40 files is currently allowed. 
+name[s] of RPN standard files (random) to be used as source for fields and grid; required. A maximum of 40 files is currently allowed.
 ** ~-ozsrt NAME~
-name of RPN standard file (random) to be used as output for fields and grid; required. 
+name of RPN standard file (random) to be used as output for fields and grid; required.
 ** ~-i NAME~
-name of directives file; defaults to "stdin". In a shell script, directives may also be included after the call to pgsm by using the "here document" syntax: <<ENDPGSM on the calling line and ENDPGSM by itself as the last directive. Of course ENDPGSM is only an example and may be anything provided it does not appear elsewhere between the calling and the last lines. See example. 
+name of directives file; defaults to "stdin". In a shell script, directives may also be included after the call to pgsm by using the "here document" syntax: <<ENDPGSM on the calling line and ENDPGSM by itself as the last directive. Of course ENDPGSM is only an example and may be anything provided it does not appear elsewhere between the calling and the last lines. See example.
 ** ~-l NAME~
-name of output file for messages and diagnostics; defaults to "stdout". Equivalent to ">". May be sent to /dev/null if directives are debugged already. 
+name of output file for messages and diagnostics; defaults to "stdout". Equivalent to ">". May be sent to /dev/null if directives are debugged already.
 ** ~-date oprun|oui|non~
-Obsolete. Kept for backward compatibility. Date is now used only in the information messages printed at the beginning and end of the program. 
+Obsolete. Kept for backward compatibility. Date is now used only in the information messages printed at the beginning and end of the program.
 
 
 * DESCRIPTION
@@ -34,7 +34,7 @@ PGSM can:
 - Extract low, mid and high clouds.
 - Perform mathematical operations on one field or more.
 - Compute latitudes and longitudes from the X-Y coordinates of a grid.
-- Read navigational records of latitudes-longitudes (grid type Y) or grid coordinates (grid type Z) in an input or output file and interpolate values from these coordinates. 
+- Read navigational records of latitudes-longitudes (grid type Y) or grid coordinates (grid type Z) in an input or output file and interpolate values from these coordinates.
 
 * DIRECTIVES
 

@@ -1,8 +1,8 @@
-subroutine bm_wrt_axay(udst, ax, ay, nig, njg, & 
+subroutine bm_wrt_axay(udst, ax, ay, nig, njg, &
                       typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, nbits, &
                       grref, ig1ref, ig2ref, ig3ref, ig4ref)
   implicit none
-  
+
   integer udst
   integer nig,njg
   real ax(nig)
@@ -20,8 +20,8 @@ subroutine bm_wrt_axay(udst, ax, ay, nig, njg, &
   integer nbits, nkg, ip1, ip2, ip3, datyp
   integer i,j,ni, nj, nk
   integer rni_start, rni_end, rni, rnj_start, rnj_end, rnj
-  
-  
+
+
   nkg = 1
   keyax = fstinf(udst, NI, NJ, NK, -1, etiket, ip1, ip2, ip3, '  ', '>>  ')
   if (keyax.lt.0) then

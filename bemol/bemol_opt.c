@@ -21,7 +21,7 @@ typedef struct
   int avg_factor;
   int ig3core, ig3coarse;
   } _Bemol_options;
-  
+
 static _Bemol_options bemolOpt;
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
@@ -63,79 +63,79 @@ void f77name(bemol_set_user_domain)(int *ni_start, int *nj_start, int *ni_end, i
   bemolOpt.ni       = *ni_end - *ni_start + 1;
   bemolOpt.nj       = *nj_end - *nj_start + 1;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_iun_in)(int *iun)
   {
   bemolOpt.iun_in = *iun;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_iun_dst)(int *iun)
   {
   bemolOpt.iun_dst = *iun;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_iun_cfs)(int *iun)
   {
   bemolOpt.iun_cfs = *iun;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_iun_core)(int *iun)
   {
   bemolOpt.iun_core = *iun;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_iun_coarse)(int *iun)
   {
   bemolOpt.iun_coarse = *iun;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_verbose_level)(int *verbose_level)
   {
   bemolOpt.verbose_level = *verbose_level;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_nbits)(int *nbits)
   {
   bemolOpt.nbits = *nbits;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_compression)(int *compression_code)
   {
   bemolOpt.compression_code = *compression_code;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
-  
+
 void f77name(bemol_set_fill_mode)(int *fill_mode)
   {
   bemolOpt.fill_mode = *fill_mode;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_avgfactor)(int *avg_factor)
   {
   bemolOpt.avg_factor = *avg_factor;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_ig3core)(int *ig3core)
   {
   bemolOpt.ig3core = *ig3core;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void f77name(bemol_set_ig3coarse)(int *ig3coarse)
   {
   bemolOpt.ig3coarse = *ig3coarse;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_grtyp_out(char *grtyp)
   {
@@ -150,43 +150,43 @@ int bemol_get_user_domain(int *ni_start, int *nj_start, int *ni_end, int *nj_end
   *ni_end = bemolOpt.ni_end;
   *nj_end = bemolOpt.nj_end;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_verbose_level(int *verbose_level)
   {
   *verbose_level = bemolOpt.verbose_level;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 int f77name(bemol_get_compression_code)(int *compression_code)
   {
   bemol_get_compression_code(compression_code);
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_compression_code(int *compression_code)
   {
   *compression_code = bemolOpt.compression_code;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_fill_mode(int *fill_mode)
   {
   *fill_mode = bemolOpt.fill_mode;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_avgfactor(int *avg_factor)
   {
   *avg_factor = bemolOpt.avg_factor;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_ig3core(int *ig3core)
   {
   *ig3core = bemolOpt.ig3core;
   }
-  
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3-- */
 void bemol_get_ig3coarse(int *ig3coarse)
   {

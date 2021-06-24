@@ -1,5 +1,5 @@
 !**S/P IPGSMLIC
-!     
+!
       integer function ipgsmlic(ifld,iun,ni,nj,nk,datev,etiket,ip1,ip2,ip3,typvar,nomvar,ig1,ig2,ig3,ig4,grtyp)
 #include "impnone.cdk90"
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev,ig1,ig2,ig3,ig4
@@ -13,7 +13,7 @@
 
 
       integer ier,i
-      
+
       ier = fstlic(ifld,iun,ni,nj,nk,datev,etiket,ip1,ip2,ip3,typvar,nomvar,ig1,ig2,ig3,ig4,grtyp)
 
       if (ier.lt.0) then
@@ -23,6 +23,6 @@
 
       call prefiltre(ifld,ni,nj,nomvar,grtyp)
       ipgsmlic=ier
-      return 
+      return
       end
-      
+

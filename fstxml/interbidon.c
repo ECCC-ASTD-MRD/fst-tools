@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <rmnlib.h>
-extern void f77name(fst2xml) (); 
+extern void f77name(fst2xml) ();
 
 ftnword f77name(c_to_f_sw)(char *program, int *f_lng)
 {
@@ -13,7 +13,7 @@ ftnword f77name(c_to_f_sw)(char *program, int *f_lng)
   int lng = *f_lng;
   char *n_program;
   n_program=malloc(lng);
-  strncpy(n_program,program,lng); 
+  strncpy(n_program,program,lng);
   if ( (n_program == "null" || n_program == " " || lng == 0) && ( 1 != 1 ) ){
     fprintf(stdout,"erreur 1: aucun argument specifie\n");
     exit(1);

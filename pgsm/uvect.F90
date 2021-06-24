@@ -173,7 +173,7 @@
           write(6,*)'********************************************'
           call pgsmabt
        endif
-       
+
 !!  Switch pour champs masques
       if (masque == 1) then
          if (ctypvar(1:1) == '@') then
@@ -225,7 +225,7 @@
       call cvtrfi(tmpif1, itmpif1, ni, nj)
       call cvtrfi(tmpif2, itmpif2, ni, nj)
       endif
-      
+
       gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
 
       if (vvent) then

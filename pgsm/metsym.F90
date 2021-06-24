@@ -1,7 +1,7 @@
 !
 !**S/P CMETSYM   MISE A JOUR DES TABLES DE SYMETRIE
 !
-      subroutine cmetsym(cnom,sym) 
+      subroutine cmetsym(cnom,sym)
 #include "impnone.cdk90"
       external pgsmabt,messags
 !
@@ -19,10 +19,10 @@
 !
 !ARGUMENTS
 !  IN   NOM    NOM DU CHAMP
-!  IN   SYM    VALEUR  .TRUE. / .FALSE. 
+!  IN   SYM    VALEUR  .TRUE. / .FALSE.
 !
 !IMPLICITES
-!MESSAGES 
+!MESSAGES
 !         PLUS DE PLACE DANS LES TABLES DE SYMETRIE
 !         MAUVAISE DIRECTIVE METSYM DOIT AVOIR 2 ARGUMENTS
 !
@@ -40,11 +40,11 @@
 #include "voir.cdk90"
 #include "dummys.cdk90"
 !
-  
+
       logical sym
-      character(len=4) cnom 
-!     
-!     sauve nsym dans nsymm a cause readlx qui remet a zero      nsymm = nsym 
+      character(len=4) cnom
+!
+!     sauve nsym dans nsymm a cause readlx qui remet a zero      nsymm = nsym
 !
       if (nnoms.lt.maxnoms) then
          nnoms = nnoms + 1
@@ -55,12 +55,12 @@
             write(6,*)            'PLUS DE PLACE DANS LES TABLES DE SYMETRIE(METSYM)'
          endif
       endif
-      
-      return 
+
+      return
       end
 !**   S/P METSYM   MISE A JOUR DES TABLES DE SYMETRIE
-!     
-      subroutine metsym(nom,sym) 
+!
+      subroutine metsym(nom,sym)
 #include "impnone.cdk90"
       external cmetsym
 !
@@ -78,13 +78,13 @@
       integer nom
       logical sym
       character(len=2) cnom
-      
+
       write(cnom, '(A4)') nom
-      write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom 
+      write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom
       call cmetsym(cnom, sym)
-      
-      
+
+
       return
       end
-      
+
 

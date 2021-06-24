@@ -1,8 +1,8 @@
-subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, & 
+subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
                       nomvar, typvar, etiket, ip1, ip2, ip3, dateo, deet, npas, datyp, nbits, &
                       grtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref, avg)
   implicit none
-  
+
   integer udst
   integer nig,njg
   real ax(nig)
@@ -57,7 +57,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   if (ig3 == -1) then
     ig3 = lcl_avg
   endif
-    
+
   dxcoarse = (ax(nig)-ax(1))/(1.0*(nicoarse-1))
   dycoarse = (ay(njg)-ay(1))/(1.0*(njcoarse-1))
 
@@ -75,7 +75,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   allocate(y_low(njcoarse))
   allocate(x_high(nicoarse))
   allocate(y_high(njcoarse))
-  
+
 
   do i=1,nicoarse
      axcoarse(i) = ax(1) + dxcoarse * (i-1)
@@ -93,7 +93,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   enddo
   axcoarse_high(nicoarse) = ax(nig)
   x_high(nicoarse) = float(nig)
-  
+
   do j=1,njcoarse
      aycoarse(j) = ay(1) + dycoarse * (j-1)
      aycoarse_low(j) = ay(1) + dycoarse * (1.0*j-1.5)
@@ -111,7 +111,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   enddo
   aycoarse_high(njcoarse) = ax(njg)
   y_high(njcoarse) = float(njg)
-   
+
   do j=2,njcoarse-1
     jstart = nint(y_low(j))
     jend   = nint(y_high(j))
@@ -126,25 +126,25 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
         yfrac = ytile_max - ytile_min
         if (ytile_min < aycoarse_low(j)) then
             yfrac = ytile_max - aycoarse_low(j)
-        endif         
+        endif
         if (ytile_max > aycoarse_high(j)) then
             yfrac = aycoarse_high(j) - ytile_min
-        endif         
+        endif
          do ii=istart, iend
             xtile_min = ax(ii)-0.5*(ax(ii)-ax(ii-1))
             xtile_max = ax(ii)+0.5*(ax(ii+1)-ax(ii))
             xfrac = xtile_max - xtile_min
             if (xtile_min < axcoarse_low(i)) then
                xfrac = xtile_max - axcoarse_low(i)
-            endif         
+            endif
             if (xtile_max > axcoarse_high(i)) then
                xfrac = axcoarse_high(i) - xtile_min
-            endif         
+            endif
           area =  xfrac*yfrac
           total_area = total_area + area
           zcoarse(i,j) = zcoarse(i,j) + z(ii,jj) * area
          enddo
-       enddo 
+       enddo
        zcoarse(i,j) = zcoarse(i,j)/total_area
     enddo
   enddo
@@ -160,43 +160,43 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
       istart = nint(x_low(i))
       iend   = nint(x_high(i))
       do jj=jstart, jend
-      
+
       if (jj == 1) then
         ytile_min = ay(jj)
       else
-        ytile_min = ay(jj)-0.5*(ay(jj)-ay(jj-1))      
+        ytile_min = ay(jj)-0.5*(ay(jj)-ay(jj-1))
       endif
-      
+
       ytile_max = ay(jj)+0.5*(ay(jj+1)-ay(jj))
       yfrac = ytile_max - ytile_min
       if (ytile_min < aycoarse_low(j)) then
           yfrac = ytile_max - aycoarse_low(j)
-      endif         
-      
+      endif
+
       if (ytile_max > aycoarse_high(j)) then
-          yfrac = aycoarse_high(j) - ytile_min      
-      endif         
-      
+          yfrac = aycoarse_high(j) - ytile_min
+      endif
+
       do ii=istart, iend
         xtile_min = ax(ii)-0.5*(ax(ii)-ax(ii-1))
         xtile_max = ax(ii)+0.5*(ax(ii+1)-ax(ii))
         xfrac = xtile_max - xtile_min
         if (xtile_min < axcoarse_low(i)) then
             xfrac = xtile_max - axcoarse_low(i)
-        endif         
+        endif
         if (xtile_max > axcoarse_high(i)) then
             xfrac = axcoarse_high(i) - xtile_min
-        endif         
+        endif
       area =  xfrac*yfrac
       total_area = total_area + area
       zcoarse(i,j) = zcoarse(i,j) + z(ii,jj) * area
       enddo
-    enddo 
+    enddo
     zcoarse(i,j) = zcoarse(i,j)/total_area
   enddo
 
 
-! Moyenne rangee du haut 
+! Moyenne rangee du haut
 
   j = njcoarse
   jstart = nint(y_high(njcoarse-1))
@@ -213,30 +213,30 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
           ytile_max = ay(jj)+0.5*(ay(jj+1)-ay(jj))
         endif
         ytile_min = ay(jj)-0.5*(ay(jj)-ay(jj-1))
-        
+
         yfrac = ytile_max - ytile_min
         if (ytile_min < aycoarse_low(j)) then
             yfrac = ytile_max - aycoarse_low(j)
-        endif         
-                
+        endif
+
         do ii=istart, iend
           xtile_min = ax(ii)-0.5*(ax(ii)-ax(ii-1))
           xtile_max = ax(ii)+0.5*(ax(ii+1)-ax(ii))
           xfrac = xtile_max - xtile_min
           if (xtile_min < axcoarse_low(i)) then
               xfrac = xtile_max - axcoarse_low(i)
-          endif         
+          endif
           if (xtile_max > axcoarse_high(i)) then
               xfrac = axcoarse_high(i) - xtile_min
-          endif         
+          endif
           area =  xfrac*yfrac
           total_area = total_area + area
           zcoarse(i,j) = zcoarse(i,j) + z(ii,jj) * area
         enddo
-    enddo 
+    enddo
     zcoarse(i,j) = zcoarse(i,j)/total_area
   enddo
-  
+
 ! Moyenne 1e colonne
 
   do j=1,njcoarse
@@ -267,10 +267,10 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
       yfrac = ytile_max - ytile_min
       if (ytile_min < aycoarse_low(j)) then
           yfrac = ytile_max - aycoarse_low(j)
-      endif         
+      endif
       if (ytile_max > aycoarse_high(j)) then
           yfrac = aycoarse_high(j) - ytile_min
-      endif         
+      endif
       do ii=istart, iend
         if (ii == 1) then
           xtile_min = ax(1)
@@ -279,17 +279,17 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
         xfrac = xtile_max - xtile_min
         if (xtile_max > axcoarse_high(i)) then
             xfrac = axcoarse_high(i) - xtile_min
-        endif         
+        endif
       area =  xfrac*yfrac
       total_area = total_area + area
       zcoarse(i,j) = zcoarse(i,j) + z(ii,jj) * area
       enddo
-    enddo 
+    enddo
     zcoarse(i,j) = zcoarse(i,j)/total_area
   enddo
-  
+
 ! Moyenne derniere colonne
-    
+
   do j=1,njcoarse
     jstart = nint(y_low(j))
     jend   = nint(y_high(j))
@@ -318,10 +318,10 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
       yfrac = ytile_max - ytile_min
       if (ytile_min < aycoarse_low(j)) then
           yfrac = ytile_max - aycoarse_low(j)
-      endif         
+      endif
       if (ytile_max > aycoarse_high(j)) then
           yfrac = aycoarse_high(j) - ytile_min
-      endif         
+      endif
       do ii=istart, iend
         xtile_min = ax(ii)-0.5*(ax(ii)-ax(ii-1))
         if (ii == nig) then
@@ -332,28 +332,28 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
         xfrac = xtile_max - xtile_min
         if (xtile_max > axcoarse_high(i)) then
             xfrac = axcoarse_high(i) - xtile_min
-        endif         
+        endif
       area =  xfrac*yfrac
       total_area = total_area + area
       zcoarse(i,j) = zcoarse(i,j) + z(ii,jj) * area
       enddo
-    enddo 
+    enddo
     zcoarse(i,j) = zcoarse(i,j)/total_area
   enddo
-  
+
 
   keyax = fstinf(udst, nix, njx, nkx, -1, etiket, ig1, ig2, ig3, '  ', '>>  ')
   if (keyax.lt.0) then
      ier = FSTECR(axcoarse, axcoarse, -32, udst, dateo, deet, npas, nicoarse, 1, 1, &
           ig1, ig2, ig3, 'X ', '>>  ', etiket, grref, &
           ig1ref, ig2ref, ig3ref, ig4ref, 5, .true.)
-     
+
      ier = FSTECR(aycoarse, aycoarse, -32, udst, dateo, deet, npas, 1, njcoarse, 1, &
           ig1, ig2, ig3, 'X ', '^^  ', etiket, grref, &
           ig1ref, ig2ref, ig3ref, ig4ref, 5, .true.)
-     
+
   endif
-  
+
   call bemol_get_compression_code(compression_code)
   if (compression_code == -1) then
      usr_datyp = datyp
@@ -384,7 +384,7 @@ subroutine bm_coarse_wrt(udst, z, ax, ay, nig, njg, &
   if (lgrtyp.eq.'#') then
      lgrtyp = 'Z'
   endif
-     
+
 
   ier = FSTECR(zcoarse, zcoarse, -nbits, udst, dateo, deet, npas, nicoarse, njcoarse, &
        1, ip1, ip2, ip3, typvar, nomvar, etiket, lgrtyp, &

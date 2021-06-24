@@ -8,4 +8,4 @@
 
       common /seq/  ntitems,nitems1,nitems2
       common /cseq/ listnom
-      
+
