@@ -5,6 +5,7 @@
 #include <diese.h>
 #include <diese_funct.h>
 #include <diese_var_e.h>
+#include "bemol_opt.h"
 
 
 typedef struct
