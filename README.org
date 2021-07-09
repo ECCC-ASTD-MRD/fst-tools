@@ -1,4 +1,29 @@
 
+* Build dependencies
+
+- CMake 3.12+
+- librmn
+
+Note: =cmake_rpn= and =ci-env= are included as a submodule.  Please clone with the
+=--recursive= flag or run =git submodule update --init --recursive= in the
+git repo after having cloned.
+
+* At CMC
+
+Source the right file depending the architecture you need from the env directory
+
+- Example for PPP3 and skylake specific architecture:
+
+#+begin_src
+. ci-env/latest/ubuntu-18.04-skylake-64/intel-19.0.3.199.sh
+#+end_src
+
+- Example for XC50 on intel-19.0.5
+
+#+begin_src
+. ci-env/latest/sles-15-skylake-64/intel-19.0.5.281.sh
+#+end_src
+
 * Build and install
 
 #+begin_src
@@ -7,19 +32,3 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${your_choice}
 #+end_src
 
-* Build dependencies at CMC
-
-- CMake 3.16+
-
-Note: =cmake_rpn= is included as a submodule.  Please clone with the
-=--recursive= flag or run =git submodule update --init --recursive= in the
-git repo after having cloned.
-
-** CMC
-
-The following script will load the proper build environment at CMC for using
-the intel compiler.
-
-#+begin_src
-source ~sici000/ci-admin-bundle/environments/eccc-setup-intel-19.0.3.199-20210614.sh
-#+end_src
