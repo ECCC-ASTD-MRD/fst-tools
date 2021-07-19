@@ -74,7 +74,8 @@
 !
       if (npar.ne. 3) then
          if (message) then
-            write(6,*) 'DIRECTIVE CHAMP_SEQ IL DEVRAIT Y AVOIR 3 ARGUMENTS (CHAMP_SEQ)'
+            write(6,*)  &
+        'DIRECTIVE CHAMP_SEQ IL DEVRAIT Y AVOIR 3 ARGUMENTS (CHAMP_SEQ)'
          endif
          return
       endif
@@ -91,23 +92,23 @@
 
       ntitems = ntitems + 1
       if (ntitems.gt.nmaxlist1) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 DIRECTIVES CHAMP_SEQ A ETE DEPASSEE *'
-         print *,'*******************************************************'
+         print *,'****************************************************'
+         print *,'* LIMITE DE 16 DIRECTIVES CHAMP_SEQ A ETE DEPASSEE *'
+         print *,'****************************************************'
          call pgsmabt
       endif
 
       if (argdims(1).gt.nmaxlist2) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 NOMS DE VARIABLES A ETE DEPASSEE    *'
-         print *,'*******************************************************'
+         print *,'****************************************************'
+         print *,'* LIMITE DE 16 NOMS DE VARIABLES A ETE DEPASSEE    *'
+         print *,'****************************************************'
          call pgsmabt
       endif
 
       if (argdims(2).gt.nmaxlist2) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 NIVEAUX VERTICAUX A ETE DEPASSEE    *'
-         print *,'*******************************************************'
+         print *,'****************************************************'
+         print *,'* LIMITE DE 16 NIVEAUX VERTICAUX A ETE DEPASSEE    *'
+         print *,'****************************************************'
          call pgsmabt
       endif
 
@@ -141,7 +142,11 @@
  200  irec = fstsui(1,ni,nj,nk)
       if (irec.ge.0) then
          processed = .false.
-         ier = fstprm(irec, date,deet,npas,ni, nj, nk,          nbits,datyp,         ip1,ip2,ip3,typvar,nomvar,etiket,         cigtyp,ig1,ig2,ig3,ig4,         swa, lng, dltf, ubc, extra1, extra2, extra3)
+         ier = fstprm(irec, date,deet,npas,ni, nj, nk, &
+                      nbits,datyp, &
+                      ip1,ip2,ip3,typvar,nomvar,etiket, &
+                      cigtyp,ig1,ig2,ig3,ig4, &
+                      swa, lng, dltf, ubc, extra1, extra2, extra3)
 
 !         print *,nomvar,typvar,ip1,ip2,ip3,etiket,date
          heureok = .false.
@@ -178,7 +183,10 @@
                               ier = ezdefset(gdout, gdin)
                               ier = ezsint(tmpif2, tmpif1)
 
-                              call ecritur(tmpif2,npack,date,deet,npas,                              li,lj,1,ip1,ip2,ip3,                              typvar,nomvar,etiket,cgrtyp,lg1,lg2,lg3,lg4)
+                              call ecritur(tmpif2,npack,date,deet,npas, &
+                                           li,lj,1,ip1,ip2,ip3, &
+                                           typvar,nomvar,etiket,cgrtyp, &
+                                           lg1,lg2,lg3,lg4)
 !
                               deallocate(tmpif2)
                               deallocate(tmpif1)
