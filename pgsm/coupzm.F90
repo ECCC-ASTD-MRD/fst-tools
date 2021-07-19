@@ -4,7 +4,9 @@
 #include "defin.cdk90"
       subroutine coupzm(iunit, cnom, cjcoup)
 #include "impnone.cdk90"
-      external calcul,ecritur,gauss,fstinf,pgsmlir,memoir,fstprm,fstcvt,          pgsmabt,imprime,loupmir,louptra,loupin1,fstopc,messags
+      external calcul,ecritur,gauss,&
+               fstinf,pgsmlir,memoir,fstprm,fstcvt, &
+               pgsmabt,imprime,loupmir,louptra,loupin1,fstopc,messags
       integer  fstinf,pgsmlir,fstprm,fstopc,fstcvt
 !
 !auteur  p. sarrazin  dorval quebec avril 85 drpn
@@ -153,7 +155,10 @@
 !     identifier parametres si type g-a-b-l-c
 !
 !
-         ier = fstprm( irec, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,         jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,          ig1,ig2,ig3,ig4,          cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         ier = fstprm( irec, dat,deet,npas,ni, nj, nk, cnbits,cdatyp, &
+                       jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp, &
+                       ig1,ig2,ig3,ig4, &
+                       cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) then
             write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
          endif

@@ -265,7 +265,11 @@
 !
 !     identifier parametres pour champ 1
 !
-         ier = fstprm( irec1, dat1,deet1,npas1,         ni, nj, nk, cnbits,cdatyp,         jp01,jp02, jp03,ctypvar,cnoment,cetiket,         cigtyp, ig1,ig2,ig3,ig4,          cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         ier = fstprm( irec1, dat1,deet1,npas1, &
+                       ni, nj, nk, cnbits,cdatyp, &
+                       jp01,jp02, jp03,ctypvar,cnoment,cetiket, &
+                       cigtyp, ig1,ig2,ig3,ig4, &
+                       cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) then
             write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
          endif
@@ -289,7 +293,12 @@
 !
 !     identifier parametres pour champ 2
 !
-         ier = fstprm( irec2, dat2,deet2,npas2,ni, nj, nk,          cnbits,cdatyp,         jp11,jp12,jp13,ctypvar,cnoment,cetiket,         cigtyp,ig1,ig2,ig3,ig4,         cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         ier = fstprm(irec2, dat2,deet2,npas2,ni, nj, nk, &
+                      cnbits,cdatyp, &
+                      jp11,jp12,jp13,ctypvar,cnoment,cetiket, &
+                      cigtyp,ig1,ig2,ig3,ig4, &
+                      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+
          if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
 !
 !
@@ -403,9 +412,13 @@
 !
 !
       if (cgrtyp.eq.'*') then
-         call ecritur(lclif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk,         jp(1),jp(2),jp(3),         ctypvar,cnomsrt,cetiket,cigtyp,ig1,ig2,ig3,ig4)
+         call ecritur(lclif1,npack,datsrt,deetsrt,npassrt,ni,nj,nk, &
+                      jp(1),jp(2),jp(3), &
+                      ctypvar,cnomsrt,cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
-         call ecritur(lclif2,npack,datsrt,deetsrt,npassrt,         li,lj,1,jp(1),jp(2),jp(3),         ctypvar,cnomsrt,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+         call ecritur(lclif2,npack,datsrt,deetsrt,npassrt, &
+                      li,lj,1,jp(1),jp(2),jp(3), &
+                      ctypvar,cnomsrt,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
       endif
 
 !

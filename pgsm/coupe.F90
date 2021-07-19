@@ -2,7 +2,15 @@
 !**s/p coupe, calcul coupe zonale\meridionale
 !
 #include "defin.cdk90"
-      subroutine pgcoupe(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,      ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,      ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,      ipr26,ipr27,ipr28,ipr29,ipr30)
+      subroutine pgcoupe(nom,lcoupe, &
+                         ipr1,ipr2,ipr3,ipr4, &
+                         ipr5,ipr6,ipr7,ipr8, &
+                         ipr9,ipr10,ipr11,ipr12,&
+                         ipr13,ipr14,ipr15,ipr16,&
+                         ipr17,ipr18,ipr19,ipr20,&
+                         ipr21,ipr22,ipr23,ipr24,&
+                         ipr25,ipr26,ipr27,ipr28,&
+                         ipr29,ipr30)
 #include "impnone.cdk90"
       external coupzm,messags,fstcvt,pgsmabt
       integer  fstcvt
@@ -154,7 +162,15 @@
 !
 !     directive moysrt lire sur fichier de sorti
 !
-      entry moysrt(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,      ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,      ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,      ipr26,ipr27,ipr28,ipr29,ipr30)
+      entry moysrt(nom,lcoupe, &
+                   ipr1,ipr2,ipr3,ipr4, &
+                   ipr5,ipr6,ipr7,ipr8, &
+                   ipr9,ipr10,ipr11,ipr12,&
+                   ipr13,ipr14,ipr15,ipr16,&
+                   ipr17,ipr18,ipr19,ipr20,&
+                   ipr21,ipr22,ipr23,ipr24,&
+                   ipr25,ipr26,ipr27,ipr28,&
+                   ipr29,ipr30)
       iunit=2
       go to 1000
 !

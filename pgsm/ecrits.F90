@@ -1,7 +1,9 @@
 !
 !**S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 !
-      subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,      etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt)
+      subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type, &
+                        etiqet,igtyp,imprim,&
+                        ig1srt,ig2srt,ig3srt,ig4srt)
       implicit none
       external conver,fstecr,fclos,memoir,pgsmabt,imprims,fstopc,messags,fstcvt,putfld
       integer fstecr,fstopc,fstcvt,iopc
@@ -197,12 +199,18 @@
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
             rewrit = .true.
 !
-            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,            nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,            ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit )
+            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas, &
+                         nni,nnj,nnk,lip1,ip2,ip3, &
+                         ctypvar,cnomvar,cetiqet,cigtyp, &
+                         ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
          else
             if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
             rewrit = .false.
 !
-            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas,            nni,nnj,nnk,lip1,ip2,ip3,ctypvar,cnomvar,cetiqet,cigtyp,            ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
+            ier = fstecr(tmpif0,tmpif0,npkc,iun,idat,ideet,npas, &
+                         nni,nnj,nnk,lip1,ip2,ip3, &
+                         ctypvar,cnomvar,cetiqet,cigtyp, &
+                         ig1s,ig2s,ig3s,ig4s,cdatyp,rewrit)
          endif
 #if defined (SGI) || defined (NEC)
       else if (mode.eq.2) then
