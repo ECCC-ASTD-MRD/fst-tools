@@ -182,7 +182,10 @@
 ! ** On imprime
 !
       write(Lun_out,99) F_no,F_nv_S,moyd,vard,imin,jmin,kmin,mind, imax,jmax,kmax,maxd,F_from_S
- 99   format (i4,a4,' Mean:',e22.14,' Var:',e22.14,/,' Min:[(',i3,',',i3,',',i3,')',e22.14,']',' Max:[(',i3,',',i3,',',i3,')',e22.14,']',a6)
+ 99   format (i4,a4, &
+              ' Mean:',e22.14,' Var:',e22.14,/, &
+              ' Min:[(',i3,',',i3,',',i3,')',e22.14,']', &
+              ' Max:[(',i3,',',i3,',',i3,')',e22.14,']',a6)
       call hpdeallc (pabuf1,err,1)
 !
       endif
