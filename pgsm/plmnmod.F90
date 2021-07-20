@@ -136,7 +136,13 @@
  10   if (irec.gt.-1) then
 !
 !
-         ier = fstprm(irec,idate,ideete,npase,nie,nje,nke,          cnbits,cdatyp,         jp1e,jp2e,jp3e,ctypve,cnumve,cetike,cigtye,         ig1e,ig2e,ig3e,ig4e,         cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         ier = fstprm(irec,idate,ideete,npase,nie,nje,nke, &
+                      cnbits,cdatyp, &
+                      jp1e,jp2e,jp3e,ctypve,cnumve,cetike,cigtye, &
+                      ig1e,ig2e,ig3e,ig4e, &
+                      cswa, clng, cdltf, cubc, &
+                      extra1, extra2, extra3)
+
          if (ier.lt.0) then
             write(6,*)' IER = FSTPRM NEGATIF VOIR PLUSE/MOIN.....'
          endif

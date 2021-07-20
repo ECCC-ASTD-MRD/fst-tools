@@ -61,7 +61,10 @@
 !     *                                (absent IF Nextra = 0)       *
 !     *                                                             *
 !     ***************************************************************
-!       subroutine wrtstdf (ZOUT,iun, dateo, deet, npas, ni, nj,nxgrid,            nygrid,  nrows, ip1, ip2, ip3, typvar,nomvar, etiket,            grtyp, ig1, ig2, ig3, ig4, datyp,Nextra,xtra, nbits,            iflt,list,L, S)
+!       subroutine wrtstdf (ZOUT,iun, dateo, deet, npas, ni, nj,nxgrid, &
+!                           nygrid,  nrows, ip1, ip2, ip3, typvar,nomvar, etiket, 
+!                           grtyp, ig1, ig2, ig3, ig4, datyp,Nextra,xtra, nbits, &
+!                           iflt,list,L, S)
 !       implicit none
 !       integer fstecr
 !       integer ni, nj, nrows, k, Nextra, i, j
@@ -112,13 +115,19 @@
 !             if ((iflt(k) .GT. 0) .and. (L .gt. 1)) then
 !                call filtre (Temp,nxgrid,nj,nrows,iflt(k),FACT,list,L)
 !             endif
-!             ierr = fstecr(Temp, work, npak, iun, dateo, deet,             npas, nxgrid, nj, 1, ip1(k), ip2(k), ip3(k),             typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8),            grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k),            .false.)
+!             ierr = fstecr(Temp, work, npak, iun, dateo, deet, &
+!                           npas, nxgrid, nj, 1, ip1(k), ip2(k), ip3(k), &
+!                           typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8), &
+!                           grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k), .false.)
 !
 !          else
 !             if ((iflt(k) .GT. 0) .and. (L .gt. 1)) then
 !                call filtre (ZOUT(1,1,k),nxgrid,nj,nrows,iflt(k),FACT               ,list,L)
 !             endif
-!             ierr = fstecr(ZOUT(1,1,k), work, npak, iun, dateo, deet,             npas, ni, nj, 1, ip1(k), ip2(k), ip3(k),             typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8),            grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k),            .false.)
+!             ierr = fstecr(ZOUT(1,1,k), work, npak, iun, dateo, deet, &
+!                           npas, ni, nj, 1, ip1(k), ip2(k), ip3(k), &
+!                           typvar(k)(1:1), nomvar(k)(1:2), etiket(1:8), &
+!                           grtyp(1:1), ig1, ig2, ig3, ig4, datyp(k), .false.)
 !          endif
 !  300  continue
 !
@@ -126,7 +135,10 @@
 !       deallocate(fact)
 !
 !       if (Nextra .ne. 0) then
-!          ierr = fstecr(xtra ,WORK,npak, iun, 20002020,         1, 1, nrows, Nextra,1, 0,0,S,'|',         '||' ,'||||*||||','x',0,0,         0,0,1, .false.)
+!          ierr = fstecr(xtra ,WORK,npak, iun, 20002020, &
+!                        1, 1, nrows, Nextra,1, 0,0,S,'|', &
+!                        '||' ,'||||*||||','x',0,0, &
+!                        0,0,1, .false.)
 !       endif
 !
 !       return
@@ -175,8 +187,17 @@
       npak = -24
       datyp = 1
 
-      ierr = fstecr(xpos, work, npak, iun, dateo, deet,                   npas, ni, 1, 1, ip1, ip2, ip3,                   'X ', '>>  ', etiket,                  grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,                  .false.)
-      ierr = fstecr(ypos, work, npak, iun, dateo, deet,                   npas, 1, nj, 1, ip1, ip2, ip3,                   'X ', '^^  ', etiket,                  grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp,                  .false.)
+      ierr = fstecr(xpos, work, npak, iun, dateo, deet, &
+                    npas, ni, 1, 1, ip1, ip2, ip3, &
+                    'X ', '>>  ', etiket, &
+                    grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp, &
+                    .false.)
+
+      ierr = fstecr(ypos, work, npak, iun, dateo, deet, &
+                    npas, 1, nj, 1, ip1, ip2, ip3, &
+                    'X ', '^^  ', etiket, &
+                    grtyp_(1:1), ig1_, ig2_, ig3_, ig4_, datyp, &
+                    .false.)
 
       return
       end

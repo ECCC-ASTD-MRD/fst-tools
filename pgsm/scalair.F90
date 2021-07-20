@@ -4,7 +4,8 @@
       subroutine scalair(cnom, iheur, nniv, niveaux)
 #include "impnone.cdk90"
 #include "defin.cdk90"
-      external ecritur, pgsmluk, ipgsmluk, fstinf, fstsui, memoir, fstprm, qaaqr, fstcvt,     fstsel, symetri, imprime, itrouve, messags, pgsmabt
+      external ecritur, pgsmluk, ipgsmluk, fstinf, fstsui, memoir, fstprm, qaaqr, fstcvt, &
+               fstsel, symetri, imprime, itrouve, messags, pgsmabt
       external cvtrfi,cvtifr
       external liraxez
       integer  pgsmluk, ipgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl
@@ -268,10 +269,15 @@
          if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
 !            print *, 'Avant iecritur : cdatyp', cdatyp
             call cvtifr(ifld_out,tmpout,li,lj)
-            call iecritur(ifld_out, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call iecritur(ifld_out, npack, dateo, deet, npas, li, lj, nk, &
+                          jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, &
+                          lg1, lg2, lg3, lg4)
             deallocate(ifld_in, ifld_out)
          else
-            call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, &
+                         jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, &
+                         lg1, lg2, lg3, lg4)
+
             if (associated(tmpif2)) then
                deallocate(tmpif2)
             endif

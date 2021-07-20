@@ -113,8 +113,9 @@
       ichck=1
 !
 !
-      ier = fstprm(irec1,idatt,ideet,npas,nni,nnj,nnk, cnbits,cdatyp,      jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiqet,cigtyp,igg1,igg2,igg3,      igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-
+      ier = fstprm(irec1,idatt,ideet,npas,nni,nnj,nnk, cnbits,cdatyp, &
+                   jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiqet,cigtyp,igg1,igg2,igg3, &
+                   igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
 
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIREN'
 

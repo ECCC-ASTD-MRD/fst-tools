@@ -205,13 +205,19 @@
             endif
             rewrit = .true.
 !
-            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas, &
+                         ni,nj,nk,ip1,ip2o,ip3o, &
+                         ltypsrt,cnomvar,cetksrt, &
+                         cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          else
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
             rewrit = .false.
-            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas,            ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt,            cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas, &
+                         ni,nj,nk,ip1,ip2o,ip3o, &
+                         ltypsrt,cnomvar,cetksrt, &
+                         cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          endif
 !
       else
@@ -225,7 +231,10 @@
                cdatyp = 1
                write (chaine, 10) ltypsrt,lnomvar,letiksrt,cgtyp
  10            format(a2,2x,a4,a12,a1,3x)
-               write (iun) npac, idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, cdatyp,               chaine
+               write (iun) npac, idat, deet, npas, ni, nj, nk, &
+                           ip1, ip2o, ip3o, &
+                           llg1, llg2, llg3, llg4, &
+                           cdatyp, chaine
             endif
 
             write(iun) fld
@@ -266,7 +275,10 @@
             endif
 
             ier = gdll(gdout, tmplat,tmplon)
-            call pgsmwr(2,fld,ni,nj,nk,qcform,qposition,qitems,qcsepar,cnomvar,ctypvar,cetiket,            idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
+            call pgsmwr(2,fld,ni,nj,nk, &
+                        qcform,qposition,qitems,qcsepar,&
+                        cnomvar,ctypvar,cetiket, &
+                        idat,idatv,dateform,ip1,ip2,ip3,tmplat,tmplon)
 
 !
          else
@@ -282,9 +294,13 @@
       return
       end
 
-      subroutine iecritur(fld,npac,idat,deet,npas,ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+      subroutine iecritur(fld,npac,idat,deet,npas, &
+                          ni,nj,nk,ip1,ip2,ip3, &
+                          ctypvar,cnomvar,cetiket,cgtyp, &
+                          llg1,llg2,llg3,llg4)
 #include "impnone.cdk90"
-      external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
+      external conver,fstecr,fclos,memoir,pgsmabt, &
+               imprims,fstopc,messags,fstcvt,putfld
       integer fstopc,fstcvt,fstecr
 #include "lires.cdk90"
 #include "voir.cdk90"
@@ -382,14 +398,19 @@
             endif
             rewrit = .true.
 !
-            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas,ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+            ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas, &
+                         ni,nj,nk,ip1,ip2o,ip3o, &
+                         ltypsrt,cnomvar,cetksrt, &
+                         cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit)
          else
             if (.not.message) then
                iopc= fstopc('TOLRNC','DEBUGS',.true.)
             endif
             rewrit = .false.
             ier = fstecr(fld,dummy,local_npac,iun,idat,deet,npas, &
-               ni,nj,nk,ip1,ip2o,ip3o,ltypsrt,cnomvar,cetksrt, cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
+                         ni,nj,nk,ip1,ip2o,ip3o, &
+                         ltypsrt,cnomvar,cetksrt,  &
+                         cgtyp,llg1,llg2,llg3,llg4,cdatyp,rewrit )
          endif
 !
       else

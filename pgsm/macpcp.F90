@@ -135,7 +135,12 @@
 !
 !     identifier parametres pour champ 1
 !
-      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,       ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp, &
+                   jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp, &
+                   ig1,ig2,ig3,ig4, &
+                   cswa, clng, cdltf, cubc, &
+                   extra1, extra2, extra3)
+
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
 !
 !     verifier si grille gaussienne ni doit etre pair
@@ -155,7 +160,12 @@
 !
 !     identifier parametres pour champ 2
 !
-      ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,      ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+      ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp, &
+                   jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp, &
+                   ig1,ig2,ig3,ig4, &
+                   cswa, clng, cdltf, cubc, &
+                   extra1, extra2, extra3)
+
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
 !
 !     verifier si grille gaussienne ni doit etre pair

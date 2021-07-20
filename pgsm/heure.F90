@@ -1,7 +1,10 @@
 !
 !**S/P HEURE INITIALISER TABLE HEURE
 !
-      subroutine heure(ih1,ih2,ih3,ih4,ih5,ih6,ih7,ih8,ih9,ih10,      ih11,ih12,ih13,ih14,ih15,ih16,ih17,ih18,ih19,ih20,      ih21,ih22,ih23,ih24,ih25,ih26,ih27,ih28,ih29,       ih30,ih31,ih32,ih33,ih34,ih35,ih36,ih37,ih38,ih39,ih40)
+      subroutine heure(ih1,ih2,ih3,ih4,ih5,ih6,ih7,ih8,ih9,ih10, &
+                       ih11,ih12,ih13,ih14,ih15,ih16,ih17,ih18,ih19,ih20, &
+                       ih21,ih22,ih23,ih24,ih25,ih26,ih27,ih28,ih29, &
+                       ih30,ih31,ih32,ih33,ih34,ih35,ih36,ih37,ih38,ih39,ih40)
 #include "impnone.cdk90"
       external pgsmabt,messags
 !
@@ -48,7 +51,8 @@
 !
 !
 !
-      go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,      23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40)nheure
+      go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,&
+             23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40)nheure
  40   heures(40) = ih40
  39   heures(39) = ih39
  38   heures(38) = ih38

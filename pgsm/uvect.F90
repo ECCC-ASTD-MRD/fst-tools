@@ -3,7 +3,8 @@
 !
    subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
 #include "impnone.cdk90"
-   external ecritur,cigaxg,fstinf,fstinl,ipgsmlic,pgsmlic,ipgsmlir,pgsmlir,memoir, fstcvt,fstprm,pgsmabt,imprime,vdauv, incdat,fstopc,messags
+   external ecritur,cigaxg,fstinf,fstinl,ipgsmlic,pgsmlic,ipgsmlir,pgsmlir,memoir, &
+            fstcvt,fstprm,pgsmabt,imprime,vdauv, incdat,fstopc,messags
    external liraxez,  cxgaig
    integer fstinf,fstinl,ipgsmlic,pgsmlic,ipgsmlir,pgsmlir,fstprm,fstopc,fstcvt
    integer ezqkdef, ezwdint, ezuvint, ezdefset, ezsint
@@ -144,7 +145,13 @@
 !     identifier parametres champ nom1
 !
          cetike = '            '
-         ier = fstprm( irec_uu, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,jp1,jp2, jp3,ctypvar, cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
+         ier = fstprm( irec_uu, dat,deet,npas,ni, nj, nk, &
+                      cnbits,cdatyp,jp1,jp2, jp3, &
+                      ctypvar, cnomvar,cetike,cigtyp,  &
+                      ig1,ig2,ig3,ig4,  &
+                      cswa, clng, cdltf, cubc,  &
+                      extra1, extra2, extra3)
+
          npack_orig = -cnbits
          if (ier .lt. 0) then
             write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'

@@ -3,7 +3,9 @@
 !
       subroutine epaisur(iheur, npar, niveau)
 #include "impnone.cdk90"
-      external ecritur,fstinf,pgsmlir,memoir,fstprm,pgsmabt,      fstcvt,symetri, imprime,loupsou,fstopc,messags,      liraxez
+      external ecritur,fstinf,pgsmlir,memoir,fstprm,pgsmabt,&
+               fstcvt,symetri, imprime,loupsou,fstopc,messags, &
+               liraxez
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
       integer ezsint, ezqkdef, ezdefset
 !
@@ -116,7 +118,11 @@
 !
 !     identifier parametres pour champ 1
 !
-      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,      ig1,ig2,ig3,ig4,cswa, clng, cdltf, cubc,       extra1, extra2, extra3)
+      ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp, &
+                   jp1,jp2, jp3, &
+                   ctypvar,cnomvar,cetiket,cigtyp, &
+                   ig1,ig2,ig3,ig4,cswa, clng, cdltf, cubc, &
+                   extra1, extra2, extra3)
 
       if (ier .lt. 0) then
          write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
@@ -146,7 +152,11 @@
 !
 !     identifier parametres pour champ 2
 !
-      ier = fstprm( irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,       ig1,ig2,ig3,ig4, cswa,clng,cdltf,cubc,extra1,extra2,extra3)
+      ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp, &
+                   jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp, &
+                   ig1,ig2,ig3,ig4, &
+                   cswa,clng,cdltf,cubc,extra1,extra2,extra3)
+
       if (ier .lt. 0) then
          write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
       endif
@@ -182,7 +192,9 @@
 
       if (cgrtyp.eq.'*') then
          ier = chkenrpos(1,2,ig1,ig2,ig3)
-         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,nk,         niveau(1),niveau(2),iheur,         ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
+         call ecritur(tmpif1,npack,dat,deet,npas,ni,nj,nk, &
+                      niveau(1),niveau(2),iheur, &
+                      ctypvar,'DZ  ',cetiket,cigtyp,ig1,ig2,ig3,ig4)
       else
          gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
          ier = ezdefset(gdout, gdin)
@@ -195,7 +207,9 @@
 !
 !     ecrire sur fichier standard,ms,sequentiel
 !
-         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,         ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
+         call ecritur(tmpif2,npack,dat,deet,npas,li,lj,nk, &
+                      jp1,jp2,jp3, &
+                      ctypvar,'DZ  ',cetiket,cgrtyp,lg1,lg2,lg3,lg4)
 
       endif
 

@@ -1,5 +1,5 @@
       subroutine liraxez(iun, ni, nj, nk, ig1, ig2, ig3, ig4)
-#include "impnone.cdk90"
+      implicit none
 
       integer iun, ni, nj, nk, ig1, ig2, ig3, ig4
 
@@ -55,14 +55,21 @@
          call pgsmabt
       endif
 
-      ier = fstprm(irecy,idatt,idett,npas,niy,njy,nky, cnbits,cdatyp,      jjp1,jjp2,jjp3,ctpvry,cnmvar1,citiky,cgtypy,      ig1y,ig2y,ig3y,ig4y, cswa, clng, cdltf, cubc,      extra1, extra2, extra3)
+      ier = fstprm(irecy,idatt,idett,npas,niy,njy,nky, cnbits,cdatyp, &
+                   jjp1,jjp2,jjp3,ctpvry,cnmvar1,citiky,cgtypy, &
+                   ig1y,ig2y,ig3y,ig4y, cswa, clng, cdltf, cubc,  &
+                   extra1, extra2, extra3)
+
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRAXEZ'
 !
 !     verifier si grille gaussienne ni doit etre pair
 !
       if (cgtypy.eq.'G'.and.mod(niy,2).ne.0)  call messags(niy)
 !
-      ier = fstprm(irecx,idatt,idett,npas,nix,njx,nkx, cnbits,cdatyp,      jjp1,jjp2,jjp3,ctpvrx,cnmvar2,citikx,cgtypx,      ig1x,ig2x,ig3x,ig4x, cswa, clng, cdltf, cubc,      extra1, extra2, extra3)
+      ier = fstprm(irecx,idatt,idett,npas,nix,njx,nkx, cnbits,cdatyp, &
+                   jjp1,jjp2,jjp3,ctpvrx,cnmvar2,citikx,cgtypx, &
+                   ig1x,ig2x,ig3x,ig4x, cswa, clng, cdltf, cubc, &
+                   extra1, extra2, extra3)
 
 
       if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRAXEZ'

@@ -97,7 +97,7 @@
 !         if (it.ne.gr_tape2) then
             ier = chkenrpos(lnkdiun(1),lnkdiun(idx_ozsrt),ip1,ip2,ip3)
             if (ier.lt.0) then
-               print *, '<gritp12> enregistrements positionnels absents!'
+               print *,'<gritp12> enregistrements positionnels absents!'
                print *, '          impossible de continuer...'
 !               call exit(13)
                call pgsmabt
@@ -110,18 +110,31 @@
 
             if (mode.eq.1) then
                 if (grille_z) then
-               ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-               irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+               ireclo = fstinf(iunit, nix, njx, nkx, -1, &
+                               '            ', &
+                               ip1, ip2, ip3, '  ', '>>  ')
+               irecla = fstinf(iunit, niy, njy, nky, -1, &
+                               '            ', &
+                               ip1, ip2, ip3, '  ', '^^  ')
                cgrtyp = 'Z'
                gdout = ezqkdef(nix,njy,cgrtyp,ip1,ip2,ip3,0,iunit)
            endif
 
            if (grille_u) then
-               irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
+               irecyy = fstinf(iunit, niu, nju, nku, -1, &
+                               '            ', &
+                               ip1, ip2, ip3, '  ', '^>  ')
                cgrtyp = 'U'
-               ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu,etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+               ier = fstprm(irecyy, dateou, deetu, npasu, &
+                            niu, nju, nku, nbitsu, datypu, &
+                            lip1, lip2, lip3, typvaru, nomu,etiku, &
+                            grref, ig1ref, ig2ref, ig3ref, ig4ref, &
+                            swa, lng, dltf, ubc, extra1, extra2, extra3)
+
                gdout = ezqkdef(niu,nju,cgrtyp,lip1,lip2,lip3,0,iunit)
-               ier = ezgxprm(gdout, nix, njy, cgrtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+               ier = ezgxprm(gdout, nix, njy, cgrtyp, &
+                             ig1, ig2, ig3, ig4, grref, &
+                             ig1ref, ig2ref, ig3ref, ig4ref)
            endif
 
            li = nix
@@ -131,9 +144,18 @@
             lg3 = ig3
             lg4 = ig4
          else
-            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-            ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx, datypx, lip1, lip2, lip3, typvarx, nomx, etikx, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+            ireclo = fstinf(iunit, nix, njx, nkx, -1, &
+                            '            ', &
+                            ip1, ip2, ip3, '  ', '>>  ')
+            irecla = fstinf(iunit, niy, njy, nky, -1, &
+                            '            ', &
+                            ip1, ip2, ip3, '  ', '^^  ')
+            ier = fstprm(ireclo, dateox, deetx, npasx, &
+                         nix, njx, nkx, nbitsx, datypx, &
+                         lip1, lip2, lip3, typvarx, nomx, etikx, &
+                         grref, ig1ref, ig2ref, ig3ref, ig4ref, &
+                         swa, lng, dltf, ubc, &
+                         extra1, extra2, extra3)
             li = nix
             lj = njy
             gdout = ezqkdef(li,lj,'Z',lip1,lip2,lip3,0,1)
@@ -193,9 +215,15 @@
          nj = 1
          nk = 1
          if (mode.eq.1) then
-            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,nj,nk,            ip1x,ip2x,ip3x,            typvarx,nomvarx,etiketx,cgtypxy,ig1lo,ig2lo,ig3lo,ig4lo)
+            call ecritur(tmplon,npack,dateox,deetx,npasx,ncoords,nj,nk, &
+                         ip1x,ip2x,ip3x, &
+                         typvarx,nomvarx,etiketx,cgtypxy,&
+                         ig1lo,ig2lo,ig3lo,ig4lo)
 
-            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk,            ip1x,ip2x,ip3x,            typvary,nomvary,etikety,cgtypxy,ig1la,ig2la,ig3la,ig4la)
+            call ecritur(tmplat,npack,dateox,deetx,npasx,ncoords,nj,nk, &
+                         ip1x,ip2x,ip3x, &
+                         typvary,nomvary,etikety,cgtypxy,&
+                         ig1la,ig2la,ig3la,ig4la)
             lg1 = ip1x
             lg2 = ip2x
             lg3 = ip3x
