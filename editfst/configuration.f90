@@ -46,17 +46,17 @@ module configuration
                'NOBOX   ', 'DIAG    ', 'ECR     ', 'I.      ', 'L.      ', 'K       ', &
                'M       ', 'T       ', 'C       ', 'SS      ', 'DS      ', 'V       ', &
                'N       ', 'VS      ', 'E       ', 'F       ', 'SF      ', 'DF      ', &
-               'NRECMIN ',('S:      ',i = 1,120),  'DRYRUN  ', 'STRICT' /),                      &
+               'NRECMIN ',('S:      ',i = 1,120),  'DRYRUN  ', 'STRICT  ' /),                      &
       def1b=(/ 'OUI     ', '        ', '0       ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', '$IN     ', '$OUT    ', 'FATALE  ', &
                'ERRORS  ', 'FATALE  ', '-1      ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', 'OUI     ', 'NON     ', 'NON     ', &
-               '-1      ',('        ',i = 1,120),  '        ', 'NON'    /),                       &
+               '-1      ',('        ',i = 1,120),  '        ', 'NON     ' /),                       &
       def2b=(/ 'OUI     ', '        ', '0       ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', '$IN     ', '$OUT    ', 'ERRORS  ', &
                'INFORM  ', 'ERRORS  ', '-1      ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', &
-               '-1      ',('        ',i = 1,120),  'DRYRUN  ', 'OUI'    /)
+               '-1      ',('        ',i = 1,120),  'DRYRUN  ', 'OUI     ' /)
 !
 ! REQ : table utilisee pour stocker les requetes
       integer, save :: JOURS(4),REQ(11,4,NMD)

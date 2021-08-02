@@ -18,7 +18,7 @@ add_library(bemollib
     statfld.F90
 )
 
-target_include_directories(bemollib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(bemollib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${RMN_INCLUDE_DIRS})
 target_link_libraries(bemollib PRIVATE ${RMN_LIBRARIES})
 
 add_executable(bemol bemol.F90)

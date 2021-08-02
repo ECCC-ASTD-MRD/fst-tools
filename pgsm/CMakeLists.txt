@@ -34,7 +34,7 @@ add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 target_link_libraries(pgsmlib PUBLIC ${RMN_LIBRAIRES})
 
 # Needed for version.inc
-target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${RMN_INCLUDE_DIRS})
 
 add_executable(pgsm main.F90)
 target_link_libraries(pgsm PRIVATE pgsmlib ${RMN_LIBRARIES})

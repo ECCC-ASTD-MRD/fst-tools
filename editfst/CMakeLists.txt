@@ -32,7 +32,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 target_link_libraries(editfstlib PUBLIC ${RMN_LIBRAIRES})
 
 # Needed for version.inc
-target_include_directories(editfstlib PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(editfstlib PRIVATE ${CMAKE_BINARY_DIR} ${RMN_INCLUDE_DIRS})
 
 add_executable(editfst main.F90)
 target_link_libraries(editfst PRIVATE editfstlib ${RMN_LIBRARIES})
