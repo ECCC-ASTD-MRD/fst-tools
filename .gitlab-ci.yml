@@ -3,8 +3,7 @@ variables:
 stages:
   - build
   - test
-#  - package
-#  - deploy
+  - deploy
 
 before_script:
   # Force color CMake output even when output is not TTY
@@ -16,7 +15,7 @@ build:intel-19.0.3:
     - source ci-env/latest/ubuntu-18.04-skylake-64/intel-19.0.3.199.sh
     - mkdir build_intel-19.0.3
     - cd build_intel-19.0.3
-    - cmake ../ -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-dir
+    - cmake ../
     - make
 
   artifacts:
@@ -30,7 +29,7 @@ build:intel-19.0.3:
 #    - source ci-env/latest/ubuntu-18.04-amd-64/gnu-7.4.0.sh
 #    - mkdir build_gnu-7.4.0
 #    - cd build_gnu-7.4.0
-#    - cmake ../ -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/install-dir
+#    - cmake ../
 #    - make
 #  artifacts:
 #    expire_in: 2 hrs
@@ -51,3 +50,26 @@ test:intel-19.0.3:
 #      - cd build_gnu-7.4.0
 #      - make check
 
+deploy:intel-19.0.3:
+   stage: deploy
+   only:
+      - tags
+   environment:
+      name: testing
+   script:
+      - source ci-env/latest/ubuntu-18.04-skylake-64/intel-19.0.3.199.sh
+      - cd build_intel-19.0.3
+      - make package
+      - ~/ci-admin-bundle/bin/ci-deploy-ssm.sh package
+
+deploy:gnu-7.4.0:
+   stage: deploy
+   only:
+      - tags
+   environment:
+      name: testing
+   script:
+      - source ci-env/latest/ubuntu-18.04-amd-64/gnu-7.4.0.sh
+      - cd build_gnu-7.4.0
+      - make package
+      - ~/ci-admin-bundle/bin/ci-deploy-ssm.sh package
