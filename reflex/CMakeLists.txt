@@ -12,8 +12,8 @@ install(TARGETS reflex)
 ######################## TESTING ###################################
 # Lets not forget to add tests later
 # Unit test executable
-# add_executable(test_pgsm test.f90)
-# target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
-# target_link_libraries(test_pgsm PRIVATE pgsmlib ${RMN_LIBRARIES})
-# add_test(NAME test_pgsm COMMAND test_pgsm)
-# add_dependencies(check test_pgsm)
+# add_executable(test_reflex test.f90)
+# target_compile_options(test_reflex PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
+# target_link_libraries(test_reflex PRIVATE pgsmlib ${RMN_LIBRARIES})
+# add_test(NAME test_reflex COMMAND test_reflex)
+# add_dependencies(check test_reflex)
