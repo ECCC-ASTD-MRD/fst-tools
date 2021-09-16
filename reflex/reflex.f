@@ -83,7 +83,7 @@
 *                        DANS UN BUFFER, A PARTIR DU MOT COURANT WI
 *
 * APPEL:      QQQXPUT(BUF,WI,ELEMENT,DERBIT,NBIT)
-      PROGRAM REFLEX
+      PROGRAM reflex
 *
 
       IMPLICIT NONE

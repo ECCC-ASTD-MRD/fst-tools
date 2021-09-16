@@ -36,6 +36,7 @@ add_subdirectory(fstinfo)
 add_subdirectory(fststat)
 add_subdirectory(fstxml)
 add_subdirectory(pgsm)
+add_subdirectory(reflex)
 add_subdirectory(voir)
 
 ec_build_config()      # Create build configuration script
