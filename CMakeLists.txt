@@ -16,15 +16,12 @@ ec_install_prefix()        # Define install prefix
 
 enable_language(C Fortran)
 
-
 # configure_file(version.in.inc version.inc @ONLY)
 include(CTest)
 add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMAND})
 
+include(ec_org_manpages)   # Generates manpages
 include(ec_compiler_presets)
-
-include(orgmanpages)
-orgmanpages_add_man_target()
 
 find_package(RMN)
 
