@@ -3,20 +3,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ##################### NORMAL TARGETS ##############################
 configure_file(version.in.inc version.inc @ONLY)
 
-add_library(reflexlib STATIC reflex.f)
-target_link_libraries(reflexlib PUBLIC ${RMN_LIBRAIRES})
-
-# Needed for version.inc
-target_include_directories(reflexlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${RMN_INCLUDE_DIRS})
-
-add_executable(reflex main.F90)
-target_link_libraries(reflex PRIVATE reflexlib ${RMN_LIBRARIES})
-
+add_executable(reflex reflex.f)
+target_link_libraries(reflex PRIVATE ${RMN_LIBRARIES})
+target_include_directories(reflex PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${RMN_INCLUDE_DIRS})
 
 install(TARGETS reflex)
 
 ######################## TESTING ###################################
-
+# Lets not forget to add tests later
 # Unit test executable
 # add_executable(test_pgsm test.f90)
 # target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
