@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <pwd.h>
 #include <rpnmacros.h>
@@ -23,7 +24,7 @@ typedef enum
 /* for null pointers */
 #define null 0
 
-Bool IsWhite(uint c);
+Bool IsWhite(uint32_t c);
 
 typedef void (ParseProperty)(char *option);
 
@@ -33,7 +34,7 @@ ParseProperty SkipTag;       /* skip tag */
 ParseProperty ParseValues;   /* parser for array of integer/float values */
 
 
-static uint c;               /* current char in input stream */
+static uint32_t c;               /* current char in input stream */
 static FILE *fin;            /* file pointer for input stream */
 static int MAX_SIZE  = 8192000;
 static int MAX_SIZE1 = 2000000;
@@ -227,7 +228,7 @@ void ReportError(char *option)
 }
 
 /* test if character is a white space */
-Bool IsWhite(uint c)
+Bool IsWhite(uint32_t c)
 {
   if(c == ' ')
     return yes;
@@ -284,7 +285,7 @@ static PList *lookup(char *s)
 static int AdvanceChar()
 {
     if (c != EOF)
-        c = (uint)GetC(fin);
+        c = (uint32_t)GetC(fin);
     return c;
 }
 
@@ -301,8 +302,8 @@ void SkipTag(char *option)
 
 static int SkipWhite()
 {
-    while (IsWhite((uint) c))
-        c = (uint)GetC(fin);
+    while (IsWhite((uint32_t) c))
+        c = (uint32_t)GetC(fin);
 
     return c;
 }
@@ -317,14 +318,14 @@ static int NextProperty()
     {
       /* skip to end of line */
       while (c != '\n' && c != '\r' && c != EOF)
-	c = (uint)GetC(fin);
+	c = (uint32_t)GetC(fin);
       
       /* treat  \r\n   \r  or  \n as line ends */
       if (c == '\r')
-	c = (uint)GetC(fin);
+	c = (uint32_t)GetC(fin);
       
       if (c == '\n')
-	c = (uint)GetC(fin);
+	c = (uint32_t)GetC(fin);
 
     }while (IsWhite(c));  /* line continuation? */
   
