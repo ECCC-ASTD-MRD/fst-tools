@@ -9,7 +9,7 @@ ec_git_version()           # Get version from git state
 ec_parse_manifest()        # Parse MANIFEST file
 
 project(${NAME} DESCRIPTION "${DESCRIPTION}")
-set(PROJECT_VERSION ${VERSION} CACHE STRING "Define the version of VGRID that will be baked into the various artifacts of this build")
+set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of VGRID that will be baked into the various artifacts of this build" FORCE)
 
 ec_build_info()            # Generate build information
 ec_install_prefix()        # Define install prefix  

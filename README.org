@@ -53,7 +53,7 @@ make install
 - librmn with shared libraries (https://github.com/ECCC-ASTD-MRD/librmn/tree/dev)
 
 Note: =cmake_rpn= and =ci-env= are included as a submodule but =ci-env= is not available externally. 
-Please run =git submodule update --init --recursive cmake_rpn= in the git repo after having cloned.
+Please run =git -c submodule."ci-env".update=none submodule update --init --recursive= in the git repo after having cloned.
 
 ** Build and install
 
