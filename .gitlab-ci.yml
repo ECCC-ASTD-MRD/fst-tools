@@ -1,14 +1,14 @@
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 stages:
-  - build
-  - test
-  - package
-#  - deploy
+   - build
+   - test
+   - package
+#   - deploy
 
 before_script:
-  # Force color CMake output even when output is not TTY
-  - export CLICOLOR_FORCE=true
+   # Force color CMake output even when output is not TTY
+   - export CLICOLOR_FORCE=true
 
 build:XC50_intel-19.0.5:
    stage: build
@@ -35,23 +35,23 @@ build:intel-19.0.3:
       - cmake ../
       - make
 
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - build_intel-19.0.3
+   artifacts:
+      expire_in: 2 hrs
+      paths:
+         - build_intel-19.0.3
 
 #build:gnu-7.4.0:
-#  stage: build
-#  script:
-#    - source ci-env/latest/ubuntu-18.04-amd-64/gnu-7.4.0.sh
-#    - mkdir build_gnu-7.4.0
-#    - cd build_gnu-7.4.0
-#    - cmake ../
-#    - make
+#   stage: build
+#   script:
+#      - source ci-env/latest/ubuntu-18.04-amd-64/gnu-7.4.0.sh
+#      - mkdir build_gnu-7.4.0
+#      - cd build_gnu-7.4.0
+#      - cmake ../
+#      - make
 #  artifacts:
-#    expire_in: 2 hrs
-#    paths:
-#      - build_gnu-7.4.0
+#     expire_in: 2 hrs
+#     paths:
+#        - build_gnu-7.4.0
 
 test:intel-19.0.3:
    stage: test
