@@ -58,7 +58,7 @@ C*DECK FSTCOMP
       EXTERNAL FSTLUK, FSTOUV, FSTFRM, FSTVOI, CCARD, FNOM,
      X         FSTINF, INCDATR, RCMP1D, FSTSUI, EXFIN, FSTOPC,  EXDB,
      X         FSTPRM, FSTNBR, ICMP1D, FSTRWD, ABORT, LOW2UP, convip_plus,
-     %         fstopl, ip1_all, qqexit, longueur
+     %         fstopl, ip1_all, qqexit
 *
       CHARACTER*1  GRTYPA, GRTYPB
       CHARACTER*2  TYPVAR, TYPVAB
@@ -77,7 +77,7 @@ C*DECK FSTCOMP
      X        UBC, EX1, EX2, EX3, NBITS, DATYPA, IDATE, NBIT2,
      X        DATYPB, FSTRWD, IP1B, IP2B, IP3B,
      X        FSTLUK, FSTOUV, FSTFRM, FSTVOI, FNOM, FSTOPC, EXFIN,
-     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl, longueur,
+     X        FSTINF, FSTSUI, FSTPRM, FSTNBR, EXDB, fstopl,
      X        TABLO(0:6,0:6)
       integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
       integer lvar, iunexpv
@@ -192,7 +192,7 @@ C*ENDIF
       ier = fstopl('REDUCTION32',.true.,.false.)
 
       CALL GETENV('ARMNLIB',ARMNLIB_var)
-      lvar = LONGUEUR(ARMNLIB_var)
+      lvar = len_trim(ARMNLIB_var)
       IF (lvar .gt. 0) THEN
         iunexpv=0
 	ier = fnom(iunexpv,

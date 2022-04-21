@@ -1,32 +1,39 @@
+#ifndef DIESE_FUNCT_H
+#define DIESE_FUNCT_H
+
+#include <stdint.h>
+
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint ftnstrclean(char *string, wordint length);
-wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[], 
-      wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[], 
+int32_t ftnstrclean(char *string, int32_t length);
+int32_t f77name(diesinf)(int32_t *key, int32_t *iun, int32_t *ni, int32_t *nj, int32_t *nk, int32_t *datev, char etiket[], 
+      int32_t *ip1, int32_t *ip2, int32_t *ip3, int32_t *ig1, int32_t *ig2, char typvar[], char nomvar[], 
       F2Cl flenetiket, F2Cl flentypvar, F2Cl flennomvar);
-wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay, 
-        char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref, F2Cl lengrref);
-wordint f77name(diesfillval)(float *value);
-wordint f77name(diesfillmode)(int *mode);
-wordint f77name(diesaxay)(int *key, float *ax, float *ay);
-wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3, 
-          wordint *dateo, char *typvar, char *etiket, char *grref,
-          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref, 
+int32_t f77name(dieslir)(int *iun, int32_t *key, float *buffer, float *ax, float *ay, 
+        char *grref, int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref, F2Cl lengrref);
+int32_t f77name(diesfillval)(float *value);
+int32_t f77name(diesfillmode)(int *mode);
+int32_t f77name(diesaxay)(int *key, float *ax, float *ay);
+int32_t f77name(diesaxayprm)(int *key, int32_t *ni, int32_t *nj,  int32_t *ip1, int32_t *ip2, int32_t *ip3, 
+          int32_t *dateo, char *typvar, char *etiket, char *grref,
+          int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref, 
           F2Cl flentypvar, F2Cl flenetiket, F2Cl flengrref);
-wordint f77name(diesclrcache)();
-wordint f77name(diesisincache)(int *key);
-wordint f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
+int32_t f77name(diesclrcache)();
+int32_t f77name(diesisincache)(int *key);
+int32_t f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesFindGrid(wordint ip1, wordint ip2);
-wordint c_diesinf(wordint key, wordint iun, wordint *ni, wordint *nj, wordint *nk, wordint datev, char etiket[], 
-      wordint ip1, wordint ip2, wordint ip3, wordint ig1, wordint ig2, char typvar[], char nomvar[]);
-wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay, 
-      char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref);
-wordint c_diesfillval(float value);
-wordint c_diesfillmode(int mode);
-wordint c_diesaxay(int key, float *ax, float *ay);
-wordint c_diesaxayprm(int key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3, 
-          wordint *dateo, char *typvar, char *etiket, char *grref,
-          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref);
-wordint c_diesclrcache();
-wordint c_diesisincache(int key);
-wordint c_diesaddkey(int key);
+int32_t c_diesFindGrid(int32_t ip1, int32_t ip2);
+int32_t c_diesinf(int32_t key, int32_t iun, int32_t *ni, int32_t *nj, int32_t *nk, int32_t datev, char etiket[], 
+      int32_t ip1, int32_t ip2, int32_t ip3, int32_t ig1, int32_t ig2, char typvar[], char nomvar[]);
+int32_t c_dieslir(int iun, int32_t key, float *buffer, float *ax, float *ay, 
+      char *grref, int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref);
+int32_t c_diesfillval(float value);
+int32_t c_diesfillmode(int mode);
+int32_t c_diesaxay(int key, float *ax, float *ay);
+int32_t c_diesaxayprm(int key, int32_t *ni, int32_t *nj,  int32_t *ip1, int32_t *ip2, int32_t *ip3, 
+          int32_t *dateo, char *typvar, char *etiket, char *grref,
+          int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref);
+int32_t c_diesclrcache();
+int32_t c_diesisincache(int key);
+int32_t c_diesaddkey(int key);
+
+#endif

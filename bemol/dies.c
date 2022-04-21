@@ -1,15 +1,18 @@
-#include <rpnmacros.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <diese.h>
-#include <diese_funct.h>
-#include <diese_var_e.h>
+
+#include <rpnmacros.h>
+
+#include "diese.h"
+#include "diese_funct.h"
+#include "diese_var_e.h"
 
 
 /*****************************************************************************************/
-wordint c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
-wordint f77name(dies_setninj)(wordint *ni_start, wordint *ni_end, wordint *ni, wordint *nj_start, wordint *nj_end, wordint *nj)
+int32_t c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_end);
+int32_t f77name(dies_setninj)(int32_t *ni_start, int32_t *ni_end, int32_t *ni, int32_t *nj_start, int32_t *nj_end, int32_t *nj)
   {
   gni_start = *ni_start;
   gnj_start = *nj_start;
@@ -21,18 +24,18 @@ wordint f77name(dies_setninj)(wordint *ni_start, wordint *ni_end, wordint *ni, w
 /*  fprintf(stderr, "Dies_setninj : %d-%d-%d --- %d-%d-%d\n", gni_start, gni_end, gni, gnj_start, gnj_end, gnj); */
   }
 /*****************************************************************************************/
-wordint f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, int *nj_end)
+int32_t f77name(dies_getgridparams)(int *ni_start, int *nj_start, int *ni_end, int *nj_end)
   {
-  wordint ier;
+  int32_t ier;
   ier = c_dies_getgridparams(ni_start, nj_start, ni_end, nj_end);
   }
 
-wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, wordint *nk, wordint *datev, char etiket[],
-      wordint *ip1, wordint *ip2, wordint *ip3, wordint *ig1, wordint *ig2, char typvar[], char nomvar[],
+int32_t f77name(diesinf)(int32_t *key, int32_t *iun, int32_t *ni, int32_t *nj, int32_t *nk, int32_t *datev, char etiket[],
+      int32_t *ip1, int32_t *ip2, int32_t *ip3, int32_t *ig1, int32_t *ig2, char typvar[], char nomvar[],
       F2Cl flenetiket, F2Cl flentypvar, F2Cl flennomvar)
   {
-  wordint ier;
-  wordint lenetiket=flenetiket, lentypvar=flentypvar, lennomvar=flennomvar;
+  int32_t ier;
+  int32_t lenetiket=flenetiket, lentypvar=flentypvar, lennomvar=flennomvar;
 
   ier = ftnstrclean(nomvar, lennomvar);
   ier = ftnstrclean(typvar, lentypvar);
@@ -42,38 +45,38 @@ wordint f77name(diesinf)(wordint *key, wordint *iun, wordint *ni, wordint *nj, w
   return ier;
   }
 /*****************************************************************************************/
-wordint f77name(dieslir)(int *iun, wordint *key, float *buffer, float *ax, float *ay,
-      char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref,
-      wordint *ig4ref, F2Cl lengrref)
+int32_t f77name(dieslir)(int *iun, int32_t *key, float *buffer, float *ax, float *ay,
+      char *grref, int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref,
+      int32_t *ig4ref, F2Cl lengrref)
   {
-  wordint ier;
+  int32_t ier;
 
   ier = c_dieslir(*iun, *key, buffer, ax, ay, grref, ig1ref, ig2ref, ig3ref, ig4ref);
   return ier;
 
   }
 /*****************************************************************************************/
-wordint f77name(diesfillval)(float *value)
+int32_t f77name(diesfillval)(float *value)
   {
-  wordint ier;
+  int32_t ier;
 
   ier = c_diesfillval(*value);
   return ier;
   }
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint f77name(diesaxay)(int *key, float *ax, float *ay)
+int32_t f77name(diesaxay)(int *key, float *ax, float *ay)
   {
   return c_diesaxay(*key, ax, ay);
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3,
-          wordint *dateo, char *typvar, char *etiket, char *grref,
-          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref,
+int32_t f77name(diesaxayprm)(int *key, int32_t *ni, int32_t *nj,  int32_t *ip1, int32_t *ip2, int32_t *ip3,
+          int32_t *dateo, char *typvar, char *etiket, char *grref,
+          int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref,
           F2Cl flentypvar, F2Cl flenetiket, F2Cl flengrref)
   {
-  wordint i, ier;
-  wordint lenetiket=flenetiket, lentypvar=flentypvar, lengrref=flengrref;
+  int32_t i, ier;
+  int32_t lenetiket=flenetiket, lentypvar=flentypvar, lengrref=flengrref;
 
   ier = ftnstrclean(typvar, lentypvar);
   ier = ftnstrclean(etiket, lenetiket);
@@ -82,30 +85,30 @@ wordint f77name(diesaxayprm)(int *key, wordint *ni, wordint *nj,  wordint *ip1, 
   return c_diesaxayprm(*key, ni, nj, ip1, ip2, ip3, dateo, typvar, etiket, grref, ig1ref, ig2ref, ig3ref, ig4ref);
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint f77name(diesclrcache)()
+int32_t f77name(diesclrcache)()
 {
   return c_diesclrcache();
 }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint f77name(diesisincache)(int *key)
+int32_t f77name(diesisincache)(int *key)
 {
   return c_diesisincache(*key);
 }
 
 
 /*****************************************************************************************/
-wordint c_diesinf(wordint key, wordint iun, wordint *ni, wordint *nj, wordint *nk, wordint datev, char etiket[],
-      wordint ip1, wordint ip2, wordint ip3, wordint ig1, wordint ig2, char typvar[], char nomvar[])
+int32_t c_diesinf(int32_t key, int32_t iun, int32_t *ni, int32_t *nj, int32_t *nk, int32_t datev, char etiket[],
+      int32_t ip1, int32_t ip2, int32_t ip3, int32_t ig1, int32_t ig2, char typvar[], char nomvar[])
 {
-  wordint ier, ier_ax, ier_ay, key_ax, key_ay;
-  wordint dateo, npas, deet, nit, njt, nkt, nbits, datyp;
-  wordint nix, njx, nkx, niy, njy, nky;
+  int32_t ier, ier_ax, ier_ay, key_ax, key_ay;
+  int32_t dateo, npas, deet, nit, njt, nkt, nbits, datyp;
+  int32_t nix, njx, nkx, niy, njy, nky;
   char grtyp, grref;
-  wordint ig1t, ig2t, ig3t, ig4t, ig1ref, ig2ref, ig3ref, ig4ref;
-  wordint swa, lng, dltf, ubc, extra1, extra2, extra3;
+  int32_t ig1t, ig2t, ig3t, ig4t, ig1ref, ig2ref, ig3ref, ig4ref;
+  int32_t swa, lng, dltf, ubc, extra1, extra2, extra3;
 
   char lnomvar[5],ltypvar[3],lgrtyp[2],letiket[13];
-  wordint i, ndiese;
+  int32_t i, ndiese;
 
   strcpy(lnomvar, "    ");
   strcpy(letiket, "            ");
@@ -178,9 +181,9 @@ wordint c_diesinf(wordint key, wordint iun, wordint *ni, wordint *nj, wordint *n
 
 }
 /*****************************************************************************************/
-wordint c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_end)
+int32_t c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_end)
   {
-  wordint igrd = 0;
+  int32_t igrd = 0;
   *ni_start = grd[igrd].lim_x[0];
   *nj_start = grd[igrd].lim_y[0];
   *ni_end   = grd[igrd].lim_x[grd[igrd].ntuiles_x]-1;
@@ -189,27 +192,27 @@ wordint c_dies_getgridparams(int *ni_start, int *nj_start, int *ni_end, int *nj_
 /*  fprintf(stderr, "getgridparams: (%d, %d)), (%d, %d)\n", *ni_start, *nj_start, *ni_end, *nj_end); */
   }
 /*****************************************************************************************/
-wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
-      char *grref, wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref)
+int32_t c_dieslir(int iun, int32_t key, float *buffer, float *ax, float *ay,
+      char *grref, int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref)
 {
   float *tuile;
-  wordint ier, ier_ax, ier_ay, key_ax, key_ay, keyt;
-  wordint dateo, datev, npas, deet, nit, njt, nkt, nbits, datyp;
+  int32_t ier, ier_ax, ier_ay, key_ax, key_ay, keyt;
+  int32_t dateo, datev, npas, deet, nit, njt, nkt, nbits, datyp;
   char nomvar[5], typvar[2], etiket[13];
-  wordint nix, njx, nkx, niy, njy, nky, nig, njg;
+  int32_t nix, njx, nkx, niy, njy, nky, nig, njg;
   char grtyp[2];
-  wordint ip1, ip2, ip3;
-  wordint ig1t, ig2t, ig3t, ig4t;
-  wordint swa, lng, dltf, ubc, extra1, extra2, extra3;
-  wordint liste[1024], infon;
+  int32_t ip1, ip2, ip3;
+  int32_t ig1t, ig2t, ig3t, ig4t;
+  int32_t swa, lng, dltf, ubc, extra1, extra2, extra3;
+  int32_t liste[1024], infon;
   double delta_t;
-  wordint i, j;
-  static wordint nmax = 1024;
-  wordint startx, starty;
+  int32_t i, j;
+  static int32_t nmax = 1024;
+  int32_t startx, starty;
 
-  wordint dateox, datevx, npasx, deetx, datypx, nbitsx;
+  int32_t dateox, datevx, npasx, deetx, datypx, nbitsx;
   char nomvarx[5], typvarx[2], etiketx[13];
-  wordint ip1x, ip2x, ip3x;
+  int32_t ip1x, ip2x, ip3x;
 
   strcpy(nomvar, "    ");
   strcpy(typvar, " ");
@@ -317,51 +320,51 @@ wordint c_dieslir(int iun, wordint key, float *buffer, float *ax, float *ay,
 
 }
 /*****************************************************************************************/
-wordint c_diesfillval(float value)
+int32_t c_diesfillval(float value)
 {
-  wordint ier = 0;
+  int32_t ier = 0;
 
   return ier;
 }
 
 /*****************************************************************************************/
-wordint c_diesfillmode(int mode)
+int32_t c_diesfillmode(int mode)
 {
-  wordint ier = 0;
+  int32_t ier = 0;
 
   return ier;
 
 }
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesaxay(int key, float *ax, float *ay)
+int32_t c_diesaxay(int key, float *ax, float *ay)
 {
-  wordint ier = 0;
+  int32_t ier = 0;
 
   return ier;
 }
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesaxayprm(int key, wordint *ni, wordint *nj,  wordint *ip1, wordint *ip2, wordint *ip3,
-          wordint *dateo, char *typvar, char *etiket, char *grref,
-          wordint *ig1ref, wordint *ig2ref, wordint *ig3ref, wordint *ig4ref)
+int32_t c_diesaxayprm(int key, int32_t *ni, int32_t *nj,  int32_t *ip1, int32_t *ip2, int32_t *ip3,
+          int32_t *dateo, char *typvar, char *etiket, char *grref,
+          int32_t *ig1ref, int32_t *ig2ref, int32_t *ig3ref, int32_t *ig4ref)
   {
-  wordint ier = 0;
+  int32_t ier = 0;
 
   return ier;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesclrcache()
+int32_t c_diesclrcache()
   {
   free(dieskeys);
-  dieskeys = (wordint *) NULL;
+  dieskeys = (int32_t *) NULL;
   ndieskeys = 0;
   return 0;
   }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesisincache(key)
+int32_t c_diesisincache(key)
 {
-  wordint i;
+  int32_t i;
 
   if (dieskeys == NULL) return -1;
 
@@ -372,14 +375,14 @@ wordint c_diesisincache(key)
   return -1;
 }
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesaddkey(int key)
+int32_t c_diesaddkey(int key)
 {
-  wordint  i, n;
+  int32_t  i, n;
 
   n = currentdiese;
 if (dieskeys == NULL)
   {
-  dieskeys = (wordint *) malloc(256*sizeof(int));
+  dieskeys = (int32_t *) malloc(256*sizeof(int));
   }
 
 for (i=0; i < ndieskeys; i++)
@@ -392,7 +395,7 @@ ndieskeys++;
 
 if (0 == ndieskeys%256)
   {
-  dieskeys = (wordint *) realloc(dieskeys, (ndieskeys+256)*sizeof(int));
+  dieskeys = (int32_t *) realloc(dieskeys, (ndieskeys+256)*sizeof(int));
   }
 
 return 0;
@@ -400,9 +403,9 @@ return 0;
 }
 
 /* ------1---------2---------3---------4---------5---------6---------7---------8---------9------- */
-wordint c_diesFindGrid(wordint ip1, wordint ip2)
+int32_t c_diesFindGrid(int32_t ip1, int32_t ip2)
 {
-  wordint i = 0;
+  int32_t i = 0;
 
   i = 0;
   while (i < ndiese && (grd[i].ip1 != ip1 || grd[i].ip2 != ip2))
@@ -477,22 +480,22 @@ int c_diese_AddGrid(int igrid, int ip1, int ip2)
   {
   int old_ndiese;
   float *tuile;
-  wordint ier, ier_ax, ier_ay, key_ax, key_ay, keyt;
-  wordint dateo, datev, npas, deet, nit, njt, nkt, nbits, datyp;
+  int32_t ier, ier_ax, ier_ay, key_ax, key_ay, keyt;
+  int32_t dateo, datev, npas, deet, nit, njt, nkt, nbits, datyp;
   char nomvar[5], typvar[2], etiket[13];
-  wordint nix, njx, nkx, niy, njy, nky, nig, njg;
+  int32_t nix, njx, nkx, niy, njy, nky, nig, njg;
   char grtyp[2];
-  wordint ig1t, ig2t, ig3t, ig4t;
-  wordint swa, lng, dltf, ubc, extra1, extra2, extra3;
-  wordint liste[1024], infon;
+  int32_t ig1t, ig2t, ig3t, ig4t;
+  int32_t swa, lng, dltf, ubc, extra1, extra2, extra3;
+  int32_t liste[1024], infon;
   double delta_t;
-  wordint i, j,iun;
-  static wordint nmax = 1024;
-  wordint startx, starty;
+  int32_t i, j,iun;
+  static int32_t nmax = 1024;
+  int32_t startx, starty;
 
-  wordint dateox, datevx, npasx, deetx, datypx, nbitsx;
+  int32_t dateox, datevx, npasx, deetx, datypx, nbitsx;
   char nomvarx[5], typvarx[2], etiketx[13];
-  wordint ip1x, ip2x, ip3x;
+  int32_t ip1x, ip2x, ip3x;
 
   i = igrid;
   bemol_get_iun_in(&iun);

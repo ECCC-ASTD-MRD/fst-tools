@@ -1,13 +1,20 @@
-extern wordint *dieskeys;
-extern wordint ndieskeys;
-extern wordint igrd;
+#ifndef DIESE_VAR_E_H
+#define DIESE_VAR_E_H
+
+#include <stdint.h>
+
+extern int32_t *dieskeys;
+extern int32_t ndieskeys;
+extern int32_t igrd;
 
 extern _Diese grd[];
 extern _Fldlst *flist;
 extern int lng_flist;
 
-extern  wordint ndiesemax;
-extern  wordint currentdiese;
-extern  wordint ndiese;
+extern int32_t ndiesemax;
+extern int32_t currentdiese;
+extern int32_t ndiese;
 
-extern  wordint gni_start, gni_end, gni, gnj_start, gnj_end, gnj;
+extern int32_t gni_start, gni_end, gni, gnj_start, gnj_end, gnj;
+
+#endif

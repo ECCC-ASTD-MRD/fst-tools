@@ -24,20 +24,19 @@ set(FICHIERS_FTN90
     sorti.F90 stenfilt.F90 symetri.F90 testseq.F90
     uvect.F90 uvecteur_masque.F90 vdauv.F90 verlalo.F90
 )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 ##################### NORMAL TARGETS ##############################
 
 configure_file(version.in.inc version.inc @ONLY)
 
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
-target_link_libraries(pgsmlib PUBLIC ${RMN_LIBRAIRES})
+target_link_libraries(pgsmlib PRIVATE rmn)
 
 # Needed for version.inc
-target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${RMN_INCLUDE_DIRS})
+target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(pgsm main.F90)
-target_link_libraries(pgsm PRIVATE pgsmlib ${RMN_LIBRARIES})
+target_link_libraries(pgsm PRIVATE pgsmlib rmn)
 
 
 install(TARGETS pgsm)
@@ -47,6 +46,6 @@ install(TARGETS pgsm)
 # Unit test executable
 add_executable(test_pgsm test.f90)
 target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
-target_link_libraries(test_pgsm PRIVATE pgsmlib ${RMN_LIBRARIES})
+target_link_libraries(test_pgsm PRIVATE pgsmlib rmn)
 add_test(NAME test_pgsm COMMAND test_pgsm)
 add_dependencies(check test_pgsm)

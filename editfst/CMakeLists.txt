@@ -1,4 +1,4 @@
-add_library(editfstlib STATIC
+add_executable(editfst
     configuration.f90
     copystx.f90
     # create_test_file.f90
@@ -22,19 +22,9 @@ add_library(editfstlib STATIC
     # stubs.f90
     weofile.f90
     zap.f90
-    # main.F90
+    main.F90
 )
 
-include_directories(${CMAKE_SOURCE_DIR})
-
-##################### NORMAL TARGETS ##############################
-
-target_link_libraries(editfstlib PUBLIC ${RMN_LIBRAIRES})
-
-# Needed for version.inc
-target_include_directories(editfstlib PRIVATE ${CMAKE_BINARY_DIR} ${RMN_INCLUDE_DIRS})
-
-add_executable(editfst main.F90)
-target_link_libraries(editfst PRIVATE editfstlib ${RMN_LIBRARIES})
+target_link_libraries(editfst PRIVATE rmn)
 
 install(TARGETS editfst)

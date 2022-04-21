@@ -1,6 +1,6 @@
-  program zcrop 
+  program zcrop
   implicit none
-  
+
   integer dateo,deet,npas,nbits,datyp,ip1,ip2,ip3
   integer ig1,ig2,ig3,ig4,swa,lng,dltf,ubc
   integer extra1,extra2,extra3,datev
@@ -33,14 +33,14 @@
   mode = non_defini
   ipos = 0
   call ccard(cle,def,val, 13, ipos)
-  
+
   iun_src = 10
   iun_dst = 11
-  
+
   rewrite_flag = .false.
   ier = fnom(iun_src, val(1), 'STD+RND+R/O+OLD',0)
   ier = fnom(iun_dst, val(2), 'STD+RND+R/W', 0)
-  
+
   ier = fstouv(iun_src,'RND')
   ier = fstouv(iun_dst,'RND')
 
@@ -51,7 +51,7 @@
               ig4, swa, lng, dltf, ubc, datev, extra2, extra3)
 
   allocate(ax(nix))
-  allocate(ay(njy))    
+  allocate(ay(njy))
 
   ier = fstluk(ax,key_ax,nix,njx,nkx)
   ier = fstluk(ay,key_ay,niy,njy,nky)
@@ -77,11 +77,11 @@
   if (ip1 == -99) then
     new_ip1 = ip1x
   endif
-  
+
   if (ip2 == -99) then
     new_ip2 = ip2x
   endif
-  
+
   if (ip3 == -99) then
     new_ip3 = ip3x + 1
   endif
@@ -92,7 +92,7 @@
   do while (val(i) == def(i).and.i<=9)
     i = i + 1
   enddo
-  if (i < 10) then 
+  if (i < 10) then
    mode = entier
   endif
   i = 10
@@ -108,7 +108,7 @@
       mode = reel
     endif
   endif
-  
+
   if (mode == copie) then
     ier = fstecr(ax, ax, -nbits, iun_dst, dateo, deet, npas, nix, njx, nkx, &
                  new_ip1, new_ip2, new_ip3, typvar, '>>  ', etiket, grtyp, ig1, ig2,&
@@ -122,7 +122,7 @@
   else
     if (mode==entier.and.(imin < 1.or.jmin < 1.or.imax < 1.or.jmax < 1.or.imin>nix.or.imax>nix.or.jmin>njy.or.jmax>njy)) then
       print *, 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
-      stop 
+      stop
     endif
   endif
 
@@ -147,7 +147,7 @@
 
   if (imin > imax .or. jmin > jmax) then
     print *, '(zcrop) invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
-    stop 
+    stop
   endif
 
   new_ni = imax - imin + 1
@@ -157,7 +157,7 @@
   new_ax = ax(imin:imax)
   new_ay = ay(jmin:jmax)
 
-   
+
    ier = fstecr(new_ax, new_ax, -nbits, iun_dst, dateo, deet, npas, new_ni, njx, nkx, &
                 new_ip1, new_ip2, new_ip3, typvar, '>>  ', etiket, grtyp, ig1, ig2,&
                 ig3, ig4, datyp, rewrite_flag)

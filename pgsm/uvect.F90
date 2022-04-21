@@ -138,7 +138,7 @@
 !
       do ilop=1,infon
 !
-	 entier_ou_reel = 1
+     entier_ou_reel = 1
          irec_uu=listniv(ilop)
 !
 !     identifier parametres champ nom1
@@ -187,11 +187,11 @@
 !     allouer memoire
 
       if (cdatyp == 2 .or. cdatyp == 130 .or. cdatyp == 4 .or. cdatyp == 132) then
-	allocate(itmpif1(ni,nj))
-	allocate(itmpif2(ni,nj))
-	allocate(itmpif3(li,lj))
-	allocate(itmpif4(li,lj))
-	entier_ou_reel = 2
+    allocate(itmpif1(ni,nj))
+    allocate(itmpif2(ni,nj))
+    allocate(itmpif3(li,lj))
+    allocate(itmpif4(li,lj))
+    entier_ou_reel = 2
       endif
 
       allocate(tmpif1(ni,nj))
@@ -203,17 +203,17 @@
 !
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       if (entier_ou_reel == 2) then
-	numu =ipgsmlir(itmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
+    numu =ipgsmlir(itmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
       else
-	numu = pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
+    numu = pgsmlir(tmpif1,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom1,cigtyp)
       endif
 
       if (printen)  call imprime(cnom1,tmpif1,ni,nj)
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
       if (entier_ou_reel == 2) then
-	numv = ipgsmlic(itmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
+    numv = ipgsmlic(itmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
       else
-	numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
+    numv = pgsmlic(tmpif2,1,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2,ig1,ig2,ig3,ig4,cigtyp)
       endif
       if (cigtyp.eq.'G'.and.mod(ni,2).ne.0)  call messags(ni)
 !
@@ -222,8 +222,8 @@
 !     si vvent=.true. on calcule la vitesse du vent
 
       if (entier_ou_reel == 2) then
-	 call cvtrfi(tmpif1, itmpif1, ni, nj)
-	 call cvtrfi(tmpif2, itmpif2, ni, nj)
+     call cvtrfi(tmpif1, itmpif1, ni, nj)
+     call cvtrfi(tmpif2, itmpif2, ni, nj)
       endif
       
       gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
@@ -266,13 +266,13 @@
             vvout => tmpif4
          endif
 
-	 if (entier_ou_reel == 2) then
-	    call cvtifr(itmpif3, uuout, li, lj)
-	    call  iecritur(itmpif3, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
-	      ctypvar, cnom3, cetike, cgrtyp, lg1, lg2, lg3, lg4)
-	 else
-	    call  ecritur(uuout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
-	    ctypvar, cnom3, cetike, cgrtyp, lg1, lg2, lg3, lg4)
+     if (entier_ou_reel == 2) then
+        call cvtifr(itmpif3, uuout, li, lj)
+        call  iecritur(itmpif3, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
+          ctypvar, cnom3, cetike, cgrtyp, lg1, lg2, lg3, lg4)
+     else
+        call  ecritur(uuout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
+        ctypvar, cnom3, cetike, cgrtyp, lg1, lg2, lg3, lg4)
          endif
 
       if (wdvent) then
@@ -285,12 +285,12 @@
          enddo
          vvout => tmpif4
          if (entier_ou_reel == 2) then
-	    call cvtifr(itmpif4, vvout, li, lj)
-	    call iecritur(itmpif4, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3,&
-		ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
+        call cvtifr(itmpif4, vvout, li, lj)
+        call iecritur(itmpif4, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3,&
+        ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
           else
-	    call ecritur(vvout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3,&
-		ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
+        call ecritur(vvout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3,&
+        ctypvar,'WD  ',cetike,cgrtyp,lg1,lg2,lg3,lg4)
          endif
       endif
 
@@ -344,9 +344,9 @@
 !     ecrire vecteur u
 !
          if (entier_ou_reel == 2) then
-	    call cvtifr(itmpif3, uuout, li, lj)
-	    call iecritur(itmpif3, npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,lg1,lg2,lg3,lg4)
-	 else
+        call cvtifr(itmpif3, uuout, li, lj)
+        call iecritur(itmpif3, npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,lg1,lg2,lg3,lg4)
+     else
            call ecritur(uuout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom1,cetike,cgrtyp,lg1,lg2,lg3,lg4)
          endif
 !
@@ -354,9 +354,9 @@
 !     ecrire vecteur v
 !
          if (entier_ou_reel == 2) then
-	    call cvtifr(itmpif4, vvout, li, lj)
-	    call iecritur(itmpif4, npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,lg1,lg2,lg3,lg4)
-	 else
+        call cvtifr(itmpif4, vvout, li, lj)
+        call iecritur(itmpif4, npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,lg1,lg2,lg3,lg4)
+     else
             call ecritur(vvout,npack,dat,deet,npas,li,lj,nk,jp1,jp2,jp3,ctypvar,cnom2,cetike,cgrtyp,lg1,lg2,lg3,lg4)
          endif
 !
@@ -374,10 +374,10 @@
          if (allocated(longdin)) deallocate(longdin)
 
          if (entier_ou_reel == 2) then
-	    if (associated(itmpif1)) deallocate(itmpif1)
-	    if (associated(itmpif2)) deallocate(itmpif2)
-	    if (associated(itmpif3)) deallocate(itmpif3)
-	    if (associated(itmpif4)) deallocate(itmpif4)
+        if (associated(itmpif1)) deallocate(itmpif1)
+        if (associated(itmpif2)) deallocate(itmpif2)
+        if (associated(itmpif3)) deallocate(itmpif3)
+        if (associated(itmpif4)) deallocate(itmpif4)
          endif
 
 99999 continue

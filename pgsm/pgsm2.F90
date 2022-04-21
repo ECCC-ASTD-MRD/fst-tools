@@ -59,7 +59,7 @@
 !
 !librairies
 !          - rmnxlib.a
-
+!
 !fichiers
 !         - tape1  - fichier d'entree  (standard)
 !         - tape2  - fichier de sortie standard..direct(writms)...sequentiel
@@ -115,11 +115,11 @@ END INTERFACE
     external expon, racine,alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
     external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
     external qqqform,qqqident,coord,qqqfilt
-!
+
     external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi
     external fstnbr,fstunl,fstouv
     external fclos,exfin,lrsmde,lrsmds,fstopc,fstopl,qlxopt
-!
+
     integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
     integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
     real dum
@@ -150,27 +150,27 @@ END INTERFACE
         character(len=16) :: PGSM_VERSION
 
 
-!
-!
+
+
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
     data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
     data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','ISENT_SCRAP','IMPOS_SCRAP','NON'/
 
         data form/'(A8)'/
-!
+
     data nheure,  heures, nnoms,  npack,  nhur, nomb, ichck         /0,  MXHEURE*-2, 0,      -16,    1,    0,    0/
-!
+
     data nomss /256*'  '/
 
     data ecarts,     facts,     pose,     ixlat, ixlon       /256*0.0, 256*1.0, .false., 0, 0 /
-!
+
        data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
-!
+
     data valid, voire,   voirs, message,seldat       /.false.,.false., .false.,.true.,.false.  /
-!
+
     data numero,  numdel,  iset,  nbrow,  ip4        / 1,           1,    -2,      0,    0    /
-!
+
     data paire(1) /  'VENT    UU  VV  UV      ' /
     data paire(2) /  'UV      UU  VV  ??      ' /
     data paire(3) /  'VENTUVS US  VS  UV      ' /
@@ -178,19 +178,19 @@ END INTERFACE
     data paire(5) /  'WDUV    UU  VV  UV  WD  ' /
     data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
     data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
-!
+
     data unefois,once,vvent/.false.,.false.,.false./
-!
+
     data cnomqq, cnomqr, cnommt /'QQ', 'QR', 'MT'/
-!
+
     data printen,printsr,mtdone/.false.,.false.,.false./
-!
+
      data nis,njs,nif,njf,ninc,njnc,if9/1,1,1000,1000,10,10,0/
-!
+
       data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
-!
+
       data if7,if8,npairuv,npair/0,0,4,7/
-!
+
       data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
@@ -342,31 +342,30 @@ END INTERFACE
    data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
    data idx_msglvl /987/  idx_isent /988/  idx_impos  /989/ idx_v /990/
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!
+
 !           listl=position  iment(tape1 standard),isll(tape4 sequentiel)
 !                 ozsrt(tape2 - standard - seq file - random ms)
 !           defo=liste des defauts pour iment,isll,ozsrt,i,l
 !           lfn=liste que l usager propose pour remplacer
 !           6=nombre de lfn
 !           nequiv=nombre d'equivalence output de ccard
-!
-!
-      include 'version.inc'
-    nequiv=-1
+
+
+    include 'version.inc'
+    nequiv = -1
     lnkdiun = 0
-   lnkdiun(1) = 1
-   lnkdiun(idx_ozsrt) = 2
+    lnkdiun(1) = 1
+    lnkdiun(idx_ozsrt) = 2
     call ccard(listl,defo,lfn,990,nequiv)
     ier = fnom(5,lfn(idx_i),'SEQ',0)
     ier = fnom(6,lfn(idx_l),'SEQ',0)
 
-!
-!          imprime boite debut du programme
-!
-    jdate= exdb(' PGSM  ',PGSM_VERSION,  lfn(idx_date))
- !       print *, jdate
 
-!
+    ! imprime boite debut du programme
+    jdate = exdb(' PGSM  ',PGSM_VERSION,  lfn(idx_date))
+
+
+
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -442,24 +441,24 @@ END INTERFACE
       endif
     endif
 
-!
-!
-!
+
+
+
     mtype =   MTYP
     maxnoms = MAXNOM
 
     call initseq
 
-!
-!
+
+
 !  initialise les dictionnaires
-!
+
     call qlxopt ('CARMOT', 4)
     call qlxinx (sorti,'SORTIE', nsort,0103,2)
 !                        3 appels reconnus  1=sortie(std,noenrg) noenrg>=2
 !                                           2=sortie(ms,noenrg,jwrit)
 !                                           3=sortie(seq)
-!
+
 
     call qlxinx (heure,'HEURE',nheure, 0140,2)
     call qlxinx (heure, 'IP2',nheure, 0140,2)
@@ -467,19 +466,19 @@ END INTERFACE
 !                               2=champ(mac,00,06) minimum 2 pour
 !                               2=champ(pcp,00,06) minimum 2 pour
 !                               accumulateur d"ajustement ou precipitation
-!
+
     call qlxinx (qqqintx,'SETINTX',nsetin, 0101,2)
-!
+
 !                        appel - setintx(voisin) avec le plus proche
 !                                setintx(lineair) interpolation lineaire
 !                                setintx(cubique) interpolation cubique(defaut)
-!
+
     call qlxinx (setxtrap,'EXTRAP',nsetex, 0101,2)
-!
+
 !                        appel - setintx(voisin) avec le plus proche
 !                                setintx(lineair) interpolation lineaire
 !                                setintx(cubique) interpolation cubique(defaut)
-!
+
     call qlxinx (champ,'CHAMP',nchamp, 0131,2)
 !                     appel - champ(z,niveau)  niveau=1000,850,.......
 !                           - champ(t,niveau)  niveau=1000,850,.......
@@ -500,9 +499,9 @@ END INTERFACE
 !                           - champ(epais,niveau1,niveau2) niveau2 - niveau1
 !                           - champ(mac,heure1,heure2)  heure2 - heure1
 !                           - champ(pcp,heure1,heure2)  heure2 - heure1
-!
+
     call qlxinx (chmpdif,'CHMPDIF',npar,0508,2)
-!
+
 !                 appel - chmpdif (noment,nomsrt,ip1tab,ip2tab,ip3tab)
 !                    ex:  chmpdif ("gz","dz",[1000,500],12,0)
 !                         z500mb - z1000mb  a 12hr
@@ -513,15 +512,15 @@ END INTERFACE
 !                    ex:  chmpdif ("gz","dz",1000,6,[1,2,3,4])
 !                         z1000mb 6hr ip3=1 - z1000mb  6hr ip3=2
 !                         fichier de sorti aura ip1=1000, ip2=1, ip3=2
-!
+
     call qlxinx (champ_seq,'CHAMPSEQ',npar,0303,2)
-!
+
 !                 appel - champseq(['GZ','TT','UU'],[1000,850,500],WAIT)
 !                 appel - champ_seq(' ',[1000,850,500],WAIT)
 !                 appel - champ_seq(['GZ','TT','UU'],-1,GO)
 
     call qlxinx (convs, 'CONV',ncon, 0305,2)
-!
+
 !                 appel - conv(nom, ecart, facteur, bas, haut) directive
 !                         conv("ts", -273.16, 1.0,-280.0, -250.0)
 !                         routine conver dans ecriture soustrait
@@ -545,7 +544,7 @@ END INTERFACE
 !                                 lon0=premiere lon du coin degree
 !                                 dlat=espacement entre latitude  (degree)
 !                                 dlon=espacement entre longitude (degree)
-!
+
 !                               3=grille(ps,nni,nnj,pi,pj,d60,dgrw)
 !                                 ps  =polaire stereographique
 !                                 nni =nombre pts est-ouest (dir i)
@@ -555,7 +554,7 @@ END INTERFACE
 !                                 d60 =distance en metres entre les pts
 !                                      a 60 degrees nord (latitude)
 !                                 drgw=angle entre l"axe x et greewich
-!
+
 !                               4=grille(tape4,nni,nnj,ip1,ip2,ip3)
 !                                 tape4=fichier contenant nni*nnj(lat-lon)
 !                                 nni  =nombre de pts est-ouest
@@ -563,7 +562,7 @@ END INTERFACE
 !                                 ip1  =definit par usager
 !                                 ip2  =definit par usager
 !                                 ip3  =definit par usager
-!
+
 !                               5=grille(stdb,nni,nnj,hem)
 !                                 stdb=standard b
 !                                 nni  =nombre de pts est-ouest
@@ -571,7 +570,7 @@ END INTERFACE
 !                                 hem  =hemisphere 0=global
 !                                                  1=nord
 !                                                  2=sud
-!
+
 !                               6=grille(gauss,nni,nnj,hem)
 !                                 gauss=grille gaussienne lat-lon
 !                                 nni  =nombre de pts est-ouest
@@ -579,7 +578,7 @@ END INTERFACE
 !                                 hem  =hemisphere 0=global
 !                                                  1=nord
 !                                                  2=sud
-!
+
 !                               7=grille(tape1,ip1,ip2,ip3,ip4,nord/sud)
 !                                 tape1=lit sur fichier 1 lat-lon ou xy
 !                                 ip1=valeur 0-32767
@@ -587,7 +586,7 @@ END INTERFACE
 !                                 ip3=valeur 0-4095
 !                                 ip4=valeur "xydir" ou "llist"
 !                                    =valeur "lldir" ou "xylis"
-!
+
 !                               8=grille(tape2,ip1,ip2,ip3,ip4,nord/sud)
 !                                 tape2 lit sur fichier 2 lat-lon ou xy
 !                                 ip1=valeur 0-32767
@@ -595,19 +594,19 @@ END INTERFACE
 !                                 ip3=valeur 0-4095
 !                                 ip4=valeur "xydir" ou "llist"
 !                                    =valeur "lldir" ou "xylis"
-!
+
     call qlxinx (lrsmde,'LIRMODE',nlirmde,0708,2)
     call qlxinx (lrsmds,'LIRMODS',nlirmds,0708,2)
-!
+
 !                  lrsmde(nomvar,typvar,date,niveau,heure,ip3,etiquet)
 !                  lrsmds(nomvar,typvar,date,niveau,heure,ip3,etiquet)
-!
+
     call qlxinx (metsym,'METSYM',  nsym, 0202,2)
 
 !                               metsym(z,oui)
 !                               z  =geopotentiel "gz"
 !                               oui=symetrique
-!
+
     call qlxinx (outlalo,'OUTLALO', nlalo, 0108,2)
 !     outlalo(ip1,ip2,ip3,nomlat,nomlon,grtyp,etiklat,etiklon)
 !             ip1=valeur 0-32767
@@ -618,13 +617,13 @@ END INTERFACE
 !             grtyp=type de grille
 !             etiklat=nom de l'etiquette latitude
 !             etiklon=nom de l'etiquette longitude
-!
+
     call qlxinx (pairvct, "PAIRES",npairuv, 0305,2)
 !      ex: paires("uv","uu","vv",0) vecteur "uu","vv" geographique
 !                                     niveau donne par champ
 !      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
 !      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
-!
+
    call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
    call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
    call qlxinx (liren,'LIREE', nlire, 0708,2)
@@ -647,13 +646,13 @@ END INTERFACE
    call qlxinx (alogn, 'ALOGN', npex, 0101,2)
    call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
    call qlxinx (carre, 'CARRE', npex, 0101,2)
-!
+
     call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
     call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
     call qlxinx (qqqform, 'FORMAT', dum, 0101, 2)
     call qlxinx (coord,   'COORD',  dum, 0202, 2)
     call qlxinx (qqqfilt, 'FILTRE', dum, 0204, 2)
-!
+
       call qlxins (npack,  'COMPAC',  dum, 1, 1)
     call qlxins (message,'MESSAGE', dum, 1, 1)
     call qlxins (numdel, 'DELTA',   dum, 1, 1)
@@ -687,9 +686,9 @@ END INTERFACE
     do i=1,2
        call qlxins(qlxlval(i), qlxlcon(i), dum, 1, 0)
     enddo
-!
+
 !   defaut pour lire fichier d'entre
-!
+
     typeent = -1
     etikent(1) = -1
     etikent(2) = -1
@@ -702,9 +701,9 @@ END INTERFACE
     diese = 1
     ip1style = 2
     dateform = 1
-!
+
 !   defaut pour fichier de sorti
-!
+
     ip3srt= -1
     ip2srt=-1
     etiksrt(1) = -1
@@ -714,10 +713,10 @@ END INTERFACE
     typesrt= -1
    compression_level = 0
    masque = 0
-!
-!
+
+
 !    initialiser avec .true. champ symetrique
-!
+
     nsym = 2
     call cmetsym('GZ',.true.)
     call cmetsym('TT',.true.)
@@ -728,14 +727,14 @@ END INTERFACE
     call cmetsym('PN',.true.)
     call cmetsym('PS',.true.)
     call cmetsym('TS',.true.)
-!
-    call cmetsym('QQ',.false.)
-!
-!
-!    directives de l'usager
-!
 
-!
+    call cmetsym('QQ',.false.)
+
+
+!    directives de l'usager
+
+
+
 !    initialisation parametres de sortie pour fichier formate
 
     call initid
@@ -746,9 +745,9 @@ END INTERFACE
 
     ipose= 0
     call readlx(5,kend,ipose)
-!
+
 !   initialise variable de printsr
-!
+
     if (associated(tmplat)) deallocate(tmplat)
     if (associated(tmplon)) deallocate(tmplon)
 
@@ -779,9 +778,9 @@ END INTERFACE
           write (6, *) 'DANS CETTE VERSION DE PGSM'
        endif
 #endif
-!
+
 !    fermer fichier sequentiel
-!
+
             if (mode.eq.3)  then
           call fclos(lnkdiun(idx_ozsrt))
        endif
@@ -790,20 +789,20 @@ END INTERFACE
           call pgsmcf(lnkdiun(idx_ozsrt))
        endif
     endif
-!
-!
-!
+
+
+
 !  fermer fichier 4 dans grille
-!
-!
+
+
 !  imprime boite avec le temps d execution du pgm  pgsm
-!
+
     if (ipose.gt.0) then
        jdate= exfin('  PGSM  ', 'ABORT', 'NON')
        call qqexit(13)
     else
        jdate= exfin('  PGSM  ', 'OK', 'NON')
     endif
-!
+
 !     stop
      end

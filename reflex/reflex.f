@@ -138,8 +138,8 @@
 *       D. Bouhemhem, Fev. 2017 - incremeter le nombre de clefs dans ccard (3.4.2)
 *
 *MODULES
-      INTEGER EXDB, EXFIN, FNOM, longueur
-      EXTERNAL EXDB, EXFIN, FNOM, CCARD, longueur
+      INTEGER EXDB, EXFIN, FNOM
+      EXTERNAL EXDB, EXFIN, FNOM, CCARD
       INTEGER XDFSTA, XDFCLS, WASIZE
       EXTERNAL XDFSTA, XDFCLS, WASIZE
       INTEGER XDFUSE, XDFIMP, QDFRSTR, QDFDIAG, XDFOPT
@@ -208,7 +208,7 @@ c      print *,'Debug+ apres appels a XDFOPT'
            do nf = 1,nsplit
              write(suffix,'(a,i3.3)') '_',nf
              ier = fnom(fichout+nf-1,
-     %                  VAL(11)(1:longueur(val(11)))//suffix,'RND',0)
+     %                  VAL(11)(1:len_trim(val(11)))//suffix,'RND',0)
            enddo
          endif
 c      print *,'Debug+ apres fnom fichier out'

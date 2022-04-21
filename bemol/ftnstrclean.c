@@ -18,43 +18,31 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <rpnmacros.h>
+//! Trim spaces at both ends of a string
+int32_t ftnstrclean(
+    char str[],
+    int32_t lenstr
+) {
+    int32_t iinit = 0;
+    int32_t i = iinit;
+    while (str[i] == ' ' && i < lenstr) {
+        i++;
+    }
 
-/**
- ******************************************************************************
- ** Routine strclean
- ** Objet:  Enleve les espaces entourant un string
- ** Ex:     "   Skippy le kangourou   " -> "Skippy le kangourou"
- ******************************************************************************
- **/
+    if (i != iinit) {
+        strcpy(str, str + i);
+    }
 
-wordint ftnstrclean(str,lenstr)
-  char str[];
-wordint lenstr;
-{
-   wordint i, j, iinit, jinit;
-   
-   iinit = 0;
-   i = iinit;
-   while (str[i] == ' ' && i < lenstr)
-     i++;
-   
-   if (i != iinit)
-     strcpy(str, str+i);
-   
-   jinit = lenstr-1;
-   j = jinit;
-   
-   while (str[j] == ' ' && j >= 0)
-     j--;
-   
-   if (j != jinit)
-     str[j+1] = '\0';
+    int32_t jinit = lenstr - 1;
+    int32_t j = jinit;
 
-   return 0;
+    while (str[j] == ' ' && j >= 0) {
+        j--;
+    }
+
+    if (j != jinit) {
+        str[j + 1] = '\0';
+    }
+
+    return 0;
 }
-/**
-******************************************************************************
-******************************************************************************
-**/
-

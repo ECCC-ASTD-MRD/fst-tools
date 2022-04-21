@@ -1,4 +1,3 @@
-
 add_library(bemollib
     bemol_opt.c
     bm_utils.c
@@ -18,13 +17,13 @@ add_library(bemollib
     statfld.F90
 )
 
-target_include_directories(bemollib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${RMN_INCLUDE_DIRS})
-target_link_libraries(bemollib PRIVATE ${RMN_LIBRARIES})
+#target_include_directories(bemollib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(bemollib PRIVATE rmn)
 
 add_executable(bemol bemol.F90)
-target_link_libraries(bemol PRIVATE bemollib ${RMN_LIBRARIES})
+target_link_libraries(bemol PRIVATE bemollib rmn)
 
 add_executable(zcrop utils/zcrop/zcrop.F90)
-target_link_libraries(zcrop PRIVATE bemollib ${RMN_LIBRARIES})
+target_link_libraries(zcrop PRIVATE bemollib rmn)
 
-install(TARGETS bemol zcrop RUNTIME DESTINATION bin)
+install(TARGETS bemol zcrop)

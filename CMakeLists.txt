@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
+# The minimum version can not be 3.16 because of the LINK_LANGUAGE generator expression in librmn's rmnConfig.cmake
+cmake_minimum_required(VERSION 3.20)
 
 #----- Append EC specific module path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_rpn)
@@ -10,6 +11,11 @@ ec_parse_manifest()        # Parse MANIFEST file
 
 project(${NAME} DESCRIPTION "${DESCRIPTION}")
 set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fsst-tools that will be baked into the various artifacts of this build" FORCE)
+
+message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
+
+set(CMAKE_SKIP_RPATH TRUE)
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 ec_build_info()            # Generate build information
 
@@ -23,13 +29,14 @@ include(ec_org_manpages)   # Generates manpages
 include(ec_compiler_presets)
 
 if (NOT RMN_FOUND)
-   find_package(RMN ${RMN_REQ_VERSION} REQUIRED)
+   find_package(rmn ${RMN_REQ_VERSION} REQUIRED)
 endif()
 
 add_subdirectory(bemol)
 add_subdirectory(editfst)
 add_subdirectory(fstcomp)
 add_subdirectory(fstcompress)
+add_subdirectory(fstdumpfld)
 add_subdirectory(fstinfo)
 add_subdirectory(fststat)
 add_subdirectory(fstxml)
@@ -40,7 +47,7 @@ add_subdirectory(voir)
 #----- Packaging
 ec_package_name()      # Define package prefix  
 ec_build_config()      # Create build configuration script
-ec_prepare_ssm(bin)    # Prepare ssm packaging files
+#ec_prepare_ssm()       # Prepare ssm packaging files
 
 set(CPACK_GENERATOR "TGZ")
 set(CPACK_PACKAGE_VENDOR "ECCC")
