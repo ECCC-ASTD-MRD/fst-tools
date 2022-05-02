@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <rpnmacros.h>
+#include <rmn.h>
 
 #include "diese.h"
 #include "diese_funct.h"
@@ -216,7 +216,7 @@ int f77name(dies_process_flds)(int *keys, int *nkeys)
                             tuile = (float *) malloc(nit*njt*sizeof(float));
                         }
 
-                        ier = f77name(fstluk)((void *)tuile, &(flist[i].tuiles[n].key), &nit, &njt, &nkt);
+                        ier = c_fstluk(tuile, &(flist[i].tuiles[n].key), &nit, &njt, &nkt);
 
                         startx = flist[i].tuiles[n].ni_start;
                         starty = flist[i].tuiles[n].nj_start;

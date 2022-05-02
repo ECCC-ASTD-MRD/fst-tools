@@ -6,7 +6,6 @@ add_executable(editfst
     desire.f90
     dmpdes.f90
     editfst.f90
-    excdes_new.c
     fermes.f90
     fstnol.f90
     holacar.f90
