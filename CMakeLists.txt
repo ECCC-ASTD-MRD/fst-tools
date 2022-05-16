@@ -28,8 +28,8 @@ add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMA
 include(ec_org_manpages)   # Generates manpages
 include(ec_compiler_presets)
 
-if (NOT RMN_FOUND)
-   find_package(rmn ${RMN_REQ_VERSION} REQUIRED)
+if (NOT rmn_FOUND)
+   find_package(rmn ${rmn_REQ_VERSION} REQUIRED)
 endif()
 
 add_subdirectory(bemol)

@@ -10,4 +10,4 @@ URL        : https://gitlab.science.gc.ca/RPN-SI/fst-tools
 #    =,<,<=,>,>= : Version rules
 #    ~           : Optional
 
-RMN  ~>= 20.0.0
+rmn  ~>= 20.0.0
