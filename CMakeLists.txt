@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.20)
 
 #----- Append EC specific module path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_rpn)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 include(ec_init)           # Initialise compilers and ec specific functions
 ec_git_version()           # Get version from git state
@@ -25,7 +24,8 @@ enable_language(C Fortran)
 include(CTest)
 add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMAND})
 
-include(ec_org_manpages)   # Generates manpages
+#TODO: needs pandoc, no available by deafult on U2, should we revise ?
+#include(ec_org_manpages)   # Generates manpages
 include(ec_compiler_presets)
 
 if (NOT rmn_FOUND)
@@ -45,9 +45,9 @@ add_subdirectory(reflex)
 add_subdirectory(voir)
 
 #----- Packaging
-ec_package_name()      # Define package prefix  
-ec_build_config()      # Create build configuration script
-#ec_prepare_ssm()       # Prepare ssm packaging files
+ec_install_prefix(${NAME} ${PROJECT_VERSION} PACKAGE_PREFIX)   # Define package prefix  
+ec_build_config()                                              # Create build configuration script
+ec_prepare_ssm()                                               # Prepare ssm packaging files
 
 set(CPACK_GENERATOR "TGZ")
 set(CPACK_PACKAGE_VENDOR "ECCC")
@@ -56,6 +56,6 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.org")
 set(CPACK_OUTPUT_FILE_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/package")
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_PREFIX}")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${NAME}_${PROJECT_VERSION}")
 include(CPack)
