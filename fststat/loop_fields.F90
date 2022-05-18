@@ -43,7 +43,7 @@ subroutine loop_fields(iun, ni, nj, nk, datev, etiket, ip1, ip2, ip3, typvar, no
             ig1, ig2, ig3, ig4, swa, lng, dltf, ubc, &
             extra1, extra2, extra3)
 
-        if (nomvar /= '!!') then
+        if (nomvar2 /= '!!') then
             ier = fstluk(buf, key, ni, nj, nk)
 
             if (datyp == 2 .or. datyp == 4) then
