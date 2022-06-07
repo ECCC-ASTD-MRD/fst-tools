@@ -8,17 +8,19 @@ include(ec_init)           # Initialise compilers and ec specific functions
 ec_git_version()           # Get version from git state
 ec_parse_manifest()        # Parse MANIFEST file
 
-project(${NAME} DESCRIPTION "${DESCRIPTION}")
+project(${NAME} DESCRIPTION "${DESCRIPTION}" LANGUAGES C Fortran)
 set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fsst-tools that will be baked into the various artifacts of this build" FORCE)
+
+include(ec_compiler_presets)
 
 message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_SKIP_RPATH TRUE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_EXTENSIONS OFF)
 
 ec_build_info()            # Generate build information
-
-enable_language(C Fortran)
 
 # configure_file(version.in.inc version.inc @ONLY)
 include(CTest)
@@ -26,7 +28,6 @@ add_custom_target(check COMMAND CTEST_OUTPUT_ON_FAILURE=TRUE ${CMAKE_CTEST_COMMA
 
 #TODO: needs pandoc, no available by deafult on U2, should we revise ?
 #include(ec_org_manpages)   # Generates manpages
-include(ec_compiler_presets)
 
 if (NOT rmn_FOUND)
    find_package(rmn ${rmn_REQ_VERSION} REQUIRED)
