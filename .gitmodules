@@ -4,4 +4,5 @@
 	branch = dev
 [submodule "ci-env"]
 	path = ci-env
-	url = https://gitlab.science.gc.ca/RPN-SI/ci-env
+	url = ../ci-env
+	branch = dev
