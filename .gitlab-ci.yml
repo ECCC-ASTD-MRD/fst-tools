@@ -12,6 +12,7 @@ stages:
 
 before_script:
    - export CLICOLOR_FORCE=true
+   - if [[ ${CI_COMMIT_REF_NAME} == "dev" && ${ECCI_PROCESS} != "nightly" ]]; then ECCI_PROCESS="dev"; fi
 
 build:icelake-inteloneapi-2022.1.2:
    stage: build
@@ -22,7 +23,7 @@ build:icelake-inteloneapi-2022.1.2:
    script:
       - set +e
       - source ci-env/latest/rhel-8-icelake-64/inteloneapi-2022.1.2.sh
-      - . r.load.dot ${ECCI_SSM}/${ECCI_PROCESS}/libs/
+      - . r.load.dot ${ECCI_SSM}/${ECCI_PROCESS}/libs
       - set -e
       - mkdir build_icelake-inteloneapi-2022.1.2
       - cd build_icelake-inteloneapi-2022.1.2
