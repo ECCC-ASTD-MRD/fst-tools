@@ -128,6 +128,7 @@ package:icelake-inteloneapi-2022.1.2:
    only:
       - tags
       - schedules
+      - triggers
    dependencies:
       - build:icelake-inteloneapi-2022.1.2
    environment:
@@ -145,6 +146,7 @@ package:amd64-inteloneapi-2022.1.2:
    only:
       - tags
       - schedules
+      - triggers
    dependencies:
       - build:amd64-inteloneapi-2022.1.2
    environment:
@@ -162,6 +164,7 @@ package:amd64-gnu-9.3.0:
    only:
       - tags
       - schedules
+      - triggers
    dependencies:
       - build:amd64-gnu-9.3.0
    environment:
@@ -179,6 +182,7 @@ deploy:staging:
    only:
       - tags
       - schedules
+      - triggers
    script:
       - ~/ci-admin-bundle/bin/ci-stage-ssm.sh utils $CI_PROJECT_NAME "${CI_COMMIT_TAG}" "${ECCI_PROCESS}"
 
