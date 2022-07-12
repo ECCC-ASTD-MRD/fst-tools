@@ -1,0 +1,9 @@
+      integer dat,deet
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!        - bloc /param/  integer dat,deet
+!          definir variables comme entier
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

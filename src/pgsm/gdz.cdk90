@@ -1,0 +1,12 @@
+      integer niz, njz, nkz
+      integer ig1z, ig2z, ig3z, ig4z
+      integer ig1ref, ig2ref, ig3ref, ig4ref
+      real, pointer, dimension(:) :: axex, axey
+      common /gdz/ niz, njz, nkz, ig1z, ig2z, ig3z, ig4z, ig1ref, ig2ref, ig3ref, ig4ref, axex, axey
+
+      character*1 grref
+
+      common /gdzchar/ grref
+
+
+

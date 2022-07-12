@@ -1,0 +1,16 @@
+   integer heures,nhur,nheure
+   common / heures/ nhur,nheure,heures(MXHEURE)
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /heures / nhur,nheure,
+!                          heures(mxheure)
+!
+!           nhur   -cause de readlx nheure est sauve dans nhur
+!                   nhur est desormais employe
+!           nheure -nombre d'arguments dans routine heure
+!                   via directive (readlx) nombre d'heures dans
+!                   routine heure table heures
+!           heures -table contenant les heures via directive
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif

@@ -1,0 +1,39 @@
+      integer nni,nnj,nnk,idatt,jpp1,jpp2,jpp3,ideet,npas
+      integer igg1,igg2,igg3,igg4,if0,icnt,ier
+      logical unefois,once
+      common /accum/ nni,nnj,nnk,idatt,jpp1,jpp2,jpp3,ideet,npas,igg1,igg2,igg3,igg4,if0,icnt,unefois,once
+
+
+      character*12 cetik
+      character*2 ctypv
+      character*1 cigty
+      character*4 cnumv
+      common /caccum/ cetik, ctypv, cigty, cnumv
+
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc / accum / nni,nnj,idatt,etik,jpp1,jpp2,jpp3,typv,numv
+!                          ideet,npas,igty,igg1,igg2,igg3,igg4,if0,icnt
+!                  nni    -nombre de grids pts est-ouest dans acumula
+!                  nnj    -nombre de grids pts nord-sud dans acumula
+!                  idatt  -date(cmc stamp) du champ acumula
+!                  etik   -etiquette du champ acumula max 10 caracteres
+!                  jpp1   -niveau du champ acumula
+!                  jpp2   -heure du champ acumula
+!                  jpp3   -libre (utiliser par usager)
+!                  typv   -type de variabla "p"=prevision "a"=analyse
+!                  numv   -nom du champ acumula lcar(gz),"tt"......
+!                  ideet  -nombre de secondes par pas
+!                  npas   -numero du pas du temp
+!                  igty   -type de grille   g=gaussien  n=polaire nord.....
+!                  igg1   -parametre decrit dans  pgsm sous grille
+!                  igg2   -parametre decrit dans  pgsm sous grille
+!                  igg3   -parametre decrit dans  pgsm sous grille
+!                  igg4   -parametre decrit dans  pgsm sous grille
+!                  if0    -pointeur pour champ acumula dans common accu
+!                  icnt   -compteur augmenter a chaque appel pluse-
+!                          pluss-moinse-moinss
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

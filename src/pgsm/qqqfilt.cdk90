@@ -1,0 +1,4 @@
+      integer fltwgtlng(2),fltntimes(2),fltverb(2),fltlist(9,2)
+      logical fltoggle(2)
+      common /qfilter/ fltoggle,fltwgtlng,fltntimes,fltverb,fltlist
+

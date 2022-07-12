@@ -1,0 +1,19 @@
+      integer typeent,ip3ent,mtype,nis,njs,nif,njf,ninc,njnc,diese
+      logical printen,mtdone
+      common /lires/ ip3ent,typeent,mtype,printen,nis,njs,nif,njf,ninc,njnc,diese,mtdone
+!
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /lires  /ip3ent,typeent,mtype
+!           integer typeent
+!
+!          ip3ent    -arguments de la routine lire initialiser a -1
+!                  dans pgsm peut etre initialiser avec directive
+!          typeent  -type de variable initialiser a -1 dans pgsm
+!                  peut-etre initialiser avec directive
+!          mtype  -echelle pour contour des champs (debug)
+!
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

@@ -1,0 +1,14 @@
+      integer ichck,nlire,najou,nenle,nmoys,necrt,nmod, nraci,npfo,multp
+      common/chck/ ichck,nlire,najou,nenle,nmoys, necrt,nmod,nraci,npfo,multp
+!
+!
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc / chck/  ichck
+!                  ichck-initialiser a zero dans pgsm    routine liren ou
+!                  lirsr initialise a 1 pour routine plmnmod-enleve-pfois......
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

@@ -1,0 +1,17 @@
+      integer nivospr,nmoy,nmo
+      common / nivos/ nmoy, nmo, nivospr(MXCHAMP)
+!
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /nivos/nmoy, nmo, nivospr(mxchamp)
+!                integer nmoy,nmo,nivospr
+!
+!                nmoy  -nombre d'arguments pour directive moyent/moysrt
+!                nmo   -initialiser pour readlx
+!                nivospr -table contenant les niveaux de pression
+!
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!
+!
+

@@ -1,0 +1,22 @@
+#define MAXNOM  256
+#define MTYP    32
+#define MXCHAMP 31
+#define MXHEURE 40
+#define NIVOMAX 40
+#define NON     0
+#define NPAIRMX 40
+#define OUI     1
+
+#define maxnom  256
+#define mtyp    32
+#define mxchamp 31
+#define mxheure 40
+#define nivomax 40
+#define non     0
+#define npairmx 40
+#define oui     1
+
+#define BIT1CAR 8
+#define BIT2CAR 16
+#define qlxinxs  qlxinx
+

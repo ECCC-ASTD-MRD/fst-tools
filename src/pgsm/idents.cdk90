@@ -1,0 +1,8 @@
+   integer qposition, qitems(16), qnitems
+   character*1 qcsepar
+   character*16 qcform
+
+   common /idents/  qposition, qitems, qnitems
+   common /cidents/ qcsepar,qcform
+
+

@@ -1,0 +1,15 @@
+   integer typesrt,etiksrt(3),ip3srt, niis,njjs,niif,njjf,niinc,njjnc,ip2srt,nwetiks,compression_level
+   logical printsr
+
+   common /ecrires/ ip3srt,typesrt,etiksrt,nwetiks,printsr,niis, njjs,niif,njjf,niinc,njjnc,ip2srt, compression_level
+!
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!          -bloc /ecrires/ ip3srt,typesrt,etiksrt,printsr,niis,
+!                          njjs,niif,njjf,niinc,njjnc
+!                integer typesrt,etiksrt
+!                logical printsr
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

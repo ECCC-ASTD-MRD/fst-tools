@@ -1,0 +1,50 @@
+      subroutine qqqfilt(inout,weightlst,ntimes,verbose)
+      implicit none
+      integer inout,weightlst(*),ntimes,verbose
+      
+#include "qqqfilt.cdk90"
+
+      integer i,j,l,sum
+      integer nb_elem,lng_liste,istart, iend
+
+      external argdims
+      integer argdims
+
+      data(fltoggle(i),i= 1,2)  /.false.,.false./
+      data(fltntimes(i), i=1,2) /0,0/
+      data(fltverb(i), i=1,2)   /0,0/
+
+
+      if (inout.ne.1.and.inout.ne.2) then
+        write (6,*) '(QQQFILT) On doit mentionner LECTURE ou ECRITURE'
+        return
+      endif
+
+      if (argdims(2).gt.9) then
+        write (6,*) '(QQQFILT) Liste de poids trop longue - Maximum=9'
+        return
+      endif
+
+      
+      fltoggle(inout)=.true.
+      if (argdims(2).le.1) then
+         fltoggle(inout)=.false.
+         return
+      endif
+      
+      fltwgtlng(inout)=argdims(2)
+      fltntimes(inout)=ntimes
+      fltverb(inout)=verbose
+
+      if (mod(fltwgtlng(inout),2).ne.1) then
+        write (6,*) '(QQQFILT) Liste de poids doit etre impaire'
+        return
+      endif
+
+      do i=1, fltwgtlng(inout)
+        fltlist(i,inout)=weightlst(i)
+      enddo
+
+
+      return
+      end

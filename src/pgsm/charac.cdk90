@@ -1,0 +1,7 @@
+      character(len=512) :: defo(990)
+      character(len=512) :: listl(990), form
+      character(len=512) :: lfn(990)
+
+      common/carac/defo,listl,form,lfn
+
+

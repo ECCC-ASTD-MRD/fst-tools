@@ -1,0 +1,7 @@
+      character cnomvar*4,ctypvar*2,cigtyp*1,cetiket*12
+      common /cfldinf/ cnomvar, ctypvar, cetiket, cigtyp
+!
+#if defined (doc)
+#endif
+!
+!

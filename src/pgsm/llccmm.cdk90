@@ -1,0 +1,22 @@
+   real, dimension(:,:), pointer :: tmpif0, tmpif1, tmpif2, tmpif3, tmpif4
+   integer, dimension(:,:), pointer :: itmpif0, itmpif1, itmpif2, itmpif3, itmpif4
+   real, dimension(:,:), pointer :: tmpift, tmplat, tmplon
+   real, dimension(:,:), pointer :: tmplatg, tmplong
+   real, dimension(:), pointer :: tmproot
+
+   common /llccmm/ tmpif0,tmpif1,tmpif2,tmpif3,tmpif4, &
+                   itmpif0,itmpif1,itmpif2,itmpif3,itmpif4, &
+                   tmpift,tmproot,&
+                   tmplat,tmplon, tmplatg,tmplong
+
+!
+!
+#if defined (doc)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /lcm    /  bufl(1)
+!             - bufl - champ dont la longueur varie selon les
+!                      ressources demandees par l'usager
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!

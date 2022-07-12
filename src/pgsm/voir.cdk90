@@ -1,0 +1,7 @@
+      logical voire,voirs,pose,message
+      common/voir/ voire,voirs, pose, message
+!
+!
+#if defined (doc)
+#endif
+!

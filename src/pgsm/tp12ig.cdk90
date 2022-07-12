@@ -1,0 +1,7 @@
+      integer ig1la,ig2la,ig3la,ig4la,nilo,njlo,nklo
+      integer ig1lo,ig2lo,ig3lo,ig4lo
+
+      common /tp12ig/ ig1la,ig2la,ig3la,ig4la,nilo,njlo,nklo,ig1lo,ig2lo,ig3lo,ig4lo
+
+
+

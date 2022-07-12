@@ -1,0 +1,17 @@
+      integer champpr,nchamp,nchmp,npar
+      common / champs/ nchamp, nchmp, npar,champpr(MXCHAMP)
+!     
+#if defined (doc)
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!         - bloc /champs / nchamp, nchmp
+!                          champpr(mxchamp)
+!
+!           nchamp -valeur initialiser par readlx sauve dans nchmp
+!           nchmp  -nombre d'arguments pour directives champ
+!           champpr-table contenant des niveaux ou des heures
+!
+!
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#endif
+!
+!
