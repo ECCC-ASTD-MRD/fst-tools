@@ -1,7 +1,0 @@
-sortie(std,100)
-heure(tout)
-setintx(voisin)
-grille(tape2,-1,-1,-1)
-champ(tout,tout)
-champ(uv,tout)
-end

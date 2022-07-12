@@ -1,6 +1,0 @@
-#if defined (sun)
-      implicit undefined (A-Z)
-#else
-      implicit none
-
-#endif

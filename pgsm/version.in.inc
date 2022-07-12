@@ -1,1 +1,0 @@
-      PGSM_VERSION = "@PROJECT_VERSION@"

@@ -1,1 +1,0 @@
-      RELEASE = "@PROJECT_VERSION@"

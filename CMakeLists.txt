@@ -19,6 +19,7 @@ set(CMAKE_SKIP_RPATH TRUE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_Fortran_PREPROCESS ON)
 
 ec_build_info()            # Generate build information
 
@@ -29,17 +30,18 @@ if (NOT rmn_FOUND)
    find_package(rmn ${rmn_REQ_VERSION} REQUIRED)
 endif()
 
-add_subdirectory(bemol)
-add_subdirectory(editfst)
-add_subdirectory(fstcomp)
-add_subdirectory(fstcompress)
-add_subdirectory(fstdumpfld)
-add_subdirectory(fstinfo)
-add_subdirectory(fststat)
-add_subdirectory(fstxml)
-add_subdirectory(pgsm)
-add_subdirectory(reflex)
-add_subdirectory(voir)
+add_subdirectory(src/bemol)
+add_subdirectory(src/editfst)
+add_subdirectory(src/fstcomp)
+add_subdirectory(src/fstcompress)
+add_subdirectory(src/fstdumpfld)
+add_subdirectory(src/fstinfo)
+add_subdirectory(src/fststat)
+add_subdirectory(src/fstxml)
+add_subdirectory(src/pgsm)
+add_subdirectory(src/reflex)
+add_subdirectory(src/voir)
+add_subdirectory(src/dbzono)
 
 #----- Packaging
 ec_install_prefix(${NAME} ${PROJECT_VERSION} PACKAGE_PREFIX)   # Define package prefix  
