@@ -21,8 +21,8 @@
       SUBROUTINE DESIRE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       use ISO_C_BINDING
       use configuration
-      IMPLICIT NONE 
-  
+      IMPLICIT NONE
+
       INTEGER, intent(IN) ::  DATE(NML), IP1(NML), IP2(NML), IP3(NML)
       INTEGER, intent(IN) ::  TC(NML), NV(NML), LBL(30)
 !     AUTEUR YVON R. BOURASSA JAN 86
@@ -32,11 +32,11 @@
 !Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
 !Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
 !Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
-!                           mar  14 - interface avec la selection par le logiciel fstd 
+!                           mar  14 - interface avec la selection par le logiciel fstd
 !                           sept 17 - bug fix pour le cas desire avec tous les arguments a -1
 !                           sept 19 - augmenter les limites (listes et requetes)
 !     LANGUAGE FTN90
-!  
+!
 !ARGUMENTS
 !  ENT    TC   -  1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
 !   "     NV   -  1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
@@ -47,10 +47,10 @@
 !   "     IP3  -  1 A NML IP3    "      "      "    "
 !
 !MODULES
-      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, JULHR, HOLACAR
+      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, JULHR, HOLACAR
       include 'excdes.inc'
-!*  
-      INTEGER  FSTCVT, ARGDIMS, ARGDOPE, IOPDATM, I, J, LIS(10)
+
+      INTEGER  FSTCVT, ARGDIMS, ARGDOPE, I, J, LIS(10)
 !      DATA     LIS/10*0/
       integer  newip1(NML), newip2(NML), newip3(NML), nip1, nip2, nip3
       integer :: status
@@ -61,7 +61,7 @@
       max_requetes_exdes =  min(NMD,max_requetes_exdes)
       excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. max_requetes_exdes) THEN
-         PRINT*,'** MAXIMUM DE',max_requetes_exdes,' REQUETES ATTEINT **' 
+         PRINT*,'** MAXIMUM DE',max_requetes_exdes,' REQUETES ATTEINT **'
          RETURN
       ENDIF
       lima = [NML, NML, 10, NML, NML, NML, NML]
@@ -75,23 +75,23 @@
           PRINT *,'** VEUILLEZ UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE'
         endif
       enddo
-  
+
 !     COMPTER LES DIRECTIVES DESIRE/EXCLURE
       IF(excdes_de == EXCDES_EXCLURE) NEXC = NEXC + 1   ! compteur pour "exclure"
       NREQ = NREQ+1                  ! nombre de requetes
-  
+
 !     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
       SATISF(NREQ) = 0
 !     INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
       DESEXC(NREQ) = excdes_de
-  
+
       DO 20 J=1,4              ! mise a zero de la requete NREQ dans la table de requetes
       DO 20 I=1,11
    20    REQ(I,J,NREQ) = 0
       REQE(NREQ) = 0
       REQN(NREQ) = 0
       REQT(NREQ) = 0
-  
+
       IF( DEBUG ) PRINT*,'REQUETE # ',NREQ
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
@@ -154,7 +154,7 @@
          IF( DEBUG ) PRINT*,'TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
          status = Select_typvar(nreq,excdes_de,typs(1,nreq),REQT(NREQ),2)
       ENDIF
-  
+
 !     AJOUTER LES CRITERES SUPPLEMENTAIRES AU BESOIN
       IF( SCRI ) THEN
          SUP(8,NREQ) = 1
@@ -170,12 +170,12 @@
       ENDIF
       IF( DEBUG )  call Dump_Request_table()
       RETURN
-  
+
 !     POUR CHOISIR LES CHAMPS NON VOULUS
       ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       excdes_de = EXCDES_EXCLURE
       GO TO 10
-  
+
       contains
 !** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
 ! transformer la liste ip pouvant contenir des paires valeur/kind
@@ -194,7 +194,7 @@
 !Revision 001  M. Lepine - sept 2106 Remettre l'initialisation du package convip en mode newstyle
 !
 !LANGUAGE Fortran 90
-!  
+!
 !ARGUMENTS
 ! Entree  ip     -  liste de niveaux (ip [entier] ou paire [reel,code_de_type entier])
 !   "     nip    -  dimension de ip
@@ -202,7 +202,7 @@
 !   "     nnewip -  nombre de valeurs dans newip
 !
 !
-!*  
+!*
       integer :: i, kindp, dummyip
       character(len=12) :: dummy
       real :: p, dummyp
@@ -218,7 +218,7 @@
          call convip_plus(dummyip,dummyp,kindp,0,dummy,.false.)   ! initialisation de convip au mode newstyle
          initdone = .true.
       endif
-                                                                    
+
       nnewip = 0
       i = 1
       do while (i <= nip)
