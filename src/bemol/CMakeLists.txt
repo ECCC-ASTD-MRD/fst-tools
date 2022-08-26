@@ -26,4 +26,9 @@ target_link_libraries(bemol PRIVATE bemollib rmn)
 add_executable(zcrop utils/zcrop/zcrop.F90)
 target_link_libraries(zcrop PRIVATE bemollib rmn)
 
+# Force the use of RPATH instead of RUNPATH to revert to the
+# old behaviour which inherits the search paths in the dependency chain
+target_link_libraries(bemol PUBLIC "-Wl,--disable-new-dtags")
+target_link_libraries(zcrop PUBLIC "-Wl,--disable-new-dtags")
+
 install(TARGETS bemol zcrop)

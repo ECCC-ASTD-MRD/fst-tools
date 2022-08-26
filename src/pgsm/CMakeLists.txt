@@ -38,6 +38,9 @@ target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 add_executable(pgsm main.F90)
 target_link_libraries(pgsm PRIVATE pgsmlib rmn)
 
+# Force the use of RPATH instead of RUNPATH to revert to the
+# old behaviour which inherits the search paths in the dependency chain
+target_link_libraries(pgsm PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS pgsm)
 
