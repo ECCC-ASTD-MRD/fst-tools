@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <rpnmacros.h>
+#include <rmn/rpnmacros.h>
 
 #include "diese.h"
 #include "diese_funct.h"

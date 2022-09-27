@@ -23,8 +23,8 @@
 !      use format_ip123_kind
        use configuration
       IMPLICIT NONE 
-       include 'convert_ip123.inc'
-       include 'excdes.inc'
+       include 'rmn/convert_ip123.inc'
+       include 'rmn/excdes.inc'
   
 !AUTEURS
 !         - C. THIBEAULT  FEV 83

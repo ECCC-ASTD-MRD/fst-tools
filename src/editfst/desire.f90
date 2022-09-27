@@ -184,7 +184,7 @@
       subroutine ip_to_newip(ip,newip,nip,nnewip)
       use ISO_C_BINDING
       implicit none
-      include 'convert_ip123.inc'
+      include 'rmn/convert_ip123.inc'
       integer, intent(IN) :: nip
       integer, intent(OUT) :: nnewip
       integer, intent(IN), dimension(nip) :: ip
