@@ -20,7 +20,7 @@ program create_test_file
 !use convert_ip123
 use ISO_C_BINDING
 implicit none
-include 'convert_ip123.inc'
+include 'rmn/convert_ip123.inc'
 integer, parameter :: TYP134=1  ! f  type, compressed F type reals
 integer, parameter :: TYP198=198  ! fm type, compressed reals with potentially missing values
 integer, parameter :: TYP6=5      ! F  type, reals with new quantization scheme

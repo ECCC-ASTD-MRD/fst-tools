@@ -23,7 +23,7 @@
 !      use format_ip123_kind
        use configuration
       IMPLICIT NONE 
-       include 'convert_ip123.inc'
+       include 'rmn/convert_ip123.inc'
        include 'excdes.inc'
   
 !AUTEURS

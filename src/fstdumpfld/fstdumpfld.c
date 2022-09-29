@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include <rmn.h>
-#include <convert_ip.h>
+#include <rmn/convert_ip.h>
 
 // KIND =0, p est en hauteur (m) par rapport au niveau de la mer (-20,000 -> 100,000)
 // KIND =1, p est en sigma                                       (0.0 -> 1.0)

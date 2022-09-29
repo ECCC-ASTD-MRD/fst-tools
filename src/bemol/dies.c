@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <rmn.h>
-#include <rpnmacros.h>
+#include <rmn/rpnmacros.h>
 
 #include "diese.h"
 #include "diese_funct.h"

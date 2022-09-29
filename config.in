@@ -18,7 +18,7 @@ libs=CMAKE_LIBS
 version=@PROJECT_VERSION@
 env=@EC_CI_ENV@
 
-has_rmn=@RMN_VERSION@@RMN_STATE@
+has_rmn=@rmn_VERSION@@rmn_STATE@
 
 usage()
 {

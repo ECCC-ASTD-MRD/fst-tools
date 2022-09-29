@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pwd.h>
-// #include <rpnmacros.h>
 
 /* -----------------------------------------------------------------------------------------------*/
 /*  xml2generic : Convertisseur de fichier XML en fichier standard RPN version 2000

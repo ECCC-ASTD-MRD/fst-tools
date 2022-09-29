@@ -8,9 +8,9 @@
 
 #include <pwd.h>
 
-#include <rpnmacros.h>
-#include <fnom.h>
-#include <fstd98.h>
+#include <rmn/rpnmacros.h>
+#include <rmn/fnom.h>
+#include <rmn/fstd98.h>
 
 
 /* introducing a new enum called Bool */

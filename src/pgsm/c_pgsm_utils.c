@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <rpnmacros.h>
+#include <rmn/rpnmacros.h>
 #include <ctype.h>
 #include <string.h>
 

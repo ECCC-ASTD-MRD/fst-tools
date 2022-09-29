@@ -2,7 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <rmnlib.h>
+#include <rmn.h>
 extern void f77name(fst2xml) ();
 
 ftnword f77name(c_to_f_sw)(char *program, int *f_lng)
