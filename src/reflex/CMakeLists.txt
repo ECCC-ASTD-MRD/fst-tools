@@ -5,6 +5,10 @@ add_executable(reflex reflex.f)
 target_link_libraries(reflex PRIVATE rmn)
 target_include_directories(reflex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
+# Force the use of RPATH instead of RUNPATH to revert to the
+# old behaviour which inherits the search paths in the dependency chain
+target_link_libraries(reflex PUBLIC "-Wl,--disable-new-dtags")
+
 install(TARGETS reflex)
 
 ######################## TESTING ###################################

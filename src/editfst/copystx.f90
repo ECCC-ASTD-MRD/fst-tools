@@ -24,7 +24,7 @@
        use configuration
       IMPLICIT NONE 
        include 'rmn/convert_ip123.inc'
-       include 'excdes.inc'
+       include 'rmn/excdes.inc'
   
 !AUTEURS
 !         - C. THIBEAULT  FEV 83

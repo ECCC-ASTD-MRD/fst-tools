@@ -16,8 +16,8 @@
 /* introducing a new enum called Bool */
 typedef enum
 {
-  no,
-  yes
+    no,
+    yes
 } Bool;
 
 /* for null pointers */

@@ -9,7 +9,7 @@ ec_git_version()           # Get version from git state
 ec_parse_manifest()        # Parse MANIFEST file
 
 project(${NAME} DESCRIPTION "${DESCRIPTION}" LANGUAGES C Fortran)
-set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fsst-tools that will be baked into the various artifacts of this build" FORCE)
+set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fst-tools that will be baked into the various artifacts of this build" FORCE)
 
 include(ec_compiler_presets)
 

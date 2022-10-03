@@ -1,8 +1,17 @@
-set(FICHIERS_F  
-    bsort.f       dbzono.f       debalzn.f       inctcon.f
-    litzon.f      outfld.f       setuvd0.f       writlzn.f)
-
-add_executable(dbzono ${FICHIERS_F})
+add_executable(dbzono 
+    bsort.f
+    dbzono.f
+    debalzn.f
+    inctcon.f
+    litzon.f
+    outfld.f
+    setuvd0.f
+    writlzn.f
+)
 target_link_libraries(dbzono PRIVATE rmn)
-install(TARGETS dbzono)
 
+# Force the use of RPATH instead of RUNPATH to revert to the
+# old behaviour which inherits the search paths in the dependency chain
+target_link_libraries(dbzono PUBLIC "-Wl,--disable-new-dtags")
+
+install(TARGETS dbzono)
