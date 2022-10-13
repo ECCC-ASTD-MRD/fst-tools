@@ -1,6 +1,6 @@
 NAME       : fst-tools
 VERSION    : 
-BUILD      : Release
+BUILD      : 
 DESCRIPTION: ECCC-MRD Collection of tools to manipulate RPN standard files
 SUMMARY    : These tools allow for manipulation of RPN standard files
 MAINTAINER : Philippe Carphin - Philippe.Carphim@ec.gc.ca
@@ -10,4 +10,4 @@ URL        : https://gitlab.science.gc.ca/RPN-SI/fst-tools
 #    =,<,<=,>,>= : Version rules
 #    ~           : Optional
 
-RMN  ~>= 19.7.0
+rmn  ~>= 20.0.0

@@ -1,0 +1,8 @@
+add_executable(fstcomp fstcomp.f statfldx.F90)
+target_link_libraries(fstcomp PRIVATE rmn)
+
+# Force the use of RPATH instead of RUNPATH to revert to the
+# old behaviour which inherits the search paths in the dependency chain
+target_link_libraries(fstcomp PUBLIC "-Wl,--disable-new-dtags")
+
+install(TARGETS fstcomp)

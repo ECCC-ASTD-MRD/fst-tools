@@ -1,0 +1,13 @@
+SHELL = /bin/sh
+
+.DEFAULT:
+	co $@
+
+
+COMDECKS= \
+         ctescon.cdk
+
+
+
+ctescon.acdk: ctescon.cdk  dbzono.ftn 	inctcon.ftn 	zonfin.ftn 
+
