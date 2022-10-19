@@ -8,7 +8,7 @@ Collection of tools to manipulate RPN standard files
 - CMake 3.12+
 - librmn
 
-Note: =cmake_rpn= and =ci-env= are included as a submodule.  Please clone with the
+Note: =cmake_rpn= is included as a submodule.  Please clone with the
 =--recursive= flag or run =git submodule update --init --recursive= in the
 git repo after having cloned.
 
@@ -20,7 +20,6 @@ This will load the specified compiler and define the ECCI_DATA_DIR variable for 
 - Example for PPP6 and icelake specific architecture:
 
 #+begin_src
-<<<<<<< HEAD
 . $ECCI_ENV/latest/ubuntu-18.04-skylake-64/intel-19.0.3.199.sh
 #+end_src
 
@@ -28,9 +27,6 @@ This will load the specified compiler and define the ECCI_DATA_DIR variable for 
 
 #+begin_src
 . $ECCI_ENV/latest/sles-15-skylake-64/intel-19.0.5.281.sh
-=======
-. ci-env/latest/rhel-8-icelake-64/inteloneapi-2022.1.2.sh
->>>>>>> e77b8cf5e7c07c392a712f0a817a05be45f2367b
 #+end_src
 
 - Example for CMC network and gnu 7.5:
@@ -56,8 +52,9 @@ make install
 - CMake 3.12+
 - librmn with shared libraries (https://github.com/ECCC-ASTD-MRD/librmn/tree/dev)
 
-Note: =cmake_rpn= and =ci-env= are included as a submodule but =ci-env= is not available externally. 
-Please run =git -c submodule."ci-env".update=none submodule update --init --recursive= in the git repo after having cloned.
+Note: =cmake_rpn= is included as a submodule.  Please clone with the
+=--recursive= flag or run =git submodule update --init --recursive= in the
+git repo after having cloned.
 
 ** Build and install
 
