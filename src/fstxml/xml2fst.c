@@ -1006,36 +1006,6 @@ void InitConfig(void)
 
 }
 
-char * strtrim(char *s)
-{
-
-#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n'))
-  char *p = s;
-
-  for(p = s; *p; p++);        /* Find end of string */
-
-
-  for(p--; p>=s; p--)
-    {
-      if (SPACE(*p))
-        *p = 0;                /* Zap trailing blanks */
-      else
-        break;
-    }
-
-  while(s != null)
-    {
-      while((*s == ' ') || (*s == '\t') || (*s == '\n'))
-        {
-          s++;                /* Strip leading blanks */
-
-        }
-      s++;
-    }
-
-  return s;
-}
-
 
 void ParseConfigFile(char *file)
 {
