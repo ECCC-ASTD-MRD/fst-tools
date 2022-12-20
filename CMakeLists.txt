@@ -1,6 +1,8 @@
 # The minimum version can not be 3.16 because of the LINK_LANGUAGE generator expression in librmn's rmnConfig.cmake
 cmake_minimum_required(VERSION 3.20)
 
+message(STATUS "(EC) Generating fst-tools Makefile")
+
 #----- Append EC specific module path
 list(APPEND CMAKE_MODULE_PATH $ENV{EC_CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake_rpn/modules)
 
@@ -10,6 +12,7 @@ ec_parse_manifest()        # Parse MANIFEST file
 
 project(${NAME} DESCRIPTION "${DESCRIPTION}" LANGUAGES C Fortran)
 set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fst-tools that will be baked into the various artifacts of this build" FORCE)
+message(STATUS "(EC) ${PROJECT_NAME} version = ${PROJECT_VERSION}")
 
 include(ec_compiler_presets)
 
