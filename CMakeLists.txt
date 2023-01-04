@@ -13,11 +13,8 @@ set(PROJECT_VERSION ${VERSION}${STATE} CACHE STRING "Define the version of fst-t
 
 include(ec_compiler_presets)
 
-message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_Fortran_PREPROCESS ON)
 
 ec_build_info()            # Generate build information

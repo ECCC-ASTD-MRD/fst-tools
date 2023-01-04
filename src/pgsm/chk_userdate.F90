@@ -1,4 +1,5 @@
    subroutine chk_userdate(datev)
+   use app
    implicit none
 
 #include "defin.cdk90"
@@ -22,7 +23,8 @@
       date3 = -1
       datev = -1
    else
-      print *, '(chk_userdate) suspicious date value :', userdate
+      write(app_msg,*) 'chk_userdate: Suspicious date value :', userdate
+      call app_log(APP_WARNING,app_msg)
    endif
 
    return

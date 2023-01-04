@@ -1,5 +1,7 @@
-      subroutine initseq
-#include "impnone.cdk90"
+   subroutine initseq
+      use app
+      implicit none
+      
 #include "champseq.cdk90"
       
 !     

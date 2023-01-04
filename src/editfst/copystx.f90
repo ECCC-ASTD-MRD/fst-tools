@@ -22,6 +22,7 @@
 !      use convert_ip123
 !      use format_ip123_kind
        use configuration
+       use app
       IMPLICIT NONE 
        include 'rmn/convert_ip123.inc'
        include 'rmn/excdes.inc'
@@ -94,7 +95,9 @@
 
    10 BONNE  = .FALSE.
       FIRSTP = .TRUE.
-      IF( DEBUG ) WRITE(6,*)' FIRSTP=',FIRSTP,'  OK=',OK,' BONNE=',BONNE
+      WRITE(app_msg,*) 'copystx: FIRSTP=',FIRSTP,'  OK=',OK,' BONNE=',BONNE
+      call app_log(APP_DEBUG,app_msg)
+
 !     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT QUI NOUS INTERESSE
       IREC   = FSTINF(SOURCES(1), NI, NJ, NK, -1, ' ', -1, -1, -1,' ', ' ')
 !
@@ -105,7 +108,8 @@
                  IG3, IG4, SWA, LNG, DLFT, UBC, VALID, XTRA2, XTRA3)
 !
       IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
-         WRITE(6,*)'IMPOSSIBLE DE COPIER ENREGISTREMENT NO.',IREC,' NBITS =',NBITS 
+         WRITE(app_msg,*) 'copystx: Unable top copy record no ',IREC,' NBITS=',NBITS 
+         call app_log(APP_ERROR,app_msg)
          GO TO 140
       ENDIF
       nrecords = nrecords + 1
@@ -114,9 +118,11 @@
 
       IF(FIRSTP .OR. OK) THEN 
          IP(4) = VALID   ! date valid
-         IF(DEBUG .AND. FIRSTP) WRITE(6,*)'ENRG. #1 DATE ORIG = ',DATE,' VALID =',IP(4)
+         WRITE(app_msg,*) 'copystx: ENRG. #1 DATE ORIG = ',DATE,' VALID =',IP(4) 
+         IF(FIRSTP) call app_log(APP_DEBUG,app_msg)
          FIRSTP = .FALSE.
-         IF( DEBUG ) WRITE(6,*)' FIRSTP=',FIRSTP,' OK=',OK,  ' BONNE=',BONNE
+         WRITE(app_msg,*) 'copystx: FIRSTP=',FIRSTP,' OK=',OK,  ' BONNE=',BONNE 
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
 
 !     SI ON DEMANDE TOUT LE FICHIER.
@@ -170,10 +176,11 @@
         strkind3=kind_to_string(kind3)
         call newdate(date,date_1,date_2,-3)   ! translate date time stamp to printable format
         if(can_translate)then
-          write(6,667)'DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,P1,strkind1,P2,strkind2,P3,strkind3,DATE,GTY,IG1,IG2,IG3,IG4
+          write(app_msg,667)'copystx: DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,P1,strkind1,P2,strkind2,P3,strkind3,DATE,GTY,IG1,IG2,IG3,IG4
         else
-          write(6,666)'DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,IP1,IP2,IP3,DATE,GTY,IG1,IG2,IG3,IG4
+          write(app_msg,666)'copystx: DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,IP1,IP2,IP3,DATE,GTY,IG1,IG2,IG3,IG4
         endif
+        call app_log(APP_INFO,app_msg)
 666     format(A,2(I8.8,1X),A3,A5,A13,3I14       ,I12,A2,4I10)
 667     format(A,2(I8.8,1X),A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
 !
@@ -182,7 +189,7 @@
         I = FSTECR(BUFtemp, BUFtemp, -NBITS, 3, DATE, DEET, NPAS, NI, NJ, NK,  &
                    IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2, IG3, IG4, DTYP, ECR)
         if (i .lt. 0) then
-          write(6,*) 'ERROR: (copystx) write error, ABORTING'
+          call app_log(APP_ERROR,'copystx: write error')
           call qqexit(55)
         endif
       endif
@@ -196,10 +203,11 @@
 !
   160 IF(SSEQ) THEN                          ! le fichier source est sequentiel
          LEOF = FSTEOF(SOURCES(1))
-         print*,'apres fsteof leof=',leof
-         IF(DIAG .OR. DEBUG) WRITE(6,*)'RENCONTRE UN EOF',LEOF, ' DANS ', SOURCES(1),'...'
+         WRITE(app_msg,*)'copystx: Encountered EOF ',LEOF,' within ',SOURCES(1),'...'
+         call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
-            WRITE(6,*) LEOF," N'EST PAS ACCEPTABLE COMME EOF LOGIQUE"
+            WRITE(app_msg,*) 'copystx: ',LEOF,' is not an acceptable logical EOF'
+            call app_log(APP_ERROR,app_msg)
             call qqexit(30)
          ENDIF
          IF(DSEQ .AND. CEOF.NE.0) THEN
@@ -207,10 +215,12 @@
             IF(CEOF .LT. 0) K = LEOF
             IF(K .LT. 15) THEN
                I = FSTWEO(3, K)
-               IF(I.EQ.0 .AND. (DIAG .OR. DEBUG)) THEN
-                  WRITE(6,*)'EOF LOGIQUE ',K,' AJOUTEE AU FICHIER',TRIM(ND)
-               ELSEIF(I .NE. 0) THEN
-                  WRITE(6,*)'IMPOSSIBLE D''ECRIRE UNE MARQUE DE ', 'NIVEAU ',K,' DANS ', TRIM(ND)
+               IF(I.EQ.0) THEN
+                  WRITE(app_msg,*) 'copystx: EOF LOGIQUE ',K,' AJOUTEE AU FICHIER',TRIM(ND) 
+                  call app_log(APP_DEBUG,app_msg)
+               ELSE
+                  WRITE(app_msg,*) 'copystx: Unable to write mark of level ',K,' in ',TRIM(ND) 
+                  call app_log(APP_ERROR,app_msg)
                   call qqexit(31)
                ENDIF
             ENDIF
@@ -222,20 +232,22 @@
 !     DOIT-ON ECRIRE UN EOF AVANT DE FERMER?
       IF(DSEQ .AND. EOF.GT.0) THEN           ! le fichier destination est sequentiel
          I = FSTWEO(3, EOF)
-         IF(I.EQ.0 .AND. (DIAG .OR. DEBUG)) THEN
-            WRITE(6,*)' MARQUE DE NIVEAU',K,' ECRITE DANS ', TRIM(ND)
-         ELSEIF(I .NE. 0) THEN
-            WRITE(6,*)' IMPOSSIBLE D''ECRIRE UNE MARQUE DE NIVEAU', K,' DANS ', TRIM(ND)
+         IF(I.EQ.0) THEN
+            WRITE(app_msg,*) 'copystx: Mark of level ',K,' written in ',TRIM(ND) 
+            call app_log(APP_ERROR,app_msg)
+         ELSE
+            WRITE(app_msg,*) 'copystx: Unable to write mark of level ',K,' in ',TRIM(ND) 
+            call app_log(APP_ERROR,app_msg)
             call qqexit(32)
          ENDIF
       ENDIF
   
-  180 WRITE(6,*) COPIES,' ENREGISTREMENT(S) COPIES DANS ', TRIM(ND)
-!      WRITE(6,*) nrecords,' ENREGISTREMENT(S) LUS DANS ', NS
+  180 WRITE(app_msg,*) 'copystx: ',COPIES,' record(s) copied in ',TRIM(ND) 
+      call app_log(APP_INFO,app_msg)
 
       IF (COPIES .LT. NRECMIN) THEN
-         WRITE(6,*) ' NOMBRE MINIMAL D ENREGISTREMENT INSATISFAIT'
-         WRITE(6,*) ' NRECMIN=',NRECMIN,' NOMBRE TROUVE = ',COPIES
+         WRITE(app_msg,*) 'copystx: Minimal number of records not satisfied, NRECMIN=',NRECMIN,' NREC found=',COPIES
+         call app_log(APP_ERROR,app_msg)
          CALL QQEXIT(12)
       ENDIF
 

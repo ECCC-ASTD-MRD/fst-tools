@@ -19,6 +19,7 @@
 !** S/R SQICOPI COPIE UN FICHIER SEQUENTIEL SQI DANS UN FICHIER STANDARD
       SUBROUTINE SQICOPI(INPT, OUPT, TD, PR, TO, PS, NB)
       use configuration
+      use app
       IMPLICIT   NONE
       INTEGER    INPT(*), OUPT(*), TD(*), PR, TO, PS, NB
 !
@@ -67,9 +68,8 @@
    30 CSD  = TO
    40 PRE  = PR
       IF(PRE .GT. MEOF) THEN
-         PRINT*,' PRE = ',PRE, '    MAXEOF = ',MEOF
-         PRINT*,'*    ON DEMANDE DE COPIER PASSE MEOF   *'
-         PRINT*,'*        ABORT DANS SUB. SEQCOPI       *'
+         WRITE(app_msg,*) 'sqicopi: Cannot copy passed EOF (PRE=',PRE,', MAXEOF=',MEOF,')'
+         call app_log(APP_ERROR,app_msg)
          IF( INTERAC ) THEN
             RETURN
          ELSE
@@ -98,7 +98,7 @@
          CALL OUVRES( DD )
       ENDIF
       IF( .NOT. OUVS ) THEN
-         PRINT*,'****  FICHIER SOURCE INCONNU  ****'
+         call app_log(APP_ERROR,'sqicopi: Source file unknown')
          IF( INTERAC ) THEN
             RETURN
          ELSE
@@ -111,7 +111,7 @@
          I = OUVRED( DD )
       ENDIF
       IF( .NOT. OUVD) THEN
-         PRINT*,'****  FICHIER DESTINATION INCONNU  ****'
+         call app_log(APP_ERROR,'sqicopi: Destination file unknown')
          IF( INTERAC ) THEN
             RETURN
          ELSE
@@ -132,9 +132,11 @@
 !        SAUTE AU PROCHAIN EOF NIVEAU PRE
    90    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 90
          LEOF = FSTEOF(J)
-         IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
+         WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
+         call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
-            WRITE(6,*) LEOF,' N''EST PAS ACCEPTABLE COMME EOF LOGOQUE'
+            WRITE(app_msg,*) 'sqicopi: ',LEOF,' is not an acceptable logical EOF'
+            call app_log(APP_ERROR,app_msg)
             CALL qqexit(73)
          ENDIF
          IF(LEOF .LT. PRE) GO TO 90
@@ -146,7 +148,7 @@
          IF(LIMITE .NE. 0) THEN
             CALL COPYSTX
          ELSE
-            WRITE(6,*)'LA LIMITE DES TRANSFERS DEJA ATEINTE'
+            call app_log(APP_WARNING,'sqicopi: Transfer limit already reached')
             GO TO 120
          ENDIF
       ENDIF
@@ -156,9 +158,11 @@
 !        SAUTE AU PROCHAIN EOF NIVEAU POS
   100    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 100
          LEOF = FSTEOF(J)
-         IF( DIAG ) WRITE(6,*)'RENCONTRE UN EOF #',LEOF
+         WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
+         call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
-            WRITE(6,*) LEOF,' N''EST PAS ACCEPTABLE COMME EOF LOGOQUE'
+            WRITE(app_msg,*) 'sqicopi: ',LEOF,' is not an acceptable logical EOF'
+            call app_log(APP_ERROR,app_msg)
             CALL qqexit(74)
          ENDIF
          IF(LEOF .LT. POS) GO TO 100

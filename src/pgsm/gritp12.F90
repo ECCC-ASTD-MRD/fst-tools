@@ -1,8 +1,10 @@
 !
 !**S/P GRITP12   LIRE LAT LONG DE CHAQUE PT D'UNE GRILLE TYPE "Y" OU "Z"
 !
-      subroutine gritp12(it,ip1,ip2,ip3)
-#include "impnone.cdk90"
+   subroutine gritp12(it,ip1,ip2,ip3)
+      use app
+      implicit none
+
       integer it,ip1,ip2,ip3
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
@@ -97,9 +99,7 @@
 !         if (it.ne.gr_tape2) then
             ier = chkenrpos(lnkdiun(1),lnkdiun(idx_ozsrt),ip1,ip2,ip3)
             if (ier.lt.0) then
-               print *, '<gritp12> enregistrements positionnels absents!'
-               print *, '          impossible de continuer...'
-!               call exit(13)
+               call app_log(APP_ERROR,'gritp12: Posisional records missing')
                call pgsmabt
             elseif (ier == 0) then
 	            grille_z = .true.
@@ -218,7 +218,7 @@
           ier = gdll(gdout,tmplat,tmplon)
       endif
 
-      if (printen) write(6,*)' IMPRIME LAT LON APRES CALL GDLL'
+      if (printen)  call app_log(APP_INFO,'gritp12: Print latlon after gdll call')
       if (printen)  call imprime(nomvarx,tmplat,niy,njy)
       if (printen)  call imprime(nomvary,tmplon,nix,njx)
 !

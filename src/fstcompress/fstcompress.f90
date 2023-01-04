@@ -1,11 +1,15 @@
       program fstcompress
+      use app
       implicit none
+
+#include "fst-tools_build_info.h"
+
       integer iun_in,iun_out,key1,iun_out2
       integer ier, ipos, ni1,nj1,nk1,fstvoi,fstfrm,n
       integer dateo,deet,npas,ni,nj,nk,nbits,datyp,ip1,ip2,ip3
       integer ig1,ig2,ig3,ig4,swa,lng,dltf,ubc
       integer extra2,extra3,datev
-      integer fstinf,fstprm,fstinl,fstecr,fstouv,fnom,fstluk,exdb,exfin,fstsui
+      integer fstinf,fstprm,fstinl,fstecr,fstouv,fnom,fstluk,fstsui
       integer compression_level, custom_nbits
       logical rewrite_flag
       external fstinf,fstprm,fstecr,ccard,fstinl,fstouv,fnom,fstluk,fstsui
@@ -27,38 +31,44 @@
       data def /'void',    'void', 'env', '-1' /
       data val /'void',    'void', 'env', '-1' /
 
-      ier = exdb('FSTCOMPRESS','3.07',  'NON')
-
       rewrite_flag = .false.
       ipos = 0
       call ccard(cle,def,val, 4, ipos)
+
+      app_ptr=app_init(0,'fstcompress',VERSION,'',BUILD_TIMESTAMP)
+      call app_start()
 
       iun_in = 10
       iun_out = 11
       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
       if (ier.lt.0) then
-         print *, 'FSTCOMPRESS: INVALID INPUT FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.05',  'NON')
+         write(app_msg,*) 'INVALID INPUT FILE -- ERR. CODE : ', ier
+         call app_log(APP_ERROR,app_msg)
+         app_status=app_end(-1)
          call exit(13)
       endif
       ier = fstouv(iun_in,'RND')
       if (ier.lt.0) then
-         print *, 'FSTCOMPRESS: INPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.05',  'NON')
+         write(app_msg,*) 'INPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
+         call app_log(APP_ERROR,app_msg)
+         app_status=app_end(-1)
          call exit(13)
+
       endif
       ier = fnom(iun_out, val(2), 'STD+RND+R/W+REMOTE', 0)
       if (ier.lt.0) then
-         print *, 'FSTCOMPRESS: INVALID OUTPUT FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.05',  'NON')
+         write(app_msg,*) 'INVALID OUTPUT FILE -- ERR. CODE : ', ier
+         call app_log(APP_ERROR,app_msg)
+         app_status=app_end(-1)
          call exit(13)
       endif
       ier = fstouv(iun_out,'RND')
       if (ier.lt.0) then
-         print *, 'FSTCOMPRESS: OUTPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
-         ier = exfin('FSTCOMPRESS','3.05',  'NON')
+         write(app_msg,*) 'OUTPUT FILE NOT A VALID RPN STANDARD FILE -- ERR. CODE : ', ier
+         call app_log(APP_ERROR,app_msg)
+         app_status=app_end(-1)
          call exit(13)
-      endif
+       endif
 !       ier = fnom(iun_in,val(1),'STD+RND+R/O+OLD+REMOTE',0)
 !       ier = fnom(iun_out, val(2), 'STD+RND+R/W+REMOTE', 0)
 !       ier = fstouv(iun_in,'RND')
@@ -67,24 +77,25 @@
       if (val(3)(1:3).eq.'env') then
         compression_level = armn_compress_getlevel()
         if (compression_level == -1) then
-            print *, '***  FST_OPTIONS environment variable undefined - Compression level set to BEST by default'
+            call app_log(APP_INFO,'FST_OPTIONS environment variable undefined - Compression level set to BEST by default')
             compression_level = 1
            call armn_compress_setlevel(compression_level)
         else if (compression_level == 0) then
-           print *, '*** Compression level set to FAST from FST_OPTIONS environment variable'
+         call app_log(APP_INFO,'Compression level set to FAST from FST_OPTIONS environment variable')
         else
-           print *, '*** Compression level set to BEST from FST_OPTIONS environment variable'
+         call app_log(APP_INFO,'Compression level set to BEST from FST_OPTIONS environment variable')
         endif
       else
         call up2low(val(3),val(3))
         if (val(3)(1:4).eq.'best') then
           compression_level = 1
-          print *, '***  Compression level set to BEST from calling arguments'
+          call app_log(APP_INFO,'Compression level set to BEST from calling arguments')
         else if (val(3)(1:4).eq.'fast') then
           compression_level = 0
-          print *, '*** Compression level set to FAST from calling arguments'
+          call app_log(APP_INFO,'Compression level set to FAST from calling arguments')
         else
-          print *, '*** Wrong compression level', val(3), 'Compression level set to "best"'
+          write(app_msg,*) 'Wrong compression level', val(3), 'Compression level set to "best"'
+          call app_log(APP_INFO,app_msg)
           compression_level = 1
         endif
         call armn_compress_setlevel(compression_level)
@@ -105,8 +116,8 @@
          endif
 
         if (ier < 0) then
-          print *,'Debug fstprm errno',ier
-          exit
+         app_status=app_end(-1)
+         call exit(13)
         endif
         if (datyp.eq.2.or.datyp.eq.4.or.datyp.eq.130.or.datyp.eq.132) then
          allocate(iibuf(ni*nj*nk*real_or_double))
@@ -116,8 +127,8 @@
          ier = fstluk(buf,key1,ni,nj,nk)
         endif
         if (ier < 0) then
-          print *,'Debug fstluk errno',ier
-          exit
+         app_status=app_end(-1)
+         call exit(13)
         endif
 
 
@@ -165,7 +176,8 @@
 
          endif
         if (ier < 0) then
-          print *,'Debug fstecr errno',ier
+         app_status=app_end(-1)
+         call exit(13)
           exit
         endif
         key1 = fstsui(iun_in,ni,nj,nk)
@@ -177,6 +189,6 @@
       ier = fstfrm(iun_in)
       ier = fstfrm(iun_out)
 
-      ier= exfin('FSTCOMPRESS',' V3.05',  'NON')
-      stop
+      app_status=app_end(-1)
+      call qqexit(app_status)
       end

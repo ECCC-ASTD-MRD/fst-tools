@@ -1,8 +1,10 @@
 !
 !**S/P HEURE INITIALISER TABLE HEURE
 !
-      subroutine heure(ih1,ih2,ih3,ih4,ih5,ih6,ih7,ih8,ih9,ih10,      ih11,ih12,ih13,ih14,ih15,ih16,ih17,ih18,ih19,ih20,      ih21,ih22,ih23,ih24,ih25,ih26,ih27,ih28,ih29,       ih30,ih31,ih32,ih33,ih34,ih35,ih36,ih37,ih38,ih39,ih40) 
-#include "impnone.cdk90"
+   subroutine heure(ih1,ih2,ih3,ih4,ih5,ih6,ih7,ih8,ih9,ih10,      ih11,ih12,ih13,ih14,ih15,ih16,ih17,ih18,ih19,ih20,      ih21,ih22,ih23,ih24,ih25,ih26,ih27,ih28,ih29,       ih30,ih31,ih32,ih33,ih34,ih35,ih36,ih37,ih38,ih39,ih40) 
+      use app
+      implicit none
+      
       external pgsmabt,messags
 !
 !AUTEUR P. SARRAZIN JANVIER 82 DRPN DORVAL P.Q. CANADA

@@ -1,8 +1,9 @@
 !
 !**S/P GRISTDB   CALCUL LAT LONG DE CHAQUE PT D'UNE GRILLE STD "B"
 !
-      subroutine gristdb(nni,nnj,hem)
-#include "impnone.cdk90"
+   subroutine gristdb(nni,nnj,hem)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -49,7 +50,7 @@
       lg4=0
 !
       if (lg1.lt.0 .or. lg1.gt.2) then
-         write(6,*)'GRILLE(STDB.....DOIT-ETRE  GLOBAL,NORD,SUD '
+         call app_log(APP_ERROR,'gristdb: GRILLE(STDB... must be GLOBAL,NORD,SUD ')
          call pgsmabt
       endif
 !

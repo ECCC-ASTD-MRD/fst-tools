@@ -1,5 +1,5 @@
-      subroutine qqqform(theform)
-#include "impnone.cdk90"
+   subroutine qqqform(theform)
+      implicit none
 
       integer theform(4)
 #include "idents.cdk90"

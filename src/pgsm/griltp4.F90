@@ -1,8 +1,9 @@
 !     
 !**S/P GRILTP4   LIRE LAT LONG DE CHAQUE PT D'UNE GRILLE TYPE "X" OU "Y"
 !
-      subroutine griltp4(nni,nnj,ip1,ip2,ip3)
-#include "impnone.cdk90"
+   subroutine griltp4(nni,nnj,ip1,ip2,ip3)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -22,7 +23,7 @@
 !
 !------------------------------------------------------
       integer nni,nnj,ip1,ip2,ip3
-      write(6,*)  'CE TYPE DE GRILLE N EST PAS SUPPORTE DANS CETTE VERSION DE PGSM'
+      call app_log(APP_ERROR,'griltp4: This grid type is not supported in the version of PGSM')
       call pgsmabt
       return
       end

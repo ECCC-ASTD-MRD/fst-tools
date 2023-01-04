@@ -19,6 +19,7 @@
 !** S/R SETPER ETABLIR UNE DATE (DEBUT/FIN DE PERIODE)
       SUBROUTINE SETPER(DN, ECART, DUREE, DELTA)
       use configuration
+      use app
       IMPLICIT NONE
 
       INTEGER    DN(*), ECART, DUREE, DELTA
@@ -49,12 +50,13 @@
       EQUIVALENCE   (K, DTG(14))
       CHARACTER*128 C
 
-         print *,'PERIODE',jours
+      WRITE(app_msg,*) 'setper: Period',jours
+      call app_log(APP_INFO,app_msg)
 !     ETABLIR LE DATESTAMP DU CAS OU DU DEBUT DE LA PERIODE
       IF(DN(1) .LT. 0) THEN   ! CMC date-time stamp numerique
          K = -DN(1)
       ELSE                    ! chaine de caracteres
-         PRINT*,"CETTE FONCTION N'EST PLUS SUPPORTEE!"
+         call app_log(APP_ERROR,'setper: This function is not supported anymore')
          CALL qqexit(67)
       ENDIF
 

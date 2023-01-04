@@ -1,8 +1,9 @@
 !
 !**S/P GRILSTD   CALCUL LATITUDE LONGITUDE DE CHAQUE PT D'UNE GRILLE STD
 !
-      subroutine grilstd(nni,nnj,hem)
-#include "impnone.cdk90"
+   subroutine grilstd(nni,nnj,hem)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -55,7 +56,7 @@
 !
 !
        if (lg1.ne.0.and.lg1.ne.1.and.lg1.ne.2) then
-          write(6,*)'GRILLE(STD........ DOIT ETRE NORD/SUD/GLOBAL'
+          call app_log(APP_ERROR,'griltd: GRILLE(STD... must be GLOBAL,NORD,SUD ')
           call pgsmabt
        endif
 !

@@ -19,6 +19,7 @@
 !** S/R SELECT TRAITER LES DIRECTIVES DE L'USAGER
       SUBROUTINE SELECT
       use configuration
+      use app
       IMPLICIT NONE 
   
 !AUTEUR       YVON R. BOURASSA JUN 86
@@ -113,12 +114,7 @@
       CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete READLX
   
       IF(KERR .NE. 0 .and. strict_mode) THEN
-         WRITE(6,*)'  **************************************'
-         WRITE(6,*)' *                                      *'
-         WRITE(6,*)'*     ERREUR(S) DANS LES DIRECTIVES      *'
-         WRITE(6,*)'*      ERROR(S) FOUND IN DIRECTIVES      *'
-         WRITE(6,*)' *                                      *'
-         WRITE(6,*)'  **************************************'
+         call app_log(APP_ERROR,'select: Error(s) found in directives')
          CALL qqexit(66) 
       ENDIF
       RETURN

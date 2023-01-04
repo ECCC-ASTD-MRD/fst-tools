@@ -1,5 +1,8 @@
   program zcrop
+  use app
   implicit none
+
+#include "fst-tools_build_info.h"
 
   integer dateo,deet,npas,nbits,datyp,ip1,ip2,ip3
   integer ig1,ig2,ig3,ig4,swa,lng,dltf,ubc
@@ -29,6 +32,9 @@
   data cle /'src.',  'dst.', 'ip1', 'ip2', 'ip3', 'imin', 'imax', 'jmin', 'jmax',  'xmin', 'xmax', 'ymin', 'ymax' /
   data def /'void',  'void', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
   data val /'void',  'void','-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
+
+  app_ptr=app_init(0,'ZCROP',VERSION,'',BUILD_TIMESTAMP)
+  call app_start()
 
   mode = non_defini
   ipos = 0
@@ -121,8 +127,10 @@
     stop
   else
     if (mode==entier.and.(imin < 1.or.jmin < 1.or.imax < 1.or.jmax < 1.or.imin>nix.or.imax>nix.or.jmin>njy.or.jmax>njy)) then
-      print *, 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
-      stop
+         write(app_msg,*) 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
+         call app_log(APP_ERROR,app_msg)
+         app_status=app_end(-1)
+         stop app_status
     endif
   endif
 
@@ -146,8 +154,10 @@
   endif
 
   if (imin > imax .or. jmin > jmax) then
-    print *, '(zcrop) invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
-    stop
+    write(app_msg,*) 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
+    call app_log(APP_ERROR,app_msg)
+    app_status=app_end(-1)
+    stop app_status
   endif
 
   new_ni = imax - imin + 1
@@ -168,5 +178,6 @@
    ier = fstfrm(iun_src)
    ier = fstfrm(iun_dst)
 
-   stop
+   app_status=app_end(-1)
+   stop app_status
    end

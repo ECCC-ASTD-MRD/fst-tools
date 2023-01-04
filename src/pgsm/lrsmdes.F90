@@ -1,8 +1,9 @@
 !
 !**S/P    CHAQUE PT D'UN CHAMP LU EST MI AU CARRE DANS ACCUMULATEUR
 !
-      subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
-#include "impnone.cdk90"
+   subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
+      use app
+      implicit none
 !
 !AUTEUR   P. SARRAZIN  DORVAL QUEBEC CANADA (DRPN)
 !
@@ -97,23 +98,15 @@
  100  ier = fstcvt(    nom,   type, letiket ,    -1, cnomvar,ctypvar, cetiket, cigtyp,     .true.)
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiket,lniv,ihr,iip3, ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
-         write(6,*)' RECORD N EXISTE PAS (FSTINF LIRMDE-LIRMDS)'
+         call app_log(APP_ERROR,'lrsmde: Record does not exist')
          call pgsmabt
       endif
 
-!      if (nnk.gt.1)   then
-!         write(6,*)'***************************************************'
-!         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-!         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (LIRMDE-LIRMDS)'
-!         write(6,*)'***************************************************'
-!         call pgsmabt
-!      endif
-!
       ichck=1
 !
 !
       ier = fstprm( irec1,idatt,ideet,npas,nni,nnj,nnk,cnbits,cdatyp,      jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiket,cigtyp,igg1,igg2,      igg3,igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRMDE'
+      if (ier .lt. 0) call app_log(APP_ERROR,'lrsmde: FSTPRM failed')
 !
 !     MODIFICATION DE CARACTERE A HOLLERITH
 !
@@ -136,7 +129,7 @@
 !         num1=pgsmlir(tmpif0,iunit,nni,nnj,nnk,idat,cetiket,jpp1,
 !     $        jpp2,jpp3,ctypvar,cnomvar,cigtyp)
 !         if (num1 .lt.0) then
-!            write(6,*) 'RECORD N EXISTE PAS LIRE (LIRMDE-LIRMDS)'
+!            call app_log(APP_ERROR,'lrsmde: Record does not exist')
 !            call pgsmabt
 !         endif
 !
@@ -166,7 +159,7 @@
 !
          num1 = pgsmlir(tmpif0,iunit,nni,nnj,nnk,idat,cetiket,jpp1,          jpp2,jpp3,ctypvar,cnomvar,cigtyp)
          if (num1 .lt. 0)  then
-            write(6,*) 'RECORD N EXISTE PAS LIRE (LIRSMDE-LIRSMDS)'
+            call app_log(APP_ERROR,'lrsmde: Record does not exist')
             call pgsmabt
          endif
          if (printen)  call imprime(cnomvar,tmpif0,nni,nnj)

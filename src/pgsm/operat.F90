@@ -1,8 +1,10 @@
 !
 !**   S/P EXTRAIRE L'EXPONENTIEL DE CHAQUE POINT D UN CHAMP DANS ACCUMULATEUR
 !     ET MULTIPLIER LE RESULTAT PAR LE FACT
-      subroutine operat(fact,ecart,divi)
-#include "impnone.cdk90"
+   subroutine operat(fact,ecart,divi)
+      use app
+      implicit none
+      
       external pgsmabt,messags
 !
 !AUTEUR P.SARRAZIN JUIN 83 DRPN DORVAL P.Q. CANADA
@@ -65,8 +67,7 @@
       ecart=ec
 !     erreur faut appeler liree ou lires
  1000 if (ichck.eq.0)   then
-         write(6,*)' LIREE LIRES DOIT ETRE APPELE AVANT '
-         write(6,*)' EXPON-PFOIS-MOYENE-RACINE-ALOGN'
+         call app_log(APP_ERROR,'operat: LIREE or LIRES has to be called before EXPON-PFOIS-MOYENE-RACINE-ALOGN directives')
          call pgsmabt
       endif
 !
@@ -78,24 +79,24 @@
 !     IT=4 EXTRAIRE LA RACINE CARRE DE CHAQUE PT DU CHAMP
 !
       if (it.eq.1) then
-         if (message) write(6,*)' PFOIS(ECART,FACTEUR,DIVISEUR)'
+         if (message) call app_log(APP_INFO,'operat: PFOIS(ECART,FACTEUR,DIVISEUR)')
       endif
 !     $(  # exponentiel
       if (it.eq.2) then
-         if (message) write(6,*)' EXPON(FACTEUR)'
+         if (message) call app_log(APP_INFO,'operat: EXPON(FACTEUR)')
       endif
 !     $(  # moyenne
       if (it.eq.3) then
-         if (message) write(6,*)' MOYENE(FACTEUR)'
+         if (message) call app_log(APP_INFO,'operat: MOYENE(FACTEUR)')
       endif
 
 !     $(  # racine
       if (it.eq.4) then
-         if (message) write(6,*)' RACINE(FACTEUR)'
+         if (message) call app_log(APP_INFO,'operat: RACINE(FACTEUR)')
       endif
 !     $(  # logarithme
       if (it.eq.0)  then
-         if (message) write(6,*)' ALOGN(FACTEUR)'
+         if (message) call app_log(APP_INFO,'operat: ALOGN(FACTEUR)')
       endif
 !
       if (it.eq.0) then
@@ -182,10 +183,8 @@
 !     # erreur
        if (icnt.le.1) then
           if (message) then
-             write(6,*)'ON DIVISE PAR UNE VALEUR < OU = A 1 ICNT=',icnt
-             if (message) then
-                write(6,*)           '   ******  ATTENTION A LA DIRECTIVE MOYENE  ******'
-             endif
+            write(app_msg,*)'operat: dividing by value <= 1 ICNT=',icnt
+            call app_log(APP_ERROR,app_msg)
           endif
        endif
 !

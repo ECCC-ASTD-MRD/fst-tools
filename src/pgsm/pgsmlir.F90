@@ -1,7 +1,9 @@
 !**S/P PGSMLIR
 !     
-      integer function pgsmlir(fld,iun,ni,nj,nk,datev,etiket,      ip1,ip2,ip3,typvar,nomvar,grtyp)
-#include "impnone.cdk90"
+   integer function pgsmlir(fld,iun,ni,nj,nk,datev,etiket,      ip1,ip2,ip3,typvar,nomvar,grtyp)
+      use app
+      implicit none
+      
       integer iun,ni,nj,nk,ip1,ip2,ip3,datev,ig1,ig2,ig3,ig4
       real fld(ni,nj,nk)
       character*12 etiket

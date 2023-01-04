@@ -1,8 +1,9 @@
 !
 !**   S/P GRIGRIB  CALCUL LATITUDE LONGITUDE DE CHAQUE PT D'UNE GRILLE GRIB
 !
-      subroutine grigrib(ig1,ig2,ig3,ig4)
-#include "impnone.cdk90"
+   subroutine grigrib(ig1,ig2,ig3,ig4)
+      use app
+      implicit none
 !
 !     AUTEUR   -  Y. CHARTIER DRPN DORVAL MAI 1996
 !

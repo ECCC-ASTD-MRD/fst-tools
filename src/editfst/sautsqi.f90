@@ -21,7 +21,7 @@
 !        A UN CERTAIN NIVEAU D'EOF LOGIQUE
       SUBROUTINE SAUTSQI(DN, LEV, NL)
       use configuration
-  
+      use app
       IMPLICIT   NONE
         
       INTEGER    DN(*), LEV, NL
@@ -70,9 +70,8 @@
       WRITE(CLE, LIN128) (DN(M), M=1,ARGDIMS(1))
       IF(CLE.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM, DND) .EQ. 0) THEN
-            WRITE(6,*)'PROBLEME AVEC FICHIER D= ', ND
-            WRITE(6,*)'DEJA OUVERT AVEC   TYPE= ', DNOM
-            WRITE(6,*)'TYPE PRESEMT=            ', SORTE
+            WRITE(app_msg,*) 'sautsqi: Problem opening file ',ND,', with type=',SORTE,' already opened with type=',DNOM
+            call app_log(APP_ERROR,app_msg)
             IF( INTERAC ) THEN
                RETURN
             ELSE
@@ -82,9 +81,8 @@
          J = 3
       ELSEIF(CLE.EQ.NS .AND. OUVS) THEN 
          IF(INDEX(SNOM, DND) .EQ. 0) THEN
-            WRITE(6,*)'PROBLEME AVEC FICHIER S= ', NS
-            WRITE(6,*)'DEJA OUVERT AVEC   TYPE= ', SNOM
-            WRITE(6,*)'TYPE PRESEMT=            ', SORTE
+            WRITE(app_msg,*) 'sautsqi: Problem opening file ',NS,', with type=',SORTE,' already opened with type=',SNOM
+            call app_log(APP_ERROR,app_msg)
             IF( INTERAC ) THEN
                RETURN
             ELSE
@@ -98,7 +96,7 @@
          IF(K .EQ. 0) THEN
             J    = 3
          ELSE
-            PRINT*,'FICNIER N''EXISTE PAS'
+            call app_log(APP_ERROR,'sautsqi: file does not exist')
             IF( INTERAC ) THEN
                RETURN
             ELSE
@@ -106,19 +104,21 @@
             ENDIF
          ENDIF
       ENDIF
-      IF( DIAG .OR. DEBUG ) THEN
-         TAPE = CLE
-         WRITE(6,600) I, LEVEL, J, TAPE
-  600    FORMAT(' SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
-      ENDIF       
+
+      TAPE = CLE
+      WRITE(app_msg,600) I, LEVEL, J, TAPE
+      call app_log(APP_DEBUG,app_msg)
+      600    FORMAT('sautsqi: SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
 !     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
    10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 10
       M = FSTEOF(J) 
       IF(M.LT.1 .OR. M.GT.15) THEN
-         PRINT*,' MAUVAISE MARQUE DE FIN DE FICHIER =',M,' RENCONTREE DANS TAPE=',J
+         WRITE(app_msg,*) 'sautsqi: Wrong EOF marker=',M,' within tape=',J
+         call app_log(APP_ERROR,app_msg)
          CALL qqexit(64)
       ENDIF
-      IF(DIAG .OR. DEBUG) WRITE(6,*)'RENCONTRE UN EOF #',M
+      WRITE(app_msg,*) 'sautsqi: Hit an EOF #',M
+      call app_log(APP_DEBUG,app_msg)
       IF(M .LT. LEVEL) GO TO 10
       IF(M .EQ. LEVEL) THEN
          I = I-1

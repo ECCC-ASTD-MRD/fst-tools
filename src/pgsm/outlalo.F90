@@ -1,8 +1,10 @@
 !
 !**S/P ECRIRE SUR TAPE2 1 REC LATITUDES ET 1 REC LONGITUDES 
 !
-      subroutine outlalo(ip1,ip2,ip3)
-#include "impnone.cdk90"
+   subroutine outlalo(ip1,ip2,ip3)
+      use app
+      implicit none
+      
       integer ip1,ip2,ip3
 !     
 !AUTEUR P. SARRAZIN AOUT 84 DRPN DORVAL P.Q. CANADA
@@ -50,15 +52,14 @@
 !
 !
       if (.not.associated(tmplat)) then
-         if (message)write(6,*)'GRILLE NON DEFINIE ..GRILLE P.S.(2805)'
+         if (message) call app_log(APP_WARNING,'outlalo: Grid not defined, will use GRILLE P.S.(2805)')
          ngr=8
          call grille2(3,51,55,26.,28.,381000.,350.,1) 
       endif
 !
 !
       if (nlalo.gt.3) then
-         write(6,*) ' PLUS DE 3 ARGUMENTS DANS OUTLALO'
-         write(6,*) ' SEULEMENT LES 3 PREMIERS SERONT UTILISES'
+         call app_log(APP_WARNING,'outlalo: More then 3 arguments to OUTLALO, will only use first 3')
       endif
 !
 !    INITIALISER ARGUMENTS POUR ECRITUR 
@@ -80,12 +81,6 @@
       if (nlalo.eq.2) jp3=0
 !
 !
-!      if (mode.ne.1) then
-!         if (message) then
-!            write(6,*)' OUTLALO NE PEUT ECRIRE SUR FICHIER NON STD'
-!         endif
-!         return
-!      endif
 !     
       jjp1=between(0,jp1,32767)
       jjp2=between(0,jp2,32767)

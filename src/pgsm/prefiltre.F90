@@ -1,5 +1,7 @@
-      subroutine prefiltre(fld,ni,nj,nomvar,grtyp)
-#include "impnone.cdk90"
+   subroutine prefiltre(fld,ni,nj,nomvar,grtyp)
+      use app
+      implicit none
+      
       integer ni,nj
       real fld(ni,nj)
       character*4 nomvar
@@ -9,9 +11,9 @@
 
       if (fltoggle(1)) then
         if (grtyp.eq.'Y') then
-          write (6, *)' (PREFILTRE) Impossible de filtrer des champs sur grille Y'
+            call app_log(APP_WARNING,'prefiltre: Cannot filter fields on Y grids')
         else
-          write (6, *) ' CHAMP FILTRE A LA LECTURE'
+            call app_log(APP_INFO,'prefiltre: Fields filtered on read')
 !          call statfld4 (fld,nomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0,0)
           call filtre (fld, NI, NJ, 0, fltntimes(1), fltlist(1,1), fltwgtlng(1))
 !          call statfld4 (fld,nomvar,1,'APRESFLT',ni,nj,1,ni,nj,1,0,0,0)

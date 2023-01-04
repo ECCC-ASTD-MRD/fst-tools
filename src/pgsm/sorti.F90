@@ -1,11 +1,9 @@
 !
 !**S/P SORTI   IDENTIFICATION DU FICHIER..OUVRIR FICHIER...RESERVER MEMOIRE
 !
-      subroutine sorti( modx, norecs, jwrit)
-
-
+   subroutine sorti( modx, norecs, jwrit)
+      use app
       implicit none
-
 
       external fnom,fstnbr,fsteof,fstouv,pgsmabt,fstvoi,fstapp,messags
       external fstabt, fstlnk, exfin, pgsmof
@@ -72,12 +70,15 @@
 !
       if (lfn(idx_date).ne. 'NON') then
          if (seldat) userdate = jdate
-         if (seldat) write(6,*)' DATE ORIGINE = DATE VALIDE DATE=',userdate
+         if (seldat) then
+            write(app_msg,*)'sorti: Origin date = valid date = ',userdate
+            call app_log(APP_INFO,app_msg)
+         endif
       endif
 !
       if (dejalue)  then
          if (message) then
-            write(6,*)            'DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE'
+            call app_log(APP_WARNING,'sorti: Second call to directive SORTI ignored')
             return
          endif
       endif
@@ -111,23 +112,22 @@
             else if (nsort.eq.3) then
                iwrit=jwrit
             else
-               write(6,*)               'MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD'
+               call app_log(APP_ERROR,'sorti: Wrong call to directive SORTI std file')
                call pgsmabt
             endif
          endif
          if (ier .lt. 0) then
-	   write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	   call pgsmabt
-	 endif
+            call app_log(APP_WARNING,'sorti: Problem openning output file')
+	         call pgsmabt
+	      endif
       else if (mode.eq.2) then
-         write(6,*)         ' LES FICHIERS "MS" NE SONT PAS SUPPORTES DANS CETTE'
-         write(6,*)         ' VERSION DE PGSM'
+         call app_log(APP_ERROR,'sorti: "MS" files are not supported in this version of PGSM')
          call pgsmabt
       else if (mode.eq.3.or.mode.eq.4) then
          ier = fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'SEQ+FTN+UNF',0)
 
          if (nsort.ne.1)  then
-            write(6,*)'MAUVAIS APPEL A SORTIE FICHIER SEQ'
+            call app_log(APP_ERROR,'sorti: Wrong call to directive SORTI seq file')
             call pgsmabt
          endif
       else if (mode.eq.5) then
@@ -139,18 +139,17 @@
             ier = fnom(lnkdiun(idx_ozsrt),lfn(idx_ozsrt),'SEQ+FMT+R/W',0)
          endif
       else
-         if (message) write(6,*)'TYPE DE FICHIER INCONNU'
-         if (message) write(6,*)         ' MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD,MS,SEQ)'
+         call app_log(APP_ERROR,'sorti: Unknown file type, wrong directive or mode different from STD,MS,SEQ')
          return
       endif
       if (ier .lt. 0) then
-        write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	call pgsmabt
+         call app_log(APP_ERROR,'sorti: Problem openning output file')
+	      call pgsmabt
       endif
 !
 !
       if (mode.eq.2) then
-         write(6,*)   'LES FICHIERS "MS" NE SONT PLUS SUPPORTES SUR LES CYBER-910-920'
+         call app_log(APP_ERROR,'sorti: "MS" files are not supported anymore on CYBER-910-920')
          call pgsmabt
       endif
 
@@ -162,14 +161,13 @@
             if (jwrit.eq.-1) then
                ier = fstapp(lnkdiun(idx_ozsrt),' ')
                ier = fsteof(lnkdiun(idx_ozsrt))
-               print *, 'fsteof retourne', ier
             endif
          else
             ier = fstouv(lnkdiun(idx_ozsrt), 'RND')
          endif
          if (ier .lt. 0) then
-           write(6,*)  'PROBLEME A L''OUVERTURE DU FICHIER DE SORTIE'
-	   call pgsmabt
+            call app_log(APP_ERROR,'sorti: Problem openning output file')
+	         call pgsmabt
          endif
       endif
 !
@@ -182,13 +180,10 @@
       do i=1,niun
          ier = fstouv(lnkdiun(i), 'RND+R/O+OLD')
          ntotal_keys = ntotal_keys + fstnbr(lnkdiun(i))
-!         print *, 'ntotal_keys : ', ntotal_keys
          if (ier .lt. 0) then
-            print *, '************************************************'
-            print *,             '* LE FICHIER #',lfn(i), 'N''EST PAS STANDARD RANDOM'
-            print *, '*************************************************'
-            jdate= exfin('  PGSM  ', 'ABORT' , 'NON')
-            call qqexit(13)
+            write(app_msg,*) 'sorti: File ,lfn(i), is not standard random'
+            call app_log(APP_ERROR,app_msg)
+            call pgsmabt
          endif
       enddo
 

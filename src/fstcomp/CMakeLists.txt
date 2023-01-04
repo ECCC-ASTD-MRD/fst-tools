@@ -1,4 +1,4 @@
-add_executable(fstcomp fstcomp.f statfldx.F90)
+add_executable(fstcomp fstcomp.f90 statfldx.F90)
 target_link_libraries(fstcomp PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

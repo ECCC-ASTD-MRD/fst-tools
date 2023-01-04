@@ -70,7 +70,10 @@
 !----------------------------------------------------------------------------
 #include "defin.cdk90"
     subroutine pgsm
-#include "impnone.cdk90"
+       use app
+       implicit none
+       
+#include "fst-tools_build_info.h"
 !
 #include "lnkflds.cdk90"
 #include "dates.cdk90"
@@ -116,11 +119,11 @@ END INTERFACE
     external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
     external qqqform,qqqident,coord,qqqfilt
 
-    external ccard,fnom,exdb,qlxins,qlxinx,readlx,fstfrm,fstvoi
+    external ccard,fnom,qlxins,qlxinx,readlx,fstfrm,fstvoi
     external fstnbr,fstunl,fstouv
-    external fclos,exfin,lrsmde,lrsmds,fstopc,fstopl,qlxopt
+    external fclos,lrsmde,lrsmds,fstopc,fstopl,qlxopt
 
-    integer exdb,exfin,fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
+    integer fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
     integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
     real dum
         integer, parameter :: str_A=transfer("A   ",1)
@@ -362,7 +365,8 @@ END INTERFACE
 
 
     ! imprime boite debut du programme
-    jdate = exdb(' PGSM  ',PGSM_VERSION,  lfn(idx_date))
+    app_ptr=app_init(0,'pgsm',VERSION,'',BUILD_TIMESTAMP)
+    call app_start()
 
 
 
@@ -374,11 +378,8 @@ END INTERFACE
         call chk_tmpdir
 
     if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
-      print *,'***************************************************'
-      print *,'* ON NE PEUT MELANGER LES FICHIERS D ENTREE       *'
-      print *,'* SEQUENTIELS ET RANDOM                           *'
-      print *,'***************************************************'
-      jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+      call app_log(APP_ERROR,'Cannot mix sequential and random files')
+      app_status=app_end(-1)
       call qqexit(13)
     endif
 
@@ -413,19 +414,15 @@ END INTERFACE
 
       niun = niun - 1
       if (niun .lt. 1) then
-        print *,'***************************************************'
-        print *,'* AUCUN FICHIER D''ENTREE DONNE EN ARGUMENT !!!'
-        print *,'***************************************************'
-        jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+        call app_log(APP_ERROR,'No input files given as arguments')
+        app_status=app_end(-1)
         call qqexit(13)
       endif
       do i=1, niun
         ier = fnom(lnkdiun(i),lfn(i),'STD+RND+OLD+R/O+REMOTE',0)
         if (ier .lt. 0) then
-          print *,'************************************************'
-          print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(i)
-          print *,'************************************************'
-          jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+          call app_log(APP_ERROR,'Problem opening file '//lfn(i))
+          app_status=app_end(-1)
           call qqexit(13)
         endif
       enddo
@@ -433,10 +430,8 @@ END INTERFACE
       niun = 1
       ier = fnom(lnkdiun(1),lfn(idx_isent),'STD+SEQ+OLD+R/O+REMOTE',0)
       if (ier .lt. 0) then
-        print *,'************************************************'
-        print *, '* PROBLEME D''OUVERTURE AVEC LE FICHIER ',lfn(idx_isent)
-        print *,'************************************************'
-        jdate= exfin('  PGSM  ', 'ABORT', 'NON')
+        call app_log(APP_ERROR,'Problem opening file '//lfn(idx_isent))
+        app_status=app_end(-1)
         call qqexit(13)
       endif
     endif
@@ -740,7 +735,7 @@ END INTERFACE
     call initid
 
 
-    iopc= fstopc('MSGLVL',lfn(idx_msglvl),.false.)
+    iopc= app_loglevel(lfn(idx_msglvl))
     ier = fstopl('REDUCTION32',.true.,.false.)
 
     ipose= 0
@@ -755,7 +750,7 @@ END INTERFACE
       call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
       call chk_toctoc(lnkdiun(1),lnkdiun(idx_ozsrt))
    endif
-    iopc= fstopc('MSGLVL','INFORMS',.false.)
+    iopc= app_loglevel('INFO')
     do i=1,niun
        ier = fstfrm(lnkdiun(i))
        call fclos(lnkdiun(i))
@@ -774,8 +769,7 @@ END INTERFACE
     else
 #if defined (unix)
          if (mode.eq.2) then
-          write (6, *) 'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
-          write (6, *) 'DANS CETTE VERSION DE PGSM'
+            call app_log(APP_WARNING,'"MS" Nfile type are not supported in this version of PGSM')
        endif
 #endif
 
@@ -797,12 +791,9 @@ END INTERFACE
 
 !  imprime boite avec le temps d execution du pgm  pgsm
 
+    app_status=app_end(-1)
     if (ipose.gt.0) then
-       jdate= exfin('  PGSM  ', 'ABORT', 'NON')
-       call qqexit(13)
-    else
-       jdate= exfin('  PGSM  ', 'OK', 'NON')
+        call qqexit(13)
     endif
 
-!     stop
-     end
+    end

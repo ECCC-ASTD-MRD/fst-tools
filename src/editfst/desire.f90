@@ -21,6 +21,7 @@
       SUBROUTINE DESIRE(TC, NV, LBL, DATE, IP1, IP2, IP3)
       use ISO_C_BINDING
       use configuration
+      use app
       IMPLICIT NONE
 
       INTEGER, intent(IN) ::  DATE(NML), IP1(NML), IP2(NML), IP3(NML)
@@ -61,7 +62,8 @@
       max_requetes_exdes =  min(NMD,max_requetes_exdes)
       excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. max_requetes_exdes) THEN
-         PRINT*,'** MAXIMUM DE',max_requetes_exdes,' REQUETES ATTEINT **'
+         write(app_msg,*) 'desire: Reached maximum ',max_requetes_exdes,' requests'
+         call app_log(APP_ERROR,'app_msg')
          RETURN
       ENDIF
       lima = [NML, NML, 10, NML, NML, NML, NML]
@@ -70,9 +72,8 @@
       enddo
       do i = 1, 7
         if (argdims(i) .gt. lima(i)) then
-          PRINT*, '** MAXIMUM DE',lima(i)," ELEMENTS POUR L'ARGUMENT DE SELECTION '",limc(i),"' ATTEINT"
-          PRINT *,'** SEULS LES ',lima(i),' PREMIERS ELEMENTS SERONT CONSIDERES'
-          PRINT *,'** VEUILLEZ UTILISER UNE DIRECTIVE DESIRE/EXCLURE SUPPLEMENTAIRE'
+           write(app_msg,*) 'desire: Reached maximum ',lima(i),' elements for selection argument ',limc(i),', use more DESIRE/EXCLURE directives'
+           call app_log(APP_ERROR,app_msg)
         endif
       enddo
 
@@ -92,22 +93,26 @@
       REQN(NREQ) = 0
       REQT(NREQ) = 0
 
-      IF( DEBUG ) PRINT*,'REQUETE # ',NREQ
+      write(app_msg,*) 'desire: REQUETE # ',NREQ
+      call app_log(APP_DEBUG,app_msg)
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
          call ip_to_newip(ip3,newip3,min(lima(7),argdims(7)),nip3)  ! transformer les paires p/kind en ip
          status = Select_ip3(nreq, excdes_de, newip3, nip3)   ! selecteur ip1 fstd98
-         IF( DEBUG ) PRINT*,'IP3 =',(REQ(I,3,NREQ),I=1,11)
+         write(app_msg,*) 'desire: IP3 =',(REQ(I,3,NREQ),I=1,11)
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
          call ip_to_newip(ip2,newip2,min(lima(6),argdims(6)),nip2)  ! transformer les paires p/kind en ip
          status = Select_ip2(nreq, excdes_de, newip2, nip2)   ! selecteur ip2 fstd98
-         IF( DEBUG ) PRINT*,'IP2 =',(REQ(I,2,NREQ),I=1,11)
+         write(app_msg,*) 'desire: IP2 =',(REQ(I,2,NREQ),I=1,11)
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
          call ip_to_newip(ip1,newip1,min(lima(5),argdims(5)),nip1)  ! transformer les paires p/kind en ip
          status = Select_ip1(nreq, excdes_de, newip1, nip1)   ! selecteur ip3 fstd98
-         IF( DEBUG ) PRINT*,'IP1 =',(REQ(I,1,NREQ),I=1,11)
+         write(app_msg,*) 'desire: IP1 =',(REQ(I,1,NREQ),I=1,11)
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    60 IF(DATE(1) .NE. -1) THEN         ! traiter DATE, on s'occupe de 'COMMUNE' ici
          IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA nheures
@@ -123,15 +128,18 @@
            ENDIF
          else  ! directive date normale, sans COMMUNE
            status = Select_date(nreq,excdes_de,date,min(lima(4),ARGDIMS(4)))
-           IF( DEBUG ) print *,'calling Select_date with',date(1:ARGDIMS(4))
+           write(app_msg,*) 'desire: calling Select_date with',date(1:ARGDIMS(4))
+           call app_log(APP_DEBUG,app_msg)
          endif
-         IF( DEBUG ) PRINT*,'DAT =',(REQ(I,4,NREQ),I=1,11)
+         write(app_msg,*) 'desire: DAT =',(REQ(I,4,NREQ),I=1,11)
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    70 IF(LBL(1) .NE. -1) THEN         ! traiter ETIKET
          LIS = 0
          REQE(NREQ) = ARGDOPE(3, LIS, 10)  ! nombre de strings + table de localisation de readlx
          CALL HOLACAR(ETIS(1,NREQ), LIS, REQE(NREQ), LBL, 12)
-         IF( DEBUG ) PRINT*,'ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
+         write(app_msg,*) 'desire: ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
+         call app_log(APP_DEBUG,app_msg)
          status = Select_etiquette(nreq,excdes_de,etis(1,nreq),REQE(NREQ),12)
       ENDIF
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
@@ -139,7 +147,8 @@
          DO 100 J=1, ARGDIMS(2)
             I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY, .TRUE.)
   100       CONTINUE
-         IF( DEBUG ) PRINT*,'NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
+         write(app_msg,*) 'desire: NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
+         call app_log(APP_DEBUG,app_msg)
          status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
       ELSE
         REQN(NREQ) = 1
@@ -151,7 +160,8 @@
          DO 120 J=1, ARGDIMS(1)
             I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY, .TRUE.)
   120       CONTINUE
-         IF( DEBUG ) PRINT*,'TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
+         write(app_msg,*) 'desire: TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
+         call app_log(APP_DEBUG,app_msg)
          status = Select_typvar(nreq,excdes_de,typs(1,nreq),REQT(NREQ),2)
       ENDIF
 
@@ -230,7 +240,8 @@
              kindp = -(ip(i+1)+1000) ! symbole pour kind = -(1000+kind) dans directives
              call convip_plus(newip(nnewip),p,kindp,1,dummy,.false.)  ! p,kind -> ip
              if(newip(nnewip)<0) then
-               WRITE(6,*)'ERROR: (Desire/Exclure) erreur de conversion  P,kind =',p,kindp
+               WRITE(app_msg,*) 'desire: DESIRE/EXCLURE conversion error P,kind =',p,kindp
+               call app_log(APP_ERROR,app_msg)
                call qqexit(20)
              endif
              i = i + 1  ! sauter kind

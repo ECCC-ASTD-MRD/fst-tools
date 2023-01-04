@@ -20,6 +20,7 @@
       SUBROUTINE CRITSUP(NI, NJ, NK, GRID, IG1, IG2, IG3, IG4)
       use ISO_C_BINDING
       use configuration
+      use app
       IMPLICIT NONE 
       include 'excdes.inc'
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
@@ -76,14 +77,12 @@
 !     DESACTIVER LES CRITERES SUPLEMENTAIRES AVEC "CTITSUP(-1)"
       IF(NP.EQ.1 .AND. NI.EQ.-1) THEN
          SCRI = .FALSE.
-         IF( DEBUG ) PRINT*,'CRITERES SUPLEMENTAIRES DESACTIVES'
+         call app_log(APP_DEBUG,'critsup: Extra selection criteria deactivated')
       ELSE
-         IF( DEBUG ) THEN
-            IF( SCRI ) THEN
-               PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION MODIFIES' 
-            ELSE
-               PRINT*,'CRITERES SUPLEMENTAIRES DE SELECTION ACTIVES'
-            ENDIF
+         IF( SCRI ) THEN
+            call app_log(APP_DEBUG,'critsup: Extra selection criteria modified')
+         ELSE
+            call app_log(APP_DEBUG,'critsup: Extra selection criteria activated')
          ENDIF
          SCRI = .TRUE.  ! on a des criteres supplementaires
       ENDIF

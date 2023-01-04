@@ -1,5 +1,7 @@
-      subroutine setxtrap(val)
-#include "impnone.cdk90"
+   subroutine setxtrap(val)
+      use app
+      implicit none
+      
 #include "defin.cdk90"
 
       integer val

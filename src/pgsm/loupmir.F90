@@ -1,6 +1,6 @@
 !
       subroutine loupmir(sortie,entre,nombre)
-#include "impnone.cdk90"
+   implicit none
 !
 !AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
 !

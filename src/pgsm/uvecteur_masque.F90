@@ -1,7 +1,9 @@
 !
 !**s/p uvectur interpolation des vecteurs u-v (horizontalement)
-      subroutine uvecteur_masque(key_uu, key_vv)
-#include "impnone.cdk90"
+   subroutine uvecteur_masque(key_uu, key_vv)
+      use app
+      implicit none
+      
       integer :: key_uu, key_vv
 #include "defin.cdk90"
       external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
@@ -131,7 +133,7 @@
             uu_out => tmp_uuin
             vv_out => tmp_vvout
             if (message) then
-              write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
+               call app_log(APP_WARNING,'uvecteur_masque: No horizontal interpolation')
             endif
          endif
          call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk,ip1,ip2,ip3,ctypvar,cnom_uu,cetiket,cgrtyp,lg1,lg2,lg3,lg4)
@@ -156,8 +158,11 @@
          uu_out => tmp_uuin
          vv_out => tmp_vvin
          tmpmsk => masque_in
-         if (message) write(6,662) cnom_uu
- 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a4)
+         if (message) then
+            write(app_msg,662) cnom_uu
+ 662           format(2x,'uvecteur_masque: No horizontal interpolation CHAMP=',a4)
+            call app_log(APP_WARNING,app_msg)
+         endif
       endif
 
       call ecritur(uu_out,npack,dateo,deet,npas,li,lj,nk, ip1, ip2, ip3, &

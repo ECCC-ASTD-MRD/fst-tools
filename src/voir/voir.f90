@@ -18,19 +18,21 @@ program voir
 !               98.33 - M. Lepine - Fev. 2015 - reload avec librmn_015.2
 !               99.00 - M. Valin  - oct. 2015 - nouvelle version de print_std_parms (librmn_Alpha_016)
 
+    use app
     implicit none
+
+#include "fst-tools_build_info.h"
     integer, parameter :: ncle = 5
-    integer :: fnom, fstouv, fstvoi, fstfrm, exdb, exfin
+    integer :: fnom, fstouv, fstvoi, fstfrm
     external fnom, fstouv, fstvoi, fstnbr, ccard, c_init_appl_var_table
     character(len = 8192) :: ccard_arg, filename
-    external exdb, exfin, ccard_arg
+    external ccard_arg
 
     integer ipos, ier, n
 
     character(len = 8) :: cles(ncle)
     character(len = 12) :: status
     character(len = 128) :: val(ncle), def(ncle)
-    character(len = *), parameter :: VERSION = '99.00'
     data cles / 'IMENT:', 'SEQ', 'STYLE', 'MOREHELP', 'V' /
     data def / '/dev/null', 'SEQ', 'NINJNK+DATEV+LEVEL+IP1+GRIDINFO', 'MOREHELP', VERSION /
     data val / '/dev/null', 'RND' , 'NINJNK+DATEO+IP1+IG1234', 2*' ' /
@@ -38,11 +40,8 @@ program voir
     call c_init_appl_var_table()
     ipos = -1
     call ccard (cles, def, val, ncle, ipos)
-    if (val(5) /= "") then
-        ier = exdb('VOIR', VERSION, 'NON')
-        stop
-    endif
-    status = '<<ERREUR>>'
+
+    app_status = 1
     IF (val(4) .eq. 'MOREHELP') THEN
         print *,"*** VOIR CALLING SEQUENCE ***"
         print *
@@ -74,7 +73,9 @@ program voir
         print *,'   -style FULL displays'
         print *,'           NINJNK+DATEV+IPALL+IP1+GRIDINFO'
     else
-        ier = exdb('VOIR', VERSION, 'NON')
+        app_ptr=app_init(0,'VOIR',VERSION,'',BUILD_TIMESTAMP)
+        call app_start()
+
         filename = ccard_arg(cles(1))
         if (trim(filename) == "") filename = val(1)
         ier = fnom(10, trim(filename), 'STD+R/O+REMOTE'//val(2), 0)
@@ -84,15 +85,9 @@ program voir
             if (N >= 0) then
                 ier = fstvoi(10, val(3))
                 ier = fstfrm(10)
-                status = 'O.K.'
             endif
         endif
-        ier = exfin('VOIR', status, 'NON')
+        app_status=app_end(-1)
     endif
-    stop
-end
-
-character(len = 128) function product_id_tag()
-    product_id_tag = '$Id: voir.f90 2014-01-30 08:00:00Z armnlib $'
-    return
+    call qqexit(app_status)
 end

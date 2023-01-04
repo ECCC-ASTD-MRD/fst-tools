@@ -20,6 +20,7 @@
 !     REWIND LE FICHIER SOURCE AU DEBUT 
       SUBROUTINE REWINDS( DSN, TIPE )
       use configuration
+      use app
       IMPLICIT NONE 
       INTEGER  DSN(*), TIPE(*)
   
@@ -61,7 +62,7 @@
             SNOM = 'STD+SEQ'
          ENDIF
       ELSE
-         PRINT*,'PAS DE REWIND POSSIBLE'
+         call app_log(APP_WARNING,'rewinds: No rewind possible')
          RETURN
       ENDIF
 
@@ -72,10 +73,11 @@
       ENDIF
       IF( OUVS ) THEN
          I = FSTRWD( SOURCES )
-         IF(DEBUG .OR. INTERAC)  WRITE(6,*)' LE FICHIER ',DN,' POSITIONNNE AU DEBUT'
+         call app_log(APP_DEBUG,'rewinds: No rewind possible')
       ELSE
          IF( INTERAC ) THEN
-            WRITE(6,*)' LE FICHIER ',DN,' PAS OUVERT'
+            WRITE(app_msg,*) 'rewinds: File ',DN,' not opened'
+            call app_log(APP_WARNING,app_msg)
             RETURN
          ELSE
             CALL qqexit(60)

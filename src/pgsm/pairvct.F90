@@ -1,7 +1,8 @@
 !
 !**S/P PAIRVCT  REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
 !
-      subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir) 
+   subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir) 
+      use app
       implicit none 
 !
 !AUTEUR P. SARRAZIN DORVAL QUE CANADA FEV 87
@@ -66,12 +67,7 @@
       integer  fstcvt
       
       if (npairuv.lt.3.or.npairuv.gt.5) then
-         write(6,*)'  VERIFIER ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)' 
-         write(6,*)' PAIRES DEJA INITIALISEES'
-         write(6,*)' PAIRES("VENT","UU","VV","UV")'
-         write(6,*)' PAIRES("UV","UU","VV","0")'
-         write(6,*)' PAIRES("VENTUVS","UU","VV","UV")'
-         write(6,*)' PAIRES("VENTUVS","UU","VV","0")'
+         call app_log(APP_ERROR,'pairvct: Check PAIRES directives for 3 or 4 arguments')
          return
       endif
 !
@@ -91,7 +87,8 @@
       if (varmodule.eq.0) ccontrl = '??'
       if (vardir.eq.0) cvarwd = '??'
       
-      write (6, *) 'PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl, cvarwd
+      write (app_msg,*) 'pairvct: PAIRES: ',cnomusr, cvaruu, cvarvv, ccontrl, cvarwd
+      call app_log(APP_INFO,app_msg)
       
       call pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
       return
@@ -146,7 +143,8 @@
 !
 !-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
-implicit none
+      use app
+      implicit none
 #include "defin.cdk90"
 #include "pairs.cdk90"
 !
@@ -166,8 +164,9 @@ implicit none
             paire(np)(17:20) = ccontrl
             paire(np)(21:24) = cvarwd
             remplac=.true.
-            write (6, *) 'PAIRE(NP): ', paire(np)
-         endif
+            write (app_msg, *) 'pairvct: PAIRE(NP): ', paire(np)
+            call app_log(APP_INFO,app_msg)
+             endif
       enddo
 !     
       if (remplac)  go to 1000
@@ -176,8 +175,9 @@ implicit none
 !
       npair = npair + 1
       if (npair.gt.NPAIRMX) then
-         write(6,666) npair,npairmx
- 666     format(1x,' TROP DE PAIRES DANS LA TABLE NPAIR=',i5,         /'   NPAIRMX=',i5)
+         write(app_msg,666) npair,npairmx
+         call app_log(APP_ERROR,app_msg)
+ 666     format(1x,'pairvct: Too many pairs in table  NPAIR=',i5,         /'   NPAIRMX=',i5)
          return
       endif
 !
@@ -186,11 +186,12 @@ implicit none
       paire(np)(13:16) = cvarvv 
       paire(np)(17:20) = ccontrl 
       paire(np)(21:24) = cvarwd
-      write (6, *) 'PAIRE(NP): ', paire(np)
-      return 
+      write (app_msg,*) 'pairvct: PAIRE(NP): ', paire(np)
+      call app_log(APP_INFO,app_msg)
+return 
 !
 !
- 1000 write(6,*)'  2 VARIABLES PAIRES REMPLACEES '
+ 1000  call app_log(APP_INFO,'pairvct: 2 pair variables replaced')
 !     
       return 
       end

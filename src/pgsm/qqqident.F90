@@ -1,6 +1,6 @@
 #include "defin.cdk90"
       subroutine qqqident(position, separateur, items)
-#include "impnone.cdk90"
+   implicit none
 
       integer position, separateur, items(16)
 

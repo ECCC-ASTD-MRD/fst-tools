@@ -2,7 +2,7 @@
 !**S/P  IMPRIME CHAMP LUT SUR FICHIER D ENTRE OU DE SORTI
 !
       subroutine imprime(cnom,champ,ni,nj)
-#include "impnone.cdk90"
+   implicit none
 !
 !AUTEUR P. SARRAZIN JUIN 85 DRPN DORVAL P.Q. CANADA
 !

@@ -1,10 +1,12 @@
       program fstinfo
+      use app
 c
 ! Revision 006 - M. Lepine, augmenter la longueur pour les noms de fichiers a 4k
 ! Revision 007 - M. Lepine, reload avec librmn_014
 ! Revision 008 - M. Lepine, reload avec librmn_015.1
 ! Revision 009 - M. Lepine, reload avec librmn_015.2
       implicit none
+#include "fst-tools_build_info.h"
 c
       integer pnier,pnfstsrc,pnnis,pnnjs,pnnks
       integer fnom,fstouv,fstfrm,fstinf,pnkey,fstsui
@@ -74,10 +76,16 @@ c
          stop
       endif
 c
+      app_ptr=app_init(0,'fstinfo',VERSION,'',BUILD_TIMESTAMP)
+      call app_start()
+
       ikind = wkoffit(ptvar(1))
 c      write(*,*) 'IKIND ====== ',ikind
-      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) call qqex
-     %it(1)
+      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) then
+         call app_log(APP_ERROR,'File is not RPN')                  
+         app_status=app_end(-1)
+         call qqexit(app_status)
+      endif
 c     ------ Initialisation des clefs de recherche -----
 c
       if (ptvar(2) .ne. '-1') then
@@ -149,10 +157,7 @@ c
  1000 format(2(a,a),6(i10,a),1(a,a),2(i8.8,i8.8,a),2(i10,a),1(a,a)
      &     ,12(i10,a),i10)
 c
-      call qqexit(0)
+      app_status=app_end(-1);
+      call qqexit(app_status)
       stop
-      end
-      character *128 function product_id_tag()
-      product_id_tag='$Id$'
-      return
       end

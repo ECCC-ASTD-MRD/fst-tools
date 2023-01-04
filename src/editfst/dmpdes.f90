@@ -21,6 +21,7 @@
       SUBROUTINE DMPDES
       use ISO_C_BINDING
       use configuration
+      use app
       IMPLICIT NONE
 
       include 'excdes.inc'
@@ -40,7 +41,7 @@
 !     AUCUNE DIRECTIVE ?
       IF(NREQ .EQ. 0) THEN  ! NREQ = no de la directive courante
          XPRES = .NOT.SCRI  ! si pas de criteres supplementaires, on veut vraiment tout
-         IF( DEBUG ) WRITE(6,*)'INFO: ON COPIE TOUT LE FICHIER '
+         call app_log(APP_DEBUG,'dmpdes: Copying whole file')
          RETURN
       ENDIF
   

@@ -1,5 +1,7 @@
 program fststat
+    use app
     implicit none
+#include "fst-tools_build_info.h"
 
     external ccard, fstlnk
 
@@ -28,9 +30,8 @@ program fststat
 
     call ccard(cle, def, val, 40, ipos)
 
-    level = 6
-    flag = .false.
-    ier = fstopc('MSGLVL', 'ERRORS', flag)
+    app_ptr=app_init(0,'fststat',VERSION,'',BUILD_TIMESTAMP)
+    call app_start()
 
     ! Count the number of files
     nf = 1
@@ -42,20 +43,18 @@ program fststat
     do i = 1, nf
         ier = fnom(lnkdiun(i), val(i), 'RND+OLD+R/O+REMOTE', 0)
         if (ier < 0) then
-            print *, '************************************************'
-            print *, ' probleme avec fichier ', val(i), ' inexistant - '
-            print *, '************************************************'
-            stop
+            call app_log(APP_ERROR,'Fichier '//trim(val(i))//' inexistant')                  
+            app_status=app_end(-1)
+            call qqexit(app_status)
         end if
     end do
 
     do i = 1, nf
         ier = fstouv(lnkdiun(i), 'RND')
         if (ier .lt. 0) then
-            print *, '**********************************************'
-            print *, '* le fichier #', val(i), 'n''est pas standard random'
-            print *, '**********************************************'
-            stop
+            call app_log(APP_ERROR,'le fichier '//trim(val(i))//'n''est pas standard random')                  
+            app_status=app_end(-1)
+            call qqexit(app_status)
         end if
     end do
 
@@ -69,8 +68,7 @@ program fststat
 
     call fstlnk(lnkdiun, nf)
     call loop_fields(lnkdiun(1), ni, nj, nk, date, etiket, ip1, ip2, ip3, typvar, nomvar)
-end program
 
-character(len = 128) function product_id_tag()
-    product_id_tag = '$Id$'
-end function
+    app_status=app_end(-1)
+    call qqexit(app_status)
+end program

@@ -1,7 +1,6 @@
 ##################### NORMAL TARGETS ##############################
-configure_file(version.in.inc version.inc @ONLY)
 
-add_executable(reflex reflex.f)
+add_executable(reflex reflex.f90)
 target_link_libraries(reflex PRIVATE rmn)
 target_include_directories(reflex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 

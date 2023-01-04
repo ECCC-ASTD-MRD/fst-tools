@@ -7,8 +7,10 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <App.h>
 #include <rmn.h>
 #include <rmn/convert_ip.h>
+#include "fst-tools_build_info.h"
 
 // KIND =0, p est en hauteur (m) par rapport au niveau de la mer (-20,000 -> 100,000)
 // KIND =1, p est en sigma                                       (0.0 -> 1.0)
@@ -66,8 +68,9 @@ int decodeIp1(const char * const lvlStr) {
         int fpStrLen = space - lvlStr;
         char * fpStr = malloc(fpStrLen + 1);
         if (!fpStr) {
-            fprintf(stderr, "Could not allocate memory!!\n");
-            exit(1);
+           App_Log(APP_ERROR,"Could not allocate memory\n");
+           App_End(-1);
+           exit(1);
         }
         fpStr[fpStrLen] = '\0';
         strncpy(fpStr, lvlStr, fpStrLen);
@@ -79,7 +82,8 @@ int decodeIp1(const char * const lvlStr) {
         ConvertIp(&ip1, &fip1, &kind, 1);
         return ip1;
     } else {
-        fprintf(stderr, "Unknown level type \"%s\"!\n", (space + 1));
+        App_Log(APP_ERROR,"Unknown level type \"%s\"\n",(space+1));
+        App_End(-1);
         exit(1);
     }
 }
@@ -93,7 +97,6 @@ void printUsage(const char ** const argv) {
 
 
 int main(int argc, const char ** const argv) {
-    print_rmn_version();
 
     if (argc != 8) {
         printUsage(argv);
@@ -107,21 +110,23 @@ int main(int argc, const char ** const argv) {
     const int ip2 = atoi(argv[6]);
     const int ip3 = atoi(argv[7]);
 
-    // Set library verbosity level
-    c_fstopc("MSGLVL", "ERRORS", 0);
+    App_Init(APP_MASTER,"fstdumpfld",VERSION,"",BUILD_TIMESTAMP);
+    App_Start();
 
     // Link file to a unit number (Fortran compatible I/O handle)
     int iun = 0;
     int resultCode = c_fnom(&iun, filePath, "STD+OLD+R/O", 0);
     if (resultCode < 0) {
-        fprintf(stderr, "Failed to link file %s !\n", filePath);
+        App_Log(APP_ERROR,"Failed to link file %s !\n", filePath);
+        App_End(-1);
         return 1;
     }
 
     // Open the file
     resultCode = c_fstouv(iun, "RND");
     if (resultCode < 0) {
-        fprintf(stderr, "Failed to open the file %s !\n", filePath);
+        App_Log(APP_ERROR,"Failed to open the file %s !\n", filePath);
+        App_End(-1);
         return 1;
     }
 
@@ -133,24 +138,26 @@ int main(int argc, const char ** const argv) {
     int nk;
 
     int handle = c_fstinf (iun, &ni, &nj, &nk, -1, etiket, ip1, ip2, ip3, "", nomvar);
-    printf("Field handle = %d\n", handle);
+    App_Log(APP_INFO,"Field handle = %d\n", handle);
 
     const int size = ni * nj * nk * sizeof(int32_t);
-    printf("ni = %d, nj = %d, nk = %d, size = %d bytes\n", ni, nj, nk, size);
+    App_Log(APP_INFO,"ni = %d, nj = %d, nk = %d, size = %d bytes\n", ni, nj, nk, size);
 
     // Allocate memory to hold the field's data
     int32_t *field = calloc(size, sizeof(char));
 
     resultCode = c_fstluk(field, handle, &ni, &nj, &nk);
     if (resultCode < 0) {
-        fprintf(stderr, "Failed to read the field!\n");
+        App_Log(APP_ERROR,"Failed to read the field!\n");
+        App_End(-1);
         return 1;
     }
 
     const int fd = open(dumpPath, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     const int sizeWritten = write(fd, field, size);
     if (sizeWritten != size) {
-        fprintf(stderr, "Did not write expected number of bytes (expected = %d, written = %d)!\n", size, sizeWritten);
+        App_Log(APP_ERROR,"Did not write expected number of bytes (expected = %d, written = %d)!\n", size, sizeWritten);
+        App_End(-1);
         return 1;
     }
     close(fd);
@@ -160,5 +167,6 @@ int main(int argc, const char ** const argv) {
     // Close the file
     c_fstfrm(iun);
 
+    App_End(0);
     return 0;
 }

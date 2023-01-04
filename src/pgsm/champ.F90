@@ -5,6 +5,8 @@
    subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr10, &
       ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17, ipr18, ipr19, ipr20, &
       ipr21, ipr22, ipr23, ipr24, ipr25, ipr26, ipr27, ipr28, ipr29, ipr30)
+
+      use app
       implicit none
 !
 !AUTEUR
@@ -83,12 +85,8 @@
 !
 !
    if (inputmod == SEQUENTIEL) then
-      print *,'***************************************************'
-      print *,'* ON NE PEUT UTILISER LA DIRECTIVE "CHAMP"        *'
-      print *,'* AVEC UN FICHIER D ENTREE SEQUENTIEL             *'
-      print *,'*                                                 *'
-      print *,'* UTILISEZ PLUTOT LA DIRECTIVE "CHAMP_SEQ"        *'
-      print *,'***************************************************'
+         app_status=app_end(-1)
+         call app_log(APP_ERROR,'champ: Cannot use directive CHAMP with a sequential input file, use directive CHAMP_SEQ instead')
       return
    endif
 
@@ -190,7 +188,7 @@
 
    if (.not.associated(tmplat).and.cgrtyp  /=  '*') then
       if (message) then
-         write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
+         call app_log(APP_WARNING,'champ: Grid not defined, will use PS(2805)')
       endif
       ngr=8
       call grille2(3,51,55,26.,28.,381000.,350.,1)
@@ -201,7 +199,7 @@
 !
    if (nhur == 0) then
       if (cnom /= 'DFPR'.or.cnom /= 'DFST') then
-         print *, '  ON DOIT DEFINIR DIRECTIVE HEURE '
+         call app_log(APP_ERROR,'champ: HEURE directive must be defined')
          return
       endif
    endif
@@ -233,8 +231,7 @@
          endif
 
          if (cgrtyp == '*') then
-            write (6,*) 'GRILLE(AUCUNE) NE FONCTIONNE QUE POUR LES VARIABLES'
-            write (6,*) 'PCP, EPAIS, DFST ET NUAG'
+            call app_log(APP_WARNING,'champ: GRILLE(AUCUNE) only works for variables PCP, EPAIS, DFST ET NUAG')
          else
             call uvectur(paire(trouve)(9:12), paire(trouve)(13:16),               paire(trouve)(17:20),ihr,nparm,champpr)
          endif
@@ -252,7 +249,7 @@
          if (ihrs == 1)   then
             call macpcp('ST  ', nparm, champpr)
             if (message) then
-               if (nhur>1)                  write(6,*)' HEURE PAS NECESSAIRE  (ST)'
+               if (nhur>1) call app_log(APP_WARNING,'champ: HEURE directive not necessary (ST)')
             endif
          endif
 !
@@ -263,9 +260,7 @@
          if (ihrs == 1) then
             call macpcp('PR  ', nparm, champpr)
             if (message) then
-               if (nhur>1) then
-                  write(6,*)                     'DIRECTIVE HEURE PAS NECESSAIRE POUR PRECIP'
-               endif
+               if (nhur>1) call app_log(APP_WARNING,'champ: HEURE directive not necessary (PRECIP)')
             endif
          endif
 !
@@ -280,8 +275,7 @@
 !
       else
          if (cgrtyp == '*') then
-            write (6,*) 'GRILLE(AUCUNE) NE FONCTIONNE QUE POUR LES VARIABLES'
-            write (6,*) 'PCP, EPAIS, DFST ET NUAG'
+            call app_log(APP_WARNING,'champ: GRILLE(AUCUNE) only works for variables PCP, EPAIS, DFST ET NUAG')
          else
             call scalair(cnom, ihr, nparm, champpr)
          endif

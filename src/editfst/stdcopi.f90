@@ -20,6 +20,7 @@
 !                 OUVRE LES FICHIERS AU BESOIN, APPEL A COPYSTX
       SUBROUTINE STDCOPI(INPT, TS, OUPT, TD)
       use configuration
+      use app
       IMPLICIT NONE 
   
       INTEGER    INPT(*), TS(*), OUPT(*), TD(*)
@@ -63,7 +64,7 @@
          CALL OUVRES( DD )
       ENDIF
       IF( .NOT. OUVS ) THEN
-         PRINT*,'****  FICHIER SOURCE INCONNU  ****'
+         call app_log(APP_ERROR,'stdcopi: Source file unknown')
          CALL qqexit(80)
       ENDIF
 
@@ -86,7 +87,7 @@
          I = OUVRED( DD )
       ENDIF
       IF( .NOT. OUVD) THEN
-         PRINT*,'****  FICHIER DESTINATION INCONNU  ****'
+         call app_log(APP_ERROR,'stdcopi: Destination file unknown')
          CALL qqexit(81)
       ENDIF
 
@@ -95,7 +96,7 @@
       IF(LIMITE .NE. 0) THEN  ! nombre  limite d'enregistrements a copier pas encore atteint
          CALL COPYSTX
       ELSE
-         WRITE(6,*)'LA LIMITE DES TRANSFERS DEJA ATEINTE'
+         call app_log(APP_WARNING,'stdcopi: Transfer limit already reached')
       ENDIF
 
 !     CONTROLE DE LA PORTEE DES DIRECTIVES

@@ -1,7 +1,8 @@
 !
 !**S/P  ADDITIONNE SOUSTRAIT MULTIPLIT MODULE 2 CHAMPS
 !
-      subroutine plmnmod(nom,type,idat,niv,ihr,ip3,etiqet)
+   subroutine plmnmod(nom,type,idat,niv,ihr,ip3,etiqet)
+      use app
       implicit none
 !
       external fstinf,fstsui,fstprm,pgsmabt,imprime
@@ -93,7 +94,7 @@
 !
  100  if (ichck.eq.0)  then
 !     erreur faut appeler liren ou lirsr
-         write(6,*)'DIRECTIVE LIREE OU LIRES DOIT-ETRE APPELE AVANT '
+         call app_log(APP_ERROR,'plmnmod: Directives LIREE or LIRES msut be called before')
          call pgsmabt
       endif
 !
@@ -127,8 +128,7 @@
 
       if (irec.lt.0)  then
 !     arret record n'EXISTE PAS
-         write(6,*)         ' VERIFIER PLUSE/S - MOINSE/S - MODUL2E/S - FOIS(E\S)'
-         write(6,*)' FSTINF A PAS RECONNU RECORD MAL DEFINI'
+         call app_log(APP_ERROR,'plmnmod: FSTINF failed,check PLUSE/S - MOINS(E\S) - MODUL2E/S - FOIS(E\S) directives')
          call pgsmabt
       endif
 
@@ -138,7 +138,7 @@
 !
          ier = fstprm(irec,idate,ideete,npase,nie,nje,nke,          cnbits,cdatyp,         jp1e,jp2e,jp3e,ctypve,cnumve,cetike,cigtye,         ig1e,ig2e,ig3e,ig4e,         cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier.lt.0) then
-            write(6,*)' IER = FSTPRM NEGATIF VOIR PLUSE/MOIN.....'
+            call app_log(APP_ERROR,'plmnmod: FSTPRM failed')
          endif
 !
 !     VERIFIER SI GRILLE GAUSSIENNE NI DOIT ETRE PAIR
@@ -146,33 +146,40 @@
          if (cigtye.eq.'G'.and.mod(nie,2).ne.0)  call messags(nie)
 !
 !
-         if (nie.ne.nni.or.nje.ne.nnj.or.nke.ne.nnk) then
-            write(6,600)nie,nni
-            write(6,610)nje,nnj
-            write(6,620)nke,nnk
-            write(6,*)'DIMENSION DU CHAMP MAUVAISE VERIFIER   '
-            write(6,*)'PLUS(E\S) - MOINS(E\S) - MODUL2(E\S) - FOIS(E\S)'
+         if (nie.ne.nni) then
+            write(app_msg,600)nie,nni
+            call app_log(APP_ERROR,app_msg)
+            call pgsmabt
+         endif
+
+         if (nje.ne.nnj) then
+            write(app_msg,610)nje,nnj
+            call app_log(APP_ERROR,app_msg)
+            call pgsmabt
+         endif
+
+         if (nke.ne.nnk) then
+            write(app_msg,620)nke,nnk
+            call app_log(APP_ERROR,app_msg)
             call pgsmabt
          endif
 !
          if (cigty.ne.cigtye) then
-            write(6,660)cigtye,cigty
-            write(6,*)            ' VERIFIER PLUS(E\S)-MOINS(E\S)-MODUL2(E\S)-FOIS(E\S)'
+            write(app_msg,660)cigtye,cigty
+            call app_log(APP_ERROR,app_msg)
             call pgsmabt
          endif
 !
          if (cigty.eq.'G'.or.cigty.eq.'A'.or.cigty.eq.'B') then
             if (ig1e.ne.igg1) then
-               write(6,*)'MAUVAISE HEMISPHERE CHAMP DE =',ig1e
-               write(6,*)'DOIT-ETRE=',igg1
-               write(6,*)             ' VERIFIER PLUS(E\S)-MOINS(E\S)-MODUL2(E\S)-FOIS(E\S)'
+               write(app_msg,*)'plmnmod: Wrong hemisphere ig1e =',ig1e,' has to be ',igg1,'. heck PLUSE/S - MOINS(E\S) - MODUL2E/S - FOIS(E\S) directives'
+               call app_log(APP_ERROR,app_msg)
                call pgsmabt
             endif
          else
             if (cigty.eq.'N'.or.cigty.eq.'S'.or.cigty.eq.'L') then
                if (ig1e.ne.igg1.or.ig2e.ne.igg2.or.               ig3e.ne.igg3.or.ig4e.ne.igg4) then
-                  write(6,*)'ERREUR  2 CHAMPS DIFFERENTS'
-                  write(6,*)            ' VERIFIER PLUS(E\S)-MOINS(E\S)-MODUL2(E\S)-FOIS(E\S)'
+                  call app_log(APP_ERROR,'plmnmod: 2 different fields, check PLUSE/S - MOINS(E\S) - MODUL2E/S - FOIS(E\S) directives')
                   call pgsmabt
                endif
             endif
@@ -185,7 +192,7 @@
 !
          ier = pgsmluk(tmpif1, irec, nni, nnj, nnk,cnomvar,cigty)
          if (ier.lt.0)  then
-            write(6,*)' IER=PGSMLUK(..... NEGATIF VOIR PLUS/MOIN.....'
+            call app_log(APP_ERROR,'plmnmod: pgsmluk failed')
             return
          endif
 
@@ -287,10 +294,10 @@
       iunit = 2
       go to 100
 !
- 600  format(2x,'NI  ENTRE =',i10,'NI ACCUMULATEUR=',i10)
- 610  format(2x,'NJ  ENTRE =',i10,'NJ ACCUMULATEUR=',i10)
- 620  format(2x,'NK  ENTRE =',i10,'NK ACCUMULATEUR=',i10)
- 660  format(2x,'MAUVAISE GRILLE ENTRE=',a1,'ACCUMULATEUR=',a1)
+600  format(2x,'plmnmod: Wrong field dimension: NI  ENTRE =',i10,'NI ACCUMULATEUR=',i10)
+610  format(2x,'plmnmod: Wrong field dimension: NJ  ENTRE =',i10,'NJ ACCUMULATEUR=',i10)
+620  format(2x,'plmnmod: Wrong field dimension: NK  ENTRE =',i10,'NK ACCUMULATEUR=',i10)
+660  format(2x,'plmnmod: Wrong grid: GRILLE ENTRE=',a1,'ACCUMULATEUR=',a1)
 !
       end
 

@@ -1,5 +1,5 @@
       subroutine fillcoord(lat,lon)
-#include "impnone.cdk90"
+   implicit none
 #include "grilles.cdk90"
       real lat(*),lon(*)
       

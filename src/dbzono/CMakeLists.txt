@@ -1,12 +1,12 @@
 add_executable(dbzono 
     bsort.f
-    dbzono.f
-    debalzn.f
-    inctcon.f
-    litzon.f
-    outfld.f
-    setuvd0.f
-    writlzn.f
+    dbzono.f90
+    debalzn.f90
+    inctcon.f90
+    litzon.f90
+    outfld.f90
+    setuvd0.f90
+    writlzn.f90
 )
 target_link_libraries(dbzono PRIVATE rmn)
 

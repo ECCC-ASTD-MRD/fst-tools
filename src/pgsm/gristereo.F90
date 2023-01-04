@@ -1,8 +1,9 @@
 !
 !**S/P GRISTEREO  CALCUL LATITUDE LONGITUDE DE CHAQUE PT D'UNE GRILLE P.S.
 !
-      subroutine gristereo(nni,nnj,d60,dgrw,clat,clon)
-#include "impnone.cdk90"
+   subroutine gristereo(nni,nnj,d60,dgrw,clat,clon)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !

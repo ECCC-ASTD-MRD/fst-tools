@@ -1,5 +1,7 @@
    integer function fst_get_mask_key(mask_key, fld_key, mask_flags, iun) result(status)
-   implicit none
+      use app
+      implicit none
+
    integer mask_key, fld_key, mask_flags, iun, ier
 
    integer fstprm, fstinf
@@ -35,13 +37,15 @@
             fld_datev, fld_extra2, fld_extra3)
 
    if (fld_typvar(2:2) /= '@') then
-      print *, ' (fst_get_mask_key) This is not a masked field', fld_nomvar, fld_typvar
+      write(app_msg,*) 'fst_get_mask_key: This is not a masked field', fld_nomvar, fld_typvar
+      call app_log(APP_ERROR,app_msg)
       status = -1
       return
    endif
 
    if (fld_typvar(1:1) == '@') then
-      print *, ' (fst_get_mask_key) This is a mask field', fld_nomvar, fld_typvar
+      write(app_msg,*) 'fst_get_mask_key: This is a mask field', fld_nomvar, fld_typvar
+      call app_log(APP_ERROR,app_msg)
       status = -1
       return
    endif
@@ -123,7 +127,8 @@
       endif
    endif
 
-   print *, ' (fst_get_mask_key) Associated mask not found'
+   write(app_msg,*) 'fst_get_mask_key: Associated mask not found'
+   call app_log(APP_ERROR,app_msg)
    status = -1
    return
    end function fst_get_mask_key

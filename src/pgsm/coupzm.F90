@@ -2,8 +2,10 @@
 !**   s/p coupzm  coupe zonale ou meridionale d un champ
 !
 #include "defin.cdk90"
-      subroutine coupzm(iunit, cnom, cjcoup)
-#include "impnone.cdk90"
+   subroutine coupzm(iunit, cnom, cjcoup)
+      use app
+      implicit none
+
       external calcul,ecritur,gauss,fstinf,pgsmlir,memoir,fstprm,fstcvt,          pgsmabt,imprime,loupmir,louptra,loupin1,fstopc,messags
       integer  fstinf,pgsmlir,fstprm,fstopc,fstcvt
 !
@@ -49,40 +51,17 @@
 !-----------------------------------------------------------------
 !
 #include "llccmm.cdk90"
-
 #include "dates.cdk90"
-!
-!
 #include "grilles.cdk90"
-!
-!
 #include "indptr.cdk90"
-!
-!
 #include "lires.cdk90"
-!
-!
 #include "accum.cdk90"
-!
-!
 #include "voir.cdk90"
-!
-!
 #include "ecrires.cdk90"
-!
-!
 #include "packin.cdk90"
-!
-!
 #include "param.cdk90"
-!
-!
 #include "heures.cdk90"
-!
-!
 #include "nivos.cdk90"
-!
-!
 #include "cfldinf.cdk90"
 !
 !
@@ -135,17 +114,13 @@
          irec = fstinf(iunit,ni,nj,nk,datev,cetiket,nivospr(iprs),          iheur,ip3ent,ctypvar,cnomvar)
 !
          if (irec .lt. 0) then
-            write(6,*)            'RECORD N EXISTE PAS VERIFIER DIRECTIVE MOYENT/MOYSRT'
-            write(6,*)            ' IUNIT=',iunit,' NIVEAU=',nivospr(iprs),            ' HEURE=',iheur
-            write(6,600) cnom
+            write(app_msg,*)  'coupzm: Record does not exist, check directive MOYENT/MOYSRT IUNIT=',iunit,' NIVEAU=',nivospr(iprs),' HEURE=',iheur,'NOM=',cnom
+            call app_log(APP_ERROR,app_msg)
             return
          endif
 
          if (nk.gt.1) then
-            write(6,*)'**********************************************'
-            write(6,*)'         PGSM N ACCEPTE PAS UN          '
-            write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (MOYENT-MOYSRT)'
-            write(6,*)'***********************************************'
+            call app_log(APP_ERROR,'coupzm: PGSM does not accept 3 dimension fields (NK>1)')
             call pgsmabt
          endif
 !
@@ -155,7 +130,7 @@
 !
          ier = fstprm( irec, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,         jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,          ig1,ig2,ig3,ig4,          cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) then
-            write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
+            call app_log(APP_ERROR,'coupzm: FSTPRM failed')
          endif
 !
 !     verifier si grille gaussienne ni doit etre pair
@@ -168,26 +143,23 @@
 !     nombre de longitude max=1000
 !
          if (ni.gt.1000) then
-            write(6,*)'  TROP DE LONGITUDES CHANGER DIMENSION DANS'
-            write(6,*)' COUPZM CHAMP'
+            call app_log(APP_ERROR,'coupzm: Too many longitudes within fields (max=1000)')
+
             call pgsmabt
          endif
 !
 !     verifier si dimension nj .gt. 500
 !
          if (ig1.eq.0.and.nj.gt.500) then
-            write(6,*)' CHAMP D ENTRE GLOBALE POUR MOYENT-MOYSRT'
-            write(6,*)' DIMENSION NJ .GT.500 STOP'
-            write(6,*)' MODIFIER ROUTINE COUPZM DANS PGSM'
+            call app_log(APP_ERROR,'coupzm: Dimension NJ for MOYENT-MOYSRT too large (max=500)')
             call pgsmabt
          endif
 !
 !     verifier type de grille
 !
          if (cigtyp.ne.'G'.and.cigtyp.ne.'A'.and.cigtyp.ne.'L'         .and.cigtyp.ne.'B'.and.cigtyp.ne.'C') then
-            write(6,*)' MAUVAIS TYPE DE GRILLE DIRECTIVE MOYENT/MOYSRT'
-            write(6,601) cigtyp
-            write(6,*)' DOIT-ETRE G - L - B - A - C  (MOYENT/MOYSRT) '
+            write(app_msg,*) 'coupzm: Bad grid type: ',cigtyp,', must be G - L - B - A - C (MOYENT/MOYSRT)'
+            call app_log(APP_ERROR,app_msg)
             return
          endif
 !
@@ -206,7 +178,7 @@
            call imprime(cnom,tmpif1,ni,nj)
         endif
         if (num .lt. 0)  then
-           write(6,*)' CHAMP N EXISTE PAS LIRE DANS MOYENT/MOYSRT'
+           call app_log(APP_ERROR,'coupzm: Field does not exist in MOYENT/MOYSRT')
            call pgsmabt
         endif
 !

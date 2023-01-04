@@ -1,5 +1,7 @@
   subroutine chk_extrap(gdout, gdin, li, lj, ni, nj)
-#include "impnone.cdk90"
+
+  use app
+  implicit none
 
   integer gdout, gdin, li, lj, ni, nj
   real, allocatable, dimension(:,:) ::  lat_dest, lon_dest, xdest, ydest
@@ -12,18 +14,12 @@
   
   allocate(lat_dest(li,lj), lon_dest(li,lj), xdest(li,lj), ydest(li,lj))
   
-!  print *, 'chk_extrap', li, lj, ni, nj
   ier = gdll(gdout, lat_dest, lon_dest)
-!  print *, lat_dest
-!  print *, lon_dest
   call gdxyfll(gdin, xdest, ydest, lat_dest, lon_dest, li*lj)
   
   outside = .false.
   r_ni = real(ni)
   r_nj = real(nj)
-  
-!  print *, xdest
-!  print *, ydest
   
   do j=1,lj
      do i=1,li
@@ -33,10 +29,8 @@
   enddo
   
   if (outside) then
-     print *, ' (CHK_EXTRAP) LA GRILLE DE DESTINATION CONTIENT '
-     print *, '              DES POINTS HORS DE LA GRILLE SOURCE'
-     print *, ' (CHK_EXTRAP) TERMINAISON ABRUPTE...'
-     stop
+    call app_log(APP_ERROR,'chk_extrap: Destination grid contains points outside of source grid')
+    call pgsmabt
   endif
   deallocate(lat_dest, lon_dest, xdest, ydest)
 
