@@ -1,4 +1,4 @@
-add_executable(r.fstinfo fstinfo.f)
+add_executable(r.fstinfo fstinfo.F90)
 target_link_libraries(r.fstinfo PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

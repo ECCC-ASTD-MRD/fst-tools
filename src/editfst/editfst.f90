@@ -369,12 +369,7 @@
       IF( DIAG ) THEN
          I = app_loglevel('INFO')
       ELSE
-         I = app_loglevel(DEF1(13))   ! -m
-      ENDIF
-      IF(DEF1(14) .NE. 'FATALE') THEN
-         I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)   ! -t
-      ELSE
-         I = FSTOPC('TOLRNC', DEF1(12), .FALSE.)   ! -k
+         I = app_loglevel(DEF1(13)) ! -m
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
