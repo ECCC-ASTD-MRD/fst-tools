@@ -3,7 +3,7 @@ VERSION    :
 BUILD      : 
 DESCRIPTION: ECCC-MRD Collection of tools to manipulate RPN standard files
 SUMMARY    : These tools allow for manipulation of RPN standard files
-MAINTAINER : Philippe Carphin - Philippe.Carphim@ec.gc.ca
+MAINTAINER : Philippe Carphin - Philippe.Carphin@ec.gc.ca
 URL        : https://gitlab.science.gc.ca/RPN-SI/fst-tools
 
 # Dependencies 
