@@ -31,6 +31,7 @@ configure_file(version.in.inc version.inc @ONLY)
 
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 target_link_libraries(pgsmlib PRIVATE rmn)
+add_dependencies(pgsmlib ${PROJECT_NAME}_build_info)
 
 # Needed for version.inc
 target_include_directories(pgsmlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

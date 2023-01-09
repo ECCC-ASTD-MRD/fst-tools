@@ -8,5 +8,7 @@ target_link_libraries(xml2fst PRIVATE rmn)
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(fst2xml PUBLIC "-Wl,--disable-new-dtags")
 target_link_libraries(xml2fst PUBLIC "-Wl,--disable-new-dtags")
+add_dependencies(fst2xml ${PROJECT_NAME}_build_info)
+add_dependencies(xml2fst ${PROJECT_NAME}_build_info)
 
 install(TARGETS fst2xml xml2fst)

@@ -3,6 +3,7 @@
 add_executable(reflex reflex.f90)
 target_link_libraries(reflex PRIVATE rmn)
 target_include_directories(reflex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(reflex ${PROJECT_NAME}_build_info)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain

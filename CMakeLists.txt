@@ -20,6 +20,8 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_Fortran_PREPROCESS ON)
 
+include_directories(${CMAKE_BINARY_DIR})
+
 ec_build_info()            # Generate build information
 
 if (EC_INIT_DONE LESS 2)

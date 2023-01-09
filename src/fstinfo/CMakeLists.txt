@@ -4,6 +4,7 @@ target_link_libraries(r.fstinfo PRIVATE rmn)
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(r.fstinfo PUBLIC "-Wl,--disable-new-dtags")
+add_dependencies(r.fstinfo ${PROJECT_NAME}_build_info)
 
 install(TARGETS r.fstinfo)
 

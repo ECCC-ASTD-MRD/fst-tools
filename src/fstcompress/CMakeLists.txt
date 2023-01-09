@@ -8,5 +8,7 @@ target_link_libraries(fstuncompress PRIVATE rmn)
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(fstcompress PUBLIC "-Wl,--disable-new-dtags")
 target_link_libraries(fstuncompress PUBLIC "-Wl,--disable-new-dtags")
+add_dependencies(fstcompress ${PROJECT_NAME}_build_info)
+add_dependencies(fstuncompress ${PROJECT_NAME}_build_info)
 
 install(TARGETS fstcompress fstuncompress)
