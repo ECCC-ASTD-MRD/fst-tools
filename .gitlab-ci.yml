@@ -19,7 +19,6 @@ before_script:
 build:rhel-8-icelake-64_inteloneapi-2022.1.2:
    stage: build
    only:
-      - try-fix-buildinfo
       - master
       - dev
       - tags
@@ -195,7 +194,6 @@ build:ubuntu-18.04-amd64_gnu-9.3.0:
       ORD_SOUMET_PROJECT : eccc_mrd
    stage: build
    only:
-     - try-fix-buildinfo
      - master
      - dev
      - tags
