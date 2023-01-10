@@ -2,7 +2,7 @@
 !**S/P CALCUL  MOYENNE ZONALE OU MERIDIONALE D UN CHAMP
 !     
       subroutine calcul(entre, sortie, ni, nj, poids, ccoupe, cigtyp)
-#include "impnone.cdk90"
+   implicit none
 !
 !AUTEUR 
 !    P. SARRAZIN  DORVAL QUEBEC AVRIL 85 DRPN 

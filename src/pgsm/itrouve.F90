@@ -21,7 +21,7 @@
 ! --------------------------------------------------------------------
 !
   
-#include "impnone.cdk90"
+   implicit none
 !
 !
       integer liste(1),nombre,ivaria,ntr

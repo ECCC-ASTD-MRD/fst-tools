@@ -1,8 +1,10 @@
 !
 !**S/P ECRITS   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 !
-      subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,      etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt)
+   subroutine ecrits(nom,npac,idat,ip1,ip2,ip3,type,      etiqet,igtyp,imprim,ig1srt,ig2srt,ig3srt,ig4srt)
+      use app
       implicit none
+
       external conver,fstecr,fclos,memoir,pgsmabt,imprims,fstopc,messags,fstcvt,putfld
       integer fstecr,fstopc,fstcvt,iopc
 !
@@ -103,8 +105,6 @@
 
       ier = fstcvt(      nom,    type,  letiket,  igtyp,       cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
-      print *, cnomvar, '--', ctypvar, '--' , cetiqet, '--', cigtyp
-
       if (nom.eq.-1)        cnomvar=cnumv
       if (type.eq.-1)       ctypvar=ctypv
       if (etiqet(1).eq.-1)  cetiqet=cetik
@@ -155,15 +155,18 @@
       endif
 !
       if (necrt.gt.9) then
-         write(6,660) cnumv,idatt,jpp1,jpp2,jpp3,ctypv,cetik,cigty
- 660     format('*   ENTRE     ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
-         write(6,670) cnomvar,idat,lip1,ip2,ip3,ctypvar,cetiqet,cigtyp
- 670     format('*   SORTIE    ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
+         write(app_msg,660) cnumv,idatt,jpp1,jpp2,jpp3,ctypv,cetik,cigty
+         call app_log(APP_INFO,app_msg)
+ 
+ 660     format('ecrits: ENTRE     ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
+         write(app_msg,670) cnomvar,idat,lip1,ip2,ip3,ctypvar,cetiqet,cigtyp
+         call app_log(APP_INFO,app_msg)
+ 670     format('ecrits: SORTIE    ',a2,2x,i10,3x,i5,3x,i2,         3x,i3,4x,a1,4x,a10,3x,a1)
 !
       endif
 !
       if (ichck.eq.0)  then
-         write(6,*)         'DIRECTIVE LIREN OU LIRSR DOIT-ETRE APPELE AVANT ECRITS'
+         call app_log(APP_ERROR,'ecrits: Directive LIREN or LIRSR must be called before ECRITS')
          call pgsmabt
       endif
 !
@@ -206,17 +209,16 @@
          endif
 #if defined (SGI) || defined (NEC)
       else if (mode.eq.2) then
-         write(6,*) 'LES FICHIERS DE TYPE "MS" NE SONT PAS SUPPORTES'
-         write(6,*)' DANS CETTE VERSION DE PGSM'
+         call app_log(APP_ERROR,'ecrits: "MS" file type are not supported with this version of PGSM')
 #endif
 #if defined (CRAY)
       else if (mode.eq.2)  then
          if (numero.le.0)
-         write(6,*)         'MAUVAISE DIRECTIVE NUMERO.LE.0  FICHIER MS (ECRITS)'
+            call app_log(APP_ERROR,'ecrits: Wrong directive NUMERO.LE.0 file MS')
          if (numero.ge.(iset-indxs))  then
 !            call closms(2)
             call fclos(lnkdiun(idx_ozsrt))
-            write(6,*)'FIN DU FICHIER CA DEBORDE (ECRITS)'
+            call app_log(APP_ERROR,'ecrits: End of file overflow')
             call pgsmabt
          endif
 !
@@ -229,7 +231,8 @@
 
          call putfld(tmpif0,tmpif0,iun,numero,iwrit,nni,nnj,          nbrow,npkc,istamp)
          if (message)then
-            write(6,600)ctypvar,cnomvar,lip1,ip2,            ip3,nni,nnj,iun,numero
+            write(app_msg,600)ctypvar,cnomvar,lip1,ip2,            ip3,nni,nnj,iun,numero
+            call app_log(APP_INFO,app_msg)
          endif
          numero = numero + numdel
 !
@@ -244,19 +247,20 @@
          endif
          call putfld(tmpif0,tmpif0,iun,0,iwrit,nni,nnj,         nbrow,npkc,istamp)
          if (message) then
-            write(6,610)ctypvar,cnomvar,lip1,ip2,ip3,nni,nnj,iun
+            write(app_msg,610)ctypvar,cnomvar,lip1,ip2,ip3,nni,nnj,iun
+            call app_log(APP_INFO,app_msg)
          endif
       else
          if (message) then
-            write(6,*)'FICHIER INCONNU ROUTINE ECRITS'
+            call app_log(APP_ERROR,'ecrits: Unknown file')
          endif
       endif
 !
 !
       deallocate(tmpif0)
 !
- 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),      'FICHIER MS ',i4,'   REC=',i4)
- 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),'TAILLE ',      2(i5,'- '), 'FICHIER SEQUENTIEL',i4)
+      600  format(2x,'ecritur:  Record written ',2(a2,'- '),3(i5,'- '),      'size ',2(i5,'- '),'file MS ',i4,'   REC=',i4)
+      610  format(2x,'ecritur:  Record written ',2(a2,'- '),3(i5,'- '),      'size ',2(i5,'- '),'file SEQUENTIEL',i4)
 !
       return
       end

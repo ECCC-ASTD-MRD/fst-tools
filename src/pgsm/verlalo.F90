@@ -1,8 +1,10 @@
 !
 !**S/P  VERLALO  VERIFI LONGITUDE ET LATITUDE
 !     
-      subroutine verlalo(clat,clon,nombre)
-#include "impnone.cdk90"
+   subroutine verlalo(clat,clon,nombre)
+      use app
+      implicit none
+      
       integer nombre
       real clat(nombre),clon(nombre)
 !
@@ -39,7 +41,8 @@
           if (clon(i).ge.360.0) clon(i)=clon(i) - 360.0
 !
           if (clat(i).lt.-90.005.or.clat(i).gt.90.005) then
-             write(6,*)' ROUTINE VERLALO MAUVAISE LATITUDE=',clat(i)
+            write(app_msg,*)'verlalo: Wrong latitude: ',clat(i)
+            call app_log(APP_ERROR,app_msg)
           endif
           clat(i)=max(-90.0,min(90.0,clat(i)))
        enddo

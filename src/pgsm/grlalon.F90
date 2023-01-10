@@ -1,8 +1,9 @@
 !
 !**S/P GRLALON   CALCUL LATITUDE LONGITUDE DE CHAQUE PT D'UNE GRILLE LATLON
 !
-      subroutine grlalon(nni,nnj,p1,p2,p3,p4)
-#include "impnone.cdk90"
+   subroutine grlalon(nni,nnj,p1,p2,p3,p4)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !

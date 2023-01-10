@@ -1,5 +1,6 @@
-      subroutine qqqecho(chaine)
-#include "impnone.cdk90"
+   subroutine qqqecho(chaine)
+      use app
+      implicit none
 
       external argdims
       integer argdims

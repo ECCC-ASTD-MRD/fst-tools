@@ -1,8 +1,10 @@
 !
 !**s/p epaisur  difference entre 2 champs de hauteur
 !
-      subroutine epaisur(iheur, npar, niveau)
-#include "impnone.cdk90"
+   subroutine epaisur(iheur, npar, niveau)
+      use app
+      implicit none
+
       external ecritur,fstinf,pgsmlir,memoir,fstprm,pgsmabt,      fstcvt,symetri, imprime,loupsou,fstopc,messags,      liraxez
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
       integer ezsint, ezqkdef, ezdefset
@@ -72,7 +74,7 @@
 !     heure ou iheur dans cette routine ne peut-etre -1 heure(tout) pas valide
 !
       if (iheur.eq.-1) then
-         write(6,*)         'HEURE NE PEUT-ETRE -1(TOUT/ALL) AVEC DIRECTIVE EPAIS'
+         call app_log(APP_ERROR,'epaisur: HEURE cannot be -1(ALL) with EPAIS directive')
          call pgsmabt
       endif
 !
@@ -102,15 +104,12 @@
       irec1=fstinf(1,ni,nj,nk,datev,cetiket,niveau(1),iheur,ip3ent,      ctypvar,'GZ  ')
       irec2=fstinf(1,ni,nj,nk,datev,cetiket,niveau(2),iheur,ip3ent,      ctypvar,'GZ  ')
       if (irec2 .lt. 0 .or. irec1 .lt. 0) then
-         write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (EPAISEUR)'
+         call app_log(APP_ERROR,'epaisur: Record does not exist in input file')
          return
       endif
 
       if (nk.gt.1) then
-         write(6,*)'**************************************************'
-         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (EPAISUR)'
-         write(6,*)'**************************************************'
+         call app_log(APP_ERROR,'epaisur: PGSM does not accept 3 dimension fields (NK>1)')
          call pgsmabt
       endif
 !
@@ -119,7 +118,7 @@
       ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,      ig1,ig2,ig3,ig4,cswa, clng, cdltf, cubc,       extra1, extra2, extra3)
 
       if (ier .lt. 0) then
-         write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
+         call app_log(APP_ERROR,'epaisur: FSTPRM failed')
       endif
 !
 !     verifier si grille gaussienne ni doit etre pair
@@ -148,7 +147,7 @@
 !
       ier = fstprm( irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetiket,cigtyp,       ig1,ig2,ig3,ig4, cswa,clng,cdltf,cubc,extra1,extra2,extra3)
       if (ier .lt. 0) then
-         write(6,*)' IER = FSTPRM NEGATIF VOIR EPAISUR'
+         call app_log(APP_ERROR,'epaisur: FSTPRM failed')
       endif
 !
 !     verifier si grille gaussienne ni doit etre pair

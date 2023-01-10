@@ -1,5 +1,7 @@
       subroutine coord(lescoords,mode)
-#include "impnone.cdk90"
+      use app
+      implicit none
+      
       real lescoords(*)
       integer mode
 
@@ -13,8 +15,8 @@
 
       localncoords = argdims(1)
       if (mod(localncoords,2).ne.0) then
-         print *, 'Malheureux(se)! Nombre de coordonnees impaires!'
-         stop
+         call app_log(APP_ERROR,'coord: Number of coordinates odd')
+         call pgsmabt
       endif
 
       if (mode.eq.0) then
@@ -27,7 +29,8 @@
             coordll(ncoords+i/2+1,1) = lescoords(i)
             coordll(ncoords+i/2+1,2) = lescoords(i+1)
          else
-            print *, '(COORD) TROP DE POINTS! MAX=', nmaxcoords, ' !!!'
+            write(app_msg,*) 'coord: Too many points, Max=', nmaxcoords
+            call app_log(APP_WARNING,app_msg)
          endif
       enddo
       

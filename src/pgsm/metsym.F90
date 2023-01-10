@@ -1,8 +1,10 @@
 !
 !**S/P CMETSYM   MISE A JOUR DES TABLES DE SYMETRIE
 !
-      subroutine cmetsym(cnom,sym) 
-#include "impnone.cdk90"
+   subroutine cmetsym(cnom,sym) 
+      use app
+      implicit none
+      
       external pgsmabt,messags
 !
 !AUTEUR  P.SARRAZIN  FEVRIER 82  DRPN DORVAL  P.Q. CANADA
@@ -40,7 +42,6 @@
 #include "voir.cdk90"
 #include "dummys.cdk90"
 !
-  
       logical sym
       character*4 cnom 
 !     
@@ -52,7 +53,7 @@
          noms(nnoms) = cnom
       else
          if (message) then
-            write(6,*)            'PLUS DE PLACE DANS LES TABLES DE SYMETRIE(METSYM)'
+            call app_log(APP_WARNING,'cmetsym: No more room in symetry tables METSYM')
          endif
       endif
       
@@ -60,8 +61,10 @@
       end
 !**   S/P METSYM   MISE A JOUR DES TABLES DE SYMETRIE
 !     
-      subroutine metsym(nom,sym) 
-#include "impnone.cdk90"
+   subroutine metsym(nom,sym) 
+      use app
+      implicit none
+
       external cmetsym
 !
 !AUTEUR  P.SARRAZIN  FEVRIER 82  DRPN DORVAL  P.Q. CANADA
@@ -80,7 +83,8 @@
       character*2 cnom
       
       write(cnom, '(A4)') nom
-      write(6, *) 'METSYM: NOM - ',nom,'CNOM - ', cnom 
+      write(app_msg, *) 'metsym: NOM - ',nom,'CNOM - ', cnom 
+      call app_log(APP_INFO,app_msg)
       call cmetsym(cnom, sym)
       
       

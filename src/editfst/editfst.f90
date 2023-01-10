@@ -24,8 +24,11 @@
 !****************************************
       use ISO_C_BINDING
       use configuration
+      use app
       IMPLICIT NONE 
       include 'excdes.inc'
+#include "fst-tools_build_info.h"
+
 !
 !         AUTEURS                                         DATE   VERSION
 !         VERSION ORIGINALE (COPYSTD) C. THIBEAULT  -     FEV. 83
@@ -265,9 +268,9 @@
 !     - NOMS       - NOMS DE VARIABLE DES DESIRES/EXCLURES
 !     - ETAT       - INDIQUE L'ETAT DU PGM. DANS LA BOITE A LA FIN
       EXTERNAL    FERMED, SELECT, FNOM, CCARD, OUVRES, SAUVDEZ, FERMES
-      EXTERNAL    FSTOPC, FSTOPL, EXDB, EXFIN, OUVRED, STDCOPI, MEMOIRH
+      EXTERNAL    FSTOPC, FSTOPL, OUVRED, STDCOPI, MEMOIRH
       EXTERNAL    QQEXIT
-      INTEGER     FSTOPC, FSTOPL, EXDB, EXFIN, OUVRED, FNOM, I
+      INTEGER     FSTOPC, FSTOPL, OUVRED, FNOM, I
       integer junk
       LOGICAL     FASTIO
 !      character(len=*), parameter :: current_version="v 1.19"
@@ -290,8 +293,6 @@
       call config_init   ! initialize values in module "configuration"
       max_requetes_exdes = Select_get_MAX_requetes()
       max_nlist_exdes = Select_get_MAX_Nlist()
-!       print *,'INFO: max requetes =',max_requetes_exdes
-!       print *,'INFO: max listes =',max_nlist_exdes
       allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b
@@ -356,7 +357,8 @@
 
 !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         I = EXDB('EDITFST',trim(RELEASE),'NON')
+         app_ptr=app_init(0,'editfst',trim(RELEASE),'',BUILD_TIMESTAMP)
+         call app_start()
       ELSE
          WRITE(6,*)'***   E D I T F S T   '//trim(RELEASE)//'   ***'
       ENDIF
@@ -365,14 +367,9 @@
 !     IF (DEF1(147) .ne. "OUI") CALL BOXED_MESSAGE(6, MSG_000, 4)
 
       IF( DIAG ) THEN
-         I = FSTOPC('MSGLVL', 'INFORM', .FALSE.)
+         I = app_loglevel('INFO')
       ELSE
-         I = FSTOPC('MSGLVL', DEF1(13), .FALSE.)   ! -m
-      ENDIF
-      IF(DEF1(14) .NE. 'FATALE') THEN
-         I = FSTOPC('TOLRNC', DEF1(14), .FALSE.)   ! -t
-      ELSE
-         I = FSTOPC('TOLRNC', DEF1(12), .FALSE.)   ! -k
+         I = app_loglevel(DEF1(13)) ! -m
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
       I = FSTOPL('IMAGE',  .TRUE., .FALSE.)
@@ -388,10 +385,7 @@
       IF(NFS .GT. 0) THEN
          CALL OUVRES( DEF1(26) )    ! ouvrir le premier fichier
          IF(NFSO .EQ. 0) THEN
-            PRINT*,' *********************************'
-            PRINT*,'***         PAS DE COPIE        ***'
-            PRINT*,'***    FICHIER SOURCE INCONNU   ***'
-            PRINT*,' *********************************'
+            call app_log(APP_ERROR,'Source file unknown, nothing copied')
             ETAT = 'ABORT'
             GO TO 30
          ENDIF
@@ -419,11 +413,9 @@
             NP = 1
             CALL STDCOPI( -1,-1,-1,-1 )
          ELSE
-            PRINT*,               ' *********************************'
-            PRINT*,               '***         PAS DE COPIE        ***'
-            IF(.NOT. OUVS) PRINT*,'***    FICHIER SOURCE INCONNU   ***'
-            IF(.NOT. OUVD) PRINT*,'*** FICHIER DESTINATION INCONNU ***'
-            PRINT*,               ' *********************************'
+            call app_log(APP_WARNING,'Nothing copied')
+            IF(.NOT. OUVS) call app_log(APP_ERROR,'Source file unknown')
+            IF(.NOT. OUVD) call app_log(APP_ERROR,'Destination file unknown')
             ETAT = 'ABORT'
          ENDIF
       ENDIF
@@ -433,7 +425,7 @@
       CALL FERMED
 !     IMPRIMER L'INDICATIF DE FIN DU PGM.
    30 IF( BOX ) THEN
-         I = EXFIN('EDITFST', ETAT, 'NON')
+         app_status=app_end(-1)
       ELSE
          IF(ETAT .EQ. 'ABORT') THEN
             WRITE(6,*)'***   E D I T F S T   A V O R T E   ***'
@@ -442,11 +434,5 @@
          ENDIF
       ENDIF
       IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
-!      IF(ETAT .EQ. 'ABORT') CALL boxed_message(6, MSG_ABT, 2)
       STOP
       END 
-      
-      character *128 function product_id_tag()
-      product_id_tag='$Id: editfst.F90 6.20 2015-10-07 18:53:41Z armnlib $'
-      return
-      end

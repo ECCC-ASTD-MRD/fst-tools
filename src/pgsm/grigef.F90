@@ -1,8 +1,9 @@
 !
 !**S/P GRIGEF   CALCUL LAT LONG DE CHAQUE PT D'UNE GRILLE "E"
 !
-      subroutine grigef(it,nni,nnj,xlat1,xlon1,xlat2,xlon2)
-#include "impnone.cdk90"
+   subroutine grigef(it,nni,nnj,xlat1,xlon1,xlat2,xlon2)
+      use app
+      implicit none
 !
 !AUTEUR   - y. chartier april 94
 !

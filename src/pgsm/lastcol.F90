@@ -1,6 +1,6 @@
 !
       subroutine lastcol(sortie,valeur,istart,ifini,incre) 
-#include "impnone.cdk90"
+   implicit none
 !
 !AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
 !

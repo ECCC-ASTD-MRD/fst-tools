@@ -1,5 +1,6 @@
 !**s/p qqqintx  choisir le degre de l'interpolation
    subroutine qqqintx(ordre)
+   use app
    implicit none
    integer ordre
 !
@@ -28,8 +29,7 @@ integer ier
    case (5)
       ier = ezsetopt('interp_degree', 'sph_average')
    case default
-      print *,  ' <QQQINTX>: MAUVAISE VALEUR - VALEUR DEVRAIT ETRE 0, 1 OU 3'
-      print *,  ' <QQQINTX>: ORDRE D''INTERPOLATION INITIALISE A 3'
+      call app_log(APP_WARNING,'qqqintx:Wrong interpolation value, should be 0, 1 or 3, will default to 3')
       ier = ezsetopt('interp_degree','cubic')
    end select
 

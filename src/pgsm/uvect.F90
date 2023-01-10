@@ -2,7 +2,9 @@
 !**s/p uvectur interpolation des vecteurs u-v (horizontalement)
 !
    subroutine uvectur (cnom1, cnom2, cnom3,iheur, npar, itabuv)
-#include "impnone.cdk90"
+      use app
+      implicit none
+      
    external ecritur,cigaxg,fstinf,fstinl,ipgsmlic,pgsmlic,ipgsmlir,pgsmlir,memoir, fstcvt,fstprm,pgsmabt,imprime,vdauv, incdat,fstopc,messags
    external liraxez,  cxgaig
    integer fstinf,fstinl,ipgsmlic,pgsmlic,ipgsmlir,pgsmlir,fstprm,fstopc,fstcvt
@@ -122,16 +124,14 @@
 
       ier = fstinl(iunit,ni,nj,nk,datev,cetiket,itabuv(iprs),iheur,ip3ent,ctypvar,cnom1,listniv,infon,total_keys)
       if (ier .lt. 0 .or. infon.eq.0) then
-         write(6,610) cnom1
- 610     format(' AUCUN RECORD SUR FICHIER (FSTINL-UVECTUR) NOM=',a2)
+         write(app_msg,610) cnom1
+ 610     format('uvectur: No record in file NOM=',a2)
+         call app_log(APP_ERROR,app_msg)
          cycle
       endif
 
       if (nk.gt.1) then
-         write(6,*)'***********************************************'
-         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-         write(6,*)'***********************************************'
+         call app_log(APP_ERROR,'uvectur: PGSM does not accept 3 dimension fields (NK>1)')
          call pgsmabt
       endif
 !
@@ -147,7 +147,7 @@
          ier = fstprm( irec_uu, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,jp1,jp2, jp3,ctypvar, cnomvar,cetike,cigtyp, ig1,ig2,ig3,ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          npack_orig = -cnbits
          if (ier .lt. 0) then
-            write(6,*)' IER = FSTPRM NEGATIF VOIR UVECTUR'
+            call app_log(APP_ERROR,'uvectur: FSTPRM failed')
          endif
 !
 !     verifier si grille gaussienne ni doit etre pair
@@ -162,15 +162,13 @@
          call incdatr(datdv,dat,delta_t)
          irec_vv = fstinf(iunit,ni,nj,nk,datdv,cetike,jp1,jp2,jp3,ctypvar,cnom2)
          if (irec_vv .lt. 0) then
-            write(6,610) nom2
+            write(app_msg,610) nom2
+            call app_log(APP_ERROR,app_msg)
             call pgsmabt
          endif
 
          if (nk.gt.1) then
-          write(6,*)'********************************************'
-          write(6,*)'         PGSM N ACCEPTE PAS UN          '
-          write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (UVECTUR)'
-          write(6,*)'********************************************'
+          call app_log(APP_ERROR,'uvectur: PGSM does not accept 3 dimension fields (NK>1)')
           call pgsmabt
        endif
        
@@ -337,7 +335,7 @@
                uuout => tmpif1
                vvout => tmpif2
                if (message) then
-                 write(6,*)'AUCUNE INTERPOLATION HORIZONTALE '
+                  call app_log(APP_WARNING,'uvectur: No horizontal interpolation')
               endif
            endif
 !

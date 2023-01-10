@@ -8,10 +8,12 @@
 
 #include <pwd.h>
 
+#include <App.h>
 #include <rmn/rpnmacros.h>
 #include <rmn/fnom.h>
 #include <rmn/fstd98.h>
 
+#include "fst-tools_build_info.h"
 
 /* introducing a new enum called Bool */
 typedef enum
@@ -176,6 +178,9 @@ void xml2fst(int argc, char **argv)
 
   c_ccard(argv, argc, &liste[0], val, &def[0], 4, &npos);
 
+    App_Init(APP_MASTER,"xml2fst",VERSION,"",BUILD_TIMESTAMP);
+    App_Start();
+
   strcpy(xmlFile, val[0]);
   strcpy(fstFile, val[1]);
   strcpy(encoding, val[2]);
@@ -203,6 +208,7 @@ void xml2fst(int argc, char **argv)
   /* close fst file once data has been written */
   ier = c_fstfrm(iun);
 
+  App_End(-1);
   exit(0);
 }
 
@@ -218,12 +224,6 @@ void ReportBadArgument(char *option)
   else
     fprintf(stderr, "Warning - missing or malformed argument for option: %s\n", option);
 #endif
-}
-
-/* display error message if XML input not found */
-void ReportError(char *option)
-{
-      fprintf(stderr, "Warning - bad file: %s\n", option);
 }
 
 /* test if character is a white space */
@@ -412,11 +412,11 @@ void write_to_fstFile()
 /*   nomvar = "\0"; */
 /*   nomvar = "ABDC\0"; */
 
-  fprintf(stderr, " nomvar = >%s<\n", nomvar);
+  App_Log(APP_INFO,"nomvar = >%s<\n", nomvar);
 
   if (datyp == INTN)
     {
-      fprintf(stderr, "****** Writing int values to fst file\n");
+      App_Log(APP_INFO,"Writing int values to fst file\n");
       ier = c_fstecr(intdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
 
       if (intdata)
@@ -426,7 +426,7 @@ void write_to_fstFile()
 
   else if (datyp == FLOATN || datyp == I3E)
     {
-      fprintf(stderr, "****** Writing float values to fst file \n");
+      App_Log(APP_INFO,"Writing float values to fst file \n");
       ier = c_fstecr(floatdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
 
       if (floatdata)
@@ -435,7 +435,7 @@ void write_to_fstFile()
     }
   else if (datyp == CHR)
     {
-      fprintf(stderr, "****** Writing character values to fst file\n");
+      App_Log(APP_INFO,"Writing character values to fst file\n");
 
       chardata = (char *)malloc(256 * sizeof(char));
 
@@ -449,9 +449,9 @@ void write_to_fstFile()
 
       else
         {
-          fprintf(stderr, "Error, cannot allocate memory for chardata\n");
+          App_Log(APP_ERROR,"Cannot allocate memory for chardata\n");
+          App_End(-1);
           exit(FAILURE);
-
         }
 
     }
@@ -539,7 +539,7 @@ void setStringVar(char *option, char *buf)
           nomvar = ">>";
 
           trimright(nomvar);
-          fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
+          App_Log(APP_INFO,"setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
 
         }
       /* trimleft(nomvar); */
@@ -814,7 +814,8 @@ void extract_data(char * buf, int datatype)
         }
       else
         {
-          fprintf(stderr, "extract_data(char *option), PROBLEM allocating memory for integer data\n");
+          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for integer data\n",__func__);
+          App_End(-1);
           exit(FAILURE);
         }
 
@@ -828,7 +829,8 @@ void extract_data(char * buf, int datatype)
         floatdata[i] = strtod(token, (char **)null);
       else
         {
-          fprintf(stderr, "extract_data(char *option), PROBLEM allocating memory for float data\n");
+          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for float data\n",__func__);
+          App_End(-1);
           exit(FAILURE);
         }
 
@@ -859,7 +861,8 @@ void extract_data(char * buf, int datatype)
         }
       else
         {
-          fprintf(stderr, "extract_data(char *option), PROBLEM allocating memory for character data\n");
+          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for character data\n",__func__);
+          App_End(-1);
           exit(FAILURE);
         }
     }
@@ -1006,36 +1009,6 @@ void InitConfig(void)
 
 }
 
-char * strtrim(char *s)
-{
-
-#define SPACE(c) ((c == ' ') || (c == '\t') || (c == '\n'))
-  char *p = s;
-
-  for(p = s; *p; p++);        /* Find end of string */
-
-
-  for(p--; p>=s; p--)
-    {
-      if (SPACE(*p))
-        *p = 0;                /* Zap trailing blanks */
-      else
-        break;
-    }
-
-  while(s != null)
-    {
-      while((*s == ' ') || (*s == '\t') || (*s == '\n'))
-        {
-          s++;                /* Strip leading blanks */
-
-        }
-      s++;
-    }
-
-  return s;
-}
-
 
 void ParseConfigFile(char *file)
 {
@@ -1064,7 +1037,7 @@ void ParseConfigFile(char *file)
 
     /* open the file and parse its contents */
     if ((fin = fopen(fname, "r")) == null)
-      ReportError((char *)fname);
+      App_Log(APP_WARNING,"bad file: %s\n",(char *)fname);
     else
     {
       config_text = null;
@@ -1135,7 +1108,7 @@ void ParseConfigFile(char *file)
 
               if (strcmp(name, " ") == 0 || strlen(name) == 1)
                 {
-                  fprintf(stderr, "ParseConfigFile(), name found is empty \n");
+                  App_Log(APP_WARNING,"%s: name found is empty \n",__func__);
                 }
               else
                 {
@@ -1199,6 +1172,3 @@ static void trimright(
         }
     }
 }
-
-
-char * product_id_tag="$Id$";

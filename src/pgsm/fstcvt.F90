@@ -2,7 +2,7 @@
 !**   FONCTION FSTCVT  HOLLERITH A CARACTERE OU L'INVERSE
 !     
       integer FUNCTION FSTCVT2( NOM, TYP, ETIK, GRTP, CNOM, CTYP,      CETIK, CGRTP, HOLACAR)
-#include "impnone.cdk90"
+   implicit none
       
       INTEGER NOM, TYP, ETIK(3), GRTP
       CHARACTER *(*) CNOM

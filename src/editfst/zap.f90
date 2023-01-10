@@ -20,6 +20,7 @@
 !
       SUBROUTINE ZAP(TV, NV, LBL, DATE, IP1, IP2, IP3)
       use configuration
+      use app
       IMPLICIT NONE 
   
       INTEGER, intent(IN) ::  TV, NV, LBL(*), DATE, IP1, IP2, IP3
@@ -66,17 +67,20 @@
    10 IF(IP3 .NE. -1) THEN
          ZA = .TRUE.
          Z3 = IP3
-         IF( DEBUG ) WRITE(6,*)' ZIP3 = ',Z3
+         write(app_msg,*) 'zap: ZIP3 = ',Z3
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    20 IF(IP2 .NE. -1) THEN
          ZA = .TRUE.
          Z2 = IP2
-         IF( DEBUG ) WRITE(6,*)' ZIP2 = ',Z2
+         write(app_msg,*) 'zap: ZIP2 = ',Z2
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    30 IF(IP1 .NE. -1) THEN
          ZA = .TRUE.
          Z1 = IP1
-         IF( DEBUG ) WRITE(6,*)' ZIP1 = ',Z1
+         write(app_msg,*) 'zap: ZIP1 = ',Z1
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
    40 IF(DATE .NE. -1) THEN
          ! ZD = DATE - DATE/1000000000*1000000000 !
@@ -87,7 +91,8 @@
             IF (IER == 0 .AND. NDATE == DATE) THEN
                ZA = .TRUE.
                ZD = DATE
-               IF( DEBUG ) WRITE(6,*)' ZDAT = ',ZD
+               write(app_msg,*) 'zap: ZDAT = ',ZD
+               call app_log(APP_DEBUG,app_msg)
             ENDIF
          ENDIF
       ENDIF
@@ -97,21 +102,24 @@
          CALL HOLACAR(ZE, LIS, I, LBL, 12)
          IF(ZE .NE. '????????????') THEN
             ZA = .TRUE.
-            IF( DEBUG ) WRITE(6,*)' ZETIKET= -',ZE,'-'
+            write(app_msg,*) 'zap: ZETIKET = ',ZE
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
       ENDIF
    60 IF(NV .NE. -1) THEN
          I = FSTCVT(NV, -1, -1, -1, ZN, T, E, G, .TRUE.)
          IF(ZN .NE. '????') THEN
             ZA = .TRUE.
-            IF( DEBUG ) WRITE(6,*)' ZNOM= -',ZN,'-'
+            write(app_msg,*) 'zap: ZNOM = ',ZN
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
       ENDIF
    70 IF(TV .NE. -1) THEN
          I = FSTCVT(-1, TV, -1, -1, N, ZT, E, G, .TRUE.)
             IF(ZT .NE. '??') THEN
             ZA = .TRUE.
-            IF( DEBUG ) WRITE(6,*)' ZTYP= -',ZT,' -'
+            write(app_msg,*) 'zap: ZTYP = ',ZT
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
       ENDIF
      

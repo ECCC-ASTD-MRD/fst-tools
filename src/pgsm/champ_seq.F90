@@ -3,13 +3,14 @@
 !
 #include "defin.cdk90"
       subroutine champ_seq (listn,listip1,waitOrGo)
+      use app
       implicit none
       integer listn(*),listip1(*),waitOrGo
       external ecritur,fstrwd,pgsmlir,fstprm,symetri,fstsel,fstsui,pgsmluk
-      external loupneg,loupsou,fstopc,argdims,pgsmabt,imprims,grille2
+      external loupneg,loupsou,argdims,pgsmabt,imprims,grille2
       external imprime,messags,fstcvt
       external liraxez
-      integer  fstinf,pgsmlir,fstprm,fstopc,fstcvt,fstsel,fstsui,fstrwd,pgsmluk
+      integer  fstinf,pgsmlir,fstprm,fstcvt,fstsel,fstsui,fstrwd,pgsmluk
       integer ezqkdef, ezsint, ezdefset
 !
 !auteur  Yves Chartier drpn Dorval Quebec Avril 1996
@@ -74,14 +75,14 @@
 !
       if (npar.ne. 3) then
          if (message) then
-            write(6,*) 'DIRECTIVE CHAMP_SEQ IL DEVRAIT Y AVOIR 3 ARGUMENTS (CHAMP_SEQ)'
+            call app_log(APP_ERROR,'champ_seq: Directive CHAMP_SEQ should have 3 arguments')
          endif
          return
       endif
 
       if (.not.associated(tmplat)) then
          if (message) then
-            write(6,*)'GRILLE NON DEFINIE ..GRILLE P.S.(2805)'
+            call app_log(APP_WARNING,'champ_seq: Grid not defined, will use PS(2805)')
          endif
          call grille2(3,51,55,26.,28.,381000.,350.,1)
       endif
@@ -91,23 +92,17 @@
 
       ntitems = ntitems + 1
       if (ntitems.gt.nmaxlist1) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 DIRECTIVES CHAMP_SEQ A ETE DEPASSEE *'
-         print *,'*******************************************************'
+         call app_log(APP_ERROR,'champ_seq: Limit of 16 directives CHAMP_SEQ has been passed')
          call pgsmabt
       endif
 
       if (argdims(1).gt.nmaxlist2) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 NOMS DE VARIABLES A ETE DEPASSEE    *'
-         print *,'*******************************************************'
+         call app_log(APP_ERROR,'champ_seq: Limit of 16 variable names has been passed')
          call pgsmabt
       endif
 
       if (argdims(2).gt.nmaxlist2) then
-         print *,'*******************************************************'
-         print *,'* LA LIMITE DE 16 NIVEAUX VERTICAUX A ETE DEPASSEE    *'
-         print *,'*******************************************************'
+         call app_log(APP_ERROR,'champ_seq: Limit of 16 vertical levels has been passed')
          call pgsmabt
       endif
 
@@ -143,7 +138,6 @@
          processed = .false.
          ier = fstprm(irec, date,deet,npas,ni, nj, nk,          nbits,datyp,         ip1,ip2,ip3,typvar,nomvar,etiket,         cigtyp,ig1,ig2,ig3,ig4,         swa, lng, dltf, ubc, extra1, extra2, extra3)
 
-!         print *,nomvar,typvar,ip1,ip2,ip3,etiket,date
          heureok = .false.
          if (heures(1).eq.-1) then
             heureok=.true.
@@ -167,10 +161,7 @@
                               ier=pgsmluk(tmpif1,irec,ni,nj,nk,nomvar,cigtyp)
 !
                               if (nk .gt. 1) then
-                                 write(6,*)'***********************************************'
-                                 write(6,*)'         PGSM N ACCEPTE PAS UN          '
-                                 write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (CHMPDIF)'
-                                 write(6,*)'***********************************************'
+                                 call app_log(APP_ERROR,'champ_seq: PGSM does not allow for 3 dimension fields (NK>1)')
                                  call pgsmabt
                               endif
 
@@ -193,7 +184,7 @@
          goto 200
       endif
 
-!**  l'interpolation est terminee - On a passé a travers le fichier
+!**  l'interpolation est terminee - On a passï¿½ a travers le fichier
 
       do i=1,ntitems
          do j=1,nitems2(i)

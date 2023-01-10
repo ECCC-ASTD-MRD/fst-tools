@@ -1,5 +1,7 @@
-      subroutine qqqfilt(inout,weightlst,ntimes,verbose)
+   subroutine qqqfilt(inout,weightlst,ntimes,verbose)
+      use app
       implicit none
+      
       integer inout,weightlst(*),ntimes,verbose
       
 #include "qqqfilt.cdk90"
@@ -16,12 +18,12 @@
 
 
       if (inout.ne.1.and.inout.ne.2) then
-        write (6,*) '(QQQFILT) On doit mentionner LECTURE ou ECRITURE'
+        call app_log(APP_ERROR,'qqqfilt: You have to use LECTURE or ECRITURE directives')
         return
       endif
 
       if (argdims(2).gt.9) then
-        write (6,*) '(QQQFILT) Liste de poids trop longue - Maximum=9'
+        call app_log(APP_ERROR,'qqqfilt: Weight list too long, maximum is 9')
         return
       endif
 
@@ -37,7 +39,7 @@
       fltverb(inout)=verbose
 
       if (mod(fltwgtlng(inout),2).ne.1) then
-        write (6,*) '(QQQFILT) Liste de poids doit etre impaire'
+        call app_log(APP_ERROR,'qqqfilt: Weight list has to be odd')
         return
       endif
 

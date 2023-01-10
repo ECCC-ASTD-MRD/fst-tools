@@ -1,7 +1,9 @@
 !**S/P ECRITUR   ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 !
-      subroutine ecritur(fld,npac,idat,deet,npas,ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
-#include "impnone.cdk90"
+   subroutine ecritur(fld,npac,idat,deet,npas,ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+      use app
+      implicit none
+
       external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
       integer fstopc,fstcvt,fstecr
 !
@@ -146,10 +148,6 @@
         local_npac = npac
       endif
 
-!      print *, npac, npack_orig, local_npac
-!
-!
-!
 !
 !     SI LE NOM EXISTE DANS LA TABLE BATIT PAR L USAGER ALORS
 !     LE fld EST MODIFIE  EX: fld(NI,NJ) = (fld(NI,NJ)+ECART)*FACTEUR
@@ -162,9 +160,9 @@
 
       if (fltoggle(2)) then
         if (cgtyp.eq.'Y') then
-          write (6, *) '(ECRITUR) Impossible de filtrer des flds sur grille Y'
+         call app_log(APP_WARNING,'ecritur: Cannot filter fields on Y grid')
         else
-          write (6, *) ' fld FILTRE A L''ECRITURE'
+         call app_log(APP_INFO,'ecritur: Field filtered on write')
 !          call statfld4 (fld,cnomvar,0,'AVANFFLT',ni,nj,1,ni,nj,1,0,0
 !     &         ,0)
           call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1,2), fltwgtlng(2))
@@ -216,7 +214,7 @@
 !
       else
          if (mode.eq.2) then
-            write(6,*)            'LES FICHIERS DE TYPE "MS" NE SONT PLUS SUPPORTES'
+            call app_log(APP_WARNING,'ecritur: "MS" file type are not supported anymore')
          else
          endif
 !
@@ -230,7 +228,7 @@
 
             write(iun) fld
             if (message) then
-               write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
+               write(app_msg,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
             endif
          else if (mode.eq.5) then
             if (valid) then
@@ -271,7 +269,7 @@
 !
          else
             if (message) then
-               write(6,*)'FICHIER INCONNU ROUTINE ECRITUR'
+               call app_log(APP_ERROR,'ecritur: Unknown file')
             endif
          endif
       endif
@@ -282,8 +280,10 @@
       return
       end
 
-      subroutine iecritur(fld,npac,idat,deet,npas,ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
-#include "impnone.cdk90"
+   subroutine iecritur(fld,npac,idat,deet,npas,ni,nj,nk,ip1,ip2,ip3,ctypvar,cnomvar,cetiket,cgtyp,llg1,llg2,llg3,llg4)
+      use app
+      implicit none
+      
       external conver,fstecr,fclos,memoir,pgsmabt,      imprims,fstopc,messags,fstcvt,putfld
       integer fstopc,fstcvt,fstecr
 #include "lires.cdk90"
@@ -394,7 +394,7 @@
 !
       else
          if (mode.eq.2) then
-            write(6,*)            'LES FICHIERS DE TYPE "MS" NE SONT PLUS SUPPORTES'
+            call app_log(APP_WARNING,'ecritur: "MS" file type are not supported anymore')
          else if (mode.eq.3.or.mode.eq.4) then
             if (mode.eq.4) then
                cdatyp = 1
@@ -406,7 +406,7 @@
 
             write(iun) fld
             if (message) then
-               write(6,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
+               write(app_msg,610)ltypsrt,cnomvar,ip1,ip2o,ip3o,ni,nj,iun
             endif
          else if (mode.eq.5) then
             if (valid) then
@@ -424,13 +424,13 @@
             call incdatr(idatv,idat,delta_t)
          else
             if (message) then
-               write(6,*)'FICHIER INCONNU ROUTINE ECRITUR'
+               call app_log(APP_WARNING,'ecritur: Unknown file')
             endif
          endif
       endif
 !
 !
- 600  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER MS ',i4,'   REC=',i4)
- 610  format(2x,' ENREG.ECRIT ',2(a2,'- '),3(i5,'- '),      'TAILLE ',2(i5,'- '),'FICHIER SEQUENTIEL',i4)
+ 600  format(2x,'ecritur:  Record written ',2(a2,'- '),3(i5,'- '),      'size ',2(i5,'- '),'file MS ',i4,'   REC=',i4)
+ 610  format(2x,'ecritur:  Record written ',2(a2,'- '),3(i5,'- '),      'size ',2(i5,'- '),'file SEQUENTIEL',i4)
       return
       end

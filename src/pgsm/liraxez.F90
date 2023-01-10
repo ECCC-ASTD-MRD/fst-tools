@@ -1,5 +1,6 @@
       subroutine liraxez(iun, ni, nj, nk, ig1, ig2, ig3, ig4)
-#include "impnone.cdk90"
+      use app
+   implicit none
 
       integer iun, ni, nj, nk, ig1, ig2, ig3, ig4
       
@@ -25,8 +26,7 @@
       integer numy,numx,ier,iopc
       integer cnbits,cdatyp,extra3,extra2,extra1,cubc,cdltf,clng,cswa
 !     
-      
-      
+        
       if (ni.eq.niz.and.nj.eq.njz.and.nk.eq.nkz.and.ig1.eq.ig1z.and.      ig2.eq.ig2z.and.ig3.eq.ig3z.and.ig4.eq.ig4z) then
          return
       endif
@@ -43,20 +43,17 @@
       irecy = fstinf(iun, niy, njy, nky, -1,' ',       ig1 ,ig2, ig3,'  ','^^  ')
       
       if (irecy .lt. 0 .or.irecx .lt. 0) then
-         print *,          'FSTINF ROUTINE LIRAXEZ RECORD ^^ OU >> MANQUANT...'
+         call app_log(APP_ERROR,'liraxez: Record ^^ or >> missing')
          call pgsmabt
       endif
 !     
       if (nky .gt. 1) then
-         write(6,*)'************************************************'
-         write(6,*)'         PGSM N''ACCEPTE PAS UN          '
-         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 (RECORD ^^ OU >>)'
-         write(6,*)'************************************************'
+         call app_log(APP_ERROR,'liraxez: PGSM does not allow 3 dimensions fields (NK>1, record ^^ or >>)')
          call pgsmabt
       endif
       
       ier = fstprm(irecy,idatt,idett,npas,niy,njy,nky, cnbits,cdatyp,      jjp1,jjp2,jjp3,ctpvry,cnmvar1,citiky,cgtypy,      ig1y,ig2y,ig3y,ig4y, cswa, clng, cdltf, cubc,      extra1, extra2, extra3)
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRAXEZ'
+      if (ier .lt. 0) call app_log(APP_ERROR,'liraxez: FSTPRM failed')
 !     
 !     verifier si grille gaussienne ni doit etre pair
 !     
@@ -65,7 +62,7 @@
       ier = fstprm(irecx,idatt,idett,npas,nix,njx,nkx, cnbits,cdatyp,      jjp1,jjp2,jjp3,ctpvrx,cnmvar2,citikx,cgtypx,      ig1x,ig2x,ig3x,ig4x, cswa, clng, cdltf, cubc,      extra1, extra2, extra3)
       
       
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIRAXEZ'
+      if (ier .lt. 0) call app_log(APP_ERROR,'liraxez: FSTPRM failed')
 !     
 !     verifier si grille gaussienne ni doit etre pair
 !     
@@ -73,8 +70,7 @@
 !     
 !     
       if (cgtypy.ne.cgtypx .or. ig1y.ne.ig1x .or. ig2y.ne.ig2x .or.       ig3y.ne.ig3x .or. ig4y .ne.ig4x) then
-         write(6,*)' VERIFIER RECORD "^^" OU ">>" '
-         write(6,*)' GRTYP,IG1,IG2,IG3,IG4 SONT DIFFERENTS'
+         call app_log(APP_ERROR,'liraxez: Check record "^^" or ">>", GRTYP,IG1,IG2,IG3,IG4 are different')
          call pgsmabt
       endif
       
@@ -85,14 +81,14 @@
       
       ier = fstluk(axex, irecx, nix, njx, nkx)
       if (ier .lt. 0) then
-         print *, 'PROBLEME LECTURE ENREGISTREMENT >> '
-         stop
+         call app_log(APP_ERROR,'liraxez: Problem reading record >>')
+         call pgsmabt
       endif
       
       ier = fstluk(axey, irecy, niy, njy, nky)
       if (ier .lt. 0) then
-         print *, 'PROBLEME LECTURE ENREGISTREMENT ^^ '
-         stop
+         call app_log(APP_ERROR,'liraxez: Problem reading record ^^')
+         call pgsmabt
       endif
       
       niz = nix

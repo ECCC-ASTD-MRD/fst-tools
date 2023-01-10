@@ -18,6 +18,7 @@
 ! */
 !**   FUNCTION OUVRE UN FICHIER DESTINATION
       FUNCTION OUVRED( DN ) 
+      use app
       use configuration
       IMPLICIT      NONE
       INTEGER       OUVRED
@@ -50,7 +51,7 @@
       integer ier
 
       if(dryrun) then  ! mode dryrun, on fait comme si on avait ouvert le fichier de sortie
-        PRINT*,'DRYRUN: le fichier de sortie ne sera pas ouvert'
+        call app_log(APP_INFO,'OUVRED: This is a dryrun, the output file will not be opened')
         ouvred = 0
         ouvd = .true.
         return
@@ -59,21 +60,19 @@
       IF(DN.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM,'SEQ') .GT. 0) THEN
             OUVRED = 0
-            IF( DEBUG ) PRINT*,'FICHIER SEQUENTIEL ',ND,' DEJA OUVERT'
+            write(app_msg,*) 'ouvred: Sequentila file ',ND,' already opened'
+            call app_log(APP_DEBUG,app_msg)
          ELSE
             OUVRED = FSTNBR( 3 )
-            IF( DEBUG ) PRINT*,'FICHIER ',ND,' DEJA OUVERT RANDOM ','TAILLE =',OUVRED
+            write(app_msg,*) 'ouvred: File',ND,' already opened ','Size =',OUVRED
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
          RETURN
       ENDIF
   
 !     SI DEJA OUVERT COMME SOURCE, ERREUR FATALE
       IF(DN.EQ.NS .AND. OUVS) THEN
-         PRINT*,'  **************************************'
-         PRINT*,' *              ATTENTION               *'
-         PRINT*,'* DESTINATION = SOURCE,  ERREUR FATALE   *'
-         PRINT*,' *                ABORT                 *'
-         PRINT*,'  **************************************'
+         call app_log(APP_ERROR,'ouvred: Destination file is the same as the source file')
          CALL qqexit(54)
       ENDIF
 
@@ -85,11 +84,7 @@
       IF(ier .EQ. 0) THEN
          OUVRED = FSTOUV(3, DNOM)
          if (ouvred .lt. 0) then
-            PRINT*,'  **************************************'
-            PRINT*,' *              ATTENTION               *'
-            PRINT*,'* ERREUR DANS FSTOUV FICHIER INUTILISABLE *'
-            PRINT*,' *                ABORT                 *'
-            PRINT*,'  **************************************'
+            call app_log(APP_ERROR,'ouvred: Cannot open file')
             CALL qqexit(55)
          endif
          ND     = DN
@@ -102,15 +97,12 @@
                RENDUA = RENDUA+1
                GO TO 10
             ENDIF
-            IF( DEBUG ) PRINT*,'ENREGISTREMENTS AVANT COPIE =',RENDUA
+            write(app_msg,*) 'ouvred: Records before copy =',RENDUA
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
          COPIES = 0
       ELSE
-         PRINT*,'  **************************************'
-         PRINT*,' *              ATTENTION               *'
-         PRINT*,'* ERREUR DANS FNOM FICHIER INUTILISABLE  *'
-         PRINT*,' *                ABORT                 *'
-         PRINT*,'  **************************************'
+         call app_log(APP_ERROR,'ouvred: File unusable')
          CALL qqexit(55)
       ENDIF
 

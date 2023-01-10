@@ -1,7 +1,7 @@
 !**S/P IPGSMLUK
 !
       integer function ipgsmluk(ifld,key,ni,nj,nk,nomvar,grtyp)
-#include "impnone.cdk90"
+   implicit none
       integer key,ni,nj,nk
       integer, dimension(ni,nj) :: ifld
       character*4 nomvar

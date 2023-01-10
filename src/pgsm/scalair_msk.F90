@@ -1,7 +1,9 @@
 !**s/p scalair  interpolation horizontale d un champ
 !               defini par l usager
-      subroutine scalair_msk(key, liste, done_liste, len_liste)
-#include "impnone.cdk90"
+   subroutine scalair_msk(key, liste, done_liste, len_liste)
+      use app
+      implicit none
+
       integer :: key,len_liste
       integer, dimension(len_liste) :: liste
       logical, dimension(len_liste) :: done_liste
@@ -15,7 +17,6 @@
       integer ezgdef_fmem, ezqkdef, ezsint, ezsint_mdm, ezdefset, fst_get_mask_key, key_masq
       logical skip
 
-!
 #include "accum.cdk90"
 #include "dates.cdk90"
 #include "defin.cdk90"
@@ -102,8 +103,12 @@
          tmpout => fld_out
       else
          tmpout => fld
-         if (message) write(6,660) cnom
- 660           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
+         if (message) then
+            write(app_msg,660) cnom
+            call app_log(APP_INFO,app_msg)
+         endif
+         
+ 660           format(2x,'scalair_msk: No horizonal interpolation CHAMP=',a2)
       endif
 !     ecrire sur fichier approprie(std,ms,seq)
       if (cnomx == cnomqr) then
@@ -128,8 +133,10 @@
       else
          tmpout => fld
          tmpmsk => masq
-         if (message) write(6,662) cnom
- 662           format(2x,'AUCUNE INTERPOLATION HORIZONTALE CHAMP=',a2)
+         if (message) then
+            write(app_msg,660) cnom
+            call app_log(APP_INFO,app_msg)
+         endif
       endif
 !     ecrire sur fichier approprie(std,ms,seq)
       if (cnomx == cnomqr) then
@@ -178,13 +185,8 @@
 
 !
    if (nunv > 0) then
-      write(6,666)
- 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
-      write(6,668)
- 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
-      write(6,669)
- 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
-!
+      call app_log(APP_WARNING,'scalair_msk: No interpolation on variable pair CHAMP(TOUT, TOUT), you have to use a variable name ex: CHAMP(UU, TOUT)')
+      call app_log(APP_WARNING,'scalair_msk: Vector interpolation will be scalar')
    endif
    return
    end

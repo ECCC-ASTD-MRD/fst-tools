@@ -20,7 +20,7 @@
 !                LES CARACTERES PASSES VIA DIRECTIVES READLX (STOCKES DANS DES ENTIERS)
 
       SUBROUTINE HOLACAR(LABEL, LIST, NL, STRING, NC)
-  
+      use app
       IMPLICIT   NONE 
       INTEGER, intent(IN) ::   NL, LIST(NL), STRING(NL*3), NC
       CHARACTER(len=*), intent(OUT) :: LABEL(NL)
@@ -50,11 +50,12 @@
          L = ishft(LIST(K), -16)             ! position du debut d'extraction dans string
          I = IAND(255, ishft(LIST(K), -8))   ! nombre de caracteres a extraire
          IF(I .GT. NC) THEN
-            WRITE(6,*)' LIMITE DE',NC,' CARACTERES DEPASSEE :',I
+            WRITE(app_msg,*) 'holacar: Limite of ',NC,' character passed:',I 
+            call app_log(APP_ERROR,app_msg)
             CALL qqexit(40)
          ENDIF
          IF(IAND(255, LIST(K)) .NE. 3) THEN  ! ce ne sont pas des caracteres (dixit readlx)
-            WRITE(6,*)' ARGUMENT PAS DE TYPE CARACTERE'
+            call app_log(APP_ERROR,'holacar: Argument not of type character')
             CALL qqexit(41)
          ENDIF
          J = (I+NCW-1)/NCW             ! nombre de mots de 32 bits

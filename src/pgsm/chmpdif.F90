@@ -3,7 +3,8 @@
 !
 #include "defin.cdk90"
       subroutine chmpdif (noment,nomsrt,ip1tab,ip2tab,ip3tab,ip1s, ip2s, ip3s)
-#include "impnone.cdk90"
+      use app
+   implicit none
       external ecritur,fstinf,pgsmlir,memoir,fstprm,symetri
       external loupneg,loupsou,fstopc,argdims,pgsmabt,imprims,grille2
       external imprime,messags,fstcvt
@@ -107,14 +108,14 @@
       nk = 1
       if (npar.lt. 5) then
          if (message) then
-            write(6,*)            'DIRECTIVE CHMPDIF IL DEVRAIT Y AVOIR AU MOINS 5 ARGUMENTS (CHMPDIF)'
+            call app_log(APP_WARNING,'chmpdif: Directive CHMPDIF should have at least 5 arguments')
          endif
          return
       endif
 
       if (.not.associated(tmplat).and.cgrtyp.ne.'*') then
          if (message) then
-            write(6,*)'GRILLE NON DEFINIE ..GRILLE DE DEFAUT P.S.(2805)'
+            call app_log(APP_WARNING,'chmpdif: Grid not defined, will use PS(2805)')
          endif
          ngr=8
          call grille2(3,51,55,26.,28.,381000.,350.,1)
@@ -133,7 +134,7 @@
       if (num3.gt.1) nloop=num3
 !
       if (nloop.eq.0) then
-         write(6,*)         ' AUCUNE LISTE [IP1], [IP2], [IP3] DIRECTIVE CHMPDIF'
+         call app_log(APP_WARNING,'chmpdif: No list of [IP1], [IP2], [IP3]')
          return
       endif
 !
@@ -165,20 +166,18 @@
 !     verifier si il ,y a plus d'une liste
 !
       if (num1.gt.1.and.num2.gt.1) then
-         write(6,*)' IP1 ET IP2 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         call app_log(APP_WARNING,'chmpdif: IP1 and IP2 contain a variable list')
          return
       endif
 
       if (num1.gt.1.and.num3.gt.1) then
-         write(6,*)' IP1 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         call app_log(APP_WARNING,'chmpdif: IP1 and IP3 contain a variable list')
+
          return
       endif
 
       if (num2.gt.1.and.num3.gt.1) then
-         write(6,*)' IP2 ET IP3 CONTIENNENT UNE LISTE DE VARIABLES'
-         write(6,*)' VERIFIER DIRECTIVE CHMPDIF'
+         call app_log(APP_WARNING,'chmpdif: IP2 and IP3 contain a variable list')
          return
       endif
 
@@ -238,26 +237,21 @@
          irec1=fstinf(1,ni1,nj1,nk1,datev,cetiket,lcl_ip1tab(i),ip2tab(j),ip3tab(k),ctypvar,cnoment)
          irec2=fstinf(1,ni2,nj2,nk2,datev,cetiket,lcl_ip1tab(ii),ip2tab(jj),ip3tab(kk),ctypvar,cnoment)
          if (irec2 .lt. 0 .or.irec1 .lt. 0) then
-          write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (CHMPDIF)'
-          write(6,*)' VERIFIER NOM,IP1,IP2,IP3 SUR DIRECTIVE CHMPDIF'
+         call app_log(APP_WARNING,'chmpdif: Record does not exist in input file, check NOMVAR,IP1,IP2,IP3')
          return
          endif
 !
 !
 !
          if (nk2 .gt. 1 .or. nk1.gt.1  ) then
-            write(6,*)'***********************************************'
-            write(6,*)'         PGSM N ACCEPTE PAS UN          '
-            write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (CHMPDIF)'
-            write(6,*)'***********************************************'
-            call pgsmabt
+            call app_log(APP_ERROR,'chmpdif: PGSM does not allow 3 dimension fields (NK>1)')
+             call pgsmabt
          endif
 !
 !     verifier dimension des deux champs d'entre
 !
          if (ni1.ne.ni2.or.nj1.ne.nj2.or.nk1.ne.nk2) then
-            write(6,*)' DIMENSION DES DEUX CHAMPS DE CHMPDIF DIFFERENT'
-            write(6,*)' VERIFIER FICHIER D ENTREE NI, NJ, NK'
+            call app_log(APP_WARNING,'chmpdif: Dimensions of the 2 fields differ, check input file NI,NJ,NK')
             return
          endif
 !
@@ -267,7 +261,7 @@
 !
          ier = fstprm( irec1, dat1,deet1,npas1,         ni, nj, nk, cnbits,cdatyp,         jp01,jp02, jp03,ctypvar,cnoment,cetiket,         cigtyp, ig1,ig2,ig3,ig4,          cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          if (ier .lt. 0) then
-            write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
+            call app_log(APP_ERROR,'chmpdif: FSTPRM failed')
          endif
 !
 !     verifier si grille gaussienne ni doit etre pair
@@ -290,7 +284,7 @@
 !     identifier parametres pour champ 2
 !
          ier = fstprm( irec2, dat2,deet2,npas2,ni, nj, nk,          cnbits,cdatyp,         jp11,jp12,jp13,ctypvar,cnoment,cetiket,         cigtyp,ig1,ig2,ig3,ig4,         cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-         if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR CHMPDIF'
+         if (ier .lt. 0) call app_log(APP_ERROR,'chmpdif: FSTPRM failed')
 !
 !
 !     verifier si grille gaussienne ni doit etre pair

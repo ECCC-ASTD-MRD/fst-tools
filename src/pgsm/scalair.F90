@@ -1,8 +1,10 @@
 !**s/p scalair  interpolation horizontale d un champ
 !               defini par l usager
 !
-      subroutine scalair(cnom, iheur, nniv, niveaux)
-#include "impnone.cdk90"
+   subroutine scalair(cnom, iheur, nniv, niveaux)
+      use app
+      implicit none
+      
 #include "defin.cdk90"
       external ecritur, pgsmluk, ipgsmluk, fstinf, fstsui, memoir, fstprm, qaaqr, fstcvt,     fstsel, symetri, imprime, itrouve, messags, pgsmabt
       external cvtrfi,cvtifr
@@ -73,7 +75,6 @@
 #include "pairs.cdk90"
 #include "voir.cdk90"
 
-
    character *12 cetiket
    character *4 cnom, cnomvar, cnomx
    character *2 ctypvar
@@ -97,20 +98,17 @@
    nunv=0
    iunit=lnkdiun(1)
    call pgsm_get_nfstkeys(total_keys)
-!   print *, 'scalair: total_keys', total_keys
+
    allocate(liste(total_keys))
    allocate(done_fields(total_keys))
    done_fields = .false.
    cnomx = cnom
    if (cnom.eq.cnomqr) cnom=cnomqq
 
-!
-!
    do iprs = 1, nniv
 !
-!  conversion de l etiquette d'entree en caracteres
+!     conversion de l etiquette d'entree en caracteres
 !
-
       if (etikent(1)  /=  -1) then
          write(cetiket, '(3A4)') (etikent(i), i=1, nwetike)
       else
@@ -127,20 +125,16 @@
 !
       if (cnom.eq.cnommt) then
          if (.not.mtdone) then
-            irec = fstinl(iunit, ni, nj, nk, -1, '            ', -1, -1, -1, '  ', cnom,           liste, nrecs, total_keys)
+            irec = fstinl(iunit, ni, nj, nk, -1, '            ', -1, -1, -1, '  ', cnom, liste, nrecs, total_keys)
             if (nrecs .eq. 0) then
                if (message) then
-                  write(6, *)                'RECORD FICHIER DE MONTAGNE PAS LA (SCALAIR)'
+                  call app_log(APP_WARNING,'scalair: Mountain record not found')
                endif
-            go to 5000
+               goto 5000
             endif
 
-
             if (nk.gt.1) then
-               write(6, *)'******************************************'
-               write(6, *)'       PGSM N ACCEPTE PAS UN          '
-               write(6, *)' CHAMP DE 3 DIMENSIONS NK>1 ??               (MT DANS SCALAIR)'
-               write(6, *)'*****************************************'
+               call app_log(APP_ERROR,'scalair: PGSM does not accept 3 dimension fields (NK>1)')
                call pgsmabt
             endif
  5000       mtdone=.true.
@@ -150,19 +144,15 @@
 
          irec=fstinl(iunit, ni, nj, nk, datev, cetiket, niveaux(iprs), iheur, ip3ent, ctypvar, cnom, liste, nrecs, total_keys)
 
-
          if (nrecs .eq. 0) then
             if (message) then
-               write(6, *)              'RECORD N EXISTE PAS SUR FICHIER D ENTRE (SCALAIR)'
+               call app_log(APP_WARNING,'scalair: Record does not exist in input file')
             endif
-         goto 22000
+            goto 22000
          endif
 
          if (nk.gt.1) then
-            write(6, *)            '************************************************'
-            write(6, *)            '         PGSM N ACCEPTE PAS UN          '
-            write(6, *)            ' CHAMP DE 3 DIMENSIONS NK>1 ?? (CHAMP SCALAIR)'
-            write(6, *)            '************************************************'
+            call app_log(APP_ERROR,'scalair: PGSM does not accept 3 dimension fields (NK>1)')
             call pgsmabt
          endif
       endif
@@ -179,7 +169,7 @@
             ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
          npack_orig = -cnbits
 !         print *, 'npack_orig=', npack_orig, 'npack=', npack
-         if (ier .lt. 0) write(6, *)          ' IER = FSTPRM NEGATIF VOIR SCALAIR'
+         if (ier .lt. 0) call app_log(APP_ERROR,'scalair: FSTPRM failed')
 
          if (cnomvar(1:2).eq.'>>'.or.cnomvar(1:2).eq.'^^'.or.cnomvar(1:2).eq.'HY'.or.cnomvar.eq.'^>'.or.cnomvar.eq.'!!') then
             cycle
@@ -192,20 +182,20 @@
             cycle
          endif
          
-	 extrap_option = '        '
-	 ier = ezgetopt('extrap_degree', extrap_option)
-	 if (extrap_option(1:5) == 'abort') then
+         extrap_option = '        '
+         ier = ezgetopt('extrap_degree', extrap_option)
+         if (extrap_option(1:5) == 'abort') then
             gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
             call chk_extrap(gdout, gdin, li, lj, ni, nj)
-	 endif
+         endif
 !
-!   si la directive de champ emploi tout  champ(tout, tout) on doit faire
+!     si la directive de champ emploi tout  champ(tout, tout) on doit faire
 !     attention pour les vecteurs u-v car l'interpolation serait scalaire
 !     on verifie et les interpolations pour les vecteurs ne sont pas faites
 !
          do i=1, npair
             if (cnom.eq.'    ') then
-               if ((paire(i)(9:10).eq.cnomvar(1:2)).or.(paire(i)(13:14).eq.cnomvar(1:2)))  then
+               if ((paire(i)(9:10).eq.cnomvar(1:2)).or.(paire(i)(13:14).eq.cnomvar(1:2))) then
                   nunv=nunv + 1
                   goto 99999
                endif
@@ -216,21 +206,18 @@
 
          skip = .false.
 
-	 allocate(tmpif1(ni,nj))
-        
+	      allocate(tmpif1(ni,nj))      
 !
          if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
             allocate(ifld_in(ni, nj))
             allocate(ifld_out(li, lj))
-	    key = ipgsmluk(ifld_in, irec, ni, nj, nk, cnomvar, cigtyp)
-!             print *, 'CDATYP=', cdatyp
+	         key = ipgsmluk(ifld_in, irec, ni, nj, nk, cnomvar, cigtyp)
             call cvtrfi(tmpif1, ifld_in, ni, nj)
          else
-	    key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
-!            print *, 'CDATYP=', cdatyp
+	         key = pgsmluk(tmpif1, irec, ni, nj, nk, cnomvar, cigtyp)
          endif
 
-         if (printen)  call imprime(cnomvar, tmpif1, ni, nj)
+         if (printen) call imprime(cnomvar, tmpif1, ni, nj)
          if (cigtyp == 'A' .or. cigtyp == 'B' .or. cigtyp == 'G') then
             if (ig1 /= 0) sym = symetri(cnomvar)
          endif
@@ -252,8 +239,11 @@
                tmpout => tmpif2
             else
                tmpout => tmpif1
-               if (message) write(6, 660) cnomvar
- 660  format(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a4)
+               if (message) then
+                  write(app_msg, 660) cnomvar
+                  call app_log(APP_WARNING,app_msg)
+               endif
+660  format(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a4)
             endif
 !
 !
@@ -265,36 +255,32 @@
             endif
 
 !            print *, 'Avant iecritur : cdatyp', cdatyp
-         if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
+            if (cdatyp .eq. 2 .or. cdatyp .eq. 4.or.cdatyp.eq.130.or.cdatyp.eq.132) then
 !            print *, 'Avant iecritur : cdatyp', cdatyp
-            call cvtifr(ifld_out,tmpout,li,lj)
-            call iecritur(ifld_out, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-            deallocate(ifld_in, ifld_out)
-         else
-            call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-            if (associated(tmpif2)) then
-               deallocate(tmpif2)
+               call cvtifr(ifld_out,tmpout,li,lj)
+               call iecritur(ifld_out, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+               deallocate(ifld_in, ifld_out)
+            else
+               call ecritur(tmpout, npack, dateo, deet, npas, li, lj, nk, jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+               if (associated(tmpif2)) then
+                  deallocate(tmpif2)
+               endif
+               deallocate(tmpif1)
             endif
-            deallocate(tmpif1)
-         endif
-         endif
-99999    continue
+            endif
+99999       continue
 !
-         if (unefois) goto 23000
+            if (unefois) goto 23000
 !
          enddo
 22000 enddo
 23000 continue
 !
       if (nunv.gt.0) then
-         write(6, 666)
-         write(6, 668)
-         write(6, 669)
+         call app_log(APP_WARNING,'scalair: No interpolation on variable pair CHAMP(TOUT, TOUT), you have to use a variable name ex: CHAMP(UU, TOUT)')
+         call app_log(APP_WARNING,'scalair: Vector interpolation will be scalar')
       endif
    deallocate(liste)
- 666  format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT, TOUT)')
- 668  format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU, TOUT)')
- 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
    return
    end
 

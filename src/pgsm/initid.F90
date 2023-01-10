@@ -1,5 +1,5 @@
       subroutine initid
-#include "impnone.cdk90"
+   implicit none
 #include "idents.cdk90"
 
       integer i

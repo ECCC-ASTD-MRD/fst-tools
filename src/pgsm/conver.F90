@@ -4,7 +4,7 @@
 !     AUTEUR P.SARRAZIN MAI 82 DRPN DORVAL QUEBEC CANADA
 !     
       subroutine conver(z, ni, nj, cnom)
-#include "impnone.cdk90"
+   implicit none
 !     
 !LANGAGE RATFOR
 !

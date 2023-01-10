@@ -2,7 +2,7 @@
 !**S/P QAAQR   CALCUL TOURBILLON RELATIF
 !
       subroutine qaaqr(qaqr, li, lj, xlat) 
-#include "impnone.cdk90"
+   implicit none
 !
 !AUTEUR  P. SARRAZIN DORVAL QUEBEC JUIN 83 DRPN
 !

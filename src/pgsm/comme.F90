@@ -2,7 +2,9 @@
 !**S/P   COMME   LIRE UN CHAMP DANS ACCUMULATEUR
 !
       subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
-#include "impnone.cdk90"
+         use app
+         implicit none
+
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
@@ -91,25 +93,18 @@
       endif
 
       if (cnomvar=='    '.and.ctypvar.eq.'  '.and.cetiqet=='            '.and. niv == -1 .and.ihr==-1.and.ip3==-1.and.idat==-1) then
-         print *, '****************************************************'
-         print *, '* Parametres de selection trop vagues... Sorry...  *'
-         print *, '****************************************************'
+         call app_log(APP_ERROR,'comme: Selection parameters too vague')
          call pgsmabt
       endif
 
-!      print *, 'COMME', iunit
-!      print *, idat, cetiqet, niv,ihr,ip3,ctypvar,cnomvar
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,niv,ihr,ip3,      ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
-         write(6,*)         'RECORD N EXISTE PAS (routine COMME)'
+         call app_log(APP_ERROR,'comme: Record does not exist')
          call pgsmabt
       endif
 !
       if (nnk.gt.1)   then
-         write(6,*)'*************************************************'
-         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (LIREE-LIRES)'
-         write(6,*)'*************************************************'
+         call app_log(APP_ERROR,'comme: PGSM does not accept 3 dimension fields (NK>1)')
          call pgsmabt
       endif
 !
@@ -123,7 +118,7 @@
 
 
       if (ier .lt. 0) then
-         write(6,*)'RECORD N EXISTE PAS (comme)'
+         call app_log(APP_ERROR,'comme: Record does not exist')
          call pgsmabt
       endif
 
@@ -135,8 +130,7 @@
          allocate(tmplon(li,lj))
          allocate(tmplat(li,lj))
       else
-         print *, 'avant gritp12', igg1, igg2, igg3
-	 if (iunit == 1) then
+	      if (iunit == 1) then
             call gritp12(7,igg1,igg2,igg3)
          else
             call gritp12(8,igg1,igg2,igg3)

@@ -1,8 +1,9 @@
 !
 !**s/p macpcp interpole ajustement convectif ou precipitation
 !
-      subroutine macpcp(cnom,npar,itime)
-#include "impnone.cdk90"
+   subroutine macpcp(cnom,npar,itime)
+      use app
+      implicit none
 !
 !auteur  p.sarrazin fevrier 82  drpn dorval p.q. canada
 !
@@ -86,9 +87,7 @@
       nk = 1
 !
       if (npar.ne.2) then
-         if (message) then
-            write(6,*)'MAUVAIS APPEL DOIT AVOIR 3 ARGUMENTS  (MACPCP)'
-         endif
+         if (message) call app_log(APP_ERROR,'macpcp: Wrong call to MACPCP, must have 3 arguments')
          return
       endif
 !
@@ -119,16 +118,12 @@
 
 !     #  record n'EXISTE PAS
       if (irec2 .lt. 0 .or.irec1 .lt. 0) then
-         write(6,*)'RECORD N EXISTE PAS SUR FICHIER D ENTRE (MACPCP)'
-         write(6,*)' VERIFIER IP2-IP3ENT  IP1=0 SUR FICHIER D ENTRE'
+         call app_log(APP_ERROR,'macpcp: Record does not exist in input file, check IP2-IP3ENT IP1=0')
          return
       endif
 
       if (nk.gt.1) then
-         write(6,*)'************************************************'
-         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (MACPCP)'
-         write(6,*)'************************************************'
+         call app_log(APP_ERROR,'macpcp: PGSM does not accept 3 dimension fields (NK>1)')
          call pgsmabt
       endif
 !
@@ -136,7 +131,7 @@
 !     identifier parametres pour champ 1
 !
       ier = fstprm( irec1, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,       ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
+      if (ier .lt. 0) call app_log(APP_ERROR,'macpcp: FSTPRM failed')
 !
 !     verifier si grille gaussienne ni doit etre pair
 !
@@ -156,7 +151,7 @@
 !     identifier parametres pour champ 2
 !
       ier = fstprm(irec2, dat,deet,npas,ni, nj, nk, cnbits,cdatyp,      jp1,jp2, jp3,ctypvar,cnomvar,cetike,cigtyp,      ig1,ig2,ig3,ig4,      cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR MACPCP'
+      if (ier .lt. 0) call app_log(APP_ERROR,'macpcp: FSTPRM failed')
 !
 !     verifier si grille gaussienne ni doit etre pair
 !

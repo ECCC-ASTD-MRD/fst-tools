@@ -22,9 +22,11 @@ target_link_libraries(bemollib PRIVATE rmn)
 
 add_executable(bemol bemol.F90)
 target_link_libraries(bemol PRIVATE bemollib rmn)
+add_dependencies(bemol fst-tools_build_info)
 
 add_executable(zcrop utils/zcrop/zcrop.F90)
 target_link_libraries(zcrop PRIVATE bemollib rmn)
+add_dependencies(zcrop fst-tools_build_info)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain

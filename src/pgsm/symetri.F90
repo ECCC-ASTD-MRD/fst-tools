@@ -1,8 +1,10 @@
 !
 !**FONCTION SYMETRI FUNCTION QUI RECONNAIT SI LA VARIABLE EST SYMETRIQUE
 !
-      logical function symetri(cnom)
-#include "impnone.cdk90"
+   logical function symetri(cnom)
+      use app
+      implicit none
+      
       external cmetsym
 #include "defin.cdk90"
 !
@@ -59,11 +61,12 @@
 !
       if (message) then
          if (cgrtyp == 'A'.or.cgrtyp == 'B'.or.cgrtyp =='G') then
-            write(6,101) cnom
-         endif
+            write(app_msg,101) cnom
+            call app_log(APP_WARNING,app_msg)
+      endif
       endif
 
- 101  format(//2x,' **** LA SYMETRIE DE LA VARIABLE- ',       a4,' - EST INCONNUE',      ' ON LA SUPPOSE SYMETRIQUE *****'//)
+ 101  format(//2x,'symetri: Symetry of variable ',       a4,' is unknown',      ' it will be supposed to be symetric'//)
 !
       call cmetsym(cnom, .true.)
       return

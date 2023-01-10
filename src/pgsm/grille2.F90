@@ -1,8 +1,9 @@
 !
 !**S/P GRILLE   DETERMINE LA SORTE DE GRILLE DEMANDE PAR USAGER
 !
-      subroutine grille2(it,p1,p2,p3,p4,p5,p6,p7,p8)
-#include "impnone.cdk90"
+   subroutine grille2(it,p1,p2,p3,p4,p5,p6,p7,p8)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 82 DRPN DORVAL P.Q. CANADA
 !           MODIFIER JANVIER 87 P.SARRAZIN DORVAL P.Q. CANADA
@@ -54,7 +55,7 @@
 !
 !
       if (iset.eq.-2) then
-         write(6,*)       'DIRECTIVE SORTIE DOIT-ETRE APPELEE AVANT DIRECTIVE GRILLE'
+         call app_log(APP_ERROR,'grille: Directive SORTIE has to be called before directive GRILLE')
          call pgsmabt
       endif
 !
@@ -67,7 +68,7 @@
 
 !
       if (it.lt.0 .or. it.gt.14) then
-         write(6,*)'GRILLE INCONNUE (GRILLE)'
+         call app_log(APP_ERROR,'grille: Unknown grid')
          call pgsmabt
       endif
 !
@@ -85,7 +86,7 @@
 !     LG1=P3  0=GLOBAL;  1=H. NORD;  2=H. SUD
 !
          else
-            write(6,*) ' MAUVAIS APPEL GRILLE(STD,NI,NJ,NORD/SUD/GLOBAL)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(STD,NI,NJ,NORD/SUD/GLOBAL) call')
             call pgsmabt
          endif
 !...................................................................
@@ -106,7 +107,7 @@
 !     DLON=P6    ESPACEMENT ENTRE CHAQUE LONGITUDE
 !
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(LATLON,NI,NJ,XLAT0,XLON0,DLAT,DLON)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(LATLON,NI,NJ,XLAT0,XLON0,DLAT,DLON) call')
             call pgsmabt
          endif
 !
@@ -129,7 +130,7 @@
 !     NORD/SUD=P7...HEMISPHERE NORD/SUD
 !
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(PS,NI,NJ,PI,PJ,D60,DGRW,NORD/SUD)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(PS,NI,NJ,PI,PJ,D60,DGRW,NORD/SUD) call')
             call pgsmabt
          endif
 !
@@ -150,9 +151,8 @@
 !     IP3=P5....VALEUR DE IP3 TRANSFER DANS IG3 POUR TAPE2
 !
          else
-            write(6,*) 'MAUVAIS APPEL  GRILLE(TAPE4,NI,NJ [,IP1,IP2,IP3] )'
-         write(6,*)' CETTE DIRECTIVE CONTIENT 3 OU 6 ARGUMENTS'
-         call pgsmabt
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(TAPE4,NI,NJ [,IP1,IP2,IP3]) call, has to have 3 or 6 arguments')
+            call pgsmabt
       endif
 !
       elseif (it.eq.gr_g) then
@@ -163,8 +163,7 @@
 !
          if (ngr.eq.4) then
             if (mod(p1,2).ne.0) then
-               write(6,*)' ON NE PEUT PRODUIRE UN CHAMP GAUSSIEN'
-               write(6,*)'  AVEC UN NOMBRE DE LONGITUDES IMPAIRS'
+               call app_log(APP_ERROR,'grille: Cannot produce a gaussian field with and odd number of longitudes')
                call pgsmabt
             endif
             call grigaus(p1,p2,p3)
@@ -174,7 +173,7 @@
 !     LG1=P3  0=GLOBAL;  1=H. NORD;  2=H. SUD
 !
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(GAUSS,NI,NJ,NORD/SUD/GLOBAL)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(GAUSS,NI,NJ,NORD/SUD/GLOBAL) call')
             call pgsmabt
          endif
       elseif (it.eq.gr_b) then
@@ -191,7 +190,7 @@
 !     LG1=P3  0=GLOBAL;  1=H. NORD;  2=H. SUD
 !
          else
-            write(6,*)' MAUVAIS APPEL GRILLE(STDB,NI,NJ,NORD/SUD/GLOBAL) '
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(STDB,NI,NJ,NORD/SUD/GLOBAL) call')
             call pgsmabt
          endif
       elseif (it.eq.gr_tape1.or.it.eq.gr_tape2.or.it.eq.gr_stations) then
@@ -212,7 +211,7 @@
 !     IP3=P3....IDENTIFICATION DU RECORD VALEUR MAX=2047
 !
          else
-            write(6,*)'MAUVAIS APPEL GRILLE(TAPE1/TAPE2,IP1,IP2,IP3)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(TAPE1/TAPE2,IP1,IP2,IP3) call')
             call pgsmabt
          endif
 !
@@ -220,7 +219,7 @@
          if (ngr.eq.9) then
             call comme(p1,p2,p3,p4,p5,p6,p7,p8)
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(COMME,FENTREE/FSORTIE,NOMVAR,TYPVAR,DATEV,IP1,IP2,IP3,ETIKET)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(COMME,FENTREE/FSORTIE,NOMVAR,TYPVAR,DATEV,IP1,IP2,IP3,ETIKET) call')
             call pgsmabt
          endif
 
@@ -228,7 +227,7 @@
          if (ngr.eq.5) then
             call grigrib(p1,p2,p3,p4)
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(GRIB,IG1,iG2,IG3,IG4)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(GRIB,IG1,iG2,IG3,IG4) call')
             call pgsmabt
          endif
 
@@ -243,7 +242,7 @@
 !     IP3=P3....IDENTIFICATION DU RECORD VALEUR MAX=2047
 !
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(E,NI,NJ,XLAT1,XLON1,XLAT2,XLON2)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(E,NI,NJ,XLAT1,XLON1,XLAT2,XLON2) call')
             call pgsmabt
          endif
 
@@ -251,7 +250,7 @@
          if(ngr.eq.7) then
             call gristereo(p1,p2,p3,p4,p5,p6)
          else
-            write(6,*)            'MAUVAIS APPEL GRILLE(STEREO,NI,NJ,D60,DGRW,CLAT,CLON)'
+            call app_log(APP_ERROR,'grille: Wrong GRILLE(STEREO,NI,NJ,D60,DGRW,CLAT,CLON) call')
             call pgsmabt
          endif
       endif

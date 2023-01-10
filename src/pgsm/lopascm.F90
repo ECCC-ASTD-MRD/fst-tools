@@ -1,6 +1,7 @@
 !
-      subroutine lopascm(sortent,entre,fact,nombre)
-#include "impnone.cdk90"
+   subroutine lopascm(sortent,entre,fact,nombre)
+      use app
+      implicit none
 !
 !AUTEUR P. SARRAZIN DORVAL QUEBEC CANADA (DRPN)
 !
@@ -55,16 +56,15 @@
       else  if (fact.eq.4) then
          do i=1,nombre
             if (entre(i).eq.0.0) then
-               print *, 'LOPASCM - Un des elements du tableau a une valeur de 0.0'
-               print *, 'Division impossible - sortie forcee'
-               call qqexit(13)
+               call app_log(APP_ERROR,'lopascm: One of the array alement has a 0.0 value for a division')
+               call pgsmabt
             endif
          enddo
          do i=1,nombre
             sortent(i)=sortent(i)/entre(i)
          enddo
       else
-         write(6,*)' ERREUR DANS ROUTINE LOPASCM (FACT..?)'
+         call app_log(APP_ERROR,'lopascm: Invalid operation (fact)')
       endif
 !     
       return

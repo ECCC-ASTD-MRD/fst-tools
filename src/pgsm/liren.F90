@@ -1,8 +1,10 @@
 !
 !**S/P   LIREN   LIRE UN CHAMP DANS ACCUMULATEUR
 !
-      subroutine liren(nom, type, idat, niv, ihr, ip3, etiqet)
+   subroutine liren(nom, type, idat, niv, ihr, ip3, etiqet)
+      use app
       implicit none
+      
       external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime
       external fstopc,messags,fstcvt
       integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
@@ -96,18 +98,10 @@
       ier = fstcvt(    nom,   type, letiket,    -1,      cnomvar,ctypvar,cetiqet,cigtyp,     .true.)
       irec1=fstinf(iunit,nni,nnj,nnk,idat,cetiqet,lniv,ihr,iip3,      ctypvar,cnomvar)
       if (irec1 .lt. 0)   then
-         write(6,*)         'RECORD N EXISTE PAS SUR FICHIER (FSTINF LIREE-LIRES)'
+         call app_log(APP_ERROR,'liren: Record does not exist')
          call pgsmabt
       endif
-!
-!      if (nnk.gt.1)   then
-!         write(6,*)'*************************************************'
-!         write(6,*)'         PGSM N ACCEPTE PAS UN          '
-!         write(6,*)' CHAMP DE 3 DIMENSIONS NK>1 ?? (LIREE-LIRES)'
-!         write(6,*)'*************************************************'
-!         call pgsmabt
-!      endif
-!
+
 !
 !  #  clef pour directive pluse,moinse,ecrits....
       ichck=1
@@ -116,7 +110,7 @@
       ier = fstprm(irec1,idatt,ideet,npas,nni,nnj,nnk, cnbits,cdatyp,      jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiqet,cigtyp,igg1,igg2,igg3,      igg4,cswa, clng, cdltf, cubc, extra1, extra2, extra3)
 
 
-      if (ier .lt. 0) write(6,*)' IER = FSTPRM NEGATIF VOIR LIREN'
+      if (ier .lt. 0) call app_log(APP_ERROR,'liren: FSTPRM failed')
 
 
       cnumv = cnomvar
@@ -137,7 +131,7 @@
       num1 =pgsmlir(tmpif0,iunit,nni,nnj,nnk,idat,cetiqet,jpp1,jpp2,      jpp3,ctypvar,cnomvar,cigtyp)
 !
       if (num1 .lt. 0) then
-         write(6,*)'RECORD N EXISTE PAS (LIRE LIREE-LIRES)'
+         call app_log(APP_ERROR,'liren: Record does not exist')
          call pgsmabt
       endif
 

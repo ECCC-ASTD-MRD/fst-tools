@@ -1,8 +1,10 @@
 !
 !**S/P VDAUV  U ET V DE DIRECTION ET VITESSE DU VENT
 !
-      subroutine vdauv(srtentu,srtentv,clong,dgtord,nombre)
-#include "impnone.cdk90"
+   subroutine vdauv(srtentu,srtentv,clong,dgtord,nombre)
+      use app
+      implicit none
+      
       integer nombre
       real srtentu(nombre),srtentv(nombre),clong(nombre),dgtord
 !
@@ -55,9 +57,8 @@
             srtentv(i)=v
          enddo
       else
-         write(6,*) ' TYPE DE GRILLE PAS "L" OU "N" '
-         write(6,*)          ' DANS ROUTINE VDAUV PAS DE CODE VALID POUR TYPE "S"'
-         call pgsmabt
+        call app_log(APP_ERROR,'vdauv: GRILLE not "L" or "N", no valid code for type "s"')
+        call pgsmabt
       endif
       return
       end 

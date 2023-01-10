@@ -2,15 +2,13 @@
 !**S/P CONLALO   CALCUL LAT LONG DE CHAQUE PT D'UNE GRILLE TYPE "Y" OU "Z"
 !
       subroutine conlalo(lat,lon,ni,nj,grtyp,grtypxy,ig1,ig2,ig3,ig4)
-#include "impnone.cdk90"
-      
+         use app
+         implicit none
       
       external conlal2
       
-      
       integer lat,lon,ni,nj,grtyp,grtypxy,ig1,ig2,ig3,ig4
       character*1 cgrtyp, cgtypxy
-      
       
       write(cgrtyp    , '(A1)') grtyp
       write(cgtypxy, '(A1)') grtypxy
@@ -25,7 +23,8 @@
       end
       subroutine conlal2(lat,lon,ni,nj,cgrtyp,cgtypxy,ig1,ig2,ig3,ig4)
 !     
-#include "impnone.cdk90"
+         use app
+         implicit none
 !     
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -93,16 +92,15 @@
             enddo
          enddo
       else
-         write(6,*)' TYPE DE GRILLE PAS "N","S","L" '
-         write(6,*) 'DIRECTIVE GRILLE(TAPE1/TAPE2.....OUCH???'
+         call app_log(APP_ERROR,'conlalo: GRILLE not "N","S","L"')
          call pgsmabt
       endif
 !     
       return
       end
       subroutine conlale(lat,lon,latg,long,ni,nj,                    cgrtyp,cgtypxy,ig1,ig2,ig3,ig4)
-!     
-#include "impnone.cdk90"
+         use app
+         implicit none
 !
 !AUTEUR   - Y. Chartier DRPN Dorval Avril 94
 !
@@ -143,8 +141,7 @@
          call cigaxg(cgtypxy,xlat1,xlon1,xlat2,xlon2,ig1,ig2,ig3,ig4)
          call ez_gfllfxy(lon,lat,long,latg,ni*nj,xlat1,xlon1,xlat2,xlon2)
       else 
-         write(6,*)' TYPE DE GRILLE PAS "E"'
-         write(6,*) 'DIRECTIVE GRILLE(TAPE1/TAPE2.....OUCH???'
+         call app_log(APP_ERROR,'conlalo: GRILLE not "E"')
          call pgsmabt
       endif
 !     

@@ -1,8 +1,9 @@
 !
 !**S/P GRIGAUS   CALCUL LAT LONG DE CHAQUE PT D'UNE GRILLE GAUSSIENNE
 !
-      subroutine grigaus(nni,nnj,nhem)
-#include "impnone.cdk90"
+   subroutine grigaus(nni,nnj,nhem)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -44,7 +45,7 @@
       lj=nnj
 !
       if (lg1.lt.0 .or.lg1.gt.2) then
-         write(6,*)'LG1 DOIT ETRE  GLOBAL,NORD,SUD   GRILLE(GAUSS.....'
+         call app_log(APP_ERROR,'grigaus: GRILLE(GAUSS... L11 must be GLOBAL,NORD,SUD ')
          call pgsmabt
       endif
 !

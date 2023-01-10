@@ -22,6 +22,7 @@
 !
       SUBROUTINE WEOFILE(OUPT, MARC, TD)
       use configuration
+      use app
       IMPLICIT NONE 
   
       INTEGER    OUPT(*), MARC, TD(*)
@@ -66,7 +67,7 @@
       ENDIF
 
    20 IF(INDEX(DNOM,'SEQ') .EQ. 0) THEN
-         PRINT*,'IMPOSSIBLR DE MARQUER IN FICHIER RND'
+         call app_log(APP_ERROR,'weofile: Unable to mark in random file')
          IF( INTERAC ) THEN
             RETURN
          ELSE
@@ -76,7 +77,8 @@
 
       IF(NP.GT.1) THEN
          IF(MARC.GT.14 .OR. MARC.LT.1) THEN
-            WRITE(6,*)'MARQUE DE FIN DE FICHIER LOGIQUE ',MARC,' INACCEPTABLE, DOIT ETRE >0 ET <15.'
+            WRITE(app_msg,*) 'weofile: Logical end of file ',MARC,' not valid, has to be between 0 and 15'
+            call app_log(APP_ERROR,app_msg)
             IF( INTERAC ) THEN
                RETURN
             ELSE
@@ -94,7 +96,7 @@
       ENDIF
   
       IF(.NOT. OUVD) THEN
-         PRINT*,'IMPOSSIBLR DE MARQUER FICHIER INCONNU'
+         call app_log(APP_ERROR,'weofile: Unable to mark unknown file')
          IF( INTERAC ) THEN
             RETURN
          ELSE
@@ -104,7 +106,8 @@
 
 !     AJOUTE LA MARQUE LOGIQUE
       L = FSTWEO(3, M)
-      IF( DIAG ) WRITE(6,*)' MARQUE ',M,' AJOUTEE AU FICHIER ',ND
+      WRITE(app_msg,*) 'weofile: Maker ',M,' added to file ',ND
+      call app_log(APP_DEBUG,app_msg)
   
       RETURN
       END 

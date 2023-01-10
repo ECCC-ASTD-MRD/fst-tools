@@ -1,8 +1,9 @@
 !
 !**S/P GRILLPS  CALCUL LATITUDE LONGITUDE DE CHAQUE PT D'UNE GRILLE P.S.
 !
-      subroutine grillps(nni,nnj,pi,pj,d60,dgrw,hem)
-#include "impnone.cdk90"
+   subroutine grillps(nni,nnj,pi,pj,d60,dgrw,hem)
+      use app
+      implicit none
 !
 !AUTEUR   - P. SARRAZIN JANVIER 87 DRPN DORVAL P.Q. CANADA
 !
@@ -54,7 +55,7 @@
        call cigaxg(cgrtyp,pp1,pp2,pp3,pp4,lg1,lg2,lg3,lg4)
 
       if (ihm.lt.1.or.ihm.gt.2) then
-         write(6,*)'GRILLE P.S. CODE D HEMISPHERE DOIT-ETRE NORD OU SUD'
+         call app_log(APP_ERROR,'grillps: GRILLE(PS... must be NORD or SUD')
          call pgsmabt
       endif
 !

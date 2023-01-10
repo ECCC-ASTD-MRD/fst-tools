@@ -2,7 +2,8 @@
 !**   s/p convs, batir une table avec noms,ecart,facteur,bas,haut
 !
       subroutine convs(nom,  ecart,  facteur, bas, haut)
-#include "impnone.cdk90"
+         use app
+         implicit none
 !
 !auteur p. sarrazin mai 82 drpn dorval quebec canada
 !
@@ -66,7 +67,7 @@
          if (ncon.eq.5) hauts(i)=haut
       else
          if (message) then
-            write(6,*)'PLUS DE 256 DIRECTIVES "CONVS" --- RESTE IGNORE'
+            call app_log(APP_WARNING,'convs: More than 256 directives, ignoring others')
          endif
       endif
       return

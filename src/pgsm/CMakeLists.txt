@@ -30,6 +30,7 @@ set(FICHIERS_FTN90
 configure_file(version.in.inc version.inc @ONLY)
 
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
+add_dependencies(pgsmlib fst-tools_build_info)
 target_link_libraries(pgsmlib PRIVATE rmn)
 
 # Needed for version.inc
@@ -50,5 +51,10 @@ install(TARGETS pgsm)
 add_executable(test_pgsm test.f90)
 target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
 target_link_libraries(test_pgsm PRIVATE pgsmlib rmn)
-add_test(NAME test_pgsm COMMAND test_pgsm)
-add_dependencies(check test_pgsm)
+
+if (EC_INIT_DONE LESS 2)
+   if(BUILD_TESTING)
+      add_test(NAME test_pgsm COMMAND test_pgsm)
+      add_dependencies(check test_pgsm)
+    endif()
+endif()

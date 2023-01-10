@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <App.h>
 #include <rmn.h>
+#include "fst-tools_build_info.h"
 
 /*
 fst2xml : Convertisseur de fichier standard RPN version 2000 a XML
@@ -18,7 +20,6 @@ Version: 007, reload avec librmn_015.2
 void xmlconvip(char xmlip1[], int ip1);
 void xmlconvdate(char xmldate[], int dateo);
 void nettoyer(char chaine[]);
-
 
 int fst2xml(int argc, char **argv) {
     char fstFile[256];
@@ -70,14 +71,15 @@ int fst2xml(int argc, char **argv) {
     def[3] = (char *) lcl_def[3];
     def[4] = (char *) lcl_def[4];
 
-
-
     for (int i = 0; i < 5; i++) {
         strcpy(val[i], def[i]);
     }
 
     npos = 0;
     c_ccard(argv, argc, (char **) liste, val, (char **) def, 5, &npos);
+
+    App_Init(APP_MASTER,"fst2xml",VERSION,"",BUILD_TIMESTAMP);
+    App_Start();
 
     strcpy(fstFile, val[0]);
     strcpy(xmlFile, val[1]);
@@ -91,13 +93,13 @@ int fst2xml(int argc, char **argv) {
 
     if (0 == strcmp(val[1], def[1])) {
         xmlfd = stdout;
-        ier = c_fstopc("MSGLVL", "FATALE", 0);
     } else {
         xmlfd = fopen(xmlFile, "w");
     }
 
     if (xmlfd == NULL) {
-        fprintf(stderr, "Cannot open output file... Exiting...");
+        App_Log(APP_ERROR,"Cannot open output file... Exiting...");
+        App_End(-1);
         exit(13);
     }
 
@@ -205,7 +207,7 @@ int fst2xml(int argc, char **argv) {
                 break;
 
             default:
-                fprintf(stderr,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",datyp,nomvar);
+                App_Log(APP_WARNING,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",datyp,nomvar);
                 isallocated = 0;
         }
         fprintf(xmlfd, "\t\t%s\n", "</values>");
@@ -230,6 +232,8 @@ int fst2xml(int argc, char **argv) {
     fclose(xmlfd);
     ier = c_fstfrm(iun);
     ier = c_fclos(iun);
+
+    App_End(-1);
 }
 
 
@@ -280,5 +284,3 @@ void nettoyer(char chaine[])
     }
 }
 
-
-char * product_id_tag="$Id$";
