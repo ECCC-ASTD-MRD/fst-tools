@@ -8,6 +8,7 @@ add_executable(dbzono
     setuvd0.f90
     writlzn.f90
 )
+add_dependencies(dbzono fst-tools_build_info)
 target_link_libraries(dbzono PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

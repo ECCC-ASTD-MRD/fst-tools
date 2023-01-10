@@ -1,7 +1,9 @@
 add_executable(fstcompress fstcompress.f90)
+add_dependencies(fstcompress fst-tools_build_info)
 target_link_libraries(fstcompress PRIVATE rmn)
 
 add_executable(fstuncompress fstuncompress.f90)
+add_dependencies(fstuncompress fst-tools_build_info)
 target_link_libraries(fstuncompress PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

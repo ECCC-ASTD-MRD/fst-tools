@@ -1,5 +1,7 @@
 add_executable(voir voir.f90)
+add_dependencies(voir fst-tools_build_info)
 target_link_libraries(voir PRIVATE rmn)
+
 install(TARGETS voir)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

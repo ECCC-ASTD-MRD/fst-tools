@@ -30,6 +30,7 @@ set(FICHIERS_FTN90
 configure_file(version.in.inc version.inc @ONLY)
 
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
+add_dependencies(pgsmlib fst-tools_build_info)
 target_link_libraries(pgsmlib PRIVATE rmn)
 
 # Needed for version.inc

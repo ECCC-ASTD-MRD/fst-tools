@@ -1,4 +1,5 @@
 add_executable(r.fstinfo fstinfo.F90)
+add_dependencies(r.fstinfo fst-tools_build_info)
 target_link_libraries(r.fstinfo PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

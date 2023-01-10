@@ -1,6 +1,7 @@
 ##################### NORMAL TARGETS ##############################
 
 add_executable(reflex reflex.f90)
+add_dependencies(reflex fst-tools_build_info)
 target_link_libraries(reflex PRIVATE rmn)
 target_include_directories(reflex PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 

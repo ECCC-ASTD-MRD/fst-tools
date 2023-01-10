@@ -23,7 +23,7 @@ add_executable(editfst
     zap.f90
     main.F90
 )
-
+add_dependencies(editfst fst-tools_build_info)
 target_link_libraries(editfst PRIVATE rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
