@@ -242,13 +242,17 @@
          ENDIF
       ENDIF
   
-  180 WRITE(app_msg,*) 'copystx: ',COPIES,' record(s) copied in ',TRIM(ND) 
-      call app_log(APP_INFO,app_msg)
-
-      IF (COPIES .LT. NRECMIN) THEN
+  180 IF (COPIES .LT. NRECMIN) THEN
          WRITE(app_msg,*) 'copystx: Minimal number of records not satisfied, NRECMIN=',NRECMIN,' NREC found=',COPIES
          call app_log(APP_ERROR,app_msg)
          CALL QQEXIT(12)
+      ELSE
+         WRITE(app_msg,*) 'copystx: ',COPIES,' record(s) copied in ',TRIM(ND) 
+         IF (COPIES .EQ. 0) THEN
+            call app_log(APP_WARNING,app_msg)
+         ELSE
+            call app_log(APP_INFO,app_msg)
+         ENDIF
       ENDIF
 
       RETURN
