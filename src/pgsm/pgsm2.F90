@@ -150,10 +150,6 @@ END INTERFACE
         integer, parameter :: str_TM=transfer("TM  ",1)
         integer, parameter :: str_MT=transfer("MT  ",1)
         integer, parameter :: str_WDUV=transfer("WDUV",1)
-        character(len=16) :: PGSM_VERSION
-
-
-
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
@@ -354,7 +350,6 @@ END INTERFACE
 !           nequiv=nombre d'equivalence output de ccard
 
 
-    include 'version.inc'
     nequiv = -1
     lnkdiun = 0
     lnkdiun(1) = 1
@@ -365,7 +360,7 @@ END INTERFACE
 
 
     ! imprime boite debut du programme
-    app_ptr=app_init(0,'pgsm',VERSION,'',BUILD_TIMESTAMP)
+    app_ptr=app_init(0,'pgsm','7.9.0','',BUILD_TIMESTAMP)
     call app_start()
 
 

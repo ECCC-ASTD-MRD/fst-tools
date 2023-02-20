@@ -273,15 +273,10 @@
       INTEGER     FSTOPC, FSTOPL, OUVRED, FNOM, I
       integer junk
       LOGICAL     FASTIO
-!      character(len=*), parameter :: current_version="v 1.19"
-      character(len=16) :: RELEASE
-      character(len=32) :: SUB_RELEASE
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
       character(len=4096), save :: PRINTR
 !      character(len=78), dimension(2):: MSG_ABT
 !      character(len=78), dimension(4):: MSG_000
-
-      include 'version.inc'
 
 !      MSG_ABT(1) = "Erreur(s) de syntaxe dans les directives"
 !      MSG_ABT(2) = "Syntax error(s) in directives"
@@ -357,10 +352,10 @@
 
 !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         app_ptr=app_init(0,'editfst',trim(RELEASE),'',BUILD_TIMESTAMP)
+         app_ptr=app_init(0,'editfst','7.12.0','',BUILD_TIMESTAMP)
          call app_start()
       ELSE
-         WRITE(6,*)'***   E D I T F S T   '//trim(RELEASE)//'   ***'
+         WRITE(6,*)'***   E D I T F S T   7.12.0   ***'
       ENDIF
       strict_mode = DEF1(147) .eq. 'OUI'
 
@@ -369,6 +364,7 @@
       IF( DIAG ) THEN
          I = app_loglevel('INFO')
       ELSE
+         write(6,*) DEF1(13)
          I = app_loglevel(DEF1(13)) ! -m
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
