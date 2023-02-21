@@ -153,8 +153,8 @@ END INTERFACE
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
-    data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
-    data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','ISENT_SCRAP','IMPOS_SCRAP','NON'/
+    data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','       ','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
+    data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  '       ','ISENT_SCRAP','IMPOS_SCRAP','NON'/
 
         data form/'(A8)'/
 
