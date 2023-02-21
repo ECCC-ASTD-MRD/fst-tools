@@ -364,7 +364,6 @@
       IF( DIAG ) THEN
          I = app_loglevel('INFO')
       ELSE
-         write(6,*) DEF1(13)
          I = app_loglevel(DEF1(13)) ! -m
       ENDIF
       I = FSTOPL('FASTIO', FASTIO, .FALSE.)
