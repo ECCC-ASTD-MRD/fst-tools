@@ -26,4 +26,4 @@ target_link_libraries(fstcompress PUBLIC "-Wl,--disable-new-dtags")
 target_link_libraries(fstuncompress PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS fstcompress fstuncompress)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fstcompress {CMAKE_CURRENT_BINARY_DIR}/fstuncompress DESTINATION bin)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fstcompress ${CMAKE_CURRENT_BINARY_DIR}/fstuncompress DESTINATION bin)

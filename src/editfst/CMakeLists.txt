@@ -38,4 +38,4 @@ add_custom_command(TARGET editfst POST_BUILD
 target_link_libraries(editfst PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS editfst)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ediftst DESTINATION bin)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/editfst DESTINATION bin)
