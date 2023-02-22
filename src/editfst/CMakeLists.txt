@@ -25,9 +25,17 @@ add_executable(editfst
 )
 add_dependencies(editfst fst-tools_build_info)
 target_link_libraries(editfst PRIVATE rmn)
+set_target_properties(editfst PROPERTIES 
+   OUTPUT_NAME editfst-${EDITFST_VERSION}
+   COMPILE_DEFINITIONS EDITFST_VERSION="${EDITFST_VERSION}")
+
+# Symbolic links to latest build
+add_custom_command(TARGET editfst POST_BUILD
+   COMMAND ln -sfv $<TARGET_FILE_NAME:editfst> editfst)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(editfst PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS editfst)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ediftst DESTINATION bin)

@@ -185,9 +185,9 @@
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       IF( LN ) THEN
-         WRITE(6,*)'* * *  FSTCOMP 8.12.0  * * *'
+         WRITE(6,*)'* * * '//FSTCOMP_VERSION//' * * *'
       ELSE
-         app_ptr=app_init(0,'fstcomp','8.12.0','',BUILD_TIMESTAMP)
+         app_ptr=app_init(0,'fstcomp',FSTCOMP_VERSION,'',BUILD_TIMESTAMP)
          call app_start()
       ENDIF
 

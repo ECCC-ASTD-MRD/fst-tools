@@ -352,7 +352,7 @@
 
 !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         app_ptr=app_init(0,'editfst','7.12.0','',BUILD_TIMESTAMP)
+         app_ptr=app_init(0,'editfst',EDITFST_VERSION,'',BUILD_TIMESTAMP)
          call app_start()
       ELSE
          WRITE(6,*)'***   E D I T F S T   7.12.0   ***'

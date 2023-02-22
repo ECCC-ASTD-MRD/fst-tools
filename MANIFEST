@@ -6,6 +6,10 @@ SUMMARY    : These tools allow for manipulation of RPN standard files
 MAINTAINER : Philippe Carphin - Philippe.Carphin@ec.gc.ca
 URL        : https://gitlab.science.gc.ca/RPN-SI/fst-tools
 
+FSTCOMP_VERSION : 8.12.0
+PGSM_VERSION    : 7.9.0
+EDITFST_VERSION : 7.12.0
+
 # Dependencies 
 #    =,<,<=,>,>= : Version rules
 #    ~           : Optional

@@ -360,7 +360,7 @@ END INTERFACE
 
 
     ! imprime boite debut du programme
-    app_ptr=app_init(0,'pgsm','7.9.0','',BUILD_TIMESTAMP)
+    app_ptr=app_init(0,'pgsm',PGSM_VERSION,'',BUILD_TIMESTAMP)
     call app_start()
 
 
