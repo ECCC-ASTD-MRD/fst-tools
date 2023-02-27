@@ -183,7 +183,7 @@
       CALL CCARD(LISTE,DEF,VAL,18,IPOS)
 !       DEBUT D'EXECUTION
 
-      app_ptr=app_init(0,'REFLEX',VERSION,'',BUILD_TIMESTAMP)
+      app_ptr=app_init(0,'REFLEX',REFLEX_VERSION,'',BUILD_TIMESTAMP)
       call app_start()
 !
 !       INITIALISER LES NIVEAUX DE TOLERANCE ET DE MESSAGES

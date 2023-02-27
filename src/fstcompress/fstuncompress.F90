@@ -31,7 +31,7 @@
       ipos = 0
       call ccard(cle,def,val, 2, ipos)
  
-      app_ptr=app_init(0,'fstcompress',VERSION,'',BUILD_TIMESTAMP)
+      app_ptr=app_init(0,'fstcompress',FSTCOMPRESS_VERSION,'',BUILD_TIMESTAMP)
       call app_start()
 
       iun_in = 10

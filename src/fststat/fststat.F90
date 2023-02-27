@@ -30,7 +30,7 @@ program fststat
 
     call ccard(cle, def, val, 40, ipos)
 
-    app_ptr=app_init(0,'fststat',VERSION,'',BUILD_TIMESTAMP)
+    app_ptr=app_init(0,'fststat',FSTSTAT_VERSION,'',BUILD_TIMESTAMP)
     call app_start()
 
     ! Count the number of files

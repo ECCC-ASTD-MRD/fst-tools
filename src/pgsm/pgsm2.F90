@@ -153,8 +153,8 @@ END INTERFACE
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
-    data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFORMS','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
-    data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFORMS','ISENT_SCRAP','IMPOS_SCRAP','NON'/
+    data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','       ','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
+    data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  '       ','ISENT_SCRAP','IMPOS_SCRAP','NON'/
 
         data form/'(A8)'/
 
@@ -360,7 +360,7 @@ END INTERFACE
 
 
     ! imprime boite debut du programme
-    app_ptr=app_init(0,'pgsm','7.9.0','',BUILD_TIMESTAMP)
+    app_ptr=app_init(0,'pgsm',PGSM_VERSION,'',BUILD_TIMESTAMP)
     call app_start()
 
 

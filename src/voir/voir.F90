@@ -73,7 +73,7 @@ program voir
         print *,'   -style FULL displays'
         print *,'           NINJNK+DATEV+IPALL+IP1+GRIDINFO'
     else
-        app_ptr=app_init(0,'VOIR',VERSION,'',BUILD_TIMESTAMP)
+        app_ptr=app_init(0,'VOIR',VOIR_VERSION,'',BUILD_TIMESTAMP)
         call app_start()
 
         filename = ccard_arg(cles(1))

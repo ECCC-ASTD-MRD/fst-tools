@@ -30,15 +30,24 @@ set(FICHIERS_FTN90
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 add_dependencies(pgsmlib fst-tools_build_info)
 target_link_libraries(pgsmlib PRIVATE rmn)
+set_target_properties(pgsmlib PROPERTIES 
+   COMPILE_DEFINITIONS PGSM_VERSION="${PGSM_VERSION}")
 
 add_executable(pgsm main.F90)
 target_link_libraries(pgsm PRIVATE pgsmlib rmn)
+set_target_properties(pgsm PROPERTIES 
+   OUTPUT_NAME pgsm-${PGSM_VERSION})
+
+# Symbolic links to latest build
+add_custom_command(TARGET pgsm POST_BUILD
+   COMMAND ln -sfv $<TARGET_FILE_NAME:pgsm> pgsm)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(pgsm PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS pgsm)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pgsm DESTINATION bin)
 
 ######################## TESTING ###################################
 
