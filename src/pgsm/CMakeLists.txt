@@ -29,12 +29,12 @@ set(FICHIERS_FTN90
 
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 add_dependencies(pgsmlib fst-tools_build_info)
-target_link_libraries(pgsmlib PRIVATE rmn)
+target_link_libraries(pgsmlib PRIVATE rmn::rmn)
 set_target_properties(pgsmlib PROPERTIES 
    COMPILE_DEFINITIONS PGSM_VERSION="${PGSM_VERSION}")
 
 add_executable(pgsm main.F90)
-target_link_libraries(pgsm PRIVATE pgsmlib rmn)
+target_link_libraries(pgsm PRIVATE pgsmlib rmn::rmn)
 set_target_properties(pgsm PROPERTIES 
    OUTPUT_NAME pgsm-${PGSM_VERSION})
 
@@ -54,7 +54,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pgsm DESTINATION bin)
 # Unit test executable
 add_executable(test_pgsm test.f90)
 target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
-target_link_libraries(test_pgsm PRIVATE pgsmlib rmn)
+target_link_libraries(test_pgsm PRIVATE pgsmlib rmn::rmn)
 
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)

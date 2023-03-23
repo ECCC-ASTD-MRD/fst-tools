@@ -1,6 +1,6 @@
 add_executable(voir voir.F90)
 add_dependencies(voir fst-tools_build_info)
-target_link_libraries(voir PRIVATE rmn)
+target_link_libraries(voir PRIVATE rmn::rmn)
 set_target_properties(voir PROPERTIES 
    OUTPUT_NAME voir-${VOIR_VERSION}
    COMPILE_DEFINITIONS VOIR_VERSION="${VOIR_VERSION}")
