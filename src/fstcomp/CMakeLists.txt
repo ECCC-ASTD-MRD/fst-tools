@@ -1,6 +1,6 @@
 add_executable(fstcomp fstcomp.F90 statfldx.F90)
 add_dependencies(fstcomp fst-tools_build_info)
-target_link_libraries(fstcomp PRIVATE rmn)
+target_link_libraries(fstcomp PRIVATE rmn::rmn)
 set_target_properties(fstcomp PROPERTIES 
    OUTPUT_NAME fstcomp-${FSTCOMP_VERSION}
    COMPILE_DEFINITIONS FSTCOMP_VERSION="${FSTCOMP_VERSION}")

@@ -18,14 +18,14 @@ add_library(bemollib
 )
 
 #target_include_directories(bemollib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(bemollib PRIVATE rmn)
+target_link_libraries(bemollib PRIVATE rmn::rmn)
 
 add_executable(bemol bemol.F90)
-target_link_libraries(bemol PRIVATE bemollib rmn)
+target_link_libraries(bemol PRIVATE bemollib rmn::rmn)
 add_dependencies(bemol fst-tools_build_info)
 
 add_executable(zcrop utils/zcrop/zcrop.F90)
-target_link_libraries(zcrop PRIVATE bemollib rmn)
+target_link_libraries(zcrop PRIVATE bemollib rmn::rmn)
 add_dependencies(zcrop fst-tools_build_info)
 
 # Force the use of RPATH instead of RUNPATH to revert to the

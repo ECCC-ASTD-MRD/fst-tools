@@ -24,7 +24,7 @@ add_executable(editfst
     main.F90
 )
 add_dependencies(editfst fst-tools_build_info)
-target_link_libraries(editfst PRIVATE rmn)
+target_link_libraries(editfst PRIVATE rmn::rmn)
 set_target_properties(editfst PROPERTIES 
    OUTPUT_NAME editfst-${EDITFST_VERSION}
    COMPILE_DEFINITIONS EDITFST_VERSION="${EDITFST_VERSION}")

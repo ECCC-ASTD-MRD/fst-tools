@@ -9,7 +9,7 @@ add_executable(dbzono
     writlzn.f90
 )
 add_dependencies(dbzono fst-tools_build_info)
-target_link_libraries(dbzono PRIVATE rmn)
+target_link_libraries(dbzono PRIVATE rmn::rmn)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain

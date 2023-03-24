@@ -1,6 +1,6 @@
 add_executable(fstcompress fstcompress.F90)
 add_dependencies(fstcompress fst-tools_build_info)
-target_link_libraries(fstcompress PRIVATE rmn)
+target_link_libraries(fstcompress PRIVATE rmn::rmn)
 set_target_properties(fstcompress PROPERTIES 
    OUTPUT_NAME fstcompress-${FSTCOMPRESS_VERSION}
    COMPILE_DEFINITIONS FSTCOMPRESS_VERSION="${FSTCOMPRESS_VERSION}")
@@ -11,7 +11,7 @@ add_custom_command(TARGET fstcompress POST_BUILD
 
 add_executable(fstuncompress fstuncompress.F90)
 add_dependencies(fstuncompress fst-tools_build_info)
-target_link_libraries(fstuncompress PRIVATE rmn)
+target_link_libraries(fstuncompress PRIVATE rmn::rmn)
 set_target_properties(fstuncompress PROPERTIES 
    OUTPUT_NAME fstuncompress-${FSTCOMPRESS_VERSION}
    COMPILE_DEFINITIONS FSTCOMPRESS_VERSION="${FSTCOMPRESS_VERSION}")
