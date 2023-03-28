@@ -374,7 +374,7 @@ END INTERFACE
 
     if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
       call app_log(APP_ERROR,'Cannot mix sequential and random files')
-      app_status=app_end(-1)
+      app_status=app_end(13)
       call qqexit(13)
     endif
 
@@ -410,14 +410,14 @@ END INTERFACE
       niun = niun - 1
       if (niun .lt. 1) then
         call app_log(APP_ERROR,'No input files given as arguments')
-        app_status=app_end(-1)
+        app_status=app_end(13)
         call qqexit(13)
       endif
       do i=1, niun
         ier = fnom(lnkdiun(i),lfn(i),'STD+RND+OLD+R/O+REMOTE',0)
         if (ier .lt. 0) then
           call app_log(APP_ERROR,'Problem opening file '//lfn(i))
-          app_status=app_end(-1)
+          app_status=app_end(13)
           call qqexit(13)
         endif
       enddo
@@ -426,7 +426,7 @@ END INTERFACE
       ier = fnom(lnkdiun(1),lfn(idx_isent),'STD+SEQ+OLD+R/O+REMOTE',0)
       if (ier .lt. 0) then
         call app_log(APP_ERROR,'Problem opening file '//lfn(idx_isent))
-        app_status=app_end(-1)
+        app_status=app_end(13)
         call qqexit(13)
       endif
     endif

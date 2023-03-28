@@ -19,7 +19,7 @@
 #include "lnkflds.cdk90"
 !
       integer ier
-      app_status=app_end(-1)
+      app_status=app_end(13)
 !
       ier = fstfrm(lnkdiun(1))
       if (mode.eq.1)ier = fstfrm(lnkdiun(idx_ozsrt))
