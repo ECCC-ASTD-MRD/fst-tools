@@ -786,9 +786,11 @@ END INTERFACE
 
 !  imprime boite avec le temps d execution du pgm  pgsm
 
-    app_status=app_end(-1)
     if (ipose.gt.0) then
+        app_status=app_end(13
         call qqexit(13)
+    else
+       app_status=app_end(0)
     endif
-
+    
     end
