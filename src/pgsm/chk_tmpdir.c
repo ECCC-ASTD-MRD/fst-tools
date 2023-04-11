@@ -24,7 +24,7 @@ int chk_tmpdir(void) {
         res = putenv("TMPDIR=/tmp");
         if (res != 0) {
            App_Log(APP_ERROR,"%s: Cannot set TMPDIR to /tmp, exiting\n",__func__);
-           App_End(-1);
+           App_End(-13);
            exit(-13);
         }
     }

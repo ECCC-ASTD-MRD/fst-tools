@@ -99,7 +99,7 @@ int fst2xml(int argc, char **argv) {
 
     if (xmlfd == NULL) {
         App_Log(APP_ERROR,"Cannot open output file... Exiting...");
-        App_End(-1);
+        App_End(13);
         exit(13);
     }
 
@@ -123,7 +123,6 @@ int fst2xml(int argc, char **argv) {
         } else {
             multi = 1;
         }
-
         xmlconvip(xmlip1, ip1);
         nhours = (double) npas * deet / 3600.0;
         f77name(incdatr)(&datev, &dateo, &nhours);
@@ -240,16 +239,15 @@ int fst2xml(int argc, char **argv) {
 void xmlconvip(char xmlip1[], int ip1)
 {
     float niveau;
-    int kind, mode;
-    int flag = 1;
-    int lip1;
-    F2Cl l=32;
+    int32_t kind, mode;
+    int32_t flag = 1;
+    int32_t lip1;
 
     mode = -1;
     lip1 = ip1;
     for (int i = 0; i < 32; i++) xmlip1[i]='\0';
 
-    f77name(convip_plus)(&lip1, &niveau, &kind, &mode, xmlip1, &flag, l );
+    f77name(convip_plus)(&lip1, &niveau, &kind, &mode, xmlip1, &flag, (F2Cl)32);
     xmlip1[31] = '\0';
     nettoyer(xmlip1);
 }
@@ -278,7 +276,7 @@ void xmlconvdate(char xmldate[], int dateo)
 void nettoyer(char chaine[])
 {
     int longueur = strlen(chaine) - 1;
-    while (chaine[longueur] == ' ' || chaine[longueur] == '\0') {
+    while (longueur>=0 && (chaine[longueur] == ' ' || chaine[longueur] == '\0')) {
         chaine[longueur] = '\0';
         longueur--;
     }
