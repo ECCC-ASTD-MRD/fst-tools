@@ -49,12 +49,12 @@ module configuration
                'NRECMIN ',('S:      ',i = 1,120),  'DRYRUN  ', 'STRICT  ' /),                      &
       def1b=(/ 'OUI     ', '        ', '0       ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', '$IN     ', '$OUT    ', 'FATALE  ', &
-               '        ', 'FATALE  ', '-1      ', 'NON     ', 'NON     ', 'NON     ', &
+               'INFO    ', 'FATALE  ', '-1      ', 'NON     ', 'NON     ', 'NON     ', &
                'NON     ', 'NON     ', 'NON     ', 'OUI     ', 'NON     ', 'NON     ', &
                '-1      ',('        ',i = 1,120),  '        ', 'NON     ' /),                       &
       def2b=(/ 'OUI     ', '        ', '0       ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', '$IN     ', '$OUT    ', 'ERRORS  ', &
-               '        ', 'ERRORS  ', '-1      ', 'OUI     ', 'OUI     ', 'OUI     ', &
+               'INFO    ', 'ERRORS  ', '-1      ', 'OUI     ', 'OUI     ', 'OUI     ', &
                'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', 'OUI     ', &
                '-1      ',('        ',i = 1,120),  'DRYRUN  ', 'OUI     ' /)
 !
