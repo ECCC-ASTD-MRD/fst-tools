@@ -78,7 +78,7 @@
 
       ikind = wkoffit(ptvar(1))
 !      write(*,*) 'IKIND ====== ',ikind
-      if(ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) then
+      if(ikind .ne. 39 .and. ikind .ne. 33 .and. ikind .ne. 34 .and. ikind .ne. 1) then
          call app_log(APP_ERROR,'File is not RPN')                  
          app_status=app_end(-1)
          call qqexit(app_status)
