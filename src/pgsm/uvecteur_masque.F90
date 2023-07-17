@@ -195,13 +195,8 @@
 
 !
    if (nunv > 0) then
-      write(6,666)
- 666     format(' AUCUNE INTERPOLATION SUR VARIABLE PAIRE CHAMP(TOUT,TOUT)')
-      write(6,668)
- 668     format(' ON DOIT UTILISER LE NOM DE LA VARIABLE EX: CHAMP(UU,TOUT)')
-      write(6,669)
- 669  format(' ATTENTION L INTERPOLATION DES VECTEURS SERA SCALAIRE (!!!)')
-!
+      call app_log(APP_WARNING,'No interpolation on variable pair CHAMP(TOUT,TOUT), you have to use the variable name ex: CHAMP(UU,TOUT)')
+      call app_log(APP_WARNING,'Scalar interpolation will be scalar')
    endif
    return
    end

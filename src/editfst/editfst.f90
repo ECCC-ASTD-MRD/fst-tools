@@ -348,15 +348,17 @@
       ELSE
          DNOM = 'STD+RND'
       ENDIF
-      I = FNOM(6, PRINTR, 'SEQ', 0)    ! open listing file
 
-!     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
+      app_ptr=app_init(0,'editfst',EDITFST_VERSION,'',BUILD_TIMESTAMP)
+      call app_logstream(PRINTR)
+      
+      !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
-         app_ptr=app_init(0,'editfst',EDITFST_VERSION,'',BUILD_TIMESTAMP)
          call app_start()
       ELSE
-         WRITE(6,*)'***   E D I T F S T   7.12.0   ***'
+         call app_log(APP_VERBATIM,'***   E D I T F S T   7.12.0   ***')
       ENDIF
+
       strict_mode = DEF1(147) .eq. 'OUI'
 
 !     IF (DEF1(147) .ne. "OUI") CALL BOXED_MESSAGE(6, MSG_000, 4)

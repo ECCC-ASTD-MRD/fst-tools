@@ -358,9 +358,9 @@ END INTERFACE
     ier = fnom(5,lfn(idx_i),'SEQ',0)
     ier = fnom(6,lfn(idx_l),'SEQ',0)
 
-
     ! imprime boite debut du programme
     app_ptr=app_init(0,'pgsm',PGSM_VERSION,'',BUILD_TIMESTAMP)
+    call app_logstream(lfn(idx_l))
     call app_start()
 
 

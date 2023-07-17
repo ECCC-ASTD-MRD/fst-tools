@@ -417,7 +417,7 @@ void write_to_fstFile()
   if (datyp == INTN)
     {
       App_Log(APP_INFO,"Writing int values to fst file\n");
-      ier = c_fstecr(intdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
+      ier = c_fstecr(intdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
 
       if (intdata)
         free(intdata);
@@ -427,7 +427,7 @@ void write_to_fstFile()
   else if (datyp == FLOATN || datyp == I3E)
     {
       App_Log(APP_INFO,"Writing float values to fst file \n");
-      ier = c_fstecr(floatdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
+      ier = c_fstecr(floatdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
 
       if (floatdata)
         free(floatdata);
@@ -442,7 +442,7 @@ void write_to_fstFile()
       if (chardata)
         {
           chardata = "abcedef";
-          ier = c_fstecr(chardata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp, "false");
+          ier = c_fstecr(chardata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
 
           /* free(chardata); */
         }

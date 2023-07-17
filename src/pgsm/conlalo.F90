@@ -10,10 +10,13 @@
       integer lat,lon,ni,nj,grtyp,grtypxy,ig1,ig2,ig3,ig4
       character*1 cgrtyp, cgtypxy
       
-      write(cgrtyp    , '(A1)') grtyp
+
+      write(cgrtyp , '(A1)') grtyp
       write(cgtypxy, '(A1)') grtypxy
-      write(6,101) cgrtyp, cgtypxy
- 101  format(' CONLALO:','CGRTYP: ',a1, 'CGTYPXY: ', a1)
+
+      WRITE(app_msg,101) cgrtyp, cgtypxy               
+      call app_log(APP_INFO,app_msg)
+101  format(' CONLALO:','CGRTYP: ',a1, 'CGTYPXY: ', a1)
       
       
       call conlal2(lat,lon,ni,nj,cgrtyp,cgtypxy,ig1,ig2,ig3,ig4)

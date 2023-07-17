@@ -88,7 +88,7 @@ int fst2xml(int argc, char **argv) {
     sscanf(val[4], "%d", &tokens_per_line);
 
     iun = 1;
-    c_fnom(iun, fstFile, "RND+R/O", 0);
+    c_fnom(&iun, fstFile, "RND+R/O", 0);
     ier = c_fstouv(iun, "RND");
 
     if (0 == strcmp(val[1], def[1])) {

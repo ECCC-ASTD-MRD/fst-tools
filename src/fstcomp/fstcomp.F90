@@ -100,7 +100,7 @@
 !      DATA exception_vars /'^^  >>  !!  '/
       DATA exception_vars /'^^  >>  !!   ^>  '/
 
-      DATA CLE  /'A:', 'B:', 'L',    'AS',  'BS ',  'AF', 'BF',  'LI', &
+      DATA CLE  /'A:', 'B:', 'L.',    'AS',  'BS ',  'AF', 'BF',  'LI', &
                  'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',    &
                  'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG' /
 
@@ -184,10 +184,12 @@
       LN = DEF1(12) .EQ. 'OUI'
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
+      app_ptr=app_init(0,'fstcomp',FSTCOMP_VERSION,'',BUILD_TIMESTAMP)
+!      call app_logstream(DEF1(3))
+
       IF( LN ) THEN
-         WRITE(6,*)'* * * '//FSTCOMP_VERSION//' * * *'
+         call app_log(APP_VERBATIM,'* * * '//FSTCOMP_VERSION//' * * *')
       ELSE
-         app_ptr=app_init(0,'fstcomp',FSTCOMP_VERSION,'',BUILD_TIMESTAMP)
          call app_start()
       ENDIF
 
