@@ -356,7 +356,7 @@
       IF( BOX ) THEN
          call app_start()
       ELSE
-         call app_log(APP_VERBATIM,'***   E D I T F S T   7.12.0   ***')
+         call app_log(APP_VERBATIM,'***   E D I T F S T   7.12.1   ***')
       ENDIF
 
       strict_mode = DEF1(147) .eq. 'OUI'
