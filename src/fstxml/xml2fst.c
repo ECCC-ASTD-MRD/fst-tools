@@ -11,7 +11,7 @@
 #include <App.h>
 #include <rmn/rpnmacros.h>
 #include <rmn/fnom.h>
-#include <rmn/fstd98.h>
+#include <rmn/fst98.h>
 
 #include "fst-tools_build_info.h"
 
