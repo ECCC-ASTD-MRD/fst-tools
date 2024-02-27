@@ -1,26 +1,8 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/R OUVRES OUVRE UN FICHIER SOURCE
       SUBROUTINE OUVRES( DN ) 
       use configuration
       IMPLICIT      NONE
-      CHARACTER*(*) DN(120)
+      CHARACTER(len=*), dimension(*) :: DN(120)
   
 !ARGUMENTS
 ! ENTREE DN    -  LISTE DES NOMS DE FICHIER SOURCE
@@ -38,8 +20,9 @@
 !
 !
 !MODULES
-      EXTERNAL FSTNOL, FSTVOI, FSTRWD, FERMES, FERMED
-      INTEGER  FSTNOL, FSTVOI, FSTRWD, I
+      EXTERNAL FERMES, FERMED
+      INTEGER  i,j,k
+      logical :: success
 
 !     TRAITEMENT DU FICHIER SOURCE
 !     si le fichier source etait ouvert comme fichier destination
@@ -49,22 +32,40 @@
 !        si on change de fichier source
          CALL FERMES
       ENDIF
-      I    = FSTNOL(SOURCES, DN, NFS, SNOM)
+
+     if (nfs.gt.1 .and. ((index(SNOM,'SEQ') + index(SNOM,'SQI') + index(SNOM,'FTN')) .ne. 0)) then
+         call app_log(APP_ERROR,'ouvres: Cannot chain sequential files')
+         nfs = 0
+      else
+        do 20 i=1,nfs
+            if(.not. sources(i)%open(dn(i),SNOM//'+REMOTE')) then
+               do 10 j=1,i
+                  success = sources(i)%close()
+   10          continue
+               nfs = 0
+               goto 30
+            endif
+   20    continue
+
+   30    if (nfs .gt. 1) then
+            if (.not. fst24_link(sources)) then
+               call app_log(APP_ERROR, 'Unable to link source files')
+               return
+            endif
+         endif
+      endif
+
       NFSO = NFS
       SSEQ = INDEX(SNOM,'SEQ') .GT. 0
 
 !     REFERME LE FICHIER SI 'RND' ET VIDE
-      IF(SSEQ .OR. (I .GE. 0)) THEN
+      IF(SSEQ .OR. (nfs .GE. 0)) THEN
          OUVS = .TRUE.
          NS   = DN(1)
          IF( VS ) THEN
-            IF( SSEQ ) I = FSTRWD( SOURCES ) 
-            IF( INDEX(SNOM,'FTN') .GT. 0) THEN
-               I = FSTVOI(SOURCES, 'SEQ')
-            ELSE
-               I = FSTVOI(SOURCES, 'STD')
-            ENDIF
-            IF( SSEQ ) I = FSTRWD( SOURCES ) 
+            IF( SSEQ )  i = sources(1)%rewind()
+            call sources(1)%print_summary()
+            IF( SSEQ )  i = sources(1)%rewind() 
          ENDIF
       ELSE
          CALL FERMES

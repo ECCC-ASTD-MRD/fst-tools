@@ -1,28 +1,11 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/R WEOFILE
 !     ECRIT UNE MARQUE DE FIN DE FICHIER LOGIQUE DE NIVO M DANS LE FICHIER
 !     DESTINATION LA POSITION COURANTE. 
 !
       SUBROUTINE WEOFILE(OUPT, MARC, TD)
-      use configuration
       use app
+      use rmn_fst24
+      use configuration
       IMPLICIT NONE 
   
       INTEGER    OUPT(*), MARC, TD(*)
@@ -46,10 +29,9 @@
 !         006      M. Valin      Mai 14 Remplacement des comdecks par un module
 !
 !MODULES
-      EXTERNAL      ARGDIMS, FSTWEO, OUVRED, qqexit, LOW2UP
-!
-!*
-      INTEGER       ARGDIMS, FSTWEO, OUVRED, L, M
+      EXTERNAL      ARGDIMS, OUVRED, qqexit, LOW2UP
+
+      INTEGER       ARGDIMS, OUVRED, L, M
       CHARACTER*128 DN
 
       M = 1
@@ -105,7 +87,7 @@
       ENDIF
 
 !     AJOUTE LA MARQUE LOGIQUE
-      L = FSTWEO(3, M)
+      L = destination%weo(M)
       WRITE(app_msg,*) 'weofile: Maker ',M,' added to file ',ND
       call app_log(APP_DEBUG,app_msg)
   

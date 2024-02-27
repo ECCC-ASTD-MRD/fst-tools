@@ -1,21 +1,3 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/R DMPDES MET EDITFST EN MODE XPRES SI L'USAGER VEUT TOUT LE FICHIER
 !       IMPRIME L'INTERPRETATION DES DIRECTIVES DESIRE SI EN MODE DEBUG
       SUBROUTINE DMPDES

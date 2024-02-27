@@ -1,31 +1,14 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/P COPYSTX COPIE UN FICHIER STANDARD EN TOUT OU EN PARTIE.
       SUBROUTINE COPYSTX
       use ISO_C_BINDING
 !      use convert_ip123
 !      use format_ip123_kind
-       use configuration
-       use app
+      use configuration
+      use app
+      use rmn_fst24
       IMPLICIT NONE 
-       include 'rmn/convert_ip123.inc'
-       include 'rmn/excdes.inc'
+      include 'rmn/convert_ip123.inc'
+      include 'rmn/excdes.inc'
   
 !AUTEURS
 !         - C. THIBEAULT  FEV 83
@@ -51,25 +34,19 @@
 !Revision 016   M. Lepine - Sep  16 - dump_request_table en mode debug seulement
 !
 !LANGAGE  - FTN77
-      integer, dimension ( : ), pointer, save :: buftemp => NULL() ! CHAMP pour lire ce qu'on doit copier, (LONGUEUR INITIALE = 0)
 
-      EXTERNAL     FSTPRM, FSTSUI, FSTECR, FSTINF, FSTWEO
-      EXTERNAL     CRITSUP, DESIRE, FSTLUK, FSTFRM, FSTEOF
       EXTERNAL     QQEXIT
-      INTEGER      FSTINF, FSTEOF, IG1, VALID, NI, I, IREC, DATE, SWA
-      INTEGER      FSTPRM, FSTFRM, IG2, XTRA2, NJ, J, DEET,       LNG
-      INTEGER      FSTECR, FSTSUI, IG3, XTRA3, NK, K, DLFT, DTYP, UBC
-      INTEGER      FSTLUK, FSTWEO, IG4, NBITS, NPAS
-      integer      IP(4)
-      integer      IP1,IP2,IP3 
+      INTEGER      I, J, K, IREC
+      integer      nrecord
       character(len=4) :: nomvar
-      logical :: can_translate
+      logical :: can_translate, success
       real :: p1, p2, p3
       integer :: kind1, kind2, kind3, matches
       character (len=2) :: strkind1, strkind2, strkind3
-      integer :: nrecords
       integer :: date_1, date_2
   
+      type(fst_record) :: record
+
       LOGICAL      FIRSTP, BONNE, OK
       interface ! can IP1/2/3 for variable 'name' be translated to value/kind ?
         function fstcantranslate(name) result (yesno) BIND(C,name='FstCanTranslateName')
@@ -91,7 +68,6 @@
 !     DONC IF(FIXD .AND. .NOT.BONNE) INUTILE DE CHERCHER PLUS LOIN
 
       IF( DEBUG ) call Dump_Request_table()
-      nrecords = 0
 
    10 BONNE  = .FALSE.
       FIRSTP = .TRUE.
@@ -99,111 +75,101 @@
       call app_log(APP_DEBUG,app_msg)
 
 !     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT QUI NOUS INTERESSE
-      IREC   = FSTINF(SOURCES(1), NI, NJ, NK, -1, ' ', -1, -1, -1,' ', ' ')
-!
-      do while(irec >= 0)
-!
-      I = FSTPRM(IREC, DATE, DEET, NPAS, NI, NJ, NK, NBITS, DTYP,    &
-                 IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2,        &
-                 IG3, IG4, SWA, LNG, DLFT, UBC, VALID, XTRA2, XTRA3)
-!
-      IF(NBITS.GT.48 .AND. DTYP.EQ.1) THEN
-         WRITE(app_msg,*) 'copystx: Unable top copy record no ',IREC,' NBITS=',NBITS 
-         call app_log(APP_ERROR,app_msg)
-         GO TO 140
-      ENDIF
-      nrecords = nrecords + 1
-      write(nomvar,'(A4)')NOM
-      can_translate = (0 /= fstcantranslate(nomvar))   ! est-ce qu'on peut traduire ip1/2/3 pour cette variable ?
+      
+      success = sources(1)%set_search_criteria()
 
-      IF(FIRSTP .OR. OK) THEN 
-         IP(4) = VALID   ! date valid
-         WRITE(app_msg,*) 'copystx: ENRG. #1 DATE ORIG = ',DATE,' VALID =',IP(4) 
-         IF(FIRSTP) call app_log(APP_DEBUG,app_msg)
-         FIRSTP = .FALSE.
-         WRITE(app_msg,*) 'copystx: FIRSTP=',FIRSTP,' OK=',OK,  ' BONNE=',BONNE 
-         call app_log(APP_DEBUG,app_msg)
-      ENDIF
+      nrecord=0
+      do while(sources(1)%find_next(record))
 
-!     SI ON DEMANDE TOUT LE FICHIER.
-      IF( XPRES ) THEN
-         BONNE  = .TRUE.
-      ENDIF
-!
-!     CONTROLE DE LA MEMOIRE TAMPON AVANT LECTURE
-!     si on se rend ici, c'est que l'enregistrement est a copier
-!
-      if(dryrun) then
-        I = 0    ! fake status of succesful read if dry run
-      else
-        IF(LNG .GT. NM) THEN  ! make sure buffer is large enough to receive data
-          IF (associated(buftemp)) deallocate(buftemp)
-          NM = LNG
-          allocate(BUFtemp(NM+10))
-        ENDIF
-        I = FSTLUK(BUFtemp, IREC, NI, NJ, NK)  ! on lit l'enregistrement
-      endif
-!
-!     ==================   logique pour directive ZAP  ==================
-!
-      IF( ZA ) THEN    ! on "zappe ?"
-         IF(Z1 .NE. -1)  IP1 = Z1  ! zap ip1
-         IF(Z2 .NE. -1)  IP2 = Z2  ! zap ip2
-         IF(Z3 .NE. -1)  IP3 = Z3  ! zap ip3
-         IF(ZD .NE. -1)  DATE  = ZD  ! zap origin date
-         IF(ZT .NE. '??') THEN   ! zap type
-            IF(ZT(1:1) .NE. '?') TYP(1:1) = ZT(1:1)
-            IF(ZT(2:2) .NE. '?') TYP(2:2) = ZT(2:2)
+         if (record%dasiz.GT.48 .AND. record%datyp.EQ.1) then
+            write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%dasiz 
+            call app_log(APP_ERROR,app_msg)
+            goto 140
+         endif
+
+         write(nomvar,'(A4)')record%nomvar
+         can_translate = (0 /= fstcantranslate(nomvar))   ! est-ce qu'on peut traduire ip1/2/3 pour cette variable ?
+
+         IF(FIRSTP .OR. OK) THEN 
+            WRITE(app_msg,*) 'copystx: ENRG. #1 DATE ORIG = ',record%dateo,' VALID =',record%datev 
+            IF(FIRSTP) call app_log(APP_DEBUG,app_msg)
+            FIRSTP = .FALSE.
+            WRITE(app_msg,*) 'copystx: FIRSTP=',FIRSTP,' OK=',OK,  ' BONNE=',BONNE 
+            call app_log(APP_DEBUG,app_msg)
          ENDIF
-         IF(ZN .NE. '??') THEN   ! zap name
-            IF(ZN(1:1) .NE. '?') NOM(1:1) = ZN(1:1)
-            IF(ZN(2:2) .NE. '?') NOM(2:2) = ZN(2:2)
-            IF(ZN(3:3) .NE. '?') NOM(3:3) = ZN(3:3)
-            IF(ZN(4:4) .NE. '?') NOM(4:4) = ZN(4:4)
+
+   !     SI ON DEMANDE TOUT LE FICHIER.
+         IF( XPRES ) THEN
+            BONNE  = .TRUE.
          ENDIF
-         IF(ZE .NE. '????????????') THEN   ! zap ETIKET
-            DO 130 I=1,12
-               IF(ZE(I:I) .NE. '?') ETI(I:I) = ZE(I:I)
-  130          CONTINUE
+   
+   !     si on se rend ici, c'est que l'enregistrement est a copier
+   
+         if (dryrun) then
+            i = 0    ! fake status of succesful read if dry run
+         else
+            success = record%read()
+         endif
+   !
+   !     ==================   logique pour directive ZAP  ==================
+   !
+         IF( ZA ) THEN    ! on "zappe ?"
+            IF(Z1 .NE. -1)  record%ip1   = Z1  ! zap ip1
+            IF(Z2 .NE. -1)  record%ip2   = Z2  ! zap ip2
+            IF(Z3 .NE. -1)  record%ip3   = Z3  ! zap ip3
+            IF(ZD .NE. -1)  record%dateo = ZD  ! zap origin date
+            IF(ZT .NE. '??') THEN   ! zap type
+               IF(ZT(1:1) .NE. '?') record%typvar(1:1) = ZT(1:1)
+               IF(ZT(2:2) .NE. '?') record%typvar(2:2) = ZT(2:2)
+            ENDIF
+            IF(ZN .NE. '??') THEN   ! zap name
+               IF(ZN(1:1) .NE. '?') record%nomvar(1:1) = ZN(1:1)
+               IF(ZN(2:2) .NE. '?') record%nomvar(2:2) = ZN(2:2)
+               IF(ZN(3:3) .NE. '?') record%nomvar(3:3) = ZN(3:3)
+               IF(ZN(4:4) .NE. '?') record%nomvar(4:4) = ZN(4:4)
+            ENDIF
+            IF(ZE .NE. '????????????') THEN   ! zap ETIKET
+               DO 130 I=1,12
+                  IF(ZE(I:I) .NE. '?') record%etiket(I:I) = ZE(I:I)
+   130         CONTINUE
+            ENDIF
          ENDIF
-      ENDIF
-!
-      if(dryrun) then  ! dry run debug mode, tell what we would be copying
-!
-        i = decode_ip(p1,kind1,p2,kind2,p3,kind3,ip1,ip2,ip3)
-        strkind1=kind_to_string(kind1)
-        strkind2=kind_to_string(kind2)
-        strkind3=kind_to_string(kind3)
-        call newdate(date,date_1,date_2,-3)   ! translate date time stamp to printable format
-        if(can_translate)then
-          write(app_msg,667)'copystx: DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,P1,strkind1,P2,strkind2,P3,strkind3,DATE,GTY,IG1,IG2,IG3,IG4
-        else
-          write(app_msg,666)'copystx: DRYRUN-select: ',date_1,date_2,TYP,NOM,ETI,IP1,IP2,IP3,DATE,GTY,IG1,IG2,IG3,IG4
-        endif
-        call app_log(APP_INFO,app_msg)
-666     format(A,2(I8.8,1X),A3,A5,A13,3I14       ,I12,A2,4I10)
-667     format(A,2(I8.8,1X),A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
-!
-      else   !  real mode, write into the output file
-!
-        I = FSTECR(BUFtemp, BUFtemp, -NBITS, 3, DATE, DEET, NPAS, NI, NJ, NK,  &
-                   IP1, IP2, IP3, TYP, NOM, ETI, GTY, IG1, IG2, IG3, IG4, DTYP, ECR)
-        if (i .lt. 0) then
-          call app_log(APP_ERROR,'copystx: write error')
-          call qqexit(55)
-        endif
-      endif
-!
-      COPIES = COPIES + 1
-      LIMITE = LIMITE - 1
-      IF(LIMITE .EQ. 0) GO TO 180            ! nombre maximum d'enregistrements a copier atteint
-140   IREC = FSTSUI(SOURCES(1), NI, NJ, NK)  ! prochain enregistrement
-!
-      END DO  ! (while(irec >= 0)
-!
+   !
+         if(dryrun) then  ! dry run debug mode, tell what we would be copying
+   !
+         i = decode_ip(p1,kind1,p2,kind2,p3,kind3,record%ip1,record%ip2,record%ip3)
+         strkind1=kind_to_string(kind1)
+         strkind2=kind_to_string(kind2)
+         strkind3=kind_to_string(kind3)
+         call newdate(record%dateo,date_1,date_2,-3)   ! translate date time stamp to printable format
+         if(can_translate)then
+            write(app_msg,667)'copystx: DRYRUN-select: ',date_1,date_2,record%typvar,record%nomvar,record%etiket,P1,strkind1,P2,strkind2,P3,strkind3,record%dateo,record%grtyp,record%ig1,record%ig2,record%ig3,record%ig4
+         else
+            write(app_msg,666)'copystx: DRYRUN-select: ',date_1,date_2,record%typvar,record%nomvar,record%etiket,record%ip1,record%ip2,record%ip3,record%dateo,record%grtyp,record%ig1,record%ig2,record%ig3,record%ig4
+         endif
+         call app_log(APP_INFO,app_msg)
+   666     format(A,2(I8.8,1X),A3,A5,A13,3I14       ,I12,A2,4I10)
+   667     format(A,2(I8.8,1X),A3,A5,A13,3(G12.5,A2),I12,A2,4I10)
+   
+         else   !  real mode, write into the output file
+   
+            success = destination%write(record,ECR)
+            
+            if (i .lt. 0) then
+               call app_log(APP_ERROR,'copystx: write error')
+               call qqexit(55)
+            endif
+         endif
+   
+         COPIES = COPIES + 1
+         LIMITE = LIMITE - 1
+   140   IF(LIMITE .EQ. 0) GO TO 180            ! nombre maximum d'enregistrements a copier atteint
+
+      END DO
+
   160 IF(SSEQ) THEN                          ! le fichier source est sequentiel
-         LEOF = FSTEOF(SOURCES(1))
-         WRITE(app_msg,*)'copystx: Encountered EOF ',LEOF,' within ',SOURCES(1),'...'
+         leof=sources(1)%eof()
+         WRITE(app_msg,*)'copystx: Encountered EOF ',LEOF,' within file ...'
          call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
             WRITE(app_msg,*) 'copystx: ',LEOF,' is not an acceptable logical EOF'
@@ -214,7 +180,7 @@
             K = CEOF
             IF(CEOF .LT. 0) K = LEOF
             IF(K .LT. 15) THEN
-               I = FSTWEO(3, K)
+               I = destination%weo(K)
                IF(I.EQ.0) THEN
                   WRITE(app_msg,*) 'copystx: EOF LOGIQUE ',K,' AJOUTEE AU FICHIER',TRIM(ND) 
                   call app_log(APP_DEBUG,app_msg)
@@ -231,7 +197,7 @@
   
 !     DOIT-ON ECRIRE UN EOF AVANT DE FERMER?
       IF(DSEQ .AND. EOF.GT.0) THEN           ! le fichier destination est sequentiel
-         I = FSTWEO(3, EOF)
+         I = destination%weo(EOF)
          IF(I.EQ.0) THEN
             WRITE(app_msg,*) 'copystx: Mark of level ',K,' written in ',TRIM(ND) 
             call app_log(APP_ERROR,app_msg)

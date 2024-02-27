@@ -1,28 +1,11 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !**   FUNCTION OUVRE UN FICHIER DESTINATION
       FUNCTION OUVRED( DN ) 
       use app
+      use rmn_fst24
       use configuration
-      IMPLICIT      NONE
-      INTEGER       OUVRED
-      CHARACTER*(*) DN
+      IMPLICIT         NONE
+      INTEGER          OUVRED
+      CHARACTER(len=*) DN
   
 !ARGUMENTS
 !SORTIE OUVRED - >=0 DIMENSION DU FICHIER OUVERT
@@ -45,10 +28,12 @@
 !
 !
 !MODULES
-      EXTERNAL FSTOUV, FNOM, FSTNBR, FSTINF, FERMED, qqexit
+      type(fst_record) :: record
 
-      INTEGER  FSTOUV, FNOM, FSTNBR, FSTINF, RENDUA, I, J, K
+      EXTERNAL FERMED, qqexit
+      INTEGER  RENDUA, I, J, K
       integer ier
+      logical :: success
 
       if(dryrun) then  ! mode dryrun, on fait comme si on avait ouvert le fichier de sortie
         call app_log(APP_INFO,'OUVRED: This is a dryrun, the output file will not be opened')
@@ -63,7 +48,7 @@
             write(app_msg,*) 'ouvred: Sequentila file ',ND,' already opened'
             call app_log(APP_DEBUG,app_msg)
          ELSE
-            OUVRED = FSTNBR( 3 )
+            OUVRED = destination%get_num_records()
             write(app_msg,*) 'ouvred: File',ND,' already opened ','Size =',OUVRED
             call app_log(APP_DEBUG,app_msg)
          ENDIF
@@ -80,31 +65,29 @@
       IF( OUVD ) CALL FERMED
 
 !     RETOURNE OUVRED >= 0 SI OUVERT
-      ier = FNOM(3, DN, DNOM//'R/W+REMOTE', 0)
-      IF(ier .EQ. 0) THEN
-         OUVRED = FSTOUV(3, DNOM)
-         if (ouvred .lt. 0) then
-            call app_log(APP_ERROR,'ouvred: Cannot open file')
-            CALL qqexit(55)
-         endif
-         ND     = DN
-         OUVD   = .TRUE.
-         DSEQ   = INDEX(DNOM,'SEQ') .NE. 0
-         IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
-            RENDUA = 0
- 10         COPIES = FSTINF( 3, I, J, K, -1, ' ', -1, -1, -1, ' ', ' ')
-            IF(COPIES .GE. 0) THEN
-               RENDUA = RENDUA+1
-               GO TO 10
-            ENDIF
-            write(app_msg,*) 'ouvred: Records before copy =',RENDUA
-            call app_log(APP_DEBUG,app_msg)
-         ENDIF
-         COPIES = 0
-      ELSE
-         call app_log(APP_ERROR,'ouvred: File unusable')
+      ouvred = destination%open(dn,DNOM//'R/W+REMOTE')
+
+      if (ouvred .le. 0) then
+         call app_log(APP_ERROR,'ouvred: Cannot open file')
          CALL qqexit(55)
+      endif
+
+      ND     = DN
+      OUVD   = .TRUE.
+      DSEQ   = INDEX(DNOM,'SEQ') .NE. 0
+      IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
+         RENDUA = 0
+
+         success = destination%set_search_criteria()
+10       COPIES = destination%find_next(record)
+         IF(COPIES .GE. 0) THEN
+            RENDUA = RENDUA+1
+            GO TO 10
+         ENDIF
+         write(app_msg,*) 'ouvred: Records before copy =',RENDUA
+         call app_log(APP_DEBUG,app_msg)
       ENDIF
+      COPIES = 0
 
       RETURN
       END 

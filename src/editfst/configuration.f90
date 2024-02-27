@@ -1,24 +1,7 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 module configuration
 !     internal variables used all over editfst
 !
+      use rmn_fst24
       implicit none
       integer, private :: i
       integer, PARAMETER :: NMR=12, NMS=25, NME=20, NMN=40, NMM=10, NMD=50, NML=50
@@ -32,13 +15,13 @@ module configuration
 ! GTYS, TYPS, NOMS, ETIS : tables utilisee pour stocker les requetes
 !     GTYS sert pour critere supplementaire type de grille
 !
-      character *1   , save :: GTY, GTYPS=' ', GTYS(NMD)
-      character *2   , save :: ZT, TYP, TYPS(NML,NMD)
-      character *4   , save :: ZN, NOM, NOMS(NML,NMD)
-      character *6   , save :: ETAT='NORMAL'
-      character *12  , save :: ZE, ETI, ETIS(NML,NMD)
-      character *4096 , save :: NS=' ', ND
-      character *15  , save :: SNOM, DNOM
+      character(len=1)   , save :: GTY, GTYPS=' ', GTYS(NMD)
+      character(len=2)   , save :: ZT, TYP, TYPS(NML,NMD)
+      character(len=4)   , save :: ZN, NOM, NOMS(NML,NMD)
+      character(len=6)   , save :: ETAT='NORMAL'
+      character(len=12)  , save :: ZE, ETI, ETIS(NML,NMD)
+      character(len=4096), save :: NS=' ', ND
+      character(len=15)  , save :: SNOM, DNOM
 
       integer, parameter :: NCCARDKEYS=147   ! dimension for program options (processed by ccard)
       character(len=8), dimension(NCCARDKEYS), save ::    &
@@ -79,13 +62,12 @@ module configuration
 !     DESEXC : flag desire/exclure associe a la requete
 !     SATISF : nb de requetes satisfaites
 !
-      integer, save ::  NREQ=0, SAUV=0, DESEXC(NMD), SATISF(NMD),                    &
-                        NEXC=0, SUP(8,NMD), NIS=-1, NJS=-1, NKS=-1,                  &
-                        IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),    &
-                        REQE(NMD), Z1, Z2, Z3, ZD
-      integer, save ::  NP  ! nb de parametres passes lors de l'appel courant a une directive (readlx)
-      integer, save ::  MEOF=1, COPIES, NDS, NDD, EOF, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0,   SOURCES(120), NRECMIN
-
+      integer, save :: NREQ=0, SAUV=0, DESEXC(NMD), SATISF(NMD),                    &
+                       NEXC=0, SUP(8,NMD), NIS=-1, NJS=-1, NKS=-1,                  &
+                       IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),    &
+                       REQE(NMD), Z1, Z2, Z3, ZD
+      integer, save :: NP  ! nb de parametres passes lors de l'appel courant a une directive (readlx)
+      integer, save :: MEOF=1, COPIES, NDS, NDD, EOF, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0, NRECMIN
       logical, save :: SCRI=.false., XPRES=.false., ESAIS=.false.,      &
                        DM1, DEBUG=.false., SELEC, BOX, DIAG,            &
                        INTERAC=.false., ZA=.false., DRYRUN=.false.,     &
@@ -93,13 +75,16 @@ module configuration
                        OUVS=.false., DSEQ, VD, OUVD=.false.
       integer, save :: max_requetes_exdes = 0
       integer, save :: max_nlist_exdes = 0
+
+      type(fst_file), dimension(120) :: sources
+      type(fst_file) :: destination
 contains
+
 subroutine config_init  ! initialisation des tableaux 
   req     = 0
   jours   = 0
   desexc  = 0   ! ni desire, ni exclure
   satisf  = 0
-  sources = -1  ! invalidate all unit numbers
   sup = 0
 end subroutine config_init
 

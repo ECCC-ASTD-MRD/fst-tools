@@ -1,27 +1,10 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/R SAUTSQI
 !        POSITIONNE LE FICHIER SEQUENTIEL DN 
 !        A UN CERTAIN NIVEAU D'EOF LOGIQUE
       SUBROUTINE SAUTSQI(DN, LEV, NL)
       use configuration
       use app
+      use rmn_fst24
       IMPLICIT   NONE
         
       INTEGER    DN(*), LEV, NL
@@ -44,14 +27,14 @@
 !LANGUAGE   - FTN77 
 !
 !MODULES  
-      EXTERNAL      ARGDIMS, FSTINF, FSTEOF, OUVRED, qqexit 
-!
-!*
-      INTEGER       ARGDIMS, FSTINF, FSTEOF, OUVRED, LEVEL
-      INTEGER       I, J, K, L, M
-      CHARACTER*128 CLE
-      CHARACTER*15  SORTE, TAPE
-      CHARACTER*3   DND
+      EXTERNAL      ARGDIMS, OUVRED, qqexit 
+
+      INTEGER       ARGDIMS, OUVRED, LEVEL
+      INTEGER       I, K, L, M, success
+      CHARACTER(len=128) :: CLE
+      CHARACTER(len=15)  :: SORTE, TAPE
+      CHARACTER(len=3)   :: DND
+      type(fst_file)     :: fstfile
 
       DND   = 'SEQ'
       SORTE = 'STD+SEQ+OLD'
@@ -78,7 +61,7 @@
                CALL qqexit(61)
             ENDIF
          ENDIF
-         J = 3
+         fstfile = destination
       ELSEIF(CLE.EQ.NS .AND. OUVS) THEN 
          IF(INDEX(SNOM, DND) .EQ. 0) THEN
             WRITE(app_msg,*) 'sautsqi: Problem opening file ',NS,', with type=',SORTE,' already opened with type=',SNOM
@@ -89,12 +72,12 @@
                CALL qqexit(62)
             ENDIF
          ENDIF
-         J = SOURCES(1)
+         fstfile = sources(1)
       ELSE
          DNOM = SORTE
          K    = OUVRED( CLE )
          IF(K .EQ. 0) THEN
-            J    = 3
+            fstfile = destination
          ELSE
             call app_log(APP_ERROR,'sautsqi: file does not exist')
             IF( INTERAC ) THEN
@@ -106,14 +89,17 @@
       ENDIF
 
       TAPE = CLE
-      WRITE(app_msg,600) I, LEVEL, J, TAPE
+      WRITE(app_msg,600) I, LEVEL, fstfile%get_unit(), TAPE
       call app_log(APP_DEBUG,app_msg)
       600    FORMAT('sautsqi: SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
+
 !     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
-   10 IF(FSTINF(J, K, L, M, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 10
-      M = FSTEOF(J) 
+      success = fstfile%set_search_criteria(ni=k,nj=l,nk=m,datev=0_int64,etiket='0',ip1=0,ip2=0,ip3=0,nomvar='0',typvar='0')
+
+   10 IF (fstfile%find_next()) GOTO 10
+      M = fstfile%eof() 
       IF(M.LT.1 .OR. M.GT.15) THEN
-         WRITE(app_msg,*) 'sautsqi: Wrong EOF marker=',M,' within tape=',J
+         WRITE(app_msg,*) 'sautsqi: Wrong EOF marker=',M,' within tape=',fstfile%get_unit()
          call app_log(APP_ERROR,app_msg)
          CALL qqexit(64)
       ENDIF
@@ -124,7 +110,7 @@
          I = I-1
          IF(I .NE. 0) GO TO 10
       ENDIF
-      IF(J .EQ. SOURCES(1)) LEOF = M
+      IF (fstfile%get_unit() .EQ. sources(1)%get_unit()) LEOF = M
       RETURN
   
 !**   SAUTSEQ OUVRE LE FICHIER 2 (SEQUENTIEL 'SEQ+FTN')

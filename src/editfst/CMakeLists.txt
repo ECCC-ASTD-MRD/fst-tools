@@ -7,7 +7,6 @@ add_executable(editfst
     dmpdes.f90
     editfst.f90
     fermes.f90
-    fstnol.f90
     holacar.f90
     ouvred.f90
     ouvres.f90
@@ -18,7 +17,6 @@ add_executable(editfst
     setper.f90
     sqicopi.f90
     stdcopi.f90
-    # stubs.f90
     weofile.f90
     zap.f90
     main.F90

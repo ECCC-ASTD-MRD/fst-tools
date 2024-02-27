@@ -1,21 +1,3 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !**PROGRAMME EDITFST - COPIE UNE PARTIE D'UN FICHIER STANDARD DANS UN 
 !                      AUTRE FICHIER DTANDARD.
       subroutine EDITFST
@@ -268,9 +250,9 @@
 !     - NOMS       - NOMS DE VARIABLE DES DESIRES/EXCLURES
 !     - ETAT       - INDIQUE L'ETAT DU PGM. DANS LA BOITE A LA FIN
       EXTERNAL    FERMED, SELECT, FNOM, CCARD, OUVRES, SAUVDEZ, FERMES
-      EXTERNAL    FSTOPC, FSTOPL, OUVRED, STDCOPI, MEMOIRH
+      EXTERNAL    FSTOPL, OUVRED, STDCOPI, MEMOIRH
       EXTERNAL    QQEXIT
-      INTEGER     FSTOPC, FSTOPL, OUVRED, FNOM, I
+      INTEGER     FSTOPL, OUVRED, FNOM, I
       integer junk
       LOGICAL     FASTIO
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
@@ -292,9 +274,6 @@
       def1 = def1b
       def2 = def2b
 
-      do i = 1,120
-        sources(i) = 24+i
-      enddo
       SAUV = 0
       CALL SAUVDEZ
   
@@ -356,7 +335,7 @@
       IF( BOX ) THEN
          call app_start()
       ELSE
-         call app_log(APP_VERBATIM,'***   E D I T F S T   7.12.1   ***')
+         call app_log(APP_VERBATIM,'***   E D I T F S T   '//EDITFST_VERSION//'   ***')
       ENDIF
 
       strict_mode = DEF1(147) .eq. 'OUI'

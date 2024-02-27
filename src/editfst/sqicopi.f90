@@ -1,25 +1,8 @@
-!/* EDITFST - Collection of useful routines in C and FORTRAN
-! * Copyright (C) 1975-2014  Environnement Canada
-! *
-! * This library is free software; you can redistribute it and/or
-! * modify it under the terms of the GNU Lesser General Public
-! * License as published by the Free Software Foundation,
-! * version 2.1 of the License.
-! *
-! * This library is distributed in the hope that it will be useful,
-! * but WITHOUT ANY WARRANTY; without even the implied warranty of
-! * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-! * Lesser General Public License for more details.
-! *
-! * You should have received a copy of the GNU Lesser General Public
-! * License along with this library; if not, write to the
-! * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-! * Boston, MA 02111-1307, USA.
-! */
 !** S/R SQICOPI COPIE UN FICHIER SEQUENTIEL SQI DANS UN FICHIER STANDARD
       SUBROUTINE SQICOPI(INPT, OUPT, TD, PR, TO, PS, NB)
       use configuration
       use app
+      use rmn_fst24
       IMPLICIT   NONE
       INTEGER    INPT(*), OUPT(*), TD(*), PR, TO, PS, NB
 !
@@ -47,19 +30,20 @@
 !
 !MODULES  
       EXTERNAL      SAUVDEZ, qqexit, COPYSTX, OUVRES, OUVRED, DMPDES
-      EXTERNAL      FSTINF,  FSTEOF, ARGDIMS, FERMES, LOW2UP
-      INTEGER       FSTINF,  FSTEOF, ARGDIMS, OUVRED, NI, NJ, NK
-      INTEGER       N, M, I, J
+      EXTERNAL      ARGDIMS, FERMES, LOW2UP
+      INTEGER       ARGDIMS, OUVRED, NI, NJ, NK
+      INTEGER       N, M, I, J, success
       INTEGER       PRE, CSD,  POS
-      CHARACTER*128 DD
-  
+      CHARACTER(len=128) :: DD
+      type(fst_file)     :: fstfile
+ 
 !     INITIALISATION
       SNOM = 'STD+SEQ+OLD'
     1 PRE  = 0
       CSD  = 0
       POS  = 0
       N    = -1
-      J    = SOURCES(1)
+      fstfile = SOURCES(1)
 !     UTILISATION DES PARAMETRES PASSES PAR L'APPELEUR
 !     DIRECTION A PRENDRE SELON LE NOMBRE D'ARGUMENTS PASSES
       GO TO(50, 50, 50, 40, 30, 20, 10) NP
@@ -130,8 +114,10 @@
   
       IF(PRE .GT. 0) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU PRE
-   90    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 90
-         LEOF = FSTEOF(J)
+         success = fstfile%set_search_criteria(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0',ip1=0,ip2=0,ip3=0,nomvar='0',typvar='0')
+
+   90    IF (fstfile%find_next()) GOTO 90
+         LEOF = fstfile%eof()
          WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
          call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
@@ -156,8 +142,10 @@
 !     SAUTE DES MARQUES DE FIN DE FICHIER LOGIQUES APRES COPIE
       IF(LEOF .LT. POS) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU POS
-  100    IF(FSTINF(J, NI, NJ, NK, 0, '0', 0, 0, 0, '0', '0') .GE. 0) GOTO 100
-         LEOF = FSTEOF(J)
+         success = fstfile%set_search_criteria(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0',ip1=0,ip2=0,ip3=0,nomvar='0',typvar='0')
+
+  100    IF (fstfile%find_next()) GOTO 100
+         LEOF = fstfile%eof()
          WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
          call app_log(APP_DEBUG,app_msg)
          IF(LEOF.GT.15 .OR. LEOF.LT.1) THEN
