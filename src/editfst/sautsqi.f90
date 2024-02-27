@@ -94,7 +94,7 @@
       600    FORMAT('sautsqi: SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
 
 !     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
-      success = fstfile%set_search_criteria(ni=k,nj=l,nk=m,datev=0_int64,etiket='0',ip1=0,ip2=0,ip3=0,nomvar='0',typvar='0')
+      success = fstfile%set_search_criteria(ni=k,nj=l,nk=m,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
    10 IF (fstfile%find_next()) GOTO 10
       M = fstfile%eof() 

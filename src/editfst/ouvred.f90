@@ -64,15 +64,16 @@
 !     FERMER LE FICHIER DESTINATION SI OUVERT
       IF( OUVD ) CALL FERMED
 
-!     RETOURNE OUVRED >= 0 SI OUVERT
-      ouvred = destination%open(dn,DNOM//'R/W+REMOTE')
+!     RETOURNE True SI OUVERT
+      success = destination%open(dn,DNOM//'R/W+REMOTE')
 
-      if (ouvred .le. 0) then
+      if (.not. success) then
          call app_log(APP_ERROR,'ouvred: Cannot open file')
          CALL qqexit(55)
       endif
 
       ND     = DN
+      ouvred = 1
       OUVD   = .TRUE.
       DSEQ   = INDEX(DNOM,'SEQ') .NE. 0
       IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
