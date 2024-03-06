@@ -6,6 +6,7 @@
       use configuration
       use app
       use rmn_fst24
+      use rmn_meta
       IMPLICIT NONE 
       include 'rmn/convert_ip123.inc'
       include 'rmn/excdes.inc'
@@ -46,6 +47,8 @@
       integer :: date_1, date_2
   
       type(fst_record) :: record
+      type(meta)       :: metaf
+      type(C_PTR)      :: obj
 
       LOGICAL      FIRSTP, BONNE, OK
       interface ! can IP1/2/3 for variable 'name' be translated to value/kind ?
@@ -109,34 +112,52 @@
             i = 0    ! fake status of succesful read if dry run
          else
             success = record%read()
-         endif
+            metaf = record%metadata
+       endif
    !
    !     ==================   logique pour directive ZAP  ==================
    !
+
          IF( ZA ) THEN    ! on "zappe ?"
             IF(Z1 .NE. -1)  record%ip1   = Z1  ! zap ip1
             IF(Z2 .NE. -1)  record%ip2   = Z2  ! zap ip2
             IF(Z3 .NE. -1)  record%ip3   = Z3  ! zap ip3
-            IF(ZD .NE. -1)  record%dateo = ZD  ! zap origin date
+            IF(ZD .NE. -1)  then ! zap origin date
+               record%dateo = ZD  
+               if (metaf%is()) then
+                  obj=metaf%DefForecastTime(ZD)
+               endif
+            endif
             IF(ZT .NE. '??') THEN   ! zap type
                IF(ZT(1:1) .NE. '?') record%typvar(1:1) = ZT(1:1)
                IF(ZT(2:2) .NE. '?') record%typvar(2:2) = ZT(2:2)
+
+               if (metaf%is()) then
+                  obj=metaf%DefFromTypVar(ZT)
+               endif
             ENDIF
             IF(ZN .NE. '??') THEN   ! zap name
                IF(ZN(1:1) .NE. '?') record%nomvar(1:1) = ZN(1:1)
                IF(ZN(2:2) .NE. '?') record%nomvar(2:2) = ZN(2:2)
                IF(ZN(3:3) .NE. '?') record%nomvar(3:3) = ZN(3:3)
                IF(ZN(4:4) .NE. '?') record%nomvar(4:4) = ZN(4:4)
+
+               if (metaf%is()) then
+                  obj=metaf%DefVarFromDict(ZN)
+               endif
             ENDIF
             IF(ZE .NE. '????????????') THEN   ! zap ETIKET
                DO 130 I=1,12
                   IF(ZE(I:I) .NE. '?') record%etiket(I:I) = ZE(I:I)
-   130         CONTINUE
+      130      CONTINUE
+               if (metaf%is()) then
+                  obj=metaf%DefFromEtiket(ZE)
+               endif
             ENDIF
          ENDIF
-   !
+   
          if(dryrun) then  ! dry run debug mode, tell what we would be copying
-   !
+   
          i = decode_ip(p1,kind1,p2,kind2,p3,kind3,record%ip1,record%ip2,record%ip3)
          strkind1=kind_to_string(kind1)
          strkind2=kind_to_string(kind2)
@@ -154,7 +175,7 @@
          else   !  real mode, write into the output file
    
             success = destination%write(record,ECR)
-            
+
             if (i .lt. 0) then
                call app_log(APP_ERROR,'copystx: write error')
                call qqexit(55)
