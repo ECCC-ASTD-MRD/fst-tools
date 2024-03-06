@@ -42,8 +42,8 @@ program voir24
         call app_start()
 
         filename = ccard_arg(cles(1))
-        if (trim(filename) == "") filename = val(1)
-        success = source%open(trim(filename),'STD+R/O+REMOTE'//val(2))
+        if (trim(filename) == "") filename = trim(val(1))
+        success = source%open(filename,'STD+R/O+REMOTE'//val(2))
 
         if (success) then
             call source%print_summary(string=val(3))
