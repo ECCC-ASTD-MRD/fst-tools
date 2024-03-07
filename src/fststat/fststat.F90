@@ -1,6 +1,8 @@
 program fststat
     use app
+    use rmn_fst24
     implicit none
+
 #include "fst-tools_build_info.h"
 
     external ccard, fstlnk
@@ -10,23 +12,11 @@ program fststat
     data def /40*'scrap'/
     data val /40*'scrap'/
 
+    integer :: fstopc
+    logical :: success
+    type(fst_file), dimension(40) :: sources
 
-    integer :: fnom, ier, fstouv, fstopc
-    logical :: flag
-
-    integer :: date, ip1, ip2, ip3
-    character(len = 12) :: etiket
-    character(len = 4) :: nomvar
-    character(len = 2) :: typvar
-
-    integer :: i, ipos, nf, level
-    integer :: ni, nj, nk
-
-    integer, dimension(40) :: lnkdiun
-    data lnkdiun /10, 11, 12, 13, 14, 15, 16, 17, 18, 19, &
-        20, 21, 22, 23, 24, 25, 26, 27, 28, 29, &
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39, &
-        41, 41, 42, 43, 44, 45, 46, 47, 48, 49/
+    integer :: i, ipos, nf
 
     call ccard(cle, def, val, 40, ipos)
 
@@ -41,34 +31,20 @@ program fststat
 
     nf = nf -1
     do i = 1, nf
-        ier = fnom(lnkdiun(i), val(i), 'RND+OLD+R/O+REMOTE', 0)
-        if (ier < 0) then
-            call app_log(APP_ERROR,'Fichier '//trim(val(i))//' inexistant')                  
+        success = sources(i)%open(trim(val(i)),'STD+R/O+REMOTE')
+        if (.not. success) then
+            call app_log(APP_ERROR,'Cannot open file '//trim(val(i)))                  
             app_status=app_end(-1)
             call qqexit(app_status)
         end if
     end do
 
-    do i = 1, nf
-        ier = fstouv(lnkdiun(i), 'RND')
-        if (ier .lt. 0) then
-            call app_log(APP_ERROR,'le fichier '//trim(val(i))//'n''est pas standard random')                  
-            app_status=app_end(-1)
-            call qqexit(app_status)
-        end if
-    end do
-
-    date = -1
-    ip1  = -1
-    ip2  = -1
-    ip3  = -1
-    etiket = '        '
-    typvar = ' '
-    nomvar = '  '
-
-    call fstlnk(lnkdiun, nf)
-    call loop_fields(lnkdiun(1), ni, nj, nk, date, etiket, ip1, ip2, ip3, typvar, nomvar)
-
+    if (.not. fst24_link(sources)) then
+        call app_log(APP_ERROR, 'Unable to link source files')
+    else
+        call loop_fields(sources(1))
+    endif
+    
     app_status=app_end(-1)
     call qqexit(app_status)
 end program

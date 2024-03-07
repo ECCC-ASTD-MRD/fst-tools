@@ -22,30 +22,23 @@ void xmlconvdate(char xmldate[], int dateo);
 void nettoyer(char chaine[]);
 
 int fst2xml(int argc, char **argv) {
-    char fstFile[256];
-    char xmlFile[256];
+
     char encoding[16];
     char format[32];
     int ok, iun, key, tokens_per_line;
 
     char *liste[5], lcl_liste[5][256], *def[5], lcl_def[5][16], val[5][256];
     int n, npos, nptsRLE;
-    int ni, nj, nk;
 
-    int ier, ip1, ip2, ip3, ig1, ig2, ig3, ig4;
-    int  dateo, datev, datyp, deet,nbits, npak, npas,swa, lng;
-    int dltf, ubc, extra1, extra2, extra3;
     int isallocated, multi;
 
-    char etiket[16], nomvar[8], typvar[4], grtyp[2];
     char xmldateo[32], xmldatev[32];
     char xmlip1[32], xmlip2[32], xmlip3[32];
     double nhours;
 
-    float *fld;
-    int *ifld;
-
-    FILE *xmlfd;
+    fst_file*   fstfile;
+    fst_record  record;
+    FILE*       xmlfd;
 
     strcpy(lcl_liste[0], "fst.");
     strcpy(lcl_liste[1], "xml.");
@@ -81,20 +74,17 @@ int fst2xml(int argc, char **argv) {
     App_Init(APP_MASTER,"fst2xml",VERSION,"",BUILD_TIMESTAMP);
     App_Start();
 
-    strcpy(fstFile, val[0]);
-    strcpy(xmlFile, val[1]);
     strcpy(encoding, val[2]);
     strcpy(format,  val[3]);
     sscanf(val[4], "%d", &tokens_per_line);
 
     iun = 1;
-    c_fnom(&iun, fstFile, "RND+R/O", 0);
-    ier = c_fstouv(iun, "RND");
+    fstfile=fst24_open(val[0],"RND+R/O");
 
     if (0 == strcmp(val[1], def[1])) {
         xmlfd = stdout;
     } else {
-        xmlfd = fopen(xmlFile, "w");
+        xmlfd = fopen(val[1], "w");
     }
 
     if (xmlfd == NULL) {
@@ -106,63 +96,41 @@ int fst2xml(int argc, char **argv) {
     fprintf(xmlfd, "%s\n", "<?xml version='1.0' encoding='utf-8' standalone='yes'?>");
     fprintf(xmlfd, "%s\n", "<rpn-standard-file>");
 
+//    fst24_set_search_criteria(fstfile,NULL);
+    while(fst24_find_next(fstfile,&record)) {
 
-    key = c_fstinf(iun, &ni, &nj, &nk, -1,"            ", -1, -1, -1, "  ", "    ");
-    do {
-        strcpy(etiket, "            ");
-        strcpy(nomvar, "    ");
-        strcpy(typvar, "  ");
-        strcpy(grtyp, " ");
-
-        ier = c_fstprm(key, &dateo, &deet, &npas, &ni, &nj, &nk, &nbits,
-                &datyp, &ip1, &ip2, &ip3, typvar, nomvar, etiket,
-                grtyp, &ig1, &ig2, &ig3, &ig4, &swa, &lng, &dltf,
-                &ubc, &extra1, &extra2, &extra3);
-        if (nbits > 32) {
+        if (record.dasiz > 32) {
             multi = 2;
         } else {
             multi = 1;
         }
-        xmlconvip(xmlip1, ip1);
-        nhours = (double) npas * deet / 3600.0;
-        f77name(incdatr)(&datev, &dateo, &nhours);
-        xmlconvdate(xmldateo, dateo);
-        xmlconvdate(xmldatev, datev);
-
-        etiket[12] = '\0';
-        nomvar[4] = '\0';
-        typvar[2] = '\0';
+        xmlconvip(xmlip1, record.ip1);
+        xmlconvdate(xmldateo, record.dateo);
+        xmlconvdate(xmldatev, record.datev);
 
         /*---------------------------------------------------------------*/
         fprintf(xmlfd, "%s\n", "<fstrecord>");
-        fprintf(xmlfd, "\t%s%s%s\n", "<nomvar>", nomvar, "</nomvar>");
-        fprintf(xmlfd, "\t\t%s%s%s\n", "<typvar>", typvar, "</typvar>");
-        fprintf(xmlfd, "\t\t%s%s%s\n", "<etiket>", etiket, "</etiket>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip1>", ip1, "</ip1>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip2>", ip2, "</ip2>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip3>", ip3, "</ip3>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ni>", ni, "</ni>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<nj>", nj, "</nj>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<nk>", nk, "</nk>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<dateo>", dateo, "</dateo>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<datev>", datev, "</datev>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<deet>", deet, "</deet>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<npas>", npas, "</npas>");
-        fprintf(xmlfd, "\t\t%s%s%s\n", "<grtyp>", grtyp, "</grtyp>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig1>", ig1, "</ig1>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig2>", ig2, "</ig2>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig3>", ig3, "</ig3>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig4>", ig4, "</ig4>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<nbits>", nbits, "</nbits>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<datyp>", datyp, "</datyp>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<swa>", swa, "</swa>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<lng>", lng, "</lng>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<dltf>", dltf, "</dltf>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<ubc>", ubc, "</ubc>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<extra1>", extra1, "</extra1>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<extra2>", extra2, "</extra2>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<extra3>", extra3, "</extra3>");
-
+        fprintf(xmlfd, "\t%s%s%s\n", "<nomvar>", record.nomvar, "</nomvar>");
+        fprintf(xmlfd, "\t\t%s%s%s\n", "<typvar>", record.typvar, "</typvar>");
+        fprintf(xmlfd, "\t\t%s%s%s\n", "<etiket>", record.etiket, "</etiket>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip1>", record.ip1, "</ip1>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip2>", record.ip2, "</ip2>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ip3>", record.ip3, "</ip3>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ni>", record.ni, "</ni>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<nj>", record.nj, "</nj>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<nk>", record.nk, "</nk>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<dateo>", record.dateo, "</dateo>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<datev>", record.datev, "</datev>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<deet>", record.deet, "</deet>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<npas>", record.npas, "</npas>");
+        fprintf(xmlfd, "\t\t%s%s%s\n", "<grtyp>", record.grtyp, "</grtyp>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig1>", record.ig1, "</ig1>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig2>", record.ig2, "</ig2>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig3>", record.ig3, "</ig3>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<ig4>", record.ig4, "</ig4>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<nbits>", record.dasiz, "</nbits>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<datyp>", record.datyp, "</datyp>");
+ 
         fprintf(xmlfd, "\t\t%s%s%s\n", "<level>", xmlip1, "</level>");
         fprintf(xmlfd, "\t\t%s%s%s\n", "<date-of-origin>", xmldateo, "</date-of-origin>");
         fprintf(xmlfd, "\t\t%s%s%s\n", "<date-of-validity>", xmldatev, "</date-of-validity>");
@@ -173,17 +141,16 @@ int fst2xml(int argc, char **argv) {
         fprintf(xmlfd, "\t\t%s\n", "<fstdata encoding='ASCII' format='14.6g' orientation='south-to-north'>");
         fprintf(xmlfd, "\t\t%s", "<values>");
 
-        switch (datyp) {
+        fst24_read(&record);
+ 
+        switch (record.datyp) {
             case 1:
             case 5:
             case 6:
             case 133:
             case 134:
-                fld = (float *) malloc(ni * nj * nk * sizeof(float) * multi);
-                isallocated = 1;
-                ier = c_fstluk(fld, key, &ni, &nj, &nk);
-                for (int i = 0; i < ni * nj * nk; i++) {
-                    fprintf(xmlfd, format, fld[i]);
+                 for (int i = 0; i < record.ni * record.nj * record.nk; i++) {
+                    fprintf(xmlfd, format, ((float*)(record.data))[i]);
                     if (0 == ((i+1) % tokens_per_line)) {
                         fprintf(xmlfd, "\n");
                     }
@@ -194,11 +161,8 @@ int fst2xml(int argc, char **argv) {
             case 4:
             case 130:
             case 132:
-                ifld = (int *) malloc(ni * nj * nk * sizeof(int) * multi);
-                isallocated = 2;
-                ier = c_fstluk(ifld, key, &ni, &nj, &nk);
-                for (int i = 0; i < ni * nj * nk; i++) {
-                    fprintf(xmlfd, format, ifld[i]);
+                for (int i = 0; i < record.ni * record.nj * record.nk; i++) {
+                    fprintf(xmlfd, format, ((int*)(record.data))[i]);
                     if (0 == ((i+1) % tokens_per_line)) {
                         fprintf(xmlfd, "\n");
                     }
@@ -206,31 +170,17 @@ int fst2xml(int argc, char **argv) {
                 break;
 
             default:
-                App_Log(APP_WARNING,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",datyp,nomvar);
-                isallocated = 0;
+                App_Log(APP_WARNING,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",record.datyp,record.nomvar);
         }
         fprintf(xmlfd, "\t\t%s\n", "</values>");
         fprintf(xmlfd, "\t\t%s\n", "</fstdata>");
         fprintf(xmlfd, "%s\n", "</fstrecord>");
 
-        switch (isallocated) {
-            case 0:
-                break;
-            case 1:
-                free(fld);
-                break;
-            case 2:
-                free(ifld);
-                break;
-        }
-
-        key = c_fstsui(iun, &ni, &nj, &nk);
-    } while (key >= 0);
+    }
 
     fprintf(xmlfd, "%s\n", "</rpn-standard-file>");
     fclose(xmlfd);
-    ier = c_fstfrm(iun);
-    ier = c_fclos(iun);
+    fst24_close(fstfile);
 
     App_End(-1);
 }
