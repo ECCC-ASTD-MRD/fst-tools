@@ -104,68 +104,48 @@ int main(int argc, const char ** const argv) {
     }
     const char * const filePath = argv[1];
     const char * const dumpPath = argv[2];
-    const char * const nomvar = argv[3];
-    const char * const etiket = argv[4];
-    const int ip1 = decodeIp1(argv[5]);
-    const int ip2 = atoi(argv[6]);
-    const int ip3 = atoi(argv[7]);
+
+    fst_file  *fstfile;
+    fst_record record, criteria = default_fst_record;
 
     App_Init(APP_MASTER,"fstdumpfld",VERSION,"",BUILD_TIMESTAMP);
     App_Start();
 
     // Link file to a unit number (Fortran compatible I/O handle)
     int iun = 0;
-    int resultCode = c_fnom(&iun, filePath, "STD+OLD+R/O", 0);
-    if (resultCode < 0) {
-        App_Log(APP_ERROR,"Failed to link file %s !\n", filePath);
-        App_End(-1);
-        return 1;
-    }
-
-    // Open the file
-    resultCode = c_fstouv(iun, "RND");
-    if (resultCode < 0) {
+    if (!(fstfile=fst24_open(filePath,"STD+OLD+R/O"))) {
         App_Log(APP_ERROR,"Failed to open the file %s !\n", filePath);
         App_End(-1);
         return 1;
     }
 
-    // Dimension along X
-    int ni;
-    // Dimension along Y
-    int nj;
-    // Dimension along Z
-    int nk;
+    strncpy(criteria.nomvar,argv[2],4);
+    strncpy(criteria.etiket,argv[4],12);
+    criteria.ip1 = decodeIp1(argv[5]);
+    criteria.ip2 = atoi(argv[6]);
+    criteria.ip3 = atoi(argv[7]);
 
-    int handle = c_fstinf (iun, &ni, &nj, &nk, -1, etiket, ip1, ip2, ip3, "", nomvar);
-    App_Log(APP_INFO,"Field handle = %d\n", handle);
+    fst24_find_next(fstfile,&record);
 
-    const int size = ni * nj * nk * sizeof(int32_t);
-    App_Log(APP_INFO,"ni = %d, nj = %d, nk = %d, size = %d bytes\n", ni, nj, nk, size);
+    App_Log(APP_INFO,"ni = %d, nj = %d, nk = %d, size = %d bytes\n", record.ni, record.nj, record.nk);
 
-    // Allocate memory to hold the field's data
-    int32_t *field = calloc(size, sizeof(char));
-
-    resultCode = c_fstluk(field, handle, &ni, &nj, &nk);
-    if (resultCode < 0) {
+    if (fst24_read(&record)) {
         App_Log(APP_ERROR,"Failed to read the field!\n");
         App_End(-1);
         return 1;
     }
 
     const int fd = open(dumpPath, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    const int sizeWritten = write(fd, field, size);
-    if (sizeWritten != size) {
-        App_Log(APP_ERROR,"Did not write expected number of bytes (expected = %d, written = %d)!\n", size, sizeWritten);
+    const int sizeWritten = write(fd, record.data, record.alloc);
+    if (sizeWritten != record.alloc) {
+        App_Log(APP_ERROR,"Did not write expected number of bytes (expected = %d, written = %d)!\n", record.alloc, sizeWritten);
         App_End(-1);
         return 1;
     }
     close(fd);
 
-    free(field);
-
     // Close the file
-    c_fstfrm(iun);
+    fst24_close(fstfile);
 
     App_End(0);
     return 0;
