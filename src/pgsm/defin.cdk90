@@ -18,5 +18,4 @@
 
 #define BIT1CAR 8
 #define BIT2CAR 16
-#define qlxinxs  qlxinx
-
+#define qlxinxs qlxinx

@@ -69,12 +69,12 @@
 !
 !----------------------------------------------------------------------------
 #include "defin.cdk90"
-    subroutine pgsm
-       use app
-       implicit none
-       
+PROGRAM pgsm
+    use app
+    implicit none
+
 #include "fst-tools_build_info.h"
-!
+
 #include "lnkflds.cdk90"
 #include "dates.cdk90"
 #include "charac.cdk90"
@@ -98,21 +98,26 @@
 #include "champseq.cdk90"
 #include "styles.cdk90"
 
-! Source on C-Fortran Interop
-!    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
-! following snippet from
-!    https://stackoverflow.com/questions/17845931/calling-c-function-subroutine-in-fortran-code
-INTERFACE
-SUBROUTINE chk_tmpdir() BIND(C)
-END SUBROUTINE chk_tmpdir
-END INTERFACE
+    ! Source on C-Fortran Interop
+    !    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
+    ! following snippet from
+    !    https://stackoverflow.com/questions/17845931/calling-c-function-subroutine-in-fortran-code
 
-    character *8 qlxcon(128),qlxlcon(4)
-    integer      qlxval(128)
-    integer      qlxlval(4)
 
-    integer ezsetopt
-    external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
+    INTERFACE
+        SUBROUTINE chk_tmpdir() BIND(C)
+        END SUBROUTINE chk_tmpdir
+    END INTERFACE
+
+    integer, parameter :: nbKeys = 128
+
+    character(len = 8), dimension(nbKeys) :: qlxcon
+    character(len = 8), dimension(4) :: qlxlcon
+    integer, dimension(nbKeys) :: qlxval
+    integer, dimension(4) :: qlxlval
+
+    integer, external :: ezsetopt
+    external heure, champ, sorti, grille2, metsym, cmetsym, convs
     external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
     external moinse, moinss, ecrits,moyene, operat, modul2e, modul2s
     external expon, racine,alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
@@ -126,45 +131,46 @@ END INTERFACE
     integer fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
     integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
     real dum
-        integer, parameter :: str_A=transfer("A   ",1)
-        integer, parameter :: str_P=transfer("P   ",1)
-        integer, parameter :: str_GZ=transfer("GZ  ",1)
-        integer, parameter :: str_TT=transfer("TT  ",1)
-        integer, parameter :: str_QQ=transfer("QQ  ",1)
-        integer, parameter :: str_QR=transfer("QR  ",1)
-        integer, parameter :: str_DD=transfer("DD  ",1)
-        integer, parameter :: str_PP=transfer("PP  ",1)
-        integer, parameter :: str_CC=transfer("CC  ",1)
-        integer, parameter :: str_WW=transfer("WW  ",1)
-        integer, parameter :: str_ES=transfer("ES  ",1)
-        integer, parameter :: str_DFGZ=transfer("DFGZ",1)
-        integer, parameter :: str_DFST=transfer("DFST",1)
-        integer, parameter :: str_DFPR=transfer("DFPR",1)
-        integer, parameter :: str_UV=transfer("UV  ",1)
-        integer, parameter :: str_VENT=transfer("VENT",1)
-        integer, parameter :: str_NUAG=transfer("NUAG",1)
-        integer, parameter :: str_F2=transfer("F2  ",1)
-        integer, parameter :: str_PN=transfer("PN  ",1)
-        integer, parameter :: str_P0=transfer("P0  ",1)
-        integer, parameter :: str_TS=transfer("TS  ",1)
-        integer, parameter :: str_TM=transfer("TM  ",1)
-        integer, parameter :: str_MT=transfer("MT  ",1)
-        integer, parameter :: str_WDUV=transfer("WDUV",1)
 
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    data listl/981*'IMENT:','OZSRT:','ISLL:','I.',    'L.',     'DATE.','MSGLVL.','ISENT:','IMPOS:','V'/
-    data defo /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','OPRUN','INFO   ','ISENT_SCRAP','IMPOS_SCRAP','OUI'/
-    data lfn  /981*'SCRAP', 'TAPE2', 'TAPE4','$INPUT','$OUTPUT','NON',  'INFO   ','ISENT_SCRAP','IMPOS_SCRAP','NON'/
+    integer, parameter :: str_A = transfer("A   ",1)
+    integer, parameter :: str_P = transfer("P   ",1)
+    integer, parameter :: str_GZ = transfer("GZ  ",1)
+    integer, parameter :: str_TT = transfer("TT  ",1)
+    integer, parameter :: str_QQ = transfer("QQ  ",1)
+    integer, parameter :: str_QR = transfer("QR  ",1)
+    integer, parameter :: str_DD = transfer("DD  ",1)
+    integer, parameter :: str_PP = transfer("PP  ",1)
+    integer, parameter :: str_CC = transfer("CC  ",1)
+    integer, parameter :: str_WW = transfer("WW  ",1)
+    integer, parameter :: str_ES = transfer("ES  ",1)
+    integer, parameter :: str_DFGZ = transfer("DFGZ",1)
+    integer, parameter :: str_DFST = transfer("DFST",1)
+    integer, parameter :: str_DFPR = transfer("DFPR",1)
+    integer, parameter :: str_UV = transfer("UV  ",1)
+    integer, parameter :: str_VENT = transfer("VENT",1)
+    integer, parameter :: str_NUAG = transfer("NUAG",1)
+    integer, parameter :: str_F2 = transfer("F2  ",1)
+    integer, parameter :: str_PN = transfer("PN  ",1)
+    integer, parameter :: str_P0 = transfer("P0  ",1)
+    integer, parameter :: str_TS = transfer("TS  ",1)
+    integer, parameter :: str_TM = transfer("TM  ",1)
+    integer, parameter :: str_MT = transfer("MT  ",1)
+    integer, parameter :: str_WDUV = transfer("WDUV",1)
 
-        data form/'(A8)'/
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'DATE.', 'MSGLVL.',      'ISENT:',      'IMPOS:',   'V'/
+    data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'OPRUN', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'OUI'/
+    data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT',   'NON', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'NON'/
 
-    data nheure,  heures, nnoms,  npack,  nhur, nomb, ichck         /0,  MXHEURE*-2, 0,      -16,    1,    0,    0/
+    data form /'(A8)'/
 
-    data nomss /256*'  '/
+    data nheure, heures, nnoms, npack, nhur, nomb, ichck /0,  MXHEURE * -2, 0, -16, 1, 0, 0/
+
+    data nomss /256 * '  '/
 
     data ecarts,     facts,     pose,     ixlat, ixlon       /256*0.0, 256*1.0, .false., 0, 0 /
 
-       data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
+    data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
 
     data valid, voire,   voirs, message,seldat       /.false.,.false., .false.,.true.,.false.  /
 
@@ -178,19 +184,19 @@ END INTERFACE
     data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
     data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
 
-    data unefois,once,vvent/.false.,.false.,.false./
+    data unefois, once, vvent /.false., .false., .false./
 
     data cnomqq, cnomqr, cnommt /'QQ', 'QR', 'MT'/
 
-    data printen,printsr,mtdone/.false.,.false.,.false./
+    data printen, printsr, mtdone /.false., .false., .false./
 
-     data nis,njs,nif,njf,ninc,njnc,if9/1,1,1000,1000,10,10,0/
+    data nis, njs, nif, njf, ninc, njnc, if9 /1, 1, 1000, 1000, 10, 10, 0/
 
-      data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
+    data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
 
-      data if7,if8,npairuv,npair/0,0,4,7/
+    data if7,if8,npairuv,npair/0,0,4,7/
 
-      data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
+    data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
     data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -300,15 +306,15 @@ END INTERFACE
     data qlxcon(106)/'IPTWO'   /  qlxval(106)/     5 /
     data qlxcon(107)/'IPTHREE' /  qlxval(107)/     6 /
 
-!               KIND =0, p est en hauteur (m) par rapport au niveau de la mer
-!               KIND =1, p est en sigma (0.0 -> 1.0)
-!               KIND =2, p est en pression (mb)
-!               KIND =3, p est un code arbitraire
-!               KIND =4, p est en hauteur (M) par rapport au niveau du sol
-!               KIND =5, p est en coordonnee hybride
-!               KIND =6, p est en coordonnee theta
-!               KIND =15, rererve (entiers)
-!               KIND =21, p est en GalChen
+!               KIND = 0, p est en hauteur (m) par rapport au niveau de la mer
+!               KIND = 1, p est en sigma (0.0 -> 1.0)
+!               KIND = 2, p est en pression (mb)
+!               KIND = 3, p est un code arbitraire
+!               KIND = 4, p est en hauteur (M) par rapport au niveau du sol
+!               KIND = 5, p est en coordonnee hybride
+!               KIND = 6, p est en coordonnee theta
+!               KIND = 15, rererve (entiers)
+!               KIND = 21, p est en GalChen
 
 
     data qlxcon(108)/'METERS'  /  qlxval(108)/ -1000 /
@@ -325,191 +331,174 @@ END INTERFACE
     data qlxcon(118)/'STAMP'   /  qlxval(118)/ 0 /
     data qlxcon(119)/'YMDHMS'  /  qlxval(119)/ 1 /
     data qlxcon(120)/'ISO8601' /  qlxval(120)/ 2 /
-        data qlxcon(121)/'FAST'    /  qlxval(121)/ 1 /
-        data qlxcon(122)/'BEST'    /  qlxval(122)/ 2 /
-        data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
-        data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
-        data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
-        data qlxcon(126)/'EXCLUDE' /  qlxval(126)/ 31/
-        data qlxcon(127)/'ORIGIN'  /  qlxval(127)/ 1023 /
-        data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
+    data qlxcon(121)/'FAST'    /  qlxval(121)/ 1 /
+    data qlxcon(122)/'BEST'    /  qlxval(122)/ 2 /
+    data qlxcon(123)/'MOYENNE' /  qlxval(123)/ 4 /
+    data qlxcon(124)/'GRIDAVG' /  qlxval(124)/ 4 /
+    data qlxcon(125)/'SPHRAVG' /  qlxval(125)/ 5 /
+    data qlxcon(126)/'EXCLUDE' /  qlxval(126)/ 31/
+    data qlxcon(127)/'ORIGIN'  /  qlxval(127)/ 1023 /
+    data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
-    data(qlxlcon(i),i=1,2)/'OUI', 'NON'/
-    data(qlxlval(i),i=1,2)/1,0/
+    data(qlxlcon(i),i = 1,2) /'OUI', 'NON'/
+    data(qlxlval(i),i = 1,2) /1,0/
 
-!        integer idx_ozsrt, idx_isll, idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v
-   data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
-   data idx_msglvl /987/  idx_isent /988/  idx_impos  /989/ idx_v /990/
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !        integer idx_ozsrt, idx_isll, idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v
+    data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
+    data idx_msglvl /987/  idx_isent /988/  idx_impos  /989/ idx_v /990/
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-!           listl=position  iment(tape1 standard),isll(tape4 sequentiel)
-!                 ozsrt(tape2 - standard - seq file - random ms)
-!           defo=liste des defauts pour iment,isll,ozsrt,i,l
-!           lfn=liste que l usager propose pour remplacer
-!           6=nombre de lfn
-!           nequiv=nombre d'equivalence output de ccard
+    ! listl = position  iment(tape1 standard),isll(tape4 sequentiel)
+    !       ozsrt(tape2 - standard - seq file - random ms)
+    ! defo = liste des defauts pour iment,isll,ozsrt,i,l
+    ! lfn = liste que l usager propose pour remplacer
+    ! 6 = nombre de lfn
+    ! nequiv = nombre d'equivalence output de ccard
 
 
     nequiv = -1
     lnkdiun = 0
     lnkdiun(1) = 1
     lnkdiun(idx_ozsrt) = 2
-    call ccard(listl,defo,lfn,990,nequiv)
-    ier = fnom(5,lfn(idx_i),'SEQ',0)
-    ier = fnom(6,lfn(idx_l),'SEQ',0)
+    CALL ccard(listl, defo, lfn, 990, nequiv)
+    ier = fnom(5, lfn(idx_i), 'SEQ', 0)
+    ier = fnom(6, lfn(idx_l), 'SEQ', 0)
 
-    ! imprime boite debut du programme
-    app_ptr=app_init(0,'pgsm',PGSM_VERSION,'',BUILD_TIMESTAMP)
-    call app_logstream(lfn(idx_l))
-    call app_start()
+    ! Imprimer boite debut du programme
+    app_ptr = app_init(0, 'pgsm', PGSM_VERSION, '', BUILD_TIMESTAMP)
+    CALL app_logstream(lfn(idx_l))
+    CALL app_start()
 
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    CALL qqqfilt(1, 0, 0, 0)
+    CALL qqqfilt(2, 0, 0, 0)
+    CALL chk_tmpdir
 
+    IF (lfn(1)(1:5) /= 'SCRAP' .and. lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
+        CALL app_log(APP_ERROR, 'Cannot mix sequential and random files')
+        app_status = app_end(13)
+        CALL qqexit(13)
+    ENDIF
 
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    call qqqfilt(1,0,0,0)
-    call qqqfilt(2,0,0,0)
-        call chk_tmpdir
-
-    if (lfn(1)(1:5).ne.'SCRAP'.and.lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
-      call app_log(APP_ERROR,'Cannot mix sequential and random files')
-      app_status=app_end(13)
-      call qqexit(13)
-    endif
-
-    if (lfn(idx_isll).ne.'TAPE4') then
-        iun_isll=0
-        ier = fnom(iun_isll,lfn(idx_isll)(1:5),'FMT+SEQ+R/O',0)
+    IF (lfn(idx_isll) /= 'TAPE4') THEN
+        iun_isll = 0
+        ier = fnom(iun_isll, lfn(idx_isll)(1:5), 'FMT+SEQ+R/O', 0)
         isll_input = 1
-    endif
+    ENDIF
 
-    if (lfn(idx_isent)(1:11).ne.'ISENT_SCRAP') then
-      inputmod = SEQUENTIEL
-    else
-      inputmod = RANDOM
-    endif
+    IF (lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
+        inputmod = SEQUENTIEL
+    ELSE
+        inputmod = RANDOM
+    ENDIF
 
-    if (lfn(idx_impos)(1:11).ne.'IMPOS_SCRAP') then
-      ier = fnom(lnkdiun(idx_impos),lfn(idx_impos),'RND+OLD+R/O',0)
-      ier = fstouv(lnkdiun(idx_impos),'RND')
-    endif
+    IF (lfn(idx_impos)(1:11) /= 'IMPOS_SCRAP') THEN
+        ier = fnom(lnkdiun(idx_impos), lfn(idx_impos), 'RND+OLD+R/O', 0)
+        ier = fstouv(lnkdiun(idx_impos), 'RND')
+    ENDIF
 
-    if (lfn(idx_v).ne.'NON') then
-      ier = ezsetopt('verbose', 'yes')
-    endif
-
-
-    if (inputmod.eq.RANDOM) then
-      niun = 1
- 100      if (lfn(niun) .ne.'SCRAP') then
-        niun = niun+1
-        goto 100
-      endif
-
-      niun = niun - 1
-      if (niun .lt. 1) then
-        call app_log(APP_ERROR,'No input files given as arguments')
-        app_status=app_end(13)
-        call qqexit(13)
-      endif
-      do i=1, niun
-        ier = fnom(lnkdiun(i),lfn(i),'STD+RND+OLD+R/O+REMOTE',0)
-        if (ier .lt. 0) then
-          call app_log(APP_ERROR,'Problem opening file '//lfn(i))
-          app_status=app_end(13)
-          call qqexit(13)
-        endif
-      enddo
-    else
-      niun = 1
-      ier = fnom(lnkdiun(1),lfn(idx_isent),'STD+SEQ+OLD+R/O+REMOTE',0)
-      if (ier .lt. 0) then
-        call app_log(APP_ERROR,'Problem opening file '//lfn(idx_isent))
-        app_status=app_end(13)
-        call qqexit(13)
-      endif
-    endif
+    IF (lfn(idx_v) /= 'NON') THEN
+        ier = ezsetopt('verbose', 'yes')
+    ENDIF
 
 
+    IF (inputmod == RANDOM) THEN
+        niun = 1
+        DO WHILE (lfn(niun) /= 'SCRAP')
+            niun = niun + 1
+        END DO
+        niun = niun - 1
 
+        IF (niun < 1) THEN
+            CALL app_log(APP_ERROR, 'No input files given as arguments')
+            app_status = app_end(13)
+            CALL qqexit(13)
+        ENDIF
+        do i = 1, niun
+            ier = fnom(lnkdiun(i), lfn(i), 'STD+RND+OLD+R/O+REMOTE', 0)
+            IF (ier < 0) THEN
+                CALL app_log(APP_ERROR, 'Problem opening file ' // lfn(i))
+                app_status = app_end(13)
+                CALL qqexit(13)
+            ENDIF
+        ENDDO
+    ELSE
+        niun = 1
+        ier = fnom(lnkdiun(1), lfn(idx_isent), 'STD+SEQ+OLD+R/O+REMOTE', 0)
+        IF (ier < 0) THEN
+            CALL app_log(APP_ERROR,'Problem opening file '// lfn(idx_isent))
+            app_status = app_end(13)
+            CALL qqexit(13)
+        ENDIF
+    ENDIF
 
-    mtype =   MTYP
+    mtype = MTYP
     maxnoms = MAXNOM
 
-    call initseq
+    CALL initseq
 
+    ! Initialiser les dictionnaires
+    CALL qlxopt ('CARMOT', 4)
 
+    ! 3 appels reconnus :
+    !   1 = sortie(std, noenrg) noenrg>=2
+    !   2 = sortie(ms, noenrg, jwrit)
+    !   3 = sortie(seq)
+    CALL qlxinx (sorti, 'SORTIE', nsort, 0103, 2)
 
-!  initialise les dictionnaires
+    ! 1 = heure(00, 12, 24, 25 ... max20) minimum 1
+    ! 2 = champ(mac, 00, 06) minimum 2 pour
+    ! 2 = champ(pcp, 00, 06) minimum 2 pour
+    ! accumulateur d"ajustement ou precipitation
+    CALL qlxinx (heure, 'HEURE', nheure, 0140, 2)
+    CALL qlxinx (heure, 'IP2', nheure, 0140, 2)
 
-    call qlxopt ('CARMOT', 4)
-    call qlxinx (sorti,'SORTIE', nsort,0103,2)
-!                        3 appels reconnus  1=sortie(std,noenrg) noenrg>=2
-!                                           2=sortie(ms,noenrg,jwrit)
-!                                           3=sortie(seq)
+    ! setintx(voisin) avec le plus proche
+    ! setintx(lineair) interpolation lineaire
+    ! setintx(cubique) interpolation cubique(defaut)
+    CALL qlxinx (qqqintx, 'SETINTX', nsetin, 0101, 2)
 
+    CALL qlxinx (setxtrap, 'EXTRAP', nsetex, 0101, 2)
 
-    call qlxinx (heure,'HEURE',nheure, 0140,2)
-    call qlxinx (heure, 'IP2',nheure, 0140,2)
-!                     2 appels  1=heure(00,12,24,25.....max20) minimum 1
-!                               2=champ(mac,00,06) minimum 2 pour
-!                               2=champ(pcp,00,06) minimum 2 pour
-!                               accumulateur d"ajustement ou precipitation
+    ! - champ(z,niveau)  niveau = 1000,850,.......
+    ! - champ(t,niveau)  niveau = 1000,850,.......
+    ! - champ(q,niveau)  niveau = 1000,850,.......
+    ! - champ(d,niveau)  niveau = 1000,850,.......
+    ! - champ(w,niveau)  niveau = 1000,850,.......
+    ! - champ(es,niveau)  niveau = 1000,850,.......
+    ! - champ(uv,niveau)  niveau = 1000,850,.......
+    ! - champ(uvs)  pas de niveau vent de surface
+    ! - champs(ventuvs) voir directive paires(.....
+    ! - champ(vent,niveau) niveau = 1000,850,.......
+    ! - champ(nuage)  nuage bas,moyen,haut
+    !         rec 1 = bas  rec 2 = moyen  rec 3 = haut
+    ! - champ(ecm)  epaisseur de la couche limite
+    ! - champ(pnm)  pression au niveau de la mer
+    ! - champ(psurf)  pression a la surface
+    ! - champ(ts)  temperature a la surface
+    ! - champ(epais,niveau1,niveau2) niveau2 - niveau1
+    ! - champ(mac,heure1,heure2)  heure2 - heure1
+    ! - champ(pcp,heure1,heure2)  heure2 - heure1
+    CALL qlxinx (champ, 'CHAMP', nchamp, 0131, 2)
 
-    call qlxinx (qqqintx,'SETINTX',nsetin, 0101,2)
+    ! appel - chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab)
+    !    ex:  chmpdif ("gz", "dz", [1000, 500], 12, 0)
+    !         z500mb - z1000mb  a 12hr
+    !         fichier de sorti aura ip1 = 1000, ip2 = 500,ip3 = 12
+    !    ex:  chmpdif ("gz","dz",1000,[6,12,18,24],0)
+    !         z1000mb 6hr - z1000mb  a 12hr
+    !         fichier de sorti aura ip1 = 1000, ip2 = 6, ip3 = 12
+    !    ex:  chmpdif ("gz","dz",1000,6,[1,2,3,4])
+    !         z1000mb 6hr ip3 = 1 - z1000mb  6hr ip3 = 2
+    !         fichier de sorti aura ip1 = 1000, ip2 = 1, ip3 = 2
+    CALL qlxinx (chmpdif, 'CHMPDIF', npar, 0508, 2)
 
-!                        appel - setintx(voisin) avec le plus proche
-!                                setintx(lineair) interpolation lineaire
-!                                setintx(cubique) interpolation cubique(defaut)
-
-    call qlxinx (setxtrap,'EXTRAP',nsetex, 0101,2)
-
-!                        appel - setintx(voisin) avec le plus proche
-!                                setintx(lineair) interpolation lineaire
-!                                setintx(cubique) interpolation cubique(defaut)
-
-    call qlxinx (champ,'CHAMP',nchamp, 0131,2)
-!                     appel - champ(z,niveau)  niveau=1000,850,.......
-!                           - champ(t,niveau)  niveau=1000,850,.......
-!                           - champ(q,niveau)  niveau=1000,850,.......
-!                           - champ(d,niveau)  niveau=1000,850,.......
-!                           - champ(w,niveau)  niveau=1000,850,.......
-!                           - champ(es,niveau)  niveau=1000,850,.......
-!                           - champ(uv,niveau)  niveau=1000,850,.......
-!                           - champ(uvs)  pas de niveau vent de surface
-!                           - champs(ventuvs) voir directive paires(.....
-!                           - champ(vent,niveau) niveau=1000,850,.......
-!                           - champ(nuage)  nuage bas,moyen,haut
-!                                   rec 1=bas  rec 2= moyen  rec 3=haut
-!                           - champ(ecm)  epaisseur de la couche limite
-!                           - champ(pnm)  pression au niveau de la mer
-!                           - champ(psurf)  pression a la surface
-!                           - champ(ts)  temperature a la surface
-!                           - champ(epais,niveau1,niveau2) niveau2 - niveau1
-!                           - champ(mac,heure1,heure2)  heure2 - heure1
-!                           - champ(pcp,heure1,heure2)  heure2 - heure1
-
-    call qlxinx (chmpdif,'CHMPDIF',npar,0508,2)
-
-!                 appel - chmpdif (noment,nomsrt,ip1tab,ip2tab,ip3tab)
-!                    ex:  chmpdif ("gz","dz",[1000,500],12,0)
-!                         z500mb - z1000mb  a 12hr
-!                         fichier de sorti aura ip1=1000, ip2=500,ip3=12
-!                    ex:  chmpdif ("gz","dz",1000,[6,12,18,24],0)
-!                         z1000mb 6hr - z1000mb  a 12hr
-!                         fichier de sorti aura ip1=1000, ip2=6, ip3=12
-!                    ex:  chmpdif ("gz","dz",1000,6,[1,2,3,4])
-!                         z1000mb 6hr ip3=1 - z1000mb  6hr ip3=2
-!                         fichier de sorti aura ip1=1000, ip2=1, ip3=2
-
-    call qlxinx (champ_seq,'CHAMPSEQ',npar,0303,2)
-
+    CALL qlxinx (champ_seq, 'CHAMPSEQ', npar, 0303, 2)
 !                 appel - champseq(['GZ','TT','UU'],[1000,850,500],WAIT)
 !                 appel - champ_seq(' ',[1000,850,500],WAIT)
 !                 appel - champ_seq(['GZ','TT','UU'],-1,GO)
 
-    call qlxinx (convs, 'CONV',ncon, 0305,2)
+    CALL qlxinx (convs, 'CONV',ncon, 0305,2)
 
 !                 appel - conv(nom, ecart, facteur, bas, haut) directive
 !                         conv("ts", -273.16, 1.0,-280.0, -250.0)
@@ -518,173 +507,170 @@ END INTERFACE
 !                         enleve toutes les valeurs plus petites que -280
 !                         enleve toutes les valeurs plus grandes que -250
 !                         avant d ecrire le champ
-    call qlxinx (grille2,'GRILLE',  ngr, 0109,2)
-!          8 appels a grille    1=grille(std,nni,nnj,lg1)
-!                                 std=standard lat lon
-!                                 nni=nombre de pts est-ouest
-!                                 nnj=nombre de pts nord-sud
-!                                 lg1=0  global
-!                                    =1  hem nord
-!                                    =2  hem sud
-!                               2=grille(latlon,nni,nnj,lat0,lon0,dlat,dlon)
-!                                 latlon=grille lat lon
-!                                 nni= nombre de pts est-ouest
-!                                 nnj= nombre de pts nord-sud
-!                                 lat0=premiere lat du coin degree
-!                                 lon0=premiere lon du coin degree
-!                                 dlat=espacement entre latitude  (degree)
-!                                 dlon=espacement entre longitude (degree)
+    CALL qlxinx (grille2, 'GRILLE',  ngr, 0109, 2)
+!          8 appels a grille    1 = grille(std,nni,nnj,lg1)
+!                                 std = standard lat lon
+!                                 nni = nombre de pts est-ouest
+!                                 nnj = nombre de pts nord-sud
+!                                 lg1 = 0  global
+!                                     = 1  hem nord
+!                                     = 2  hem sud
+!                               2 = grille(latlon,nni,nnj,lat0,lon0,dlat,dlon)
+!                                 latlon = grille lat lon
+!                                 nni = nombre de pts est-ouest
+!                                 nnj = nombre de pts nord-sud
+!                                 lat0 = premiere lat du coin degree
+!                                 lon0 = premiere lon du coin degree
+!                                 dlat = espacement entre latitude  (degree)
+!                                 dlon = espacement entre longitude (degree)
 
-!                               3=grille(ps,nni,nnj,pi,pj,d60,dgrw)
-!                                 ps  =polaire stereographique
-!                                 nni =nombre pts est-ouest (dir i)
-!                                 nnj =nombre de pts nord-sud (dir j)
-!                                 pi  =position du pole nord(pi=26)
-!                                 pj  = position du pole nord(pj=28)
-!                                 d60 =distance en metres entre les pts
+!                               3 = grille(ps,nni,nnj,pi,pj,d60,dgrw)
+!                                 ps = polaire stereographique
+!                                 nni = nombre pts est-ouest (dir i)
+!                                 nnj = nombre de pts nord-sud (dir j)
+!                                 pi = position du pole nord(pi = 26)
+!                                 pj = position du pole nord(pj = 28)
+!                                 d60 = distance en metres entre les pts
 !                                      a 60 degrees nord (latitude)
-!                                 drgw=angle entre l"axe x et greewich
+!                                 drgw = angle entre l"axe x et greewich
 
-!                               4=grille(tape4,nni,nnj,ip1,ip2,ip3)
-!                                 tape4=fichier contenant nni*nnj(lat-lon)
-!                                 nni  =nombre de pts est-ouest
-!                                 nnj  =nombre de pts nord-sud
-!                                 ip1  =definit par usager
-!                                 ip2  =definit par usager
-!                                 ip3  =definit par usager
+!                               4 = grille(tape4,nni,nnj,ip1,ip2,ip3)
+!                                 tape4 = fichier contenant nni*nnj(lat-lon)
+!                                 nni = nombre de pts est-ouest
+!                                 nnj = nombre de pts nord-sud
+!                                 ip1 = definit par usager
+!                                 ip2 = definit par usager
+!                                 ip3 = definit par usager
 
-!                               5=grille(stdb,nni,nnj,hem)
-!                                 stdb=standard b
-!                                 nni  =nombre de pts est-ouest
-!                                 nnj  =nombre de pts nord-sud
-!                                 hem  =hemisphere 0=global
-!                                                  1=nord
-!                                                  2=sud
+!                               5 = grille(stdb,nni,nnj,hem)
+!                                 stdb = standard b
+!                                 nni = nombre de pts est-ouest
+!                                 nnj = nombre de pts nord-sud
+!                                 hem = hemisphere 0 = global
+!                                                  1 = nord
+!                                                  2 = sud
 
-!                               6=grille(gauss,nni,nnj,hem)
-!                                 gauss=grille gaussienne lat-lon
-!                                 nni  =nombre de pts est-ouest
-!                                 nnj  =nombre de pts nord-sud
-!                                 hem  =hemisphere 0=global
-!                                                  1=nord
-!                                                  2=sud
+!                               6 = grille(gauss,nni,nnj,hem)
+!                                 gauss = grille gaussienne lat-lon
+!                                 nni = nombre de pts est-ouest
+!                                 nnj = nombre de pts nord-sud
+!                                 hem = hemisphere 0 = global
+!                                                  1 = nord
+!                                                  2 = sud
 
-!                               7=grille(tape1,ip1,ip2,ip3,ip4,nord/sud)
-!                                 tape1=lit sur fichier 1 lat-lon ou xy
-!                                 ip1=valeur 0-32767
-!                                 ip2=valeur 0-32767
-!                                 ip3=valeur 0-4095
-!                                 ip4=valeur "xydir" ou "llist"
-!                                    =valeur "lldir" ou "xylis"
+!                               7 = grille(tape1,ip1,ip2,ip3,ip4,nord/sud)
+!                                 tape1 = lit sur fichier 1 lat-lon ou xy
+!                                 ip1 = valeur 0-32767
+!                                 ip2 = valeur 0-32767
+!                                 ip3 = valeur 0-4095
+!                                 ip4 = valeur "xydir" ou "llist"
+!                                     = valeur "lldir" ou "xylis"
 
-!                               8=grille(tape2,ip1,ip2,ip3,ip4,nord/sud)
+!                               8 = grille(tape2,ip1,ip2,ip3,ip4,nord/sud)
 !                                 tape2 lit sur fichier 2 lat-lon ou xy
-!                                 ip1=valeur 0-32767
-!                                 ip2=valeur 0-32767
-!                                 ip3=valeur 0-4095
-!                                 ip4=valeur "xydir" ou "llist"
-!                                    =valeur "lldir" ou "xylis"
+!                                 ip1 = valeur 0-32767
+!                                 ip2 = valeur 0-32767
+!                                 ip3 = valeur 0-4095
+!                                 ip4 = valeur "xydir" ou "llist"
+!                                     = valeur "lldir" ou "xylis"
 
-    call qlxinx (lrsmde,'LIRMODE',nlirmde,0708,2)
-    call qlxinx (lrsmds,'LIRMODS',nlirmds,0708,2)
+    ! lrsmde(nomvar, typvar, date, niveau, heure, ip3, etiquet)
+    CALL qlxinx (lrsmde, 'LIRMODE', nlirmde, 0708, 2)
+    ! lrsmds(nomvar, typvar, date, niveau, heure, ip3, etiquet)
+    CALL qlxinx (lrsmds, 'LIRMODS', nlirmds, 0708, 2)
 
-!                  lrsmde(nomvar,typvar,date,niveau,heure,ip3,etiquet)
-!                  lrsmds(nomvar,typvar,date,niveau,heure,ip3,etiquet)
+    ! metsym(z,oui)
+    ! z = geopotentiel "gz"
+    ! oui = symetrique
+    CALL qlxinx (metsym, 'METSYM', nsym, 0202, 2)
 
-    call qlxinx (metsym,'METSYM',  nsym, 0202,2)
-
-!                               metsym(z,oui)
-!                               z  =geopotentiel "gz"
-!                               oui=symetrique
-
-    call qlxinx (outlalo,'OUTLALO', nlalo, 0108,2)
+    CALL qlxinx (outlalo,'OUTLALO', nlalo, 0108,2)
 !     outlalo(ip1,ip2,ip3,nomlat,nomlon,grtyp,etiklat,etiklon)
-!             ip1=valeur 0-32767
-!             ip2=valeur 0-32767
-!             ip3=valeur 0-4095
-!             nomlat=nom du champ de latitude 2 car
-!             nomlon=nom du champ de longitude 2 car
-!             grtyp=type de grille
-!             etiklat=nom de l'etiquette latitude
-!             etiklon=nom de l'etiquette longitude
+!             ip1 = valeur 0-32767
+!             ip2 = valeur 0-32767
+!             ip3 = valeur 0-4095
+!             nomlat = nom du champ de latitude 2 car
+!             nomlon = nom du champ de longitude 2 car
+!             grtyp = type de grille
+!             etiklat = nom de l'etiquette latitude
+!             etiklon = nom de l'etiquette longitude
 
-    call qlxinx (pairvct, "PAIRES",npairuv, 0305,2)
+    CALL qlxinx (pairvct, "PAIRES",npairuv, 0305,2)
 !      ex: paires("uv","uu","vv",0) vecteur "uu","vv" geographique
 !                                     niveau donne par champ
 !      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
 !      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
 
-   call qlxinx (pgcoupe,'MOYENT', nmoy, 0232,2)
-   call qlxinx (moysrt,'MOYSRT', nmoy, 0232,2)
-   call qlxinx (liren,'LIREE', nlire, 0708,2)
-    call qlxinx (lirsr,'LIRES', nlire, 0708,2)
-    call qlxinx(plmnmod,'PLUSE', najou, 0707,2)
-    call qlxinx (pluss,'PLUSS', najou, 0707,2)
-    call qlxinx (foise,'FOISE', multp, 0707,2)
-    call qlxinx (foiss,'FOISS', multp, 0707,2)
-    call qlxinx (divisee,'DIVE', multp, 0707,2)
-    call qlxinx (divises,'DIVS', multp, 0707,2)
-    call qlxinx (moinse,'MOINSE', nenle, 0707,2)
-    call qlxinx (moinss,'MOINSS', nenle, 0707,2)
-    call qlxinx (moyene,'MOYENE', nmoys, 0101,2)
-   call qlxinx (ecrits,'ECRITS',  necrt, 0814,2)
-   call qlxinx (modul2e,'MODUL2E', nmod, 0707,2)
-   call qlxinx (modul2s,'MODUL2S', nmod, 0707,2)
-   call qlxinx (racine,'RACINE', nraci, 0101,2)
-   call qlxinx (operat, 'PFOIS', npfo, 0303,2)
-   call qlxinx (expon, 'EXPON', npex, 0101,2)
-   call qlxinx (alogn, 'ALOGN', npex, 0101,2)
-   call qlxinx (absolu,  'ABSOLU', npex, 0101,2)
-   call qlxinx (carre, 'CARRE', npex, 0101,2)
+    CALL qlxinx (pgcoupe, 'MOYENT', nmoy, 0232, 2)
+    CALL qlxinx (moysrt, 'MOYSRT', nmoy, 0232, 2)
+    CALL qlxinx (liren, 'LIREE', nlire, 0708, 2)
+    CALL qlxinx (lirsr, 'LIRES', nlire, 0708, 2)
+    CALL qlxinx(plmnmod, 'PLUSE', najou, 0707, 2)
+    CALL qlxinx (pluss, 'PLUSS', najou, 0707, 2)
+    CALL qlxinx (foise, 'FOISE', multp, 0707, 2)
+    CALL qlxinx (foiss, 'FOISS', multp, 0707, 2)
+    CALL qlxinx (divisee, 'DIVE', multp, 0707, 2)
+    CALL qlxinx (divises, 'DIVS', multp, 0707, 2)
+    CALL qlxinx (moinse, 'MOINSE', nenle, 0707, 2)
+    CALL qlxinx (moinss, 'MOINSS', nenle, 0707, 2)
+    CALL qlxinx (moyene, 'MOYENE', nmoys, 0101, 2)
+    CALL qlxinx (ecrits, 'ECRITS', necrt, 0814, 2)
+    CALL qlxinx (modul2e, 'MODUL2E', nmod, 0707, 2)
+    CALL qlxinx (modul2s, 'MODUL2S', nmod, 0707, 2)
+    CALL qlxinx (racine, 'RACINE', nraci, 0101, 2)
+    CALL qlxinx (operat, 'PFOIS', npfo, 0303, 2)
+    CALL qlxinx (expon, 'EXPON', npex, 0101, 2)
+    CALL qlxinx (alogn, 'ALOGN', npex, 0101, 2)
+    CALL qlxinx (absolu, 'ABSOLU', npex, 0101, 2)
+    CALL qlxinx (carre, 'CARRE', npex, 0101, 2)
 
-    call qlxinx (qqqecho, 'ECHO',   dum, 0101, 2)
-    call qlxinx (qqqident,'IDENT',  npar, 0103, 2)
-    call qlxinx (qqqform, 'FORMAT', dum, 0101, 2)
-    call qlxinx (coord,   'COORD',  dum, 0202, 2)
-    call qlxinx (qqqfilt, 'FILTRE', dum, 0204, 2)
+    CALL qlxinx (qqqecho, 'ECHO', dum, 0101, 2)
+    CALL qlxinx (qqqident, 'IDENT', npar, 0103, 2)
+    CALL qlxinx (qqqform, 'FORMAT', dum, 0101, 2)
+    CALL qlxinx (coord, 'COORD', dum, 0202, 2)
+    CALL qlxinx (qqqfilt, 'FILTRE', dum, 0204, 2)
 
-      call qlxins (npack,  'COMPAC',  dum, 1, 1)
-    call qlxins (message,'MESSAGE', dum, 1, 1)
-    call qlxins (numdel, 'DELTA',   dum, 1, 1)
-    call qlxins (typeent,'TYPEENT', dum, 1, 1)
-    call qlxins (typesrt,'TYPESRT', dum, 1, 1)
-    call qlxins ( voire, 'VOIRENT', dum, 1, 1)
-    call qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
-   call qlxins ( pose,  'PAUSE',   dum, 1, 1)
-    call qlxins ( userdate,  'DATE',    dum, 3, 1)
-    call qlxins (seldat, 'OPDAT',   dum, 1, 1)
-    call qlxins (printen,'PRINTEN', dum,7, 1)
-    call qlxins (printsr,'PRINTSR', dum,7, 1)
-    call qlxins (etikent,'ETIKENT', nwetike, 3, 1)
-   call qlxins (masque, 'MASQUE',  dum, 1, 1)
-    call qlxins (etiksrt,'ETIKSRT', nwetiks, 3, 1)
-    call qlxins (numero, 'ENREG',   dum, 1, 1)
-    call qlxins (ip2srt, 'IP2SRT',  dum, 1, 1)
-    call qlxins (ip3ent, 'IP3ENT',  dum, 1, 1)
-    call qlxins (ip3srt, 'IP3SRT',  dum, 1, 1)
-    call qlxins (unefois,'UNEFOIS',  dum, 1, 1)
-    call qlxins (once,   'ONCE',  dum, 1, 1)
-    call qlxins (diese,  'DIESE',dum,1,1)
-    call qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
-    call qlxins (dateform, 'DATEFORM', dum, 1, 1)
-   call qlxins (compression_level, 'COMPRESS', dum, 1, 1)
+    CALL qlxins (npack, 'COMPAC', dum, 1, 1)
+    CALL qlxins (message, 'MESSAGE', dum, 1, 1)
+    CALL qlxins (numdel, 'DELTA', dum, 1, 1)
+    CALL qlxins (typeent, 'TYPEENT', dum, 1, 1)
+    CALL qlxins (typesrt, 'TYPESRT', dum, 1, 1)
+    CALL qlxins ( voire, 'VOIRENT', dum, 1, 1)
+    CALL qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
+    CALL qlxins ( pose, 'PAUSE', dum, 1, 1)
+    CALL qlxins ( userdate, 'DATE', dum, 3, 1)
+    CALL qlxins (seldat, 'OPDAT', dum, 1, 1)
+    CALL qlxins (printen, 'PRINTEN', dum, 7, 1)
+    CALL qlxins (printsr, 'PRINTSR', dum, 7, 1)
+    CALL qlxins (etikent, 'ETIKENT', nwetike, 3, 1)
+    CALL qlxins (masque, 'MASQUE', dum, 1, 1)
+    CALL qlxins (etiksrt, 'ETIKSRT', nwetiks, 3, 1)
+    CALL qlxins (numero, 'ENREG', dum, 1, 1)
+    CALL qlxins (ip2srt, 'IP2SRT', dum, 1, 1)
+    CALL qlxins (ip3ent, 'IP3ENT', dum, 1, 1)
+    CALL qlxins (ip3srt, 'IP3SRT', dum, 1, 1)
+    CALL qlxins (unefois, 'UNEFOIS', dum, 1, 1)
+    CALL qlxins (once, 'ONCE', dum, 1, 1)
+    CALL qlxins (diese, 'DIESE', dum, 1, 1)
+    CALL qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
+    CALL qlxins (dateform, 'DATEFORM', dum, 1, 1)
+    CALL qlxins (compression_level, 'COMPRESS', dum, 1, 1)
 
-    do i=1,127
-       call qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
-    enddo
+    do i = 1, nbKeys - 1
+       CALL qlxins(qlxval(i), qlxcon(i), dum, 1, 0)
+    ENDDO
 
-    do i=1,2
-       call qlxins(qlxlval(i), qlxlcon(i), dum, 1, 0)
-    enddo
+    do i = 1, 2
+       CALL qlxins(qlxlval(i), qlxlcon(i), dum, 1, 0)
+    ENDDO
 
-!   defaut pour lire fichier d'entre
-
+    ! Defauts pour lire fichier d'entre
     typeent = -1
     etikent(1) = -1
     etikent(2) = -1
 
     ip3ent = -1
-    userdate  = -1
+    userdate = -1
     date2 = -1
     date3 = -1
 
@@ -692,105 +678,89 @@ END INTERFACE
     ip1style = 2
     dateform = 1
 
-!   defaut pour fichier de sorti
-
-    ip3srt= -1
-    ip2srt=-1
+    ! Defauts pour fichier de sorti
+    ip3srt = -1
+    ip2srt = -1
     etiksrt(1) = -1
     etiksrt(2) = -1
     etiksrt(3) = -1
 
-    typesrt= -1
-   compression_level = 0
-   masque = 0
+    typesrt = -1
+    compression_level = 0
+    masque = 0
 
-
-!    initialiser avec .true. champ symetrique
-
+    ! Initialiser avec .true. champ symetrique
     nsym = 2
-    call cmetsym('GZ',.true.)
-    call cmetsym('TT',.true.)
-    call cmetsym('DD',.true.)
-    call cmetsym('WW',.true.)
-    call cmetsym('ES',.true.)
-    call cmetsym('F2',.true.)
-    call cmetsym('PN',.true.)
-    call cmetsym('PS',.true.)
-    call cmetsym('TS',.true.)
+    CALL cmetsym('GZ', .true.)
+    CALL cmetsym('TT', .true.)
+    CALL cmetsym('DD', .true.)
+    CALL cmetsym('WW', .true.)
+    CALL cmetsym('ES', .true.)
+    CALL cmetsym('F2', .true.)
+    CALL cmetsym('PN', .true.)
+    CALL cmetsym('PS', .true.)
+    CALL cmetsym('TS', .true.)
 
-    call cmetsym('QQ',.false.)
-
-
-!    directives de l'usager
+    CALL cmetsym('QQ', .false.)
 
 
+    ! directives de l'usager
 
-!    initialisation parametres de sortie pour fichier formate
+    ! Initialisation parametres de sortie pour fichier formate
+    CALL initid
 
-    call initid
+    iopc = app_loglevel(lfn(idx_msglvl))
+    ier = fstopl('REDUCTION32', .true., .false.)
 
-
-    iopc= app_loglevel(lfn(idx_msglvl))
-    ier = fstopl('REDUCTION32',.true.,.false.)
-
-    ipose= 0
-    call readlx(5,kend,ipose)
+    ipose = 0
+    CALL readlx(5, kend, ipose)
 
 !   initialise variable de printsr
+    IF (associated(tmplat)) deallocate(tmplat)
+    IF (associated(tmplon)) deallocate(tmplon)
 
-    if (associated(tmplat)) deallocate(tmplat)
-    if (associated(tmplon)) deallocate(tmplon)
+    IF (mode == 1) THEN
+        CALL chk_hy(lnkdiun(1), lnkdiun(idx_ozsrt))
+        CALL chk_toctoc(lnkdiun(1), lnkdiun(idx_ozsrt))
+    END IF
+    iopc = app_loglevel('INFO')
+    DO i = 1, niun
+        ier = fstfrm(lnkdiun(i))
+        CALL fclos(lnkdiun(i))
+    END DO
 
-    if (mode.eq.1) then
-      call chk_hy(lnkdiun(1),lnkdiun(idx_ozsrt))
-      call chk_toctoc(lnkdiun(1),lnkdiun(idx_ozsrt))
-   endif
-    iopc= app_loglevel('INFO')
-    do i=1,niun
-       ier = fstfrm(lnkdiun(i))
-       call fclos(lnkdiun(i))
-    enddo
-!    call fstunl
+    IF (mode == 1) THEN
+        IF (voirs)  THEN
+            IF (message) THEN
+                ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
+            END IF
+        END IF
 
-    if (mode.eq.1) then
-       if (voirs)  then
-          if (message) then
-             ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
-          endif
-       endif
-
-      ier = fstfrm(lnkdiun(idx_ozsrt))
-       call fclos(lnkdiun(idx_ozsrt))
-    else
+        ier = fstfrm(lnkdiun(idx_ozsrt))
+        CALL fclos(lnkdiun(idx_ozsrt))
+    ELSE
 #if defined (unix)
-         if (mode.eq.2) then
-            call app_log(APP_WARNING,'"MS" Nfile type are not supported in this version of PGSM')
-       endif
+        IF (mode == 2) THEN
+            CALL app_log(APP_WARNING, '"MS" Nfile type are not supported in this version of PGSM')
+        END IF
 #endif
 
-!    fermer fichier sequentiel
+        ! Fermer fichier sequentiel
+        IF (mode == 3)  THEN
+            CALL fclos(lnkdiun(idx_ozsrt))
+        END IF
 
-            if (mode.eq.3)  then
-          call fclos(lnkdiun(idx_ozsrt))
-       endif
+        IF (mode == 4)  THEN
+            CALL pgsmcf(lnkdiun(idx_ozsrt))
+       END IF
+    END IF
 
-            if (mode.eq.4)  then
-          call pgsmcf(lnkdiun(idx_ozsrt))
-       endif
-    endif
+    ! Imprime boite avec le temps d execution du pgm  pgsm
+    IF (ipose > 0) THEN
+        app_status = app_end(13)
+        CALL qqexit(13)
+    ELSE
+        app_status = app_end(0)
+    END IF
 
-
-
-!  fermer fichier 4 dans grille
-
-
-!  imprime boite avec le temps d execution du pgm  pgsm
-
-    if (ipose.gt.0) then
-        app_status=app_end(13)
-        call qqexit(13)
-    else
-       app_status=app_end(0)
-    endif
-    
-    end
+END PROGRAM

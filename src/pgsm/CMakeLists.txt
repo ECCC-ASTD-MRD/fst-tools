@@ -15,7 +15,7 @@ set(FICHIERS_FTN90
     initid.F90 initseq.F90 itrouve.F90 lastcol.F90
     legvar.F90 liraxez.F90 liren.F90 lopascm.F90
     loupmir.F90 lrsmdes.F90 macpcp.F90 messags.F90
-    metsym.F90 operat.F90 outlalo.F90 pairvct.F90 pgsm2.F90
+    metsym.F90 operat.F90 outlalo.F90 pairvct.F90
     pgsmabt.F90 ipgsmlic.F90 pgsmlic.F90 ipgsmlir.F90
     pgsmlir.F90 ipgsmluk.F90 pgsmluk.F90 plmnmod.F90
     prefiltre.F90 putfld.F90 qaaqr.F90 qqqecho.F90
@@ -30,12 +30,11 @@ set(FICHIERS_FTN90
 add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 add_dependencies(pgsmlib fst-tools_build_info)
 target_link_libraries(pgsmlib PRIVATE rmn::rmn)
-set_target_properties(pgsmlib PROPERTIES 
-   COMPILE_DEFINITIONS PGSM_VERSION="${PGSM_VERSION}")
 
-add_executable(pgsm main.F90)
+add_executable(pgsm pgsm2.F90)
 target_link_libraries(pgsm PRIVATE pgsmlib rmn::rmn)
 set_target_properties(pgsm PROPERTIES 
+   COMPILE_DEFINITIONS PGSM_VERSION="${PGSM_VERSION}"
    OUTPUT_NAME pgsm-${PGSM_VERSION})
 
 # Symbolic links to latest build
