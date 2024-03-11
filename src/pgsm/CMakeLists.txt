@@ -31,7 +31,7 @@ add_library(pgsmlib STATIC ${FICHIERS_FTN90} ${FICHIERS_C})
 add_dependencies(pgsmlib fst-tools_build_info)
 target_link_libraries(pgsmlib PRIVATE rmn::rmn)
 
-add_executable(pgsm pgsm2.F90)
+add_executable(pgsm pgsm.F90)
 target_link_libraries(pgsm PRIVATE pgsmlib rmn::rmn)
 set_target_properties(pgsm PROPERTIES 
    COMPILE_DEFINITIONS PGSM_VERSION="${PGSM_VERSION}"
