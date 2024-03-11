@@ -343,9 +343,8 @@ PROGRAM pgsm
     data(qlxlcon(i),i = 1,2) /'OUI', 'NON'/
     data(qlxlval(i),i = 1,2) /1,0/
 
-    !        integer idx_ozsrt, idx_isll, idx_i, idx_l, idx_date, idx_msglvl, idx_isent, idx_impos, idx_v
     data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
-    data idx_msglvl /987/  idx_isent /988/  idx_impos  /989/ idx_v /990/
+    data idx_msglvl /987/  idx_isent /988/  idx_v /990/
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     ! listl = position  iment(tape1 standard),isll(tape4 sequentiel)
@@ -390,11 +389,6 @@ PROGRAM pgsm
         inputmod = SEQUENTIEL
     ELSE
         inputmod = RANDOM
-    ENDIF
-
-    IF (lfn(idx_impos)(1:11) /= 'IMPOS_SCRAP') THEN
-        ier = fnom(lnkdiun(idx_impos), lfn(idx_impos), 'RND+OLD+R/O', 0)
-        ier = fstouv(lnkdiun(idx_impos), 'RND')
     ENDIF
 
     IF (lfn(idx_v) /= 'NON') THEN
