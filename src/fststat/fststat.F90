@@ -39,12 +39,12 @@ program fststat
         end if
     end do
 
-    if (.not. fst24_link(sources)) then
+    if (.not. fst24_link(sources(1:nf))) then
         call app_log(APP_ERROR, 'Unable to link source files')
     else
         call loop_fields(sources(1))
     endif
-    
+
     app_status=app_end(-1)
     call qqexit(app_status)
 end program

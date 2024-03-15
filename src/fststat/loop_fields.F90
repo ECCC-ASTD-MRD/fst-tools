@@ -7,9 +7,10 @@ subroutine loop_fields(source)
     type(fst_file)    :: source
     type(fst_record)  :: record
 
-    integer :: i, ier
+    integer :: i,j,k, ier
     logical :: success
 
+    real(kind = real32), dimension(:, :, :), pointer :: data_r4
     real :: rtemp
     integer :: itemp
 
@@ -20,23 +21,25 @@ subroutine loop_fields(source)
     success = source%set_search_criteria()
 
     do while(source%find_next(record))
- 
         if (record%nomvar /= '!!') then
             success = record%read()
+            call record % get_data_array(data_r4) 
 
             if (record%datyp == 2 .or. record%datyp == 4) then
-                do i = 1, record%ni * record%nj * record%nk
-                    rtemp = record%data(i)
-                    record%data(i) = real(itemp)
+                do k = 1, record%nk
+                   do j = 1, record%nj
+                      do i = 1, record%ni
+                        rtemp = data_r4(i,j,k)
+                        data_r4(i,j,k) = real(itemp)
+                      end do
+                   end do
                 end do
             end if
 
-            call statfld4(record%nomvar)
+            call statfld4(record)
         else
             write(6, *)' **   SKIPPING RECORD "!!", CAN''T PROCESS  **'
         end if
-
-        deallocate(buf)
 
     end do
 end subroutine

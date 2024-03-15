@@ -8,6 +8,7 @@ subroutine statfld4(record)
  
     integer :: i, j, k
     integer(C_INT64_T) :: size 
+    real(kind = real32), dimension(:, :, :), pointer :: data_r4
     real(kind = real64) :: sum, moy, var
     real :: rmin, rmax
     integer :: imin, jmin, kmin, imax, jmax, kmax, kind
@@ -15,18 +16,27 @@ subroutine statfld4(record)
     real :: rlevel
 
     size=record%ni*record%nj*record%nk
+    call record % get_data_array(data_r4) 
 
     ! Calculer la moyenne
     sum = 0.0
-    do i = 1, size
-       sum = sum + record%data(i)
+    do k = 1, record%nk
+        do j = 1, record%nj
+            do i = 1, record%ni
+                sum = sum + data_r4(i,j,k)
+            end do
+        end do
     end do
     moy = sum / float(size)
 
     ! Calculer la variance
     sum = 0.0
-    do i = 1, size
-        sum = sum + ((record%data(i) - moy) * (record%data(i) - moy))
+    do k = 1, record%nk
+        do j = 1, record%nj
+            do i = 1, record%ni
+                sum = sum + ((data_r4(i,j,k) - moy) * (data_r4(i,j,k) - moy))
+            end do
+        end do
     end do
     var = sqrt (sum / float(size))
 
@@ -37,20 +47,20 @@ subroutine statfld4(record)
     imax = 1
     jmax = 1
     kmax = 1
-    rmax = record%data(1,1,1)
-    rmin = record%data(1,1,1)
+    rmax = data_r4(1,1,1)
+    rmin = data_r4(1,1,1)
 
-    do k = 1, size
+    do k = 1, record%nk
         do j = 1, record%nj
             do i = 1, record%ni
-                if (record%data(i) > rmax) then
-                    rmax  = record%data(i, j, k)
+                if (data_r4(i,j,k) > rmax) then
+                    rmax  = data_r4(i,j,k)
                     imax = i
                     jmax = j
                     kmax = k
                 end if
-                if (field(i, j, k) < rmin) then
-                    rmin  = record%data(i, j, k)
+                if (data_r4(i,j,k) < rmin) then
+                    rmin  = data_r4(i,j,k)
                     imin = i
                     jmin = j
                     kmin = k
@@ -62,7 +72,7 @@ subroutine statfld4(record)
     call convip_plus(record%ip1, rlevel, kind, -1, level, .true.)
 
     write(6, 10) record%nomvar, record%typvar, level, record%ip2, record%ip3, record%datev, record%etiket, &
-        moy, var, imin, jmin + (kmin - 1) * nj, rmin, imax, jmax + (kmax - 1) * nj, rmax
+        moy, var, imin, jmin + (kmin - 1) * record%nj, rmin, imax, jmax + (kmax - 1) * record%nj, rmax
 
 10  format (' ', a4, 1x, a2, 1x, a15, 1x, i4, 1x, i3, 1x, i9, 1x, a12, 1x, &
         ' Mean:', e13.6, ' StDev:', e13.6, &
