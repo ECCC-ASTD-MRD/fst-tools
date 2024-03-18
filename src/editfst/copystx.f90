@@ -47,6 +47,7 @@
       integer :: date_1, date_2
   
       type(fst_record) :: record
+      type(fst_query)  :: query
       type(meta)       :: metaf
       type(C_PTR)      :: obj
 
@@ -79,10 +80,10 @@
 
 !     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT QUI NOUS INTERESSE
       
-      success = sources(1)%set_search_criteria()
+      query= sources(1)%make_search_query()
 
       nrecord=0
-      do while(sources(1)%find_next(record))
+      do while(query%find_next(record))
 
          if (record%dasiz.GT.48 .AND. record%datyp.EQ.1) then
             write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%dasiz 
@@ -113,7 +114,7 @@
          else
             success = record%read()
             metaf = record%metadata
-       endif
+         endif
    !
    !     ==================   logique pour directive ZAP  ==================
    !
@@ -187,6 +188,8 @@
    140   IF(LIMITE .EQ. 0) GO TO 180            ! nombre maximum d'enregistrements a copier atteint
 
       END DO
+
+      call query % free()
 
   160 IF(SSEQ) THEN                          ! le fichier source est sequentiel
          leof=sources(1)%eof()

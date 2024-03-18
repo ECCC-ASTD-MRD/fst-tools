@@ -34,7 +34,9 @@
       CHARACTER(len=128) :: CLE
       CHARACTER(len=15)  :: SORTE, TAPE
       CHARACTER(len=3)   :: DND
+
       type(fst_file)     :: fstfile
+      type(fst_query)    :: query
 
       DND   = 'SEQ'
       SORTE = 'STD+SEQ+OLD'
@@ -94,9 +96,9 @@
       600    FORMAT('sautsqi: SAUTE',I3,' EOF 'I2,' FICHIER',I3,'=',A15,'...')
 
 !     SAUTE AU N..IEME EOF DE NIVEAU LEVEL
-      success = fstfile%set_search_criteria(ni=k,nj=l,nk=m,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
+      query = fstfile%make_search_query(ni=k,nj=l,nk=m,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
-   10 IF (fstfile%find_next()) GOTO 10
+   10 IF (query%find_next()) GOTO 10
       M = fstfile%eof() 
       IF(M.LT.1 .OR. M.GT.15) THEN
          WRITE(app_msg,*) 'sautsqi: Wrong EOF marker=',M,' within tape=',fstfile%get_unit()

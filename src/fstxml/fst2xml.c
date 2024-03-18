@@ -36,8 +36,9 @@ int fst2xml(int argc, char **argv) {
     char xmlip1[32], xmlip2[32], xmlip3[32];
     double nhours;
 
-    fst_file*   fstfile;
-    fst_record  record;
+    fst_file*   fstfile=NULL;
+    fst_record  record= default_fst_record;
+    fst_query*  query=NULL; 
     FILE*       xmlfd;
 
     strcpy(lcl_liste[0], "fst.");
@@ -96,8 +97,8 @@ int fst2xml(int argc, char **argv) {
     fprintf(xmlfd, "%s\n", "<?xml version='1.0' encoding='utf-8' standalone='yes'?>");
     fprintf(xmlfd, "%s\n", "<rpn-standard-file>");
 
-//    fst24_set_search_criteria(fstfile,NULL);
-    while(fst24_find_next(fstfile,&record)) {
+    query = fst24_make_search_query(fstfile,NULL);
+    while(fst24_find_next(query,&record)) {
 
         if (record.dasiz > 32) {
             multi = 2;

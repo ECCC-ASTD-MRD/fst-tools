@@ -106,7 +106,8 @@ int main(int argc, const char ** const argv) {
     const char * const dumpPath = argv[2];
 
     fst_file  *fstfile;
-    fst_record record, criteria = default_fst_record;
+    fst_query *query;
+    fst_record record= default_fst_record, criteria = default_fst_record;
 
     App_Init(APP_MASTER,"fstdumpfld",VERSION,"",BUILD_TIMESTAMP);
     App_Start();
@@ -114,22 +115,21 @@ int main(int argc, const char ** const argv) {
     // Link file to a unit number (Fortran compatible I/O handle)
     int iun = 0;
     if (!(fstfile=fst24_open(filePath,"STD+OLD+R/O"))) {
-        App_Log(APP_ERROR,"Failed to open the file %s !\n", filePath);
+        App_Log(APP_ERROR,"Failed to open the file %s\n", filePath);
         App_End(-1);
         return 1;
     }
-
-    strncpy(criteria.nomvar,argv[2],4);
+    strncpy(criteria.nomvar,argv[3],4);
     strncpy(criteria.etiket,argv[4],12);
     criteria.ip1 = decodeIp1(argv[5]);
     criteria.ip2 = atoi(argv[6]);
     criteria.ip3 = atoi(argv[7]);
-
-    fst24_find_next(fstfile,&record);
+    query = fst24_make_search_query(fstfile, &criteria);
+    fst24_find_next(query,&record);
 
     App_Log(APP_INFO,"ni = %d, nj = %d, nk = %d, size = %d bytes\n", record.ni, record.nj, record.nk);
 
-    if (fst24_read(&record)) {
+    if (fst24_read(&record)<=0) {
         App_Log(APP_ERROR,"Failed to read the field!\n");
         App_End(-1);
         return 1;

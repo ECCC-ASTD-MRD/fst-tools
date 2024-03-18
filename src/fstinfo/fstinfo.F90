@@ -20,6 +20,7 @@
       logical :: success
       type(fst_file)   :: source
       type(fst_record) :: record
+      type(fst_query)  :: query
 
       character(len=1)  :: ptdel
       character(len=2)  :: pttypvar
@@ -110,9 +111,9 @@
       open(pnseqout,FILE=ptvar(10),ACCESS='SEQUENTIAL')
 
       success = source%open(trim(ptvar(1)),'STD+R/O+REMOTE')
-      success = source%set_search_criteria(datev=pndatev,etiket=ptetiket,ip1=pnip1,ip2=pnip2,ip3=pnip3,typvar=pttypvar,nomvar=ptnomvar)
+      query = source%make_search_query(datev=pndatev,etiket=ptetiket,ip1=pnip1,ip2=pnip2,ip3=pnip3,typvar=pttypvar,nomvar=ptnomvar)
 
-      do while(source%find_next(record))
+      do while(query%find_next(record))
  
          call newdate(record%dateo,pndatprinto,pntimeo,-3)
          call newdate(record%datev,pndatprintv,pntimev,-3)

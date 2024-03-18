@@ -6,6 +6,7 @@ subroutine loop_fields(source)
     integer, external :: fstopl
     type(fst_file)    :: source
     type(fst_record)  :: record
+    type(fst_query)  :: query
 
     integer :: i,j,k, ier
     logical :: success
@@ -18,9 +19,9 @@ subroutine loop_fields(source)
 
     ier = fstopl('REDUCTION32', .true., .false.)
 
-    success = source%set_search_criteria()
+    query = source%make_search_query()
 
-    do while(source%find_next(record))
+    do while(query%find_next(record))
         if (record%nomvar /= '!!') then
             success = record%read()
             call record % get_data_array(data_r4) 
