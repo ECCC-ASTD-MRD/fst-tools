@@ -64,7 +64,6 @@
                ICMP1D, ABORT, LOW2UP, convip_plus, fnom, &
                ip1_all, qqexit
 !
-      CHARACTER(len=1) :: GRTYPB
       CHARACTER(len=2) :: TYPVAB
       CHARACTER(len=4) :: NOMVAB
       CHARACTER(len=8) :: CLE(22)
@@ -74,10 +73,9 @@
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT, &
              P1, P2, P3, TN ,T, TG, EXCEPTION
-      INTEGER KA, KB, N1, N2, X1, X2, LIMITE, L, N, I,   &
-             IDATE, IB1, IB2, IB3, IB4, SWA, LNG, DLTF,  &
-             IP1B, IP2B, IP3B,                        &
-             FSTOPC, fstopl, fnom,                          &
+      INTEGER KA, KB, N1, N2, LIMITE, L, N, I,   &
+             IDATE, IP1B, IP2B, IP3B,            &
+             FSTOPC, fstopl, fnom,               &
              TABLO(0:6,0:6)
       integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
       integer lvar, iunexpv
@@ -120,10 +118,6 @@
 !     0=BINAIRE 1=REEL 2=ENTIER 3=CARACTERE 4=ENTIER SANS SIGNE 5=IEEE
 !     NOTE:QUAND LA CLE('X'.EQ.'R') DATA TABLO(0,0)=1
 
-!*IF DEF, NEC64
-!      DEF1(8) = '-13'
-!      DEF2(8) = '-13'
-!*ENDIF
 !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
 
       I = -1
@@ -195,11 +189,10 @@
         iunexpv=0
         ier = fnom(iunexpv,ARMNLIB_var(1:lvar)//'/data/exception_vars_ok','SEQ+FTN+FMT+OLD+R/O',0)
         IF (ier .lt. 0) THEN
-         WRITE(app_msg,*) '$ARMNLIB_DATA/exception_vars file not found; using internal exception list'                 
-         call app_log(APP_INFO,app_msg)
-
+           WRITE(app_msg,*) '$ARMNLIB_DATA/exception_vars file not found; using internal exception list'                 
+           call app_log(APP_INFO,app_msg)
         ELSE
-          READ(iunexpv,'(a)') exception_vars
+           READ(iunexpv,'(a)') exception_vars
         ENDIF
       ENDIF
 
@@ -282,18 +275,25 @@
          WRITE(6,700)
       ENDIF
 
-      IF(AS .OR. AF) L  = filea%rewind()
+      IF(AS .OR. AF) l = filea%rewind()
 
       querya = filea%make_search_query()
       do while(querya%find_next(recorda))
 
          if (recorda%NOMVAR == '!!') then
-            write(6,*)' **   Skipping record "!!", can''t compare  **' 
+            WRITE(app_msg,*) 'Skipping record "!!", can''t compare' 
+            call app_log(APP_INFO,app_msg)
             cycle
          endif 
 
-   !      SI LA DATE EST A CONSIDERER
-         IF( TD ) idate=recorda%datev
+   !     SI LA DATE EST A CONSIDERER
+         IF( TD ) then
+            if (recorda%dateo .eq. 0) then
+               idate=0
+            else            
+               idate=recorda%datev
+            endif
+         endif
    
    !     SI ETIKET EST A CONSIDERER
          IF( TE ) etikb = recorda%etiket
@@ -310,9 +310,9 @@
                ip1b = recorda%ip1
                EXCEPTION = .TRUE.
             ELSE
-               call convip_plus(recorda%ip1,level,kind,-1,string,.false.)
-               ip1b = IP1_ALL(level,kind)
-               write(6,*) recorda%ip1,ip1b,level
+                call convip_plus(recorda%ip1,level,kind,-1,string,.false.)
+!               ip1b = IP1_ALL(level,kind)
+                ip1b = recorda%ip1
                EXCEPTION = .FALSE.
             ENDIF
          ENDIF
@@ -323,18 +323,20 @@
    !     SI IP3 EST A CONSIDERER
          IF( P3 ) ip3b = recorda%ip3
 
-         if (BS .OR. BF) kb = fileb%rewind()
+         if (BS .OR. BF) l = fileb%rewind()
          queryb = fileb%make_search_query(datev=idate,etiket=etikb,ip1=ip1b,ip2=ip2b,ip3=ip3b,typvar=typvab,nomvar=nomvab)
          success = queryb%find_next(recordb)
 
          IF(.not. success) THEN
-            WRITE(6,601) nomvab, typvab, ip1b, ip2b, ip3b, idate, NB
+            write(app_msg,601) nomvab, typvab, ip1b, ip2b, ip3b, idate, NB
+            call app_log(APP_WARNING,app_msg)
             cycle
          ENDIF
 
    !     VERIFICATION DES DIMENSIONS DE LA GRILLE SI PRESENT
          IF((recordb%ni.NE.recorda%ni) .OR. (recordb%nj.NE.recorda%nj) .OR. (recordb%nk.NE.recorda%nk)) THEN
-            WRITE(6,603) NOMVAB,recorda%ni,recorda%nj,recorda%nk,recordb%ni,recordb%nj,recordb%nk
+            write(app_msg,603) NOMVAB,recorda%ni,recorda%nj,recorda%nk,recordb%ni,recordb%nj,recordb%nk
+            call app_log(APP_WARNING,app_msg)
             cycle
          ENDIF
 
@@ -342,14 +344,15 @@
          IF (TG) THEN
             IF((recorda%grtyp .NE. recordb%grtyp) .OR. (recorda%ig1 .NE.recordb%ig1) .OR. (recorda%ig2.NE.recordb%ig2) .OR. &
                (recorda%ig3.NE.recordb%ig3) .OR. (recorda%ig4.NE.recordb%ig4)) THEN
-               WRITE(6,602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
-                           NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
+               write(app_msg,602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
+                            NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
+               call app_log(APP_WARNING,app_msg)
                cycle
             ENDIF
          ENDIF
 
          IF(recorda%npak .NE. recordb%npak) then
-            WRITE(app_msg,*) 'NBITSA=',recorda%npak,' NBITSB=',recordb%npak                   
+            write(app_msg,*) 'NBITSA=',recorda%npak,' NBITSB=',recordb%npak                   
             call app_log(APP_INFO,app_msg)
          endif
 
@@ -368,14 +371,15 @@
          IF ((mod(recorda%datyp,128) .gt. 6).or.(mod(recordb%datyp,128) .gt. 6)) goto 30
          GO TO (40, 50, 30) TABLO(mod(recorda%datyp,128),mod(recordb%datyp,128))
          
-   30    WRITE(6,*)' *  PAS DE COMPARAISON  *  DATYPA=',recorda%datyp,' DATYPB=',recordb%datyp
+   30    WRITE(app_msg,*)' No comparison possible: DATYPA=',recorda%datyp,' DATYPB=',recordb%datyp
+         call app_log(APP_WARNING,app_msg)
          GO TO 60
 
    40    CALL RCMP1D(recorda, recordb, LIMITE, PACK_ERR2, EXCEPTION)
          GO TO 60
 
    50    CALL ICMP1D(recorda, recordb, EXCEPTION)
-
+         call queryb % free()
    60  continue
    enddo
 
@@ -397,7 +401,7 @@
    90 success = filea%close()
 
       IF( LN ) THEN
-         write(6,*)'* * *  fstcomp end  * * *'
+         call app_log(APP_VERBATIM,'* * *  fstcomp end  * * *')
       ELSE
          app_status=app_end(-1)
       ENDIF
@@ -426,8 +430,9 @@
       SUBROUTINE RCMP1D(A, B, LIMITE, PACK_ERR, EXCEPTION)
       use app
       use rmn_fst24
+      
       IMPLICIT NONE
-      INTEGER  N, LIMITE, NBITS
+      INTEGER  N, LIMITE
       INTEGER  PACK_ERR
       REAL     MAXABS, SUMABS, ERRABS
 !
@@ -448,7 +453,7 @@
       INTEGER   I, kind, irange
       CHARACTER(len=15) :: Level
       REAL      rlevel
-      REAL(kind = real32) :: SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR, &
+      REAL(kind=real64) :: SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR, &
                              AA, BB, FN, ERRLIM, VARA, VARB, SAB
       REAL MIN_A, MAX_A, MIN_B, MAX_B, RANGE_A, RANGE_B, DEUX_EXP_NB
       REAL ratio_max, ratio
@@ -459,12 +464,11 @@
       call a % get_data_array(dataa) 
       call b % get_data_array(datab) 
 
-      nbits=MIN(a%npak,b%npak)
       nbdiff = 0
       n=a%ni*a%nj*a%nk
 
       ERRLIM = 10.**LIMITE
-      DEUX_EXP_NB = 2.0 ** nbits
+      DEUX_EXP_NB = 2.0 ** MIN(a%npak,b%npak)
       SA     = 0.
       SB     = 0.
       SAB    = 0.
