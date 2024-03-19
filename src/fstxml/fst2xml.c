@@ -97,7 +97,7 @@ int fst2xml(int argc, char **argv) {
     fprintf(xmlfd, "%s\n", "<?xml version='1.0' encoding='utf-8' standalone='yes'?>");
     fprintf(xmlfd, "%s\n", "<rpn-standard-file>");
 
-    query = fst24_make_search_query(fstfile,NULL);
+    query = fst24_new_query(fstfile,NULL);
     while(fst24_find_next(query,&record)) {
 
         if (record.dasiz > 32) {

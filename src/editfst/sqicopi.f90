@@ -115,7 +115,7 @@
   
       IF(PRE .GT. 0) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU PRE
-         query = fstfile%make_search_query(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
+         query = fstfile%new_query(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
    90    IF (query%find_next()) GOTO 90
          LEOF = fstfile%eof()
@@ -143,7 +143,7 @@
 !     SAUTE DES MARQUES DE FIN DE FICHIER LOGIQUES APRES COPIE
       IF(LEOF .LT. POS) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU POS
-         query = fstfile%make_search_query(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
+         query = fstfile%new_query(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
   100    IF (query%find_next()) GOTO 100
          LEOF = fstfile%eof()

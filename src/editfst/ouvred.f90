@@ -80,7 +80,7 @@
       IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
          RENDUA = 0
 
-         query = destination%make_search_query()
+         query = destination%new_query()
 10       COPIES = query%find_next(record)
          IF(COPIES .GE. 0) THEN
             RENDUA = RENDUA+1

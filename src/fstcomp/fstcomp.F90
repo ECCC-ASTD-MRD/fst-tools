@@ -277,7 +277,7 @@
 
       IF(AS .OR. AF) l = filea%rewind()
 
-      querya = filea%make_search_query()
+      querya = filea%new_query()
       do while(querya%find_next(recorda))
 
          if (recorda%NOMVAR == '!!') then
@@ -311,7 +311,7 @@
                EXCEPTION = .TRUE.
             ELSE
                 call convip_plus(recorda%ip1,level,kind,-1,string,.false.)
-!               ip1b = IP1_ALL(level,kind)
+!TODO: fix               ip1b = IP1_ALL(level,kind)
                 ip1b = recorda%ip1
                EXCEPTION = .FALSE.
             ENDIF
@@ -324,7 +324,7 @@
          IF( P3 ) ip3b = recorda%ip3
 
          if (BS .OR. BF) l = fileb%rewind()
-         queryb = fileb%make_search_query(datev=idate,etiket=etikb,ip1=ip1b,ip2=ip2b,ip3=ip3b,typvar=typvab,nomvar=nomvab)
+         queryb = fileb%new_query(datev=idate,etiket=etikb,ip1=ip1b,ip2=ip2b,ip3=ip3b,typvar=typvab,nomvar=nomvab)
          success = queryb%find_next(recordb)
 
          IF(.not. success) THEN

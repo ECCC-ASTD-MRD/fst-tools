@@ -124,7 +124,7 @@ int main(int argc, const char ** const argv) {
     criteria.ip1 = decodeIp1(argv[5]);
     criteria.ip2 = atoi(argv[6]);
     criteria.ip3 = atoi(argv[7]);
-    query = fst24_make_search_query(fstfile, &criteria);
+    query = fst24_new_query(fstfile, &criteria);
     fst24_find_next(query,&record);
 
     App_Log(APP_INFO,"ni = %d, nj = %d, nk = %d, size = %d bytes\n", record.ni, record.nj, record.nk);

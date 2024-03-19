@@ -19,7 +19,7 @@ subroutine loop_fields(source)
 
     ier = fstopl('REDUCTION32', .true., .false.)
 
-    query = source%make_search_query()
+    query = source%new_query()
 
     do while(query%find_next(record))
         if (record%nomvar /= '!!') then

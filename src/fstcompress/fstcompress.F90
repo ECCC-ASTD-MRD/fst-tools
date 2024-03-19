@@ -75,7 +75,7 @@
 
       read(val(4), *) custom_nbits
 
-      query = input%make_search_query()
+      query = input%new_query()
 
       do while(query%find_next(record))
          success=record%read()

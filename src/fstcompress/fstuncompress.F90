@@ -42,7 +42,7 @@
          call qqexit(app_status)
        endif
 
-      query = input%make_search_query()
+      query = input%new_query()
 
       do while(query%find_next(record))
 

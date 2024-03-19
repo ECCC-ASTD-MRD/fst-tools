@@ -80,7 +80,7 @@
 
 !     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT QUI NOUS INTERESSE
       
-      query= sources(1)%make_search_query()
+      query= sources(1)%new_query()
 
       nrecord=0
       do while(query%find_next(record))
