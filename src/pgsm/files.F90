@@ -9,6 +9,7 @@ MODULE files
     SAVE
     ! integer :: lnkdiun(990)
     TYPE(fst_file), DIMENSION(990) :: inputFiles
+    ! integer :: idx_ozsrt
     TYPE(fst_file) :: outputFile
 
     CHARACTER(len = 4096) :: outputFilePath
@@ -16,6 +17,4 @@ MODULE files
     INTEGER :: nInput
     INTEGER :: inputMode
     INTEGER :: nRecords = 0
-
-    ! integer :: idx_ozsrt, isll_input
 END MODULE files

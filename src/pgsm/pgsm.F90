@@ -340,7 +340,6 @@ PROGRAM pgsm
     IF (lfn(idx_isll) /= 'TAPE4') THEN
         ! iun_isll = 0, Unit number 0 = stderr
         ier = fnom(iun_isll, lfn(idx_isll)(1:5), 'FMT+SEQ+R/O', 0)
-        isll_input = 1
     ENDIF
 
     IF (LEN(lfn(idx_isll)) > 0) THEN
