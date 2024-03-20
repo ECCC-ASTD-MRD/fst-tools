@@ -6,11 +6,11 @@
       
       integer :: key_uu, key_vv
 #include "defin.cdk90"
-      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
+      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr, &
          fstsel,symetri,imprime,itrouve,messags,pgsmabt
       external cvtr2i
       external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
+      integer  pgsmluk, fstinf, fstsui, fstprm, fstsel, fstinl, fstluk
 
       integer ezgdef_fmem, ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, fst_get_mask_key, key_mask
       logical skip

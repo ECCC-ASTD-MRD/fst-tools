@@ -1,24 +1,14 @@
-!
-!**S/P   COMME   LIRE UN CHAMP DANS ACCUMULATEUR
-!
-      subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
-         use app
-         implicit none
+!> LIRE UN CHAMP DANS ACCUMULATEUR
+subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
+    use app
+    implicit none
 
-      external fstinf,pgsmlir,memoir,fstprm,pgsmabt,imprime
-      external fstopc,messags,fstcvt
-      integer fstinf,pgsmlir,fstprm,fstopc,fstcvt
-!
-!AUTEUR Y. CHARTIER
-!
-!LANGAGE FORTRAN 77
-!
-!OBJET(COMME)
-!
-!LIBRAIRIES
-!         -SOURCE  ARMNSRC,DRPN
-!         -OBJET   PGSMLIB,ID=ARMNPJS.
-!
+    external pgsmabt
+    integer, external :: fstopc
+    integer, external :: fstcvt
+    integer, external :: fstinf
+    integer, external :: fstprm
+
 !ARGUMENTS
 !   IN   NOM     NOM DU CHAMP LCAR(GZ),"TT"......
 !   IN   TYPE    TYPE DE CHAMP "P"=PREVISION  "A" ANALYSE
@@ -26,20 +16,9 @@
 !   IN   IHR     HEURE DU CHAMP
 !   IN   IP3     LIBRE(USAGER) COMPTEUR POUR MOYENE UTILISER PAR ECRITS
 !   IN   ETIQET  ETIQUETTE 10 CARACTERES
-!
-!IMPLICITES
 !MESSAGES
 !         RECORD N EXISTE PAS SUR FICHIER (FSTINF DANS COMME)
-!         RECORD N EXISTE PAS (PGSMLIR DANS ROUTINE COMME)
-!
-!MODULES  FSTINF,PGSMABT,FSTPRM,MEMOIR,PGSMLIR
-!
-!APPEL     VIA DIRECTIVE
-!         LIREE(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQUET)
-!         LIRES(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQUET)
-!
-! -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!
+
 #include "accum.cdk90"
 #include "chck.cdk90"
 #include "voir.cdk90"
@@ -50,8 +29,8 @@
 #include "grilles.cdk90"
 #include "gdz.cdk90"
 #include "blancs.cdk90"
-!
-!
+
+
       character *12 cetiqet
       character *4 cnomvar
       character *2 ctypvar
@@ -63,10 +42,10 @@
 
       integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
       external  ezqkdef, ezgxprm, gdll, argdims
-!
-!
+
+
 !     MODIFICATION DE HOLLERITH A CARACTERE
-!
+
       bidon = 0
       cnomvar = '    '
       ctypvar = '  '
@@ -102,16 +81,16 @@
          call app_log(APP_ERROR,'comme: Record does not exist')
          call pgsmabt
       endif
-!
+
       if (nnk.gt.1)   then
          call app_log(APP_ERROR,'comme: PGSM does not accept 3 dimension fields (NK>1)')
          call pgsmabt
       endif
-!
-!
+
+
 !  #  clef pour directive pluse,moinse,ecrits....
-!
-!
+
+
       ier = fstprm(irec1,idatt,ideet,npas,nni,nnj,nnk, cnbits,cdatyp, &
          jpp1,jpp2,jpp3,ctypvar,cnomvar,cetiqet,cigtyp,igg1,igg2,igg3,      igg4,cswa, clng, cdltf, cubc,&
          extra1, extra2, extra3)
@@ -123,7 +102,7 @@
       endif
 
 !    ALLOCATION DE LA MEMOIRE
-!
+
       if (cigtyp.ne.'Z'.and.cigtyp.ne.'Y') then
          gdout = ezqkdef(nni,nnj, cigtyp,igg1,igg2,igg3,igg4,iunit)
          ier = ezgxprm(gdout,li,lj,cgrtyp,         lg1,lg2,lg3,lg4,cgtypxy,ig1ref,ig2ref,ig3ref,ig4ref)
@@ -137,10 +116,6 @@
          endif
       endif
 
-!
+
       if (.not.message) iopc= fstopc('TOLRNC','DEBUGS',.true.)
-
-      return
-!
-      end
-
+end

@@ -1,8 +1,8 @@
-   integer function fst_get_mask_key(mask_key, fld_key, mask_flags, iun) result(status)
-      use app
-      implicit none
+integer function fst_get_mask_key(mask_key, fld_key, mask_flags, iun) result(status)
+    use app
+    implicit none
 
-   integer mask_key, fld_key, mask_flags, iun, ier
+    integer mask_key, fld_key, mask_flags, iun, ier
 
    integer fstprm, fstinf
    external fstprm, fstinf
@@ -24,11 +24,9 @@
 
    integer ip_allones
    integer :: sorte = 3
-   integer :: mode  = 1
    character(len=32) :: ip_string
    logical :: flag = .false.
 
-!    allones = int(.not.ishft(-1,28))
   allones = -1
 
    ier = fstprm(fld_key, fld_dateo, fld_deet, fld_npas, fld_ni, fld_nj, fld_nk, &
@@ -131,35 +129,4 @@
    call app_log(APP_ERROR,app_msg)
    status = -1
    return
-   end function fst_get_mask_key
-
-!====================================================================================================
-!  Reserve pour provisions futures
-!    mask_ip3 = allones
-!
-!    mask_key = fstinf(iun, mask_ni,mask_nj, mask_nk, mask_datev, mask_etiket, mask_ip1, &
-!       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
-!
-!    if (mask_key >= 0) then
-!       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
-!           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
-!           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then
-!       status = 0
-!       return
-!       endif
-!    endif
-!
-!    mask_ip2 = allones
-!
-!    mask_key = fstinf(iun, mask_ni,mask_nj, mask_nk, mask_datev, mask_etiket, mask_ip1, &
-!       mask_ip2, mask_ip3, mask_typvar, mask_nomvar)
-!
-!    if (mask_key >= 0) then
-!       if (mask_ni == fld_ni .and. mask_nj == fld_nj .and. mask_nk == fld_nk .and. &
-!           mask_grtyp == fld_grtyp .and. mask_ig1 == fld_ig1 .and. mask_ig2 == fld_ig2 .and. &
-!           mask_ig3 == fld_ig3 .and. mask_ig4 == fld_ig4)  then
-!       status = 0
-!       return
-!       endif
-!    endif
-
+end function fst_get_mask_key

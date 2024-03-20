@@ -8,11 +8,9 @@
       integer, dimension(len_liste) :: liste
       logical, dimension(len_liste) :: done_liste
 #include "defin.cdk90"
-      external ecritur,pgsmluk,fstinf,fstsui,memoir,fstprm,qaaqr,fstcvt, &
-         fstsel,symetri,imprime,itrouve,messags,pgsmabt
+      external ecritur,pgsmluk,fstprm,qaaqr,symetri,imprime
       external cvtifr
-      external liraxez
-      integer  pgsmluk, fstinf, fstsui, fstprm, fstcvt, fstsel, fstinl, fstluk
+      integer  pgsmluk, fstprm, fstluk
 
       integer ezgdef_fmem, ezqkdef, ezsint, ezsint_mdm, ezdefset, fst_get_mask_key, key_masq
       logical skip
@@ -37,7 +35,7 @@
    character *2 ctypvar
    character *1 cigtyp
 
-   integer nniv, i, nunv, itrouve, ii
+   integer nniv, i, nunv, ii
    integer niveaux(512), deet, ig1, ig2, ig3, ig4, iheur
    integer dateo, datev, nbits, datyp, ip1, ip2, ip3
    integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs

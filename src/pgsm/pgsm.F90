@@ -1,81 +1,34 @@
-!**programme pgsm
-!        programme general de sortie des modeles
-!               programme utilitaire d'interpolation horizontale
-!               interpoler  ajustement convectif,precip,epaisseurs
+!               interpoler  ajustement convectif, precip, epaisseurs
 !               calcul du vent sqrt(u**2 + v**2)
 !               interpolation des vecteurs u et v horizontalement
 !               interpolation des 3 niveaux de nuages
 !               interpolation horizontale de variables scalaires
-!
-!auteur    - p.sarrazin octobre 1980 drpn dorval p.q.  canada
-!
-!revision
-!        4.0.1  - conversion au fichier standard 89  p. sarrazin
-!                 modification avril 90 p. sarrazin dorval canada drpn
-!
-!        4.0.2  - leger nettoyage du code
-!               - conversion des variables contenant des informations
-!                 alphanumeriques de type hollerith a caractere
-!               - elimination des macros "hcar" et "lcar"
-!               - conversion appels a "lexins" par "qlxins"
-!               - conversion pour cyber-910
-!                 y. chartier -juillet-aout 90- drpn dorval quebec
-!
-!        5.0    - utilisation des nouveaux interpolateurs
-!                 y. chartier - mai 1991 - drpn dorval quebec
-!
-!        5.1    - utilisation de fichiers d'entree lies avec "fstlnk"
-!                 y. chartier - mai 1991 - drpn dorval quebec
-!
-!        5.2    - support des grilles source de type z
-!        5.3    - conversion de RATFOR a FORTRAN
-!                 Y. Chartier - aout 1995
-!        5.4    - Optimisation des interpolateurs pour l'extension
-!                 selective des grilles.
-!        5.5    - Interpolation a partir de fichiers d'entree SQI
-!                 Support des grilles Lambert
-!                 Introduction de la librairie C gctpc
-!        5.6    - Introduction des directives COORD et GRILLE(STATIONS)
-!                 sortie(ASCII)
-!        5.7    - Support des fichiers standards 98
-!        6.0    - Introduction de ezscint comme interpolateur principal
-!        6.8    - Support des grilles diese
-!        6.9    - Support des grilles T (stereographiques generalisees)
-!        7.8.2  - Reload avec librmn_015.1
-!        7.8.3  - D. Bouhmemhem, Fev 2015, Reload avec librmn_015.2
-!        7.8.4  - M. Valin, Avril 2015,fixed data statements, include version.inc
-!        7.8.5  - M. Lepine, Nov 2015, verification des codes de retour de fnom
-!
-!langage   - fortran
-!
-!objet(pgsm)
+
 !          interpolateur horizontal qui permet de faire des
-!          interpolations (cubique,lineaire,voisin) d'une grille a
+!          interpolations (cubique, lineaire, voisin) d'une grille a
 !          une autre ou d'une grille a un point
 !          permet de faire des operations sur deux champs
 !          (gros calculateur de poche)
 !          fichier d'entre doit-etre format standard random
 !          sorti standard random ou sequentiel - seq ms - random ms
-!
-!librairies
-!          - rmnxlib.a
-!
+
 !fichiers
 !         - tape1  - fichier d'entree  (standard)
 !         - tape2  - fichier de sortie standard..direct(writms)...sequentiel
-!         - tape3  - fichier de records positionels ('^^','>>')
+!         - tape3  - fichier de records positionels ('^^', '>>')
 !         - tape5  - fichier d'entree(directives)
 !         - tape6  - fichier de sortie sur imprimante
-!
-!----------------------------------------------------------------------------
-#include "defin.cdk90"
+
+!> Utilitaire d'interpolation horizontale
 PROGRAM pgsm
     use app
+    use rmn_fst24
+    use files
     implicit none
 
 #include "fst-tools_build_info.h"
 
-#include "lnkflds.cdk90"
+#include "defin.cdk90"
 #include "dates.cdk90"
 #include "charac.cdk90"
 #include "pairs.cdk90"
@@ -118,48 +71,52 @@ PROGRAM pgsm
 
     integer, external :: ezsetopt
     external heure, champ, sorti, grille2, metsym, cmetsym, convs
-    external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
-    external moinse, moinss, ecrits,moyene, operat, modul2e, modul2s
-    external expon, racine,alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
-    external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
-    external qqqform,qqqident,coord,qqqfilt
+    external qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
+    external moinse, moinss, ecrits, moyene, operat, modul2e, modul2s
+    external expon, racine, alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
+    external moysrt, imprims, chmpdif, pairvct, messags, champ_seq, qqqecho
+    external qqqform, qqqident, coord, qqqfilt
 
-    external ccard,fnom,qlxins,qlxinx,readlx,fstfrm,fstvoi
-    external fstnbr,fstunl,fstouv
-    external fclos,lrsmde,lrsmds,fstopc,fstopl,qlxopt
+    external ccard, fnom, qlxins, qlxinx, readlx, fstfrm, fstvoi
+    external fstnbr, fstunl, fstouv
+    external fclos, lrsmde, lrsmds, fstopc, fstopl, qlxopt
 
-    integer fnom,fstfrm,fstvoi,fstnbr,fstopc,fstopl, fstouv
-    integer i,iopc,ipose,kend,nequiv,npex,nsetin,nsetex,nlirmds,nlirmde
+    integer fnom, fstfrm, fstvoi, fstnbr, fstopc, fstopl, fstouv
+    integer i, iopc, ipose, kend, nequiv, npex, nsetin, nsetex, nlirmds, nlirmde
     real dum
 
-    integer, parameter :: str_A = transfer("A   ",1)
-    integer, parameter :: str_P = transfer("P   ",1)
-    integer, parameter :: str_GZ = transfer("GZ  ",1)
-    integer, parameter :: str_TT = transfer("TT  ",1)
-    integer, parameter :: str_QQ = transfer("QQ  ",1)
-    integer, parameter :: str_QR = transfer("QR  ",1)
-    integer, parameter :: str_DD = transfer("DD  ",1)
-    integer, parameter :: str_PP = transfer("PP  ",1)
-    integer, parameter :: str_CC = transfer("CC  ",1)
-    integer, parameter :: str_WW = transfer("WW  ",1)
-    integer, parameter :: str_ES = transfer("ES  ",1)
-    integer, parameter :: str_DFGZ = transfer("DFGZ",1)
-    integer, parameter :: str_DFST = transfer("DFST",1)
-    integer, parameter :: str_DFPR = transfer("DFPR",1)
-    integer, parameter :: str_UV = transfer("UV  ",1)
-    integer, parameter :: str_VENT = transfer("VENT",1)
-    integer, parameter :: str_NUAG = transfer("NUAG",1)
-    integer, parameter :: str_F2 = transfer("F2  ",1)
-    integer, parameter :: str_PN = transfer("PN  ",1)
-    integer, parameter :: str_P0 = transfer("P0  ",1)
-    integer, parameter :: str_TS = transfer("TS  ",1)
-    integer, parameter :: str_TM = transfer("TM  ",1)
-    integer, parameter :: str_MT = transfer("MT  ",1)
-    integer, parameter :: str_WDUV = transfer("WDUV",1)
+    integer, parameter :: str_A = transfer("A   ", 1)
+    integer, parameter :: str_P = transfer("P   ", 1)
+    integer, parameter :: str_GZ = transfer("GZ  ", 1)
+    integer, parameter :: str_TT = transfer("TT  ", 1)
+    integer, parameter :: str_QQ = transfer("QQ  ", 1)
+    integer, parameter :: str_QR = transfer("QR  ", 1)
+    integer, parameter :: str_DD = transfer("DD  ", 1)
+    integer, parameter :: str_PP = transfer("PP  ", 1)
+    integer, parameter :: str_CC = transfer("CC  ", 1)
+    integer, parameter :: str_WW = transfer("WW  ", 1)
+    integer, parameter :: str_ES = transfer("ES  ", 1)
+    integer, parameter :: str_DFGZ = transfer("DFGZ", 1)
+    integer, parameter :: str_DFST = transfer("DFST", 1)
+    integer, parameter :: str_DFPR = transfer("DFPR", 1)
+    integer, parameter :: str_UV = transfer("UV  ", 1)
+    integer, parameter :: str_VENT = transfer("VENT", 1)
+    integer, parameter :: str_NUAG = transfer("NUAG", 1)
+    integer, parameter :: str_F2 = transfer("F2  ", 1)
+    integer, parameter :: str_PN = transfer("PN  ", 1)
+    integer, parameter :: str_P0 = transfer("P0  ", 1)
+    integer, parameter :: str_TS = transfer("TS  ", 1)
+    integer, parameter :: str_TM = transfer("TM  ", 1)
+    integer, parameter :: str_MT = transfer("MT  ", 1)
+    integer, parameter :: str_WDUV = transfer("WDUV", 1)
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'DATE.', 'MSGLVL.',      'ISENT:',      'IMPOS:',   'V'/
+
+    ! liste des defauts pour iment, isll, ozsrt, i, l
     data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'OPRUN', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'OUI'/
+
+    ! lfn = liste que l usager propose pour remplacer
     data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT',   'NON', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'NON'/
 
     data form /'(A8)'/
@@ -172,7 +129,7 @@ PROGRAM pgsm
 
     data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
 
-    data valid, voire,   voirs, message,seldat       /.false.,.false., .false.,.true.,.false.  /
+    data valid, voire,   voirs, message, seldat       /.false., .false., .false., .true., .false.  /
 
     data numero,  numdel,  iset,  nbrow,  ip4        / 1,           1,    -2,      0,    0    /
 
@@ -192,11 +149,11 @@ PROGRAM pgsm
 
     data nis, njs, nif, njf, ninc, njnc, if9 /1, 1, 1000, 1000, 10, 10, 0/
 
-    data niis,njjs,niif,njjf,niinc,njjnc/1,1,1000,1000,10,10/
+    data niis, njjs, niif, njjf, niinc, njjnc /1, 1, 1000, 1000, 10, 10/
 
-    data if7,if8,npairuv,npair/0,0,4,7/
+    data if7, if8, npairuv, npair /0, 0, 4, 7/
 
-    data clatmin,clatmax,clonmin,clonmax,ncoords/-90.0, +90.0, 0.0, 360.0, 0/
+    data clatmin, clatmax, clonmin, clonmax, ncoords /-90.0, +90.0, 0.0, 360.0, 0/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
     data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -306,16 +263,15 @@ PROGRAM pgsm
     data qlxcon(106)/'IPTWO'   /  qlxval(106)/     5 /
     data qlxcon(107)/'IPTHREE' /  qlxval(107)/     6 /
 
-!               KIND = 0, p est en hauteur (m) par rapport au niveau de la mer
-!               KIND = 1, p est en sigma (0.0 -> 1.0)
-!               KIND = 2, p est en pression (mb)
-!               KIND = 3, p est un code arbitraire
-!               KIND = 4, p est en hauteur (M) par rapport au niveau du sol
-!               KIND = 5, p est en coordonnee hybride
-!               KIND = 6, p est en coordonnee theta
-!               KIND = 15, rererve (entiers)
-!               KIND = 21, p est en GalChen
-
+    ! KIND = 0, p est en hauteur (m) par rapport au niveau de la mer
+    ! KIND = 1, p est en sigma (0.0 -> 1.0)
+    ! KIND = 2, p est en pression (mb)
+    ! KIND = 3, p est un code arbitraire
+    ! KIND = 4, p est en hauteur (M) par rapport au niveau du sol
+    ! KIND = 5, p est en coordonnee hybride
+    ! KIND = 6, p est en coordonnee theta
+    ! KIND = 15, rererve (entiers)
+    ! KIND = 21, p est en GalChen
 
     data qlxcon(108)/'METERS'  /  qlxval(108)/ -1000 /
     data qlxcon(109)/'SIGMA'   /  qlxval(109)/ -1001 /
@@ -340,35 +296,37 @@ PROGRAM pgsm
     data qlxcon(127)/'ORIGIN'  /  qlxval(127)/ 1023 /
     data qlxcon(128)/'RESV128' /  qlxval(128)/ 0 /
 
-    data(qlxlcon(i),i = 1,2) /'OUI', 'NON'/
-    data(qlxlval(i),i = 1,2) /1,0/
+    data(qlxlcon(i), i = 1, 2) /'OUI', 'NON'/
+    data(qlxlval(i), i = 1, 2) /1, 0/
 
-    data idx_ozsrt  /982/  idx_isll  /983/  idx_i      /984/ idx_l /985/ idx_date /986/
-    data idx_msglvl /987/  idx_isent /988/  idx_v /990/
+    data idx_ozsrt  /982/
+    integer, parameter :: idx_log = 985
+    integer, parameter :: idx_date = 986
+    integer, parameter :: idx_verbose = 990
+    integer, parameter :: idx_isent = 988
+    integer, parameter :: idx_msglvl = 987
+
+    integer, parameter :: idx_isll = 983
+    integer, parameter :: iun_isll = 0
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    ! listl = position  iment(tape1 standard),isll(tape4 sequentiel)
+    ! listl = position  iment(tape1 standard), isll(tape4 sequentiel)
     !       ozsrt(tape2 - standard - seq file - random ms)
-    ! defo = liste des defauts pour iment,isll,ozsrt,i,l
-    ! lfn = liste que l usager propose pour remplacer
     ! 6 = nombre de lfn
-    ! nequiv = nombre d'equivalence output de ccard
 
-
+    ! nombre d'equivalence output de ccard
     nequiv = -1
-    lnkdiun = 0
-    lnkdiun(1) = 1
-    lnkdiun(idx_ozsrt) = 2
+    ! lnkdiun = 0
+    !> \todo What does lnkdiun(1) represent?
+    ! lnkdiun(1) = 1
+    ! lnkdiun(idx_ozsrt) = 2
     CALL ccard(listl, defo, lfn, 990, nequiv)
-    ier = fnom(5, lfn(idx_i), 'SEQ', 0)
-    ier = fnom(6, lfn(idx_l), 'SEQ', 0)
 
     ! Imprimer boite debut du programme
     app_ptr = app_init(0, 'pgsm', PGSM_VERSION, '', BUILD_TIMESTAMP)
-    CALL app_logstream(lfn(idx_l))
+    CALL app_logstream(lfn(idx_log))
     CALL app_start()
 
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     CALL qqqfilt(1, 0, 0, 0)
     CALL qqqfilt(2, 0, 0, 0)
     CALL chk_tmpdir
@@ -380,50 +338,58 @@ PROGRAM pgsm
     ENDIF
 
     IF (lfn(idx_isll) /= 'TAPE4') THEN
-        iun_isll = 0
+        ! iun_isll = 0, Unit number 0 = stderr
         ier = fnom(iun_isll, lfn(idx_isll)(1:5), 'FMT+SEQ+R/O', 0)
         isll_input = 1
     ENDIF
 
-    IF (lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
-        inputmod = SEQUENTIEL
+    IF (LEN(lfn(idx_isll)) > 0) THEN
+        outputFilePath = lfn(idx_isll)
     ELSE
-        inputmod = RANDOM
+        CALL app_log(APP_ERROR, 'Missing output file path!')
+        app_status = app_end(13)
+        CALL qqexit(13)
     ENDIF
 
-    IF (lfn(idx_v) /= 'NON') THEN
+    IF (lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
+        inputMode = SEQUENTIEL
+    ELSE
+        inputMode = RANDOM
+    ENDIF
+
+    IF (lfn(idx_verbose) /= 'NON') THEN
         ier = ezsetopt('verbose', 'yes')
     ENDIF
 
 
-    IF (inputmod == RANDOM) THEN
-        niun = 1
-        DO WHILE (lfn(niun) /= 'SCRAP')
-            niun = niun + 1
+    IF (inputMode == RANDOM) THEN
+        nInput = 1
+        DO WHILE (lfn(nInput) /= 'SCRAP')
+            nInput = nInput + 1
         END DO
-        niun = niun - 1
+        nInput = nInput - 1
 
-        IF (niun < 1) THEN
+        IF (nInput < 1) THEN
             CALL app_log(APP_ERROR, 'No input files given as arguments')
             app_status = app_end(13)
             CALL qqexit(13)
         ENDIF
-        do i = 1, niun
-            ier = fnom(lnkdiun(i), lfn(i), 'STD+RND+OLD+R/O+REMOTE', 0)
-            IF (ier < 0) THEN
-                CALL app_log(APP_ERROR, 'Problem opening file ' // lfn(i))
-                app_status = app_end(13)
-                CALL qqexit(13)
-            ENDIF
-        ENDDO
+        ! do i = 1, nInput
+        !     ier = fnom(lnkdiun(i), lfn(i), 'STD+RND+OLD+R/O+REMOTE', 0)
+        !     IF (ier < 0) THEN
+        !         CALL app_log(APP_ERROR, 'Problem opening file ' // lfn(i))
+        !         app_status = app_end(13)
+        !         CALL qqexit(13)
+        !     ENDIF
+        ! ENDDO
     ELSE
-        niun = 1
-        ier = fnom(lnkdiun(1), lfn(idx_isent), 'STD+SEQ+OLD+R/O+REMOTE', 0)
-        IF (ier < 0) THEN
-            CALL app_log(APP_ERROR,'Problem opening file '// lfn(idx_isent))
-            app_status = app_end(13)
-            CALL qqexit(13)
-        ENDIF
+        nInput = 1
+        ! ier = fnom(lnkdiun(1), lfn(idx_isent), 'STD+SEQ+OLD+R/O+REMOTE', 0)
+        ! IF (ier < 0) THEN
+        !     CALL app_log(APP_ERROR, 'Problem opening file '// lfn(idx_isent))
+        !     app_status = app_end(13)
+        !     CALL qqexit(13)
+        ! ENDIF
     ENDIF
 
     mtype = MTYP
@@ -438,7 +404,7 @@ PROGRAM pgsm
     !   1 = sortie(std, noenrg) noenrg>=2
     !   2 = sortie(ms, noenrg, jwrit)
     !   3 = sortie(seq)
-    CALL qlxinx (sorti, 'SORTIE', nsort, 0103, 2)
+    CALL qlxinx(sorti, 'SORTIE', nsort, 0103, 2)
 
     ! 1 = heure(00, 12, 24, 25 ... max20) minimum 1
     ! 2 = champ(mac, 00, 06) minimum 2 pour
@@ -454,146 +420,145 @@ PROGRAM pgsm
 
     CALL qlxinx (setxtrap, 'EXTRAP', nsetex, 0101, 2)
 
-    ! - champ(z,niveau)  niveau = 1000,850,.......
-    ! - champ(t,niveau)  niveau = 1000,850,.......
-    ! - champ(q,niveau)  niveau = 1000,850,.......
-    ! - champ(d,niveau)  niveau = 1000,850,.......
-    ! - champ(w,niveau)  niveau = 1000,850,.......
-    ! - champ(es,niveau)  niveau = 1000,850,.......
-    ! - champ(uv,niveau)  niveau = 1000,850,.......
+    ! - champ(z, niveau)  niveau = 1000, 850, .......
+    ! - champ(t, niveau)  niveau = 1000, 850, .......
+    ! - champ(q, niveau)  niveau = 1000, 850, .......
+    ! - champ(d, niveau)  niveau = 1000, 850, .......
+    ! - champ(w, niveau)  niveau = 1000, 850, .......
+    ! - champ(es, niveau)  niveau = 1000, 850, .......
+    ! - champ(uv, niveau)  niveau = 1000, 850, .......
     ! - champ(uvs)  pas de niveau vent de surface
     ! - champs(ventuvs) voir directive paires(.....
-    ! - champ(vent,niveau) niveau = 1000,850,.......
-    ! - champ(nuage)  nuage bas,moyen,haut
+    ! - champ(vent, niveau) niveau = 1000, 850, .......
+    ! - champ(nuage)  nuage bas, moyen, haut
     !         rec 1 = bas  rec 2 = moyen  rec 3 = haut
     ! - champ(ecm)  epaisseur de la couche limite
     ! - champ(pnm)  pression au niveau de la mer
     ! - champ(psurf)  pression a la surface
     ! - champ(ts)  temperature a la surface
-    ! - champ(epais,niveau1,niveau2) niveau2 - niveau1
-    ! - champ(mac,heure1,heure2)  heure2 - heure1
-    ! - champ(pcp,heure1,heure2)  heure2 - heure1
+    ! - champ(epais, niveau1, niveau2) niveau2 - niveau1
+    ! - champ(mac, heure1, heure2)  heure2 - heure1
+    ! - champ(pcp, heure1, heure2)  heure2 - heure1
     CALL qlxinx (champ, 'CHAMP', nchamp, 0131, 2)
 
     ! appel - chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab)
     !    ex:  chmpdif ("gz", "dz", [1000, 500], 12, 0)
     !         z500mb - z1000mb  a 12hr
-    !         fichier de sorti aura ip1 = 1000, ip2 = 500,ip3 = 12
-    !    ex:  chmpdif ("gz","dz",1000,[6,12,18,24],0)
+    !         fichier de sorti aura ip1 = 1000, ip2 = 500, ip3 = 12
+    !    ex:  chmpdif ("gz", "dz", 1000, [6, 12, 18, 24], 0)
     !         z1000mb 6hr - z1000mb  a 12hr
     !         fichier de sorti aura ip1 = 1000, ip2 = 6, ip3 = 12
-    !    ex:  chmpdif ("gz","dz",1000,6,[1,2,3,4])
+    !    ex:  chmpdif ("gz", "dz", 1000, 6, [1, 2, 3, 4])
     !         z1000mb 6hr ip3 = 1 - z1000mb  6hr ip3 = 2
     !         fichier de sorti aura ip1 = 1000, ip2 = 1, ip3 = 2
     CALL qlxinx (chmpdif, 'CHMPDIF', npar, 0508, 2)
 
     CALL qlxinx (champ_seq, 'CHAMPSEQ', npar, 0303, 2)
-!                 appel - champseq(['GZ','TT','UU'],[1000,850,500],WAIT)
-!                 appel - champ_seq(' ',[1000,850,500],WAIT)
-!                 appel - champ_seq(['GZ','TT','UU'],-1,GO)
+    ! appel - champseq(['GZ', 'TT', 'UU'], [1000, 850, 500], WAIT)
+    ! appel - champ_seq(' ', [1000, 850, 500], WAIT)
+    ! appel - champ_seq(['GZ', 'TT', 'UU'], -1, GO)
 
-    CALL qlxinx (convs, 'CONV',ncon, 0305,2)
-
-!                 appel - conv(nom, ecart, facteur, bas, haut) directive
-!                         conv("ts", -273.16, 1.0,-280.0, -250.0)
-!                         routine conver dans ecriture soustrait
-!                         273.16 au champ et multiplit par 1.0
-!                         enleve toutes les valeurs plus petites que -280
-!                         enleve toutes les valeurs plus grandes que -250
-!                         avant d ecrire le champ
+    CALL qlxinx (convs, 'CONV', ncon, 0305, 2)
+    ! appel - conv(nom, ecart, facteur, bas, haut) directive
+    !         conv("ts", -273.16, 1.0, -280.0, -250.0)
+    !         routine conver dans ecriture soustrait
+    !         273.16 au champ et multiplit par 1.0
+    !         enleve toutes les valeurs plus petites que -280
+    !         enleve toutes les valeurs plus grandes que -250
+    !         avant d ecrire le champ
     CALL qlxinx (grille2, 'GRILLE',  ngr, 0109, 2)
-!          8 appels a grille    1 = grille(std,nni,nnj,lg1)
-!                                 std = standard lat lon
-!                                 nni = nombre de pts est-ouest
-!                                 nnj = nombre de pts nord-sud
-!                                 lg1 = 0  global
-!                                     = 1  hem nord
-!                                     = 2  hem sud
-!                               2 = grille(latlon,nni,nnj,lat0,lon0,dlat,dlon)
-!                                 latlon = grille lat lon
-!                                 nni = nombre de pts est-ouest
-!                                 nnj = nombre de pts nord-sud
-!                                 lat0 = premiere lat du coin degree
-!                                 lon0 = premiere lon du coin degree
-!                                 dlat = espacement entre latitude  (degree)
-!                                 dlon = espacement entre longitude (degree)
+    ! 8 appels a grille    1 = grille(std, nni, nnj, lg1)
+    !                        std = standard lat lon
+    !                        nni = nombre de pts est-ouest
+    !                        nnj = nombre de pts nord-sud
+    !                        lg1 = 0  global
+    !                            = 1  hem nord
+    !                            = 2  hem sud
+    !                      2 = grille(latlon, nni, nnj, lat0, lon0, dlat, dlon)
+    !                        latlon = grille lat lon
+    !                        nni = nombre de pts est-ouest
+    !                        nnj = nombre de pts nord-sud
+    !                        lat0 = premiere lat du coin degree
+    !                        lon0 = premiere lon du coin degree
+    !                        dlat = espacement entre latitude  (degree)
+    !                        dlon = espacement entre longitude (degree)
 
-!                               3 = grille(ps,nni,nnj,pi,pj,d60,dgrw)
-!                                 ps = polaire stereographique
-!                                 nni = nombre pts est-ouest (dir i)
-!                                 nnj = nombre de pts nord-sud (dir j)
-!                                 pi = position du pole nord(pi = 26)
-!                                 pj = position du pole nord(pj = 28)
-!                                 d60 = distance en metres entre les pts
-!                                      a 60 degrees nord (latitude)
-!                                 drgw = angle entre l"axe x et greewich
+    !                      3 = grille(ps, nni, nnj, pi, pj, d60, dgrw)
+    !                        ps = polaire stereographique
+    !                        nni = nombre pts est-ouest (dir i)
+    !                        nnj = nombre de pts nord-sud (dir j)
+    !                        pi = position du pole nord(pi = 26)
+    !                        pj = position du pole nord(pj = 28)
+    !                        d60 = distance en metres entre les pts
+    !                             a 60 degrees nord (latitude)
+    !                        drgw = angle entre l"axe x et greewich
 
-!                               4 = grille(tape4,nni,nnj,ip1,ip2,ip3)
-!                                 tape4 = fichier contenant nni*nnj(lat-lon)
-!                                 nni = nombre de pts est-ouest
-!                                 nnj = nombre de pts nord-sud
-!                                 ip1 = definit par usager
-!                                 ip2 = definit par usager
-!                                 ip3 = definit par usager
+    !                      4 = grille(tape4, nni, nnj, ip1, ip2, ip3)
+    !                        tape4 = fichier contenant nni*nnj(lat-lon)
+    !                        nni = nombre de pts est-ouest
+    !                        nnj = nombre de pts nord-sud
+    !                        ip1 = definit par usager
+    !                        ip2 = definit par usager
+    !                        ip3 = definit par usager
 
-!                               5 = grille(stdb,nni,nnj,hem)
-!                                 stdb = standard b
-!                                 nni = nombre de pts est-ouest
-!                                 nnj = nombre de pts nord-sud
-!                                 hem = hemisphere 0 = global
-!                                                  1 = nord
-!                                                  2 = sud
+    !                      5 = grille(stdb, nni, nnj, hem)
+    !                        stdb = standard b
+    !                        nni = nombre de pts est-ouest
+    !                        nnj = nombre de pts nord-sud
+    !                        hem = hemisphere 0 = global
+    !                                         1 = nord
+    !                                         2 = sud
 
-!                               6 = grille(gauss,nni,nnj,hem)
-!                                 gauss = grille gaussienne lat-lon
-!                                 nni = nombre de pts est-ouest
-!                                 nnj = nombre de pts nord-sud
-!                                 hem = hemisphere 0 = global
-!                                                  1 = nord
-!                                                  2 = sud
+    !                      6 = grille(gauss, nni, nnj, hem)
+    !                        gauss = grille gaussienne lat-lon
+    !                        nni = nombre de pts est-ouest
+    !                        nnj = nombre de pts nord-sud
+    !                        hem = hemisphere 0 = global
+    !                                         1 = nord
+    !                                         2 = sud
 
-!                               7 = grille(tape1,ip1,ip2,ip3,ip4,nord/sud)
-!                                 tape1 = lit sur fichier 1 lat-lon ou xy
-!                                 ip1 = valeur 0-32767
-!                                 ip2 = valeur 0-32767
-!                                 ip3 = valeur 0-4095
-!                                 ip4 = valeur "xydir" ou "llist"
-!                                     = valeur "lldir" ou "xylis"
+    !                      7 = grille(tape1, ip1, ip2, ip3, ip4, nord/sud)
+    !                        tape1 = lit sur fichier 1 lat-lon ou xy
+    !                        ip1 = valeur 0-32767
+    !                        ip2 = valeur 0-32767
+    !                        ip3 = valeur 0-4095
+    !                        ip4 = valeur "xydir" ou "llist"
+    !                            = valeur "lldir" ou "xylis"
 
-!                               8 = grille(tape2,ip1,ip2,ip3,ip4,nord/sud)
-!                                 tape2 lit sur fichier 2 lat-lon ou xy
-!                                 ip1 = valeur 0-32767
-!                                 ip2 = valeur 0-32767
-!                                 ip3 = valeur 0-4095
-!                                 ip4 = valeur "xydir" ou "llist"
-!                                     = valeur "lldir" ou "xylis"
+    !                      8 = grille(tape2, ip1, ip2, ip3, ip4, nord/sud)
+    !                        tape2 lit sur fichier 2 lat-lon ou xy
+    !                        ip1 = valeur 0-32767
+    !                        ip2 = valeur 0-32767
+    !                        ip3 = valeur 0-4095
+    !                        ip4 = valeur "xydir" ou "llist"
+    !                            = valeur "lldir" ou "xylis"
 
     ! lrsmde(nomvar, typvar, date, niveau, heure, ip3, etiquet)
     CALL qlxinx (lrsmde, 'LIRMODE', nlirmde, 0708, 2)
     ! lrsmds(nomvar, typvar, date, niveau, heure, ip3, etiquet)
     CALL qlxinx (lrsmds, 'LIRMODS', nlirmds, 0708, 2)
 
-    ! metsym(z,oui)
+    ! metsym(z, oui)
     ! z = geopotentiel "gz"
     ! oui = symetrique
     CALL qlxinx (metsym, 'METSYM', nsym, 0202, 2)
 
-    CALL qlxinx (outlalo,'OUTLALO', nlalo, 0108,2)
-!     outlalo(ip1,ip2,ip3,nomlat,nomlon,grtyp,etiklat,etiklon)
-!             ip1 = valeur 0-32767
-!             ip2 = valeur 0-32767
-!             ip3 = valeur 0-4095
-!             nomlat = nom du champ de latitude 2 car
-!             nomlon = nom du champ de longitude 2 car
-!             grtyp = type de grille
-!             etiklat = nom de l'etiquette latitude
-!             etiklon = nom de l'etiquette longitude
+    CALL qlxinx (outlalo, 'OUTLALO', nlalo, 0108, 2)
+    ! outlalo(ip1, ip2, ip3, nomlat, nomlon, grtyp, etiklat, etiklon)
+    !         ip1 = valeur 0-32767
+    !         ip2 = valeur 0-32767
+    !         ip3 = valeur 0-4095
+    !         nomlat = nom du champ de latitude 2 car
+    !         nomlon = nom du champ de longitude 2 car
+    !         grtyp = type de grille
+    !         etiklat = nom de l'etiquette latitude
+    !         etiklon = nom de l'etiquette longitude
 
-    CALL qlxinx (pairvct, "PAIRES",npairuv, 0305,2)
-!      ex: paires("uv","uu","vv",0) vecteur "uu","vv" geographique
-!                                     niveau donne par champ
-!      ex: paires("ventuvs","us","vs","uv") vitesse du vent a la surface
-!      ex: paires("uvs","us","vs",0) vecteurs du vent a la surface
+    CALL qlxinx (pairvct, "PAIRES", npairuv, 0305, 2)
+    ! ex: paires("uv", "uu", "vv", 0) vecteur "uu", "vv" geographique
+    !                                 niveau donne par champ
+    ! ex: paires("ventuvs", "us", "vs", "uv") vitesse du vent a la surface
+    ! ex: paires("uvs", "us", "vs", 0) vecteurs du vent a la surface
 
     CALL qlxinx (pgcoupe, 'MOYENT', nmoy, 0232, 2)
     CALL qlxinx (moysrt, 'MOYSRT', nmoy, 0232, 2)
@@ -709,42 +674,45 @@ PROGRAM pgsm
     ipose = 0
     CALL readlx(5, kend, ipose)
 
-!   initialise variable de printsr
+    ! initialise variable de printsr
     IF (associated(tmplat)) deallocate(tmplat)
     IF (associated(tmplon)) deallocate(tmplon)
 
-    IF (mode == 1) THEN
+    IF (outputFileMode == 1) THEN
         CALL chk_hy(lnkdiun(1), lnkdiun(idx_ozsrt))
         CALL chk_toctoc(lnkdiun(1), lnkdiun(idx_ozsrt))
     END IF
     iopc = app_loglevel('INFO')
-    DO i = 1, niun
-        ier = fstfrm(lnkdiun(i))
-        CALL fclos(lnkdiun(i))
+    DO i = 1, nInput
+        ! ier = fstfrm(lnkdiun(i))
+        ! CALL fclos(lnkdiun(i))
+        inputFiles(i)%close()
     END DO
 
-    IF (mode == 1) THEN
+    IF (outputFileMode == 1) THEN
         IF (voirs)  THEN
             IF (message) THEN
-                ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
+                ! ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
+                !> \todo Replace with fst24 equivalent
             END IF
         END IF
 
-        ier = fstfrm(lnkdiun(idx_ozsrt))
-        CALL fclos(lnkdiun(idx_ozsrt))
+        ! ier = fstfrm(lnkdiun(idx_ozsrt))
+        ! CALL fclos(lnkdiun(idx_ozsrt))
+        outputFilePath%close()
     ELSE
 #if defined (unix)
-        IF (mode == 2) THEN
+        IF (outputFileMode == 2) THEN
             CALL app_log(APP_WARNING, '"MS" Nfile type are not supported in this version of PGSM')
         END IF
 #endif
 
         ! Fermer fichier sequentiel
-        IF (mode == 3)  THEN
+        IF (outputFileMode == 3)  THEN
             CALL fclos(lnkdiun(idx_ozsrt))
         END IF
 
-        IF (mode == 4)  THEN
+        IF (outputFileMode == 4)  THEN
             CALL pgsmcf(lnkdiun(idx_ozsrt))
        END IF
     END IF
@@ -756,5 +724,4 @@ PROGRAM pgsm
     ELSE
         app_status = app_end(0)
     END IF
-
 END PROGRAM

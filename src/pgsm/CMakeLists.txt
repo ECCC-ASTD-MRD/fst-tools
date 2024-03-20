@@ -22,7 +22,7 @@ set(FICHIERS_FTN90
     qqqfilt.F90 qqqform.F90 qqqident.F90 routines.F90
     scalair.F90 scalair_msk.F90 setintx.F90 setxtrap.F90
     sorti.F90 stenfilt.F90 symetri.F90 testseq.F90
-    uvect.F90 uvecteur_masque.F90 vdauv.F90 verlalo.F90
+    uvect.F90 uvecteur_masque.F90 vdauv.F90 verlalo.F90 files.F90
 )
 
 ##################### NORMAL TARGETS ##############################

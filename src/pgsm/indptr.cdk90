@@ -1,37 +1,39 @@
-   integer iwrit,iset,iroot, indxs
-   integer if1,if2,if3,if4,if5,if6,if7,if8,if9,ift,mode
-   integer nsort,nggr,nlalo,jdate,ip4
+!> Rewrite mode. Initialized by sorti
+integer :: iwrit
+!> Pointeur temporaire
+integer :: iset
+integer :: iroot
+integer :: indxs
 
-   common /indptr/iwrit,iroot,indxs,iset,if1,if2,if3,if4,if9,ift,mode,nsort,nggr,nlalo,jdate,ip4
+integer :: if1
+integer ::  if2
+integer ::  if3
+integer ::  if4
+integer ::  if5
+integer ::  if6
+integer ::  if7
+integer ::  if8
+integer ::  if9
+integer ::  ift
+!> Output file mode/kind
+integer ::  outputFileMode
+integer nsort
+integer ::  nggr
+integer ::  nlalo
+integer ::  jdate
+integer ::  ip4
 
-#if defined (doc)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!         - bloc /indptr /iwrit,iset,if1,if2,if3,
-!                         if4,if5,if6,if7,if8,if9,mode,nsort,ngr
-!           iwrit  -reecrire sur fichier ou ecrire a la fin(fichier ms)
-!                   initialiser via directive sortie
-!
-!           iset   -pointeur temporaire
-!
+common /indptr/ iwrit, iroot, indxs, iset, if1, if2, if3, if4, if9, ift, outputFileMode, nsort, nggr, nlalo, jdate, ip4
 !           if1    -pointeur du premier champ
 !           if2    -pointeur du deuxieme champ
 !           if3 a if9-pointeur pour chaque champ supplementaire
 !
 !                   augmentation de la memoire
-!           mode   -mode = 1 fichier standard(sorti)
 !           nsort  -sorti nombre d argument
 !                   nsort=2 fichier standard
 !                   nsort=3 fichier ms
 !                   nsort=1 fichier sequentiel
 !           ngr    -nombre d'arguments dans directive grille
-!                   ngr=4 grille gaussienne,std,stdb
+!                   ngr=4 grille gaussienne, std, stdb
 !                   ngr=6 tape4 pour lire lat lon
 !                   ngr=7 grille lat-lon ou p.s.
-!
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#endif
-!
-!
-#if defined (doc)
-#endif
-!
