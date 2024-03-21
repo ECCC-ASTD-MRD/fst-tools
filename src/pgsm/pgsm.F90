@@ -331,7 +331,13 @@ PROGRAM pgsm
     CALL qqqfilt(2, 0, 0, 0)
     CALL chk_tmpdir
 
-    IF (lfn(1)(1:5) /= 'SCRAP' .and. lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
+    IF (lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
+        inputMode = SEQUENTIEL
+    ELSE
+        inputMode = RANDOM
+    ENDIF
+
+    IF (lfn(1)(1:5) /= 'SCRAP' .and. inputMode == SEQUENTIEL) THEN
         CALL app_log(APP_ERROR, 'Cannot mix sequential and random files')
         app_status = app_end(13)
         CALL qqexit(13)
@@ -348,12 +354,6 @@ PROGRAM pgsm
         CALL app_log(APP_ERROR, 'Missing output file path!')
         app_status = app_end(13)
         CALL qqexit(13)
-    ENDIF
-
-    IF (lfn(idx_isent)(1:11) /= 'ISENT_SCRAP') THEN
-        inputMode = SEQUENTIEL
-    ELSE
-        inputMode = RANDOM
     ENDIF
 
     IF (lfn(idx_verbose) /= 'NON') THEN
