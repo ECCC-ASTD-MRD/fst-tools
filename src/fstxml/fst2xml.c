@@ -97,7 +97,7 @@ int fst2xml(int argc, char **argv) {
     fprintf(xmlfd, "%s\n", "<?xml version='1.0' encoding='utf-8' standalone='yes'?>");
     fprintf(xmlfd, "%s\n", "<rpn-standard-file>");
 
-    query = fst24_new_query(fstfile,NULL);
+    query = fst24_new_query(fstfile,NULL,NULL);
     while(fst24_find_next(query,&record)) {
 
         if (record.dasiz > 32) {
@@ -142,7 +142,7 @@ int fst2xml(int argc, char **argv) {
         fprintf(xmlfd, "\t\t%s\n", "<fstdata encoding='ASCII' format='14.6g' orientation='south-to-north'>");
         fprintf(xmlfd, "\t\t%s", "<values>");
 
-        fst24_read(&record);
+        fst24_read_record(&record);
  
         switch (record.datyp) {
             case 1:
