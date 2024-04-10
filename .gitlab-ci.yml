@@ -23,7 +23,7 @@ build:rhel-8-icelake-64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    script:
       - set +e
@@ -42,7 +42,7 @@ test:rhel-8-icelake-64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:rhel-8-icelake-64_inteloneapi-2022.1.2
@@ -61,7 +61,7 @@ package:rhel-8-icelake-64_inteloneapi-2022.1.2:
    only:
       - master
       - tags
-      - dev
+      - /^dev.*$/
       - schedules
    dependencies:
       - build:rhel-8-icelake-64_inteloneapi-2022.1.2
@@ -83,7 +83,7 @@ build:rhel-8-amd64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    script:
       - set +e
@@ -102,7 +102,7 @@ test:rhel-8-amd64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:rhel-8-amd64_inteloneapi-2022.1.2
@@ -121,7 +121,7 @@ package:rhel-8-amd64_inteloneapi-2022.1.2:
    only:
       - master
       - tags
-      - dev
+      - /^dev.*$/
       - schedules
    dependencies:
       - build:rhel-8-amd64_inteloneapi-2022.1.2
@@ -143,7 +143,7 @@ build:rhel-8-amd64_gnu-9.3.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    script:
       - set +e
@@ -162,7 +162,7 @@ test:rhel-8-amd64_gnu-9.3.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:rhel-8-amd64_gnu-9.3.0
@@ -181,7 +181,7 @@ package:rhel-8-amd64_gnu-9.3.0:
    only:
       - master
       - tags
-      - dev
+      - /^dev.*$/
       - schedules
    dependencies:
       - build:rhel-8-amd64_gnu-9.3.0
@@ -203,7 +203,7 @@ build:rhel-8-icelake-64_inteloneapi-2021.4.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    script:
       - set +e
@@ -222,7 +222,7 @@ test:rhel-8-icelake-64_inteloneapi-2021.4.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:rhel-8-icelake-64_inteloneapi-2021.4.0
@@ -241,7 +241,7 @@ package:rhel-8-icelake-64_inteloneapi-2021.4.0:
    only:
       - master
       - tags
-      - dev
+      - /^dev.*$/
       - schedules
    dependencies:
       - build:rhel-8-icelake-64_inteloneapi-2021.4.0
@@ -267,7 +267,7 @@ build:ubuntu-22.04-amd64_inteloneapi-2022.1.2:
       - concurrent
    only:
      - master
-     - dev
+     - /^dev.*$/
      - tags
    script:
       - set +e
@@ -291,7 +291,7 @@ test:ubuntu-22.04-amd64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:ubuntu-22.04-amd64_inteloneapi-2022.1.2
@@ -314,7 +314,7 @@ package:ubuntu-22.04-amd64_inteloneapi-2022.1.2:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
       - schedules
    dependencies:
@@ -342,7 +342,7 @@ build:ubuntu-22.04-amd64_inteloneapi-2023.2.0:
       - concurrent
    only:
      - master
-     - dev
+     - /^dev.*$/
      - tags
    script:
       - set +e
@@ -366,7 +366,7 @@ test:ubuntu-22.04-amd64_inteloneapi-2023.2.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:ubuntu-22.04-amd64_inteloneapi-2023.2.0
@@ -389,7 +389,7 @@ package:ubuntu-22.04-amd64_inteloneapi-2023.2.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
       - schedules
    dependencies:
@@ -417,7 +417,7 @@ build:ubuntu-22.04-amd64_gnu-11.4.0:
       - concurrent
    only:
      - master
-     - dev
+     - /^dev.*$/
      - tags
    script:
       - set +e
@@ -441,7 +441,7 @@ test:ubuntu-22.04-amd64_gnu-11.4.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
    dependencies:
       - build:ubuntu-22.04-amd64_gnu-11.4.0
@@ -464,7 +464,7 @@ package:ubuntu-22.04-amd64_gnu-11.4.0:
       - concurrent
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
       - schedules
    dependencies:
@@ -485,7 +485,7 @@ deploy:staging:
    only:
       - master
       - tags
-      - dev
+      - /^dev.*$/
       - schedules
    script:
       - ~/ci-admin-bundle/bin/ci-stage-ssm.sh utils ${CI_PROJECT_NAME} "${CI_COMMIT_TAG}" "${ECCI_PROCESS}"
@@ -494,7 +494,7 @@ trigger:
    stage: trigger
    only:
       - master
-      - dev
+      - /^dev.*$/
       - tags
       - schedules
    script:
