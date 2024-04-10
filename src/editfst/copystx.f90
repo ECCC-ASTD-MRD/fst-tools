@@ -126,7 +126,7 @@
             IF(ZD .NE. -1)  then ! zap origin date
                record%dateo = ZD  
                if (metaf%is()) then
-                  obj=metaf%DefForecastTime(ZD)
+                  obj = metaf%DefForecastTime(int(ZD, int64))
                endif
             endif
             IF(ZT .NE. '??') THEN   ! zap type

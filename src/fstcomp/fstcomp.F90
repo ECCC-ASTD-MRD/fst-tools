@@ -324,7 +324,7 @@
          IF( P3 ) ip3b = recorda%ip3
 
          if (BS .OR. BF) l = fileb%rewind()
-         queryb = fileb%new_query(datev=idate,etiket=etikb,ip1=ip1b,ip2=ip2b,ip3=ip3b,typvar=typvab,nomvar=nomvab)
+         queryb = fileb%new_query(datev=int(idate, int64), etiket=etikb, ip1=ip1b, ip2=ip2b, ip3=ip3b, typvar=typvab, nomvar=nomvab)
          success = queryb%find_next(recordb)
 
          IF(.not. success) THEN
