@@ -136,9 +136,10 @@ int main(int argc, const char ** const argv) {
     }
 
     const int fd = open(dumpPath, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    const int sizeWritten = write(fd, record.data, record.alloc);
-    if (sizeWritten != record.alloc) {
-        App_Log(APP_ERROR,"Did not write expected number of bytes (expected = %d, written = %d)!\n", record.alloc, sizeWritten);
+    const int64_t datasize = fst24_record_data_size(&record);
+    const ssize_t sizeWritten = write(fd, record.data, datasize);
+    if (sizeWritten != datasize) {
+        App_Log(APP_ERROR, "Did not write expected number of bytes (expected = %ld, written = %lu)!\n", datasize, sizeWritten);
         App_End(-1);
         return 1;
     }
