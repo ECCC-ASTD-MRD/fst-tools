@@ -482,8 +482,6 @@ package:ubuntu-22.04-amd64_gnu-11.4.0:
 
 deploy:staging:
    stage: deploy
-   tags:
-      - U2
    only:
       - master
       - tags
@@ -494,8 +492,6 @@ deploy:staging:
 
 trigger:
    stage: trigger
-   tags:
-      - U2
    only:
       - master
       - dev
