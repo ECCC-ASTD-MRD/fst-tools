@@ -3,16 +3,16 @@ subroutine gritp12(it, ip1, ip2, ip3)
     use app
     implicit none
 
-    integer :: it, ip1, ip2, ip3
+    integer, intent(in) :: it
+    integer, intent(in) :: ip1
+    integer, intent(in) :: ip2
+    integer, intent(in) :: ip3
 
     ! Y = LISTE DE LAT-LON(NI, NJ) OU X-Y(NI, NJ)
     ! Z = COLONNE DE LAT(NJ) OU RANGEE DE LONG(NI) OU COLONNE DE Y(NJ)   RANGEE DE X(NI)
     ! COORDONNEE X, Y SONT POLAIRE STEREOGRAPHIQUE
 
     external pgsmabt, imprime, ecritur
-    integer, external :: fstprm
-    integer, external :: fstopc
-    integer, external :: fstinf
 
     integer, external :: ezqkdef
     integer, external :: ezgdef
@@ -28,7 +28,6 @@ subroutine gritp12(it, ip1, ip2, ip3)
 #include "lires.cdk90"
 #include "voir.cdk90"
 #include "tp12ig.cdk90"
-#include "lnkflds.cdk90"
 
     character(len = 12) :: etikx
     character(len = 4) :: nomx
@@ -37,7 +36,7 @@ subroutine gritp12(it, ip1, ip2, ip3)
     integer :: i
     integer :: swa, lng, dltf, ubc, extra1, extra2, extra3
 
-    integer :: iunit, irecla, ireclo, irecyy, ni, nj, nk
+    integer :: ni, nj, nk
     integer :: dateo, deet, npas
     integer :: ier, iopc
     integer :: ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
@@ -54,10 +53,20 @@ subroutine gritp12(it, ip1, ip2, ip3)
 
     logical :: grille_z, grille_u
 
+    type(fst_file) :: inputFile
+    type(fst_query) :: tic_query
+    type(fst_query) :: tac_query
+    type(fst_query) :: tictac_query
+    type(fst_record) :: tic
+    type(fst_record) :: tac
+    type(fst_record) :: tictac
+
     if (it == gr_tape2) then
-        iunit = lnkdiun(idx_ozsrt)
+        ! iunit = lnkdiun(idx_ozsrt)
+        inputFile = outputFile
     else
-        iunit = lnkdiun(1)
+        ! iunit = lnkdiun(1)
+        inputFile = inputFiles(1)
     endif
 
     !  VERIFICATION DES PARAMETRES DES 2 RECORDS
@@ -88,18 +97,38 @@ subroutine gritp12(it, ip1, ip2, ip3)
 
         if (outputFileMode == 1) then
             if (grille_z) then
-                ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-                irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
                 cgrtyp = 'Z'
-                gdout = ezqkdef(nix, njy, cgrtyp, ip1, ip2, ip3, 0, iunit)
+                ! ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+                ! irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+                tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
+                tic_query%find_next(tic)
+                call tic_query%free()
+                nix = tic%ni
+                njx = tic%nj
+                nkx = tic%nk
+                tac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
+                tac_query%find_next(tac)
+                call tac_query%free()
+                niy = tac%ni
+                njy = tac%nj
+                nky = tac%nk
+
+                gdout = ezqkdef(tic%ni, tac%nj, cgrtyp, ip1, ip2, ip3, 0, inputFile%get_unit())
             endif
 
             if (grille_u) then
-                irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
                 cgrtyp = 'U'
-                ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu, etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
-                gdout = ezqkdef(niu, nju, cgrtyp, lip1, lip2, lip3, 0, iunit)
-                ier = ezgxprm(gdout, nix, njy, cgrtyp, ig1, ig2, ig3, ig4, grref, ig1ref, ig2ref, ig3ref, ig4ref)
+                ! irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
+                tictac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
+                tictac_query%find_next(tictac)
+                call tictac_query%free()
+
+                ! ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu, etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+                niu = tictac%ni
+                nju = tictac%nj
+                nku = tictac%nk
+                gdout = ezqkdef(tictac%ni, tictac%nj, cgrtyp, tictac%ip1, tictac%ip2, tictac%ip3, 0, inputFile%get_unit())
+                ier = ezgxprm(gdout, li, lj, cgrtyp, lg1, lg2, lg3, lg4, tictac%grtyp, tictac%ig1, tictac%ig2, tictac%ig3, tictac%ig4)
             endif
 
             li = nix
@@ -109,12 +138,24 @@ subroutine gritp12(it, ip1, ip2, ip3)
             lg3 = ig3
             lg4 = ig4
         else
-            ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
-            ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx, datypx, lip1, lip2, lip3, typvarx, nomx, etikx, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+            ! ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
+            ! irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
+            tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
+            tic_query%find_next(tic)
+            call tic_query%free()
+            nix = tic%ni
+            njx = tic%nj
+            nkx = tic%nk
+            tac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
+            tac_query%find_next(tac)
+            call tac_query%free()
+            niy = tac%ni
+            njy = tac%nj
+            nky = tac%nk
+            ! ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx, datypx, lip1, lip2, lip3, typvarx, nomx, etikx, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
             li = nix
             lj = njy
-            gdout = ezqkdef(li, lj, 'Z', lip1, lip2, lip3, 0, 1)
+            gdout = ezqkdef(li, lj, 'Z', tic%ip1, tic%ip2, tic%ip3, 0, 1)
          endif
          allocate(tmplon(li, lj))
          allocate(tmplat(li, lj))
@@ -149,7 +190,7 @@ subroutine gritp12(it, ip1, ip2, ip3)
         do i = 1, li * lj
             print *, i, dateox, typvarx, li, lj
         enddo
-      endif
+    endif
 
     ! INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
     if (cgtypxy == 'E') then
@@ -158,24 +199,25 @@ subroutine gritp12(it, ip1, ip2, ip3)
         allocate(tmplon(li, lj))
         allocate(tmplat(li, lj))
     endif
+
     if (.not. message) iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
 
-        if (it == gr_stations) then
-            call fillcoord(tmplat, tmplon)
-            gdout = ezgdef(nix, njx, cgrtyp, cgtypxy, ig1la, ig2la, ig3la, ig4la, tmplon, tmplat)
+    if (it == gr_stations) then
+        call fillcoord(tmplat, tmplon)
+        gdout = ezgdef(nix, njx, cgrtyp, cgtypxy, ig1la, ig2la, ig3la, ig4la, tmplon, tmplat)
 
-            nj = 1
-            nk = 1
-            if (outputFileMode == 1) then
-                call ecritur(tmplon, npack, dateox, deetx, npasx, ncoords, nj, nk,            ip1x, ip2x, ip3x,            typvarx, nomvarx, etiketx, cgtypxy, ig1lo, ig2lo, ig3lo, ig4lo)
-                call ecritur(tmplat, npack, dateox, deetx, npasx, ncoords, nj, nk,            ip1x, ip2x, ip3x,            typvary, nomvary, etikety, cgtypxy, ig1la, ig2la, ig3la, ig4la)
-                lg1 = ip1x
-                lg2 = ip2x
-                lg3 = ip3x
-                lg4 = 0
-            endif
-        else
-            ier = gdll(gdout, tmplat, tmplon)
+        nj = 1
+        nk = 1
+        if (outputFileMode == 1) then
+            call ecritur(tmplon, npack, dateox, deetx, npasx, ncoords, nj, nk, ip1x, ip2x, ip3x, typvarx, nomvarx, etiketx, cgtypxy, ig1lo, ig2lo, ig3lo, ig4lo)
+            call ecritur(tmplat, npack, dateox, deetx, npasx, ncoords, nj, nk, ip1x, ip2x, ip3x, typvary, nomvary, etikety, cgtypxy, ig1la, ig2la, ig3la, ig4la)
+            lg1 = ip1x
+            lg2 = ip2x
+            lg3 = ip3x
+            lg4 = 0
+        endif
+    else
+        ier = gdll(gdout, tmplat, tmplon)
     endif
 
     if (printen)  call imprime(nomvary, tmplat, niy, njy)

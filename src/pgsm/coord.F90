@@ -22,7 +22,7 @@ subroutine coord(lescoords, mode)
     endif
 
     do i = 1, localncoords, 2
-        if (i < nmaxcoordsc) then
+        if (i < nmaxcoords) then
             coordll(ncoords + i / 2 + 1, 1) = lescoords(i)
             coordll(ncoords + i / 2 + 1, 2) = lescoords(i + 1)
         else

@@ -35,7 +35,6 @@ subroutine epaisur(iheur, npar, niveau)
     character *2 ctypvar
     character*1 cigtyp
 
-    real fbidon
     integer iunit
 
     integer i, niveau(2), iheur, npar, ni, nj, nk, jp1, jp2, jp3, ig1, iopc

@@ -4,12 +4,7 @@ subroutine sorti(modx, norecs, jwrit)
     use files
     IMPLICIT NONE
 
-    !> Type de fichier
-    !> 1 = Fichier standard
-    !> 2 = Fichier direct (READMS)
-    !> 3 = Fichier sequentiel
-    !> 4 = Fichier sequentiel avec paramètres de fstecr
-    !> 5 = Fichier sequentiel ascii (sortie(formatee))
+    !> Type de fichier de sortie
     INTEGER, INTENT(IN) :: modx
     !> Nombre d'enregistrements dans le fichier
     INTEGER, INTENT(IN) :: norecs

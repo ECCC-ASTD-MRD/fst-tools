@@ -72,7 +72,7 @@
             cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
    allocate(fld(ni,nj), fld_out(li,lj))
 
-   ier = fst_get_mask_key(key_masq, key, 0, iunit)
+   ier = fst_get_mask_key(key_masq, key, iunit)
 
    if (key_masq >= 0) then
       masque_present = .true.

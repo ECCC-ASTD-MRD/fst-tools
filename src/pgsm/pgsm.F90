@@ -77,11 +77,12 @@ PROGRAM pgsm
     external moysrt, imprims, chmpdif, pairvct, messags, champ_seq, qqqecho
     external qqqform, qqqident, coord, qqqfilt
 
-    external ccard, fnom, qlxins, qlxinx, readlx, fstfrm, fstvoi
-    external fstnbr, fstunl, fstouv
-    external fclos, lrsmde, lrsmds, fstopc, fstopl, qlxopt
+    external ccard, fnom, qlxins, qlxinx, readlx ! , fstfrm, fstvoi
+    ! external fstnbr, fstouv, fclos
+    external fstopc, fstopl
+    external lrsmde, lrsmds, qlxopt
 
-    integer fnom, fstfrm, fstvoi, fstnbr, fstopc, fstopl, fstouv
+    integer fnom! , fstfrm, fstvoi, fstnbr, fstopc, fstopl, fstouv
     integer i, iopc, ipose, kend, nequiv, npex, nsetin, nsetex, nlirmds, nlirmde
     real dum
 
@@ -131,7 +132,7 @@ PROGRAM pgsm
 
     data valid, voire,   voirs, message, seldat       /.false., .false., .false., .true., .false.  /
 
-    data numero,  numdel,  iset,  nbrow,  ip4        / 1,           1,    -2,      0,    0    /
+    data numero,  numdel,  iset,  nbrow / 1, 1, -2, 0 /
 
     data paire(1) /  'VENT    UU  VV  UV      ' /
     data paire(2) /  'UV      UU  VV  ??      ' /
@@ -147,11 +148,11 @@ PROGRAM pgsm
 
     data printen, printsr, mtdone /.false., .false., .false./
 
-    data nis, njs, nif, njf, ninc, njnc, if9 /1, 1, 1000, 1000, 10, 10, 0/
+    data nis, njs, nif, njf, ninc, njnc /1, 1, 1000, 1000, 10, 10/
 
     data niis, njjs, niif, njjf, niinc, njjnc /1, 1, 1000, 1000, 10, 10/
 
-    data if7, if8, npairuv, npair /0, 0, 4, 7/
+    data npairuv, npair /4, 7/
 
     data clatmin, clatmax, clonmin, clonmax, ncoords /-90.0, +90.0, 0.0, 360.0, 0/
 
@@ -345,7 +346,9 @@ PROGRAM pgsm
 
     IF (lfn(idx_isll) /= 'TAPE4') THEN
         ! iun_isll = 0, Unit number 0 = stderr
+        ! It makes no sense to set the standard error to read only
         ier = fnom(iun_isll, lfn(idx_isll)(1:5), 'FMT+SEQ+R/O', 0)
+        write(iun_isll, *) 'Gros méchant test!'
     ENDIF
 
     IF (LEN(lfn(idx_isll)) > 0) THEN
@@ -691,6 +694,7 @@ PROGRAM pgsm
     IF (outputFileMode == 1) THEN
         IF (voirs)  THEN
             IF (message) THEN
+                call outputFile%print_summary()
                 ! ier = fstvoi(lnkdiun(idx_ozsrt), 'RND')
                 !> \todo Replace with fst24 equivalent
             END IF

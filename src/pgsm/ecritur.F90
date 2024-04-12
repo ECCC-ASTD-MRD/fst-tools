@@ -1,11 +1,13 @@
-!> ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
+!> Ecrire sur fichier standard, ms, sequentiel
 subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
+    use ISO_FORTRAN_ENV, only : real64
     use app
+    use files, only : outputFile, outputFileMode
     implicit none
 
-    external :: conver, fclos, memoir, pgsmabt, imprims, messags, putfld
+    external :: conver, imprims
     integer, external :: fstopc
-    integer, external :: fstecr
+    ! integer, external :: fstecr
 
 !OBJET(ECRITUR)
 !          ECRIRE SUR FICHIER STANDARD AVEC ROUTINE FSTECR
@@ -53,185 +55,206 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 #include "styles.cdk90"
-#include "lnkflds.cdk90"
 
-      character *24 chaine
-      character *12 cetiket, cetksrt
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cgtyp
+    character(len = 24) :: chaine
+    character(len = 12) :: cetiket, cetksrt
+    character(len = 4) :: cnomvar
+    character(len = 2) :: ctypvar
+    character(len = 1) :: cgtyp
 
-      character*12 letiksrt
-      character*4 lnomvar
-      character*2 ltypsrt
+    character(len = 12) :: letiksrt
+    character(len = 4) :: lnomvar
+    character(len = 2) :: ltypsrt
 
-      character*72 form1, form2
+    integer :: i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet
+    real, dimension(ni, nj, nk) :: fld
+    real, dimension(2) :: dummy
+    integer :: llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
+    integer :: cdatyp, iopc, ier, gdout, datev
+    logical :: rewrit
 
-      integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet
-      real fld(ni, nj, nk)
-      real dummy(2)
-      integer llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
-      integer cdatyp, iopc, ier, gdout, datev
-      logical rewrit
+    integer, external :: gdll, ezgetgdout
 
-      integer gdll, ezgetgdout
-      external gdll, ezgetgdout
+    integer :: local_npac
 
-      integer local_npac
+    real(kind = real64) :: delta_t
 
-      real*8 delta_t
+    type(fst_record) :: record
 
-      if (etiksrt(1) .eq. -1) then
-         cetksrt = cetiket
-      else
-         write(cetksrt, '(3A4)') (etiksrt(i), i=1, nwetiks)
-      endif
+    if (etiksrt(1) == -1) then
+        cetksrt = cetiket
+    else
+        write(cetksrt, '(3A4)') (etiksrt(i), i=1, nwetiks)
+    endif
 
-      if (typesrt .eq. -1) then
-         ltypsrt = ctypvar
-      else
-         write(ltypsrt, '(A2)') typesrt
-      endif
+    if (typesrt == -1) then
+        ltypsrt = ctypvar
+    else
+        write(ltypsrt, '(A2)') typesrt
+    endif
 
-      if (ip3srt.ne.-1) then
-         ip3o=ip3srt
-      else
-         ip3o=ip3
-      endif
+    if (ip3srt /= -1) then
+        ip3o = ip3srt
+    else
+        ip3o = ip3
+    endif
 
-      if (ip2srt.ne.-1) then
-         ip2o=ip2srt
-      else
-         ip2o=ip2
-      endif
+    if (ip2srt /= -1) then
+        ip2o = ip2srt
+    else
+        ip2o = ip2
+    endif
 
-      lnomvar = cnomvar
-      letiksrt = cetksrt
+    lnomvar = cnomvar
+    letiksrt = cetksrt
 
-      if(npac == 1023) then
+    if (npac == 1023) then
         local_npac = npack_orig
-      else
+    else
         local_npac = npac
-      endif
+    endif
 
-      ! SI LE NOM EXISTE DANS LA TABLE BATIT PAR L USAGER ALORS
-      ! LE fld EST MODIFIE  EX: fld(NI, NJ) = (fld(NI, NJ)+ECART)*FACTEUR
-      call conver(fld, ni, nj, cnomvar)
+    ! SI LE NOM EXISTE DANS LA TABLE BATIT PAR L USAGER ALORS
+    ! LE fld EST MODIFIE  EX: fld(NI, NJ) = (fld(NI, NJ)+ECART)*FACTEUR
+    call conver(fld, ni, nj, cnomvar)
 
-      ! filtrage du fld de sortie si le fld n'est pas un stream latlon
-      if (fltoggle(2)) then
-        if (cgtyp.eq.'Y') then
-         call app_log(APP_WARNING, 'ecritur: Cannot filter fields on Y grid')
+    ! filtrage du fld de sortie si le fld n'est pas un stream latlon
+    if (fltoggle(2)) then
+        if (cgtyp == 'Y') then
+            call app_log(APP_WARNING, 'ecritur: Cannot filter fields on Y grid')
         else
-         call app_log(APP_INFO, 'ecritur: Field filtered on write')
-          call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1, 2), fltwgtlng(2))
+            call app_log(APP_INFO, 'ecritur: Field filtered on write')
+            call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1, 2), fltwgtlng(2))
         endif
-      endif
+    endif
 
-      if (printsr)  then
-         call imprims(cnomvar, fld, ni, nj)
-      endif
+    if (printsr)  then
+        call imprims(cnomvar, fld, ni, nj)
+    endif
 
-      iun=lnkdiun(idx_ozsrt)
-      if (outputFileMode.eq.1) then
-         if (compression_level.eq.0) then
+    !iun = lnkdiun(idx_ozsrt)
+    if (outputFileMode == 1) then
+        if (compression_level == 0) then
             cdatyp = 1
-         else
+        else
             if (local_npac < 0 .and. local_npac >= -16) then
-             cdatyp = 134
+                cdatyp = 134
             else if (local_npac == -32) then
-               cdatyp = 133
+                cdatyp = 133
             else
-               cdatyp = 1
+                cdatyp = 1
             endif
-         endif
+        endif
 
 
-         if (iwrit.eq.+1) then
-            if (.not.message) then
-               iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
-            endif
+        if (iwrit == +1) then
+            ! if (.not. message) then
+            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
+            ! endif
             rewrit = .true.
 
-            ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas,            ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt,            cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
-         else
-            if (.not.message) then
-               iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
-            endif
+            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+        else
+            ! if (.not. message) then
+            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
+            ! endif
             rewrit = .false.
-            ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas,            ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt,            cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
-         endif
-      else
-         if (outputFileMode.eq.2) then
+            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+        endif
+        if (.not. message) then
+            iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
+        endif
+            record%data => c_loc(fld)
+            record%npak = local_npac
+            record%date = idat
+            record%deet = deet
+            record%npas = npas
+            record%ni = ni
+            record%nj = nj
+            record%nk = nk
+            record%ip1 = ip1
+            record%ip2 = ip2o
+            record%ip3 = ip3o
+            record%typvar = ltypsrt
+            record%nomvar = cnomvar
+            record%etiket = cetksrt
+            record%grtyp = cgtyp
+            record%ig1 = llg1
+            record%ig2 = llg2
+            record%ig3 = llg3
+            record%ig4 = llg4
+            record%datyp = cdatyp
+            record%rewrite = rewrit
+            outputFile%write(record)
+    else
+        if (outputFileMode == 2) then
             call app_log(APP_WARNING, 'ecritur: "MS" file type are not supported anymore')
-         else
-         endif
-         if (outputFileMode.eq.3.or.outputFileMode.eq.4) then
-            if (outputFileMode.eq.4) then
-               cdatyp = 1
-               write (chaine, 10) ltypsrt, lnomvar, letiksrt, cgtyp
- 10            format(a2, 2x, a4, a12, a1, 3x)
-               write (iun) npac, idat, deet, npas, ni, nj, nk,                ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, cdatyp,               chaine
+        endif
+        if (outputFileMode == 3 .or. outputFileMode == 4) then
+            if (outputFileMode == 4) then
+                cdatyp = 1
+                write (chaine, '(a2, 2x, a4, a12, a1, 3x)') ltypsrt, lnomvar, letiksrt, cgtyp
+                write (iun) npac, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, llg1, llg2, llg3, llg4, cdatyp, chaine
             endif
 
             write(iun) fld
             if (message) then
-               write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
+                write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
             endif
-         else if (outputFileMode.eq.5) then
+        else if (outputFileMode == 5) then
             if (valid) then
-               call chk_userdate(datev)
-               if (datev .ne. -1) then
-                  istamp = datev
-               else
-                  istamp = idat
-               endif
+                call chk_userdate(datev)
+                if (datev  /=  -1) then
+                    istamp = datev
+                else
+                    istamp = idat
+                endif
             else
-               istamp=0
+                istamp = 0
             endif
 
-            delta_t = deet*npas/3600.0
+            delta_t = deet * npas / 3600.0
             call incdatr(idatv, idat, delta_t)
 
             gdout = ezgetgdout()
-            if (gdout .lt.0) gdout = 0
-            if (cnomvar(1:2).ne.'LA') then
-              if (associated(tmplat)) then
-                deallocate(tmplat)
-                nullify(tmplat)
-                allocate(tmplat(ni, nj))
-              endif
+            if (gdout < 0) gdout = 0
+            if (cnomvar(1:2) /= 'LA') then
+                if (associated(tmplat)) then
+                    deallocate(tmplat)
+                    nullify(tmplat)
+                    allocate(tmplat(ni, nj))
+                endif
             endif
 
-            if (cnomvar(1:2).ne.'LO') then
-              if (associated(tmplon)) then
-                deallocate(tmplon)
-                nullify(tmplon)
-                allocate(tmplon(ni, nj))
-              endif
+            if (cnomvar(1:2) /= 'LO') then
+                if (associated(tmplon)) then
+                    deallocate(tmplon)
+                    nullify(tmplon)
+                    allocate(tmplon(ni, nj))
+                endif
             endif
 
             ier = gdll(gdout, tmplat, tmplon)
-            call pgsmwr(2, fld, ni, nj, nk, qcform, qposition, qitems, qcsepar, cnomvar, ctypvar, cetiket,            idat, idatv, dateform, ip1, ip2, ip3, tmplat, tmplon)
-         else
+            call pgsmwr(2, fld, ni, nj, nk, qcform, qposition, qitems, qcsepar, cnomvar, ctypvar, cetiket, idat, idatv, dateform, ip1, ip2, ip3, tmplat, tmplon)
+        else
             if (message) then
-               call app_log(APP_ERROR, 'ecritur: Unknown file')
+                call app_log(APP_ERROR, 'ecritur: Unknown file')
             endif
-         endif
+        endif
       endif
 
- 600  format(2x, ' ENREG.ECRIT ', 2(a2, '- '), 3(i5, '- '),      'TAILLE ', 2(i5, '- '), 'FICHIER MS ', i4, '   REC=', i4)
- 610  format(2x, ' ENREG.ECRIT ', 2(a2, '- '), 3(i5, '- '),      'TAILLE ', 2(i5, '- '), 'FICHIER SEQUENTIEL', i4)
-      return
-      end
+ 610  format(2x, ' ENREG.ECRIT ', 2(a2, '- '), 3(i5, '- '), 'TAILLE ', 2(i5, '- '), 'FICHIER SEQUENTIEL', i4)
+end
+
 
 subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
+    use ISO_FORTRAN_ENV, only : real64
     use app
+    use files, only : outputFile, outputFileMode
     implicit none
 
-    external :: conver, fclos, memoir, pgsmabt, imprims, messags, putfld
     integer, external :: fstopc
-    integer, external :: fstecr
+    ! integer, external :: fstecr
 
 #include "lires.cdk90"
 #include "voir.cdk90"
@@ -245,133 +268,149 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 #include "styles.cdk90"
-#include "lnkflds.cdk90"
 
-!-----------------------------------------------------------------
-      character *24 chaine
-      character *12 cetiket, cetksrt
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cgtyp
+    character(len = 24) :: chaine
+    character(len = 12) :: cetiket, cetksrt
+    character(len = 4) :: cnomvar
+    character(len = 2) :: ctypvar
+    character(len = 1) :: cgtyp
 
 
-      character*12 letiksrt
-      character*4 lnomvar
-      character*2 ltypsrt
+    character(len = 12) :: letiksrt
+    character(len = 4) :: lnomvar
+    character(len = 2) :: ltypsrt
 
-      character*72 form1, form2
+    integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet, datev
+    integer fld(ni, nj, nk)
+    real dummy(2)
+    integer llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
+    integer cdatyp, iopc, ier, local_npac
+    logical rewrit
 
-      integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet, datev
-      integer fld(ni, nj, nk)
-      real dummy(2)
-      integer llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
-      integer cdatyp, iopc, ier, gdout, local_npac
-      logical rewrit
+    integer, external :: gdll, ezgetgdout
 
-      integer gdll, ezgetgdout
-      external gdll, ezgetgdout
+    real(kind = real64) :: delta_t
 
-      real*8 delta_t
+    type(fst_record) :: record
 
-      if (etiksrt(1) .eq. -1) then
-         cetksrt = cetiket
-      else
-         write(cetksrt, '(3A4)') (etiksrt(i), i=1, nwetiks)
-      endif
+    if (etiksrt(1) == -1) then
+        cetksrt = cetiket
+    else
+        write(cetksrt, '(3A4)') (etiksrt(i), i=1, nwetiks)
+    endif
 
-      if (typesrt .eq. -1) then
-         ltypsrt = ctypvar
-      else
-         write(ltypsrt, '(A2)') typesrt
-      endif
+    if (typesrt == -1) then
+        ltypsrt = ctypvar
+    else
+        write(ltypsrt, '(A2)') typesrt
+    endif
 
-      if (ip3srt.ne.-1) then
-         ip3o=ip3srt
-      else
-         ip3o=ip3
-      endif
+    if (ip3srt /= -1) then
+        ip3o = ip3srt
+    else
+        ip3o = ip3
+    endif
 
-      if (ip2srt.ne.-1) then
-         ip2o=ip2srt
-      else
-         ip2o=ip2
-      endif
+    if (ip2srt /= -1) then
+        ip2o = ip2srt
+    else
+        ip2o = ip2
+    endif
 
-      lnomvar = cnomvar
-      letiksrt = cetksrt
+    lnomvar = cnomvar
+    letiksrt = cetksrt
 
-      if(npac == 1023) then
+    if(npac == 1023) then
         local_npac = npack_orig
-      else
+    else
         local_npac = npac
-      endif
+    endif
 
-      iun=lnkdiun(idx_ozsrt)
-      if (outputFileMode.eq.1) then
-         if (compression_level.eq.0) then
+    !iun=lnkdiun(idx_ozsrt)
+    if (outputFileMode == 1) then
+        if (compression_level == 0) then
             cdatyp = 2
-         else
+        else
             if (local_npac < 0 .and. local_npac >= -16) then
-               cdatyp = 130
+                cdatyp = 130
             else
-               cdatyp = 2
+                cdatyp = 2
             endif
-         endif
+        endif
 
-
-         if (iwrit.eq.+1) then
-            if (.not.message) then
-               iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
-            endif
+        if (iwrit == +1) then
+            ! if (.not. message) then
+            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
+            ! endif
             rewrit = .true.
 
-            ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
-         else
-            if (.not.message) then
-               iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
-            endif
+            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, &
+            !   ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+        else
+            ! if (.not. message) then
+            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
+            ! endif
             rewrit = .false.
-            ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, &
-               ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
-         endif
-
-      else
-         if (outputFileMode.eq.2) then
+            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, &
+            !   ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+        endif
+            record%data => c_loc(fld)
+            record%npak = local_npac
+            record%date = idat
+            record%deet = deet
+            record%npas = npas
+            record%ni = ni
+            record%nj = nj
+            record%nk = nk
+            record%ip1 = ip1
+            record%ip2 = ip2o
+            record%ip3 = ip3o
+            record%typvar = ltypsrt
+            record%nomvar = cnomvar
+            record%etiket = cetksrt
+            record%grtyp = cgtyp
+            record%ig1 = llg1
+            record%ig2 = llg2
+            record%ig3 = llg3
+            record%ig4 = llg4
+            record%datyp = cdatyp
+            record%rewrite = rewrit
+            outputFile%write(record)
+    else
+        if (outputFileMode == 2) then
             call app_log(APP_WARNING, 'ecritur: "MS" file type are not supported anymore')
-         else if (outputFileMode.eq.3.or.outputFileMode.eq.4) then
-            if (outputFileMode.eq.4) then
-               cdatyp = 1
-               write (chaine, 10) ltypsrt, lnomvar, letiksrt, cgtyp
- 10            format(a2, 2x, a4, a12, a1, 3x)
-               write (iun) npac, idat, deet, npas, ni, nj, nk,  ip1, ip2o, ip3o, &
-                  llg1, llg2, llg3, llg4, cdatyp, chaine
+        else if (outputFileMode == 3 .or. outputFileMode == 4) then
+            if (outputFileMode == 4) then
+                cdatyp = 1
+                write (chaine, '(a2, 2x, a4, a12, a1, 3x)') ltypsrt, lnomvar, letiksrt, cgtyp
+                write (iun) npac, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, &
+                    llg1, llg2, llg3, llg4, cdatyp, chaine
             endif
 
             write(iun) fld
             if (message) then
-               write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
+                write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
             endif
-         else if (outputFileMode.eq.5) then
+        else if (outputFileMode == 5) then
             if (valid) then
-               call chk_userdate(datev)
-               if (datev .ne. -1) then
-                  istamp = datev
-               else
-                  istamp = idat
-               endif
+                call chk_userdate(datev)
+                if (datev  /=  -1) then
+                    istamp = datev
+                else
+                    istamp = idat
+                endif
             else
-               istamp=0
+                istamp = 0
             endif
 
-            delta_t = deet*npas/3600.0
+            delta_t = deet * npas / 3600.0
             call incdatr(idatv, idat, delta_t)
-         else
+        else
             if (message) then
                call app_log(APP_WARNING, 'ecritur: Unknown file')
             endif
-         endif
-      endif
+        endif
+    endif
 
- 600  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '),      'size ', 2(i5, '- '), 'file MS ', i4, '   REC=', i4)
- 610  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '),      'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)
+ 610  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '), 'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)
 end

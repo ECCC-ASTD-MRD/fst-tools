@@ -30,14 +30,12 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
 #include "llccmm.cdk90"
 #include "blancs.cdk90"
 #include "styles.cdk90"
-#include "lnkflds.cdk90"
 
     character *12 cetiqet
     character *4 cnomvar
     character *2 ctypvar
     character *1 cigtyp
 
-    integer i
     integer nom, npac, idat, ip1(2), ip2, ip3, igtyp, imprim, npkc
     integer iun, istamp, etiqet(*), type, cdatyp
     integer ig1srt, ig2srt, ig3srt, ig4srt, ig1s, ig2s, ig3s, ig4s
@@ -47,7 +45,7 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     integer argdims
     external argdims
     integer lip1
-    real p
+    real ptr
     character*8 string
 
     cnomvar = '    '
@@ -66,8 +64,8 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
 
     lip1 = ip1(1)
     if (argdims(4) > 1) then
-        p = transfer(ip1(1), p)
-        call convip_plus(lip1, p, -1 * ip1(2) - 1000, 2, string, .false.)
+        ptr = transfer(ip1(1), ptr)
+        call convip_plus(lip1, ptr, -1 * ip1(2) - 1000, 2, string, .false.)
     endif
 
     ier = fstcvt(      nom,    type,  letiket,  igtyp,       cnomvar, ctypvar, cetiqet, cigtyp, .true.)
@@ -144,7 +142,7 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     endif
 
     ! iun = lnkdiun(idx_ozsrt)
-    if (outoutFileMode == 1) then
+    if (outputFileMode == 1) then
         if (compression_level == 0) then
             cdatyp = 1
         else
@@ -165,7 +163,7 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
         if (.not. message) iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
         !> \todo Replace with fst24 interface
         ier = fstecr(tmpif0, tmpif0, npkc, iun, idat, ideet, npas,            nni, nnj, nnk, lip1, ip2, ip3, ctypvar, cnomvar, cetiqet, cigtyp,            ig1s, ig2s, ig3s, ig4s, cdatyp, rewrit)
-    else if (outoutFileMode == 3) then
+    else if (outputFileMode == 3) then
         if (valid) then
             istamp = idat
         else
@@ -184,6 +182,5 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
 
     deallocate(tmpif0)
 
-    600  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '),      'size ', 2(i5, '- '), 'file MS ', i4, '   REC=', i4)
     610  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '),      'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)
 end

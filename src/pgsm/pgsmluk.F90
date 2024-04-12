@@ -1,34 +1,25 @@
-!**S/P PGSMLUK
-!
-   integer function pgsmluk(fld,key,ni,nj,nk,nomvar,grtyp)
-      use app
-      implicit none
-      
-      integer key,ni,nj,nk
-      real, dimension(ni,nj) :: fld
-      character*4 nomvar
-      character*1 grtyp
-      external fstluk
-      integer fstluk
+integer function pgsmluk(fld, key, ni, nj, nk, nomvar, grtyp)
+    use app
+    implicit none
 
+    integer, external :: fstluk
 
-      integer ier,i,j
+    integer, intent(in) :: key
+    integer, intent(out) :: ni
+    integer, intent(out) :: nj
+    integer, intent(out) :: nk
+    real, dimension(ni, nj), intent(out) :: fld
+    character(len = 4), intent(out) :: nomvar
+    character(len = 1), intent(out) :: grtyp
 
-      ier = fstluk(fld,key,ni,nj,nk)
+    integer :: ier
 
-!          do j=1,nj
-!            do i=1,ni
-!              print *, i, j, fld(i,j)
-!            enddo
-!         enddo
-
-         if (ier.lt.0) then
-        pgsmluk=ier
+    ier = fstluk(fld, key, ni, nj, nk)
+    if (ier < 0) then
+        pgsmluk = ier
         return
-      endif
+    endif
 
-      call prefiltre(fld,ni,nj,nomvar,grtyp)
-      pgsmluk=ier
-      return
-      end
-
+    call prefiltre(fld, ni, nj, nomvar, grtyp)
+    pgsmluk = ier
+end

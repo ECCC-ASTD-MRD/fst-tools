@@ -31,21 +31,20 @@ subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
 #include "blancs.cdk90"
 
 
-      character *12 cetiqet
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cigtyp
-      character *4 cbidon
-      integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,num1,type
-      integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa
-      integer iopc, bidon,i
+    character *12 cetiqet
+    character *4 cnomvar
+    character *2 ctypvar
+    character *1 cigtyp
+    character *4 cbidon
+    integer etiqet(3),idat,ihr, ip3,irec1,iunit,niv,nom,type
+    integer cnbits,cdatyp,extra1,extra2,extra3,cubc,cdltf,clng,cswa
+    integer iopc, bidon,i
 
-      integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
-      external  ezqkdef, ezgxprm, gdll, argdims
+    integer ezqkdef, ezgxprm,gdll, argdims, letiket(3)
+    external  ezqkdef, ezgxprm, gdll, argdims
 
 
 !     MODIFICATION DE HOLLERITH A CARACTERE
-
       bidon = 0
       cnomvar = '    '
       ctypvar = '  '
@@ -62,8 +61,6 @@ subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
       if (argdims(8).gt.2) then
          letiket(3) = etiqet(3)
       endif
-
- 100  ier = fstcvt(    nom,   type, letiket,    bidon,              cnomvar,ctypvar,cetiqet,cbidon,.true.)
 
       if (etiqet(1) .ne. -1) then
          write(cetiqet,'(3A4)') (etiqet(i), i=1,argdims(9))
@@ -109,7 +106,7 @@ subroutine comme(iunit, nom, type, idat, niv, ihr, ip3, etiqet)
          allocate(tmplon(li,lj))
          allocate(tmplat(li,lj))
       else
-	      if (iunit == 1) then
+         if (iunit == 1) then
             call gritp12(7,igg1,igg2,igg3)
          else
             call gritp12(8,igg1,igg2,igg3)

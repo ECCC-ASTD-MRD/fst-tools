@@ -4,31 +4,12 @@ integer :: iwrit
 integer :: iset
 integer :: iroot
 integer :: indxs
+integer :: nsort
+integer :: nggr
+integer :: nlalo
+integer :: jdate
 
-integer :: if1
-integer ::  if2
-integer ::  if3
-integer ::  if4
-integer ::  if5
-integer ::  if6
-integer ::  if7
-integer ::  if8
-integer ::  if9
-integer ::  ift
-!> Output file mode/kind
-integer ::  outputFileMode
-integer nsort
-integer ::  nggr
-integer ::  nlalo
-integer ::  jdate
-integer ::  ip4
-
-common /indptr/ iwrit, iroot, indxs, iset, if1, if2, if3, if4, if9, ift, outputFileMode, nsort, nggr, nlalo, jdate, ip4
-!           if1    -pointeur du premier champ
-!           if2    -pointeur du deuxieme champ
-!           if3 a if9-pointeur pour chaque champ supplementaire
-!
-!                   augmentation de la memoire
+common /indptr/ iwrit, iroot, indxs, iset, nsort, nggr, nlalo, jdate
 !           nsort  -sorti nombre d argument
 !                   nsort=2 fichier standard
 !                   nsort=3 fichier ms
