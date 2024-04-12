@@ -20,6 +20,6 @@ integer function pgsmluk(fld, key, ni, nj, nk, nomvar, grtyp)
         return
     endif
 
-    call prefiltre(fld, ni, nj, nomvar, grtyp)
+    call prefiltre(fld, ni, nj, grtyp)
     pgsmluk = ier
 end

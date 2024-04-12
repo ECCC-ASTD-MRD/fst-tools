@@ -124,7 +124,7 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
             call app_log(APP_WARNING, 'ecritur: Cannot filter fields on Y grid')
         else
             call app_log(APP_INFO, 'ecritur: Field filtered on write')
-            call filtre (fld, NI, NJ, 0, fltntimes(2), fltlist(1, 2), fltwgtlng(2))
+            call filtre (fld, NI, NJ, fltntimes(2), fltlist(1, 2), fltwgtlng(2))
         endif
     endif
 
