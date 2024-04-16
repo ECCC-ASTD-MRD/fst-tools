@@ -26,7 +26,7 @@ subroutine loop_fields(source)
             success = record%read()
             call record % get_data_array(data_r4) 
 
-            if (record%datyp == 2 .or. record%datyp == 4) then
+            if (record%data_type == 2 .or. record%data_type == 4) then
                 do k = 1, record%nk
                    do j = 1, record%nj
                       do i = 1, record%ni

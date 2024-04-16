@@ -86,23 +86,23 @@
          endif
          
          if (record%nomvar == '^^' .or. record%nomvar == '>>' .or. record%nomvar == 'HY') then
-         else if (record%npak .le. 16) then
+         else if (record%pack_bits .le. 16) then
             if (custom_nbits .ne. -1) then
-              record%npak = -custom_nbits
+              record%pack_bits = custom_nbits
             endif
-            if (record%datyp.eq.1.or.record%datyp.eq.6.or.record%datyp.eq.5) then
-               record%datyp=134
-            else if (record%datyp.eq.129.or.record%datyp.eq.134) then
-               record%datyp=134
-            else if (record%datyp.eq.2.or.record%datyp.eq.4) then
-               record%datyp=record%datyp+128
+            if (record%data_type.eq.1.or.record%data_type.eq.6.or.record%data_type.eq.5) then
+               record%data_type=134
+            else if (record%data_type.eq.129.or.record%data_type.eq.134) then
+               record%data_type=134
+            else if (record%data_type.eq.2.or.record%data_type.eq.4) then
+               record%data_type=record%data_type+128
             endif
-         else if (record%datyp.eq.5) then
+         else if (record%data_type.eq.5) then
             if (custom_nbits .ne. -1) then
-               record%npak = -custom_nbits
-            else if (record%npak > 32) then
+               record%pack_bits = custom_nbits
+            else if (record%pack_bits > 32) then
             else
-               record%datyp=133
+               record%data_type=133
             endif
          endif
          success=output%write(record)

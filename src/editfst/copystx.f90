@@ -85,8 +85,8 @@
       nrecord=0
       do while(query%find_next(record))
 
-         if (record%dasiz.GT.48 .AND. record%datyp.EQ.1) then
-            write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%dasiz 
+         if (record%data_bits.GT.48 .AND. record%data_type.EQ.1) then
+            write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%data_bits 
             call app_log(APP_ERROR,app_msg)
             goto 140
          endif

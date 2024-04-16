@@ -351,27 +351,27 @@
             ENDIF
          ENDIF
 
-         IF(recorda%npak .NE. recordb%npak) then
-            write(app_msg,*) 'NBITSA=',recorda%npak,' NBITSB=',recordb%npak                   
+         IF(recorda%pack_bits .NE. recordb%pack_bits) then
+            write(app_msg,*) 'NBITSA=',recorda%pack_bits,' NBITSB=',recordb%pack_bits                   
             call app_log(APP_INFO,app_msg)
          endif
 
-         WRITE(app_msg,*) 'COMPARE DATYPA=',recorda%datyp,'  @  DATYPB=',recordb%datyp                   
+         WRITE(app_msg,*) 'COMPARE DATA_TYPE_A=',recorda%data_type,'  @  DATA_TYPE_B=',recordb%data_type                   
          call app_log(APP_INFO,app_msg)
 
    !     TOUT EST OK LIT ET COMPARE
          success=recorda%read()
          success=recordb%read()
 
-         IF ((mod(recorda%datyp,128) .ne. 1) .and. (mod(recorda%datyp,128) .ne. 6)) THEN
+         IF ((mod(recorda%data_type,128) .ne. 1) .and. (mod(recorda%data_type,128) .ne. 6)) THEN
             PACK_ERR2 = 0
          ELSE
             PACK_ERR2 = PACK_ERR
          ENDIF
-         IF ((mod(recorda%datyp,128) .gt. 6).or.(mod(recordb%datyp,128) .gt. 6)) goto 30
-         GO TO (40, 50, 30) TABLO(mod(recorda%datyp,128),mod(recordb%datyp,128))
+         IF ((mod(recorda%data_type,128) .gt. 6).or.(mod(recordb%data_type,128) .gt. 6)) goto 30
+         GO TO (40, 50, 30) TABLO(mod(recorda%data_type,128),mod(recordb%data_type,128))
          
-   30    WRITE(app_msg,*)' No comparison possible: DATYPA=',recorda%datyp,' DATYPB=',recordb%datyp
+   30    WRITE(app_msg,*)' No comparison possible: DATA_TYPE_A=',recorda%data_type,' DATA_TYPE_B=',recordb%data_type
          call app_log(APP_WARNING,app_msg)
          GO TO 60
 
@@ -468,7 +468,7 @@
       n=a%ni*a%nj*a%nk
 
       ERRLIM = 10.**LIMITE
-      DEUX_EXP_NB = 2.0 ** MIN(a%npak,b%npak)
+      DEUX_EXP_NB = 2.0 ** MIN(a%pack_bits,b%pack_bits)
       SA     = 0.
       SB     = 0.
       SAB    = 0.

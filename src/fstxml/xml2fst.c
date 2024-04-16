@@ -80,11 +80,14 @@ static struct Flag
   {"deet",               ParseInt},
   {"npas",               ParseInt},
   {"npak",               ParseInt},
+  {"pack_bits",          ParseInt},
   {"ig1",                ParseInt},
   {"ig2",                ParseInt},
   {"ig3",                ParseInt},
   {"ig4",                ParseInt},
   {"nbits",              ParseInt},
+  {"data_bits",          ParseInt},
+  {"data_type",          ParseInt},
   {"datyp",              ParseInt},
   {"swa",                ParseInt},
   {"lng",                ParseInt},
@@ -376,9 +379,9 @@ void write_to_fstFile()
   fprintf(stderr, "ig2    = %d\n", record.ig2);
   fprintf(stderr, "ig3    = %d\n", record.ig3);
   fprintf(stderr, "ig4    = %d\n", record.ig4);
-  fprintf(stderr, "nbits  = %d\n", record.dasiz);
-  fprintf(stderr, "datyp  = %d\n", record.datyp);
-  fprintf(stderr, "npak = %d\n", record.npak);
+  fprintf(stderr, "data_bits = %d\n", record.data_bits);
+  fprintf(stderr, "data_type = %d\n", record.data_type);
+  fprintf(stderr, "pack_bits = %d\n", record.pack_bits);
 
 #endif
 /*   nomvar = "\0"; */
@@ -416,14 +419,20 @@ void setIntVar(char *option, int number)
     record.ig3 = number;
   else if (strcmp(option, "ig4") == 0)
     record.ig4 = number;
-  else if (strcmp(option, "nbits") == 0)
-    record.dasiz = -number;
-  else if (strcmp(option, "datyp") == 0)
-    record.datyp = number;
+  else if (strcmp(option, "data_bits") == 0 || strcmp(option, "nbits") == 0)
+    record.data_bits = number;
+  else if (strcmp(option, "data_type") == 0 || strcmp(option, "datyp") == 0)
+    record.data_type = number;
   else if (strcmp(option, "npas") == 0)
     record.npas = number;
-  else if (strcmp(option, "npak") == 0)
-      record.npak = number;
+  else if (strcmp(option, "npak") == 0) {
+    if (number > 0) {
+      App_Log(APP_WARNING, "npak = %d, but can only specify number of bits now (npak must be less than 0)\n", number);
+    }
+    record.pack_bits = number;
+  }
+  else if (strcmp(option, "pack_bits") == 0)
+    record.pack_bits = number;
 
   }
 
@@ -471,9 +480,9 @@ void setStringVar(char *option, char *buf)
       values = (char *)buf;
 
 #ifdef DEBUG
-      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with datatype \"%d\" \n", option, datyp);
+      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with datatype \"%d\" \n", option, data_type);
 #endif
-      extract_data(record.data, record.datyp);
+      extract_data(record.data, record.data_type);
 
     }
 

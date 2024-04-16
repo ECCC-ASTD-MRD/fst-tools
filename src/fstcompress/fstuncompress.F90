@@ -53,11 +53,11 @@
            call qqexit(app_status)
          endif
 
-         if (record%datyp > 128) then
-           record%datyp = record%datyp - 128
+         if (record%data_type > 128) then
+           record%data_type = record%data_type - 128
          endif
-         if (record%datyp == 6) then
-           record%datyp = 1
+         if (record%data_type == 6) then
+           record%data_type = 1
          endif
 
          success=output%write(record)

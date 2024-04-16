@@ -123,7 +123,7 @@
               ,ptdel,record%etiket,ptdel,pndatprinto,pntimeo,ptdel             &
               ,pndatprintv,pntimev,ptdel,record%deet,ptdel,record%npas,ptdel        &
               ,record%grtyp,ptdel,record%ig1,ptdel,record%ig2,ptdel,record%ig3,ptdel,record%ig4    &
-              ,ptdel,record%datyp,ptdel,record%dasiz
+              ,ptdel,record%data_type,ptdel,record%data_bits
 
       end do
 

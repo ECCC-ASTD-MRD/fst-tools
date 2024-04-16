@@ -100,7 +100,7 @@ int fst2xml(int argc, char **argv) {
     query = fst24_new_query(fstfile,NULL,NULL);
     while(fst24_find_next(query,&record)) {
 
-        if (record.dasiz > 32) {
+        if (record.data_bits > 32) {
             multi = 2;
         } else {
             multi = 1;
@@ -129,8 +129,8 @@ int fst2xml(int argc, char **argv) {
         fprintf(xmlfd, "\t\t%s%d%s\n", "<ig2>", record.ig2, "</ig2>");
         fprintf(xmlfd, "\t\t%s%d%s\n", "<ig3>", record.ig3, "</ig3>");
         fprintf(xmlfd, "\t\t%s%d%s\n", "<ig4>", record.ig4, "</ig4>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<nbits>", record.dasiz, "</nbits>");
-        fprintf(xmlfd, "\t\t%s%d%s\n", "<datyp>", record.datyp, "</datyp>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<nbits>", record.data_bits, "</nbits>");
+        fprintf(xmlfd, "\t\t%s%d%s\n", "<datyp>", record.data_type, "</datyp>");
  
         fprintf(xmlfd, "\t\t%s%s%s\n", "<level>", xmlip1, "</level>");
         fprintf(xmlfd, "\t\t%s%s%s\n", "<date-of-origin>", xmldateo, "</date-of-origin>");
@@ -144,7 +144,7 @@ int fst2xml(int argc, char **argv) {
 
         fst24_read_record(&record);
  
-        switch (record.datyp) {
+        switch (record.data_type) {
             case 1:
             case 5:
             case 6:
@@ -171,7 +171,7 @@ int fst2xml(int argc, char **argv) {
                 break;
 
             default:
-                App_Log(APP_WARNING,"Cannot process Datyp %d , skipping record nomvar=%s\n\n",record.datyp,record.nomvar);
+                App_Log(APP_WARNING,"Cannot process data_type %d , skipping record nomvar=%s\n\n",record.data_type,record.nomvar);
         }
         fprintf(xmlfd, "\t\t%s\n", "</values>");
         fprintf(xmlfd, "\t\t%s\n", "</fstdata>");
