@@ -629,7 +629,7 @@
       CHARACTER(len=15) :: Level
       REAL      rlevel
       logical :: success
-      real(kind = real32), dimension(:), pointer :: dataa, datab
+      integer(kind = int32), dimension(:), pointer :: dataa, datab
 
       MD  = 0
       NC  = 0
