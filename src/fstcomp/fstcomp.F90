@@ -362,7 +362,8 @@
    !     TOUT EST OK LIT ET COMPARE
          success=recorda%read()
          success=recordb%read()
-
+         recordb%etiket=etikb
+         
          IF ((mod(recorda%data_type,128) .ne. 1) .and. (mod(recorda%data_type,128) .ne. 6)) THEN
             PACK_ERR2 = 0
          ELSE
