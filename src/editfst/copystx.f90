@@ -177,7 +177,7 @@
    
             success = destination%write(record,ECR)
 
-            if (i .lt. 0) then
+            if (.not. success) then
                call app_log(APP_ERROR,'copystx: write error')
                call qqexit(55)
             endif
