@@ -67,6 +67,7 @@ program voir
         print *,'         NODEET: suppress DEET information'
         print *,'         NONPAS: suppress NPAS information'
         print *,'          NODTY: suppress DTY information'
+        print *,'          NOSIZ: suppress SIZ information'
         print *
         print *,'   Example #1: -style "ninjnk datev level"'
         print *,'   Example #2: -style datev+level+ip1+notypv'
