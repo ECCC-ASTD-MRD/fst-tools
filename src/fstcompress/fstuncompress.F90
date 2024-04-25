@@ -56,9 +56,6 @@
          if (record%data_type > 128) then
            record%data_type = record%data_type - 128
          endif
-         if (record%data_type == 6) then
-           record%data_type = 1
-         endif
 
          success=output%write(record)
 
