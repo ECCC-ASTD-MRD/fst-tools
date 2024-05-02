@@ -58,6 +58,7 @@ program voir
         print *,'            IP1: display coded IP1 value'
         print *,'       GRIDINFO: display decoded grid information'
         print *,'         IG1234: display IG1 IG2 IG3 IG4 values'
+        print *,'          DASIZ: display data size information'
         print *
         print *,'     The following items suppress variable printout'
         print *,'         NONOMV: suppress NOMV information'
@@ -67,7 +68,6 @@ program voir
         print *,'         NODEET: suppress DEET information'
         print *,'         NONPAS: suppress NPAS information'
         print *,'          NODTY: suppress DTY information'
-        print *,'          NOSIZ: suppress SIZ information'
         print *
         print *,'   Example #1: -style "ninjnk datev level"'
         print *,'   Example #2: -style datev+level+ip1+notypv'
