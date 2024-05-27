@@ -175,11 +175,7 @@
    
          else   !  real mode, write into the output file
    
-<<<<<<< HEAD
-            success = destination%write(record,rewrite=ECR)
-=======
             success = destination%write(record, rewrite = ECR)
->>>>>>> 229e52a647748bc0aab515f4dcc29905f9e5ac5c
 
             if (.not. success) then
                call app_log(APP_ERROR,'copystx: write error')
