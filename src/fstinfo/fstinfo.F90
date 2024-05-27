@@ -67,7 +67,8 @@
               '24 ubc',              &
               '25 extra1',           &
               '26 extra2',           &
-              '27 extra3'
+              '27 extra3',           &
+              '28 json' 
          stop
       endif
 
@@ -118,18 +119,18 @@
          call newdate(record%dateo,pndatprinto,pntimeo,-3)
          call newdate(record%datev,pndatprintv,pntimev,-3)
 
+         success = record%read_metadata()  
          write (pnseqout,1000) record%nomvar,ptdel,record%typvar,ptdel,record%ip1,ptdel  &
               ,record%ip2,ptdel,record%ip3,ptdel,record%ni,ptdel,record%nj,ptdel,record%nk      &
               ,ptdel,record%etiket,ptdel,pndatprinto,pntimeo,ptdel             &
               ,pndatprintv,pntimev,ptdel,record%deet,ptdel,record%npas,ptdel        &
               ,record%grtyp,ptdel,record%ig1,ptdel,record%ig2,ptdel,record%ig3,ptdel,record%ig4    &
-              ,ptdel,record%data_type,ptdel,record%data_bits
-
-      end do
+              ,ptdel,record%data_type,ptdel,record%data_bits,ptdel,record%metadata%stringify(JSON_C_TO_STRING_SPACED)
+     end do
 
       success = source%close()
 
- 1000 format(2(a,a),6(i10,a),1(a,a),2(i8.8,i8.8,a),2(i10,a),1(a,a),6(i10,a))
+ 1000 format(2(a,a),6(i10,a),1(a,a),2(i8.8,i8.8,a),2(i10,a),1(a,a),6(i10,a),a)
 
       app_status=app_end(-1);
       call qqexit(app_status)

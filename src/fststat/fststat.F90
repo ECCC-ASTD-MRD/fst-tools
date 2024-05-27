@@ -5,7 +5,7 @@ program fststat
 
 #include "fst-tools_build_info.h"
 
-    external ccard, fstlnk
+    external ccard
 
     character(len = 1024), dimension(40) :: cle, def, val
     data cle /40*'fst:'/
