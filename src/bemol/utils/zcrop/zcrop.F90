@@ -17,7 +17,7 @@
    type(fst_file) :: src,dst
    type(fst_record)  :: ax,ay
 
-   real, allocatable, dimension(:) :: new_ax, new_ay
+   real, allocatable, dimension(:), target :: new_ax, new_ay
    real, pointer,     dimension(:) :: old_ax, old_ay
 
    character(len=128) :: cle(13)
