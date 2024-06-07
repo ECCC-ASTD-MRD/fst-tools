@@ -2,10 +2,6 @@
       use app
       use rmn_fst24
 
-! Revision 006 - M. Lepine, augmenter la longueur pour les noms de fichiers a 4k
-! Revision 007 - M. Lepine, reload avec librmn_014
-! Revision 008 - M. Lepine, reload avec librmn_015.1
-! Revision 009 - M. Lepine, reload avec librmn_015.2
       implicit none
 #include "fst-tools_build_info.h"
 
