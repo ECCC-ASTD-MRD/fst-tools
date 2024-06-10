@@ -7,6 +7,8 @@
       use ISO_C_BINDING
       use configuration
       use app
+      use rmn_fst24
+
       IMPLICIT NONE 
       include 'excdes.inc'
 #include "fst-tools_build_info.h"
@@ -275,6 +277,7 @@
       def2 = def2b
 
       SAUV = 0
+      ECR = FST_NO
       CALL SAUVDEZ
   
 !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
@@ -291,8 +294,8 @@
       VS     = (DEF1(20).EQ.'OUI')                              ! -vs   voir source
       BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON')   ! -nobox , -n
       SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i 
-      if ((DEF1(9) .EQ.'OUI') .OR.  (DEF1(21).EQ.'OUI')) ECR=1  ! -ecr , -e oui
-      if ((DEF1(9) .EQ.'SKIP') .OR.  (DEF1(21).EQ.'SKIP')) ECR=-1 ! -ecr , -e skip
+      if ((DEF1(9) .EQ.'OUI') .OR.  (DEF1(21).EQ.'OUI')) ECR=FST_YES  ! -ecr , -e oui
+      if ((DEF1(9) .EQ.'SKIP') .OR.  (DEF1(21).EQ.'SKIP')) ECR=FST_SKIP ! -ecr , -e skip
 
 ! 
 !     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
