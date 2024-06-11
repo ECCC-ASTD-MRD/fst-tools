@@ -12,7 +12,7 @@ FSTSTAT_VERSION    : 6.9.0-a2
 PGSM_VERSION       : 7.9.1
 EDITFST_VERSION    : 7.13.0-a3
 REFLEX_VERSION     : 3.5.0
-VOIR_VERSION       : 99.1.0-a2
+VOIR_VERSION       : 99.1.0-a3
 
 # Dependencies 
 #    =,<,<=,>,>= : Version rules
