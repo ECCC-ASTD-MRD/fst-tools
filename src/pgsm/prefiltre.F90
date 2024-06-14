@@ -3,7 +3,7 @@ subroutine prefiltre(fld, ni, nj, grtyp)
     implicit none
 
     integer, intent(in) :: ni, nj
-    real :: fld(ni, nj)
+    real, intent(inout) :: fld(ni, nj)
     character(len = 1), intent(in) :: grtyp
 
 #include "qqqfilt.cdk90"

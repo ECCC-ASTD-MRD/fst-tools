@@ -1,19 +1,19 @@
 !> Calculer lat long de chaque pt d'une grille type "y" ou "z"
 subroutine conlalo(lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4)
     use app
+    use grilles, only : cgrtyp
     implicit none
 
     external conlal2
 
-    integer lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4
-    character*1 cgrtyp, cgtypxy
+    integer :: lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4
+    character(len = 1) :: cgrtyp, cgtypxy
 
     write(cgrtyp , '(A1)') grtyp
     write(cgtypxy, '(A1)') grtypxy
 
-    WRITE(app_msg, 101) cgrtyp, cgtypxy
+    WRITE(app_msg, "(' CONLALO:', 'CGRTYP: ', a1, 'CGTYPXY: ', a1)") cgrtyp, cgtypxy
     call app_log(APP_INFO, app_msg)
-101  format(' CONLALO:', 'CGRTYP: ', a1, 'CGTYPXY: ', a1)
 
     call conlal2(lat, lon, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3, ig4)
 end
@@ -24,13 +24,20 @@ subroutine conlal2(lat, lon, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3, ig4)
     use app
     implicit none
 
-    external cigaxg, llfxy, pgsmabt, messags
+    integer, intent(in) :: ni
+    integer, intent(in) :: nj
+    real, intent(inout) :: lat(ni, nj)
+    real, intent(inout) :: lon(ni, nj)
+    character(len = 1), intent(in) :: cgrtyp
+    character(len = 1), intent(in) :: cgtypxy
+    integer, intent(in) :: ig1, ig2, ig3, ig4
 
-    integer ni, nj, ig1, ig2, ig3, ig4, i, j, hem
-    real lat(ni, nj), lon(ni, nj), dlat, lat0, dlon, lon0
-    real pii, pjj, d60, dgrw, buflat, buflon, dla, dlo
+    external cigaxg, llfxy, pgsmabt
 
-    character*1 cgrtyp, cgtypxy
+    integer :: i, j, hem
+    real :: dlat, lat0, dlon, lon0
+    real :: pii, pjj, d60, dgrw, buflat, buflon, dla, dlo
+
 
 
     if (cgrtyp == 'Z') then
@@ -80,19 +87,25 @@ end
 
 
 
-!> CALCULER LA LATITUDE ET LA LONGITUDE DE TOUS LES POINTS DE LA GRILLE DE SORTIE DE TYPE "Y" OU "Z"
+!> Calculer la latitude et la longitude de tous les points de la grille de sortie de type "Y" ou "Z"
 subroutine conlale(lat, lon, latg, long, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3, ig4)
     use app
     implicit none
 
-    external cigaxg, llfxy, pgsmabt, messags
+    integer, intent(in) :: ni
+    integer, intent(in) :: nj
+    real, intent(inout) :: lat(ni, nj)
+    real, intent(inout) :: lon(ni, nj)
+    real, intent(in) :: latg(ni, nj)
+    real, intent(in) :: long(ni, nj)
+    character(len = 1), intent(in) :: cgrtyp
+    character(len = 1), intent(in) :: cgtypxy
+    integer, intent(in) :: ig1, ig2, ig3, ig4
 
-    integer ni, nj, ig1, ig2, ig3, ig4, i, j
-    real lat(ni, nj), lon(ni, nj), latg(ni, nj), long(ni, nj)
-    real xlat1, xlon1, xlat2, xlon2
+    external cigaxg, llfxy, pgsmabt
 
-    character*1 cgrtyp, cgtypxy
-
+    integer :: i, j
+    real :: xlat1, xlon1, xlat2, xlon2
 
     if (cgrtyp == 'Z') then
         do j = nj, 1, -1
@@ -107,7 +120,7 @@ subroutine conlale(lat, lon, latg, long, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3,
         enddo
 
         call cigaxg(cgtypxy, xlat1, xlon1, xlat2, xlon2, ig1, ig2, ig3, ig4)
-        call ez_gfllfxy(lon, lat, long, latg, ni*nj, xlat1, xlon1, xlat2, xlon2)
+        call ez_gfllfxy(lon, lat, long, latg, ni * nj, xlat1, xlon1, xlat2, xlon2)
     else
         call app_log(APP_ERROR, 'conlalo: GRILLE not "E"')
         call pgsmabt

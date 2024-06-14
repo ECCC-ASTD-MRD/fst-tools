@@ -1,4 +1,4 @@
-integer function pgsmluk(fld, key, ni, nj, nk, nomvar, grtyp)
+integer function pgsmluk(fld, key, ni, nj, nk, grtyp)
     use app
     implicit none
 
@@ -9,7 +9,6 @@ integer function pgsmluk(fld, key, ni, nj, nk, nomvar, grtyp)
     integer, intent(out) :: nj
     integer, intent(out) :: nk
     real, dimension(ni, nj), intent(out) :: fld
-    character(len = 4), intent(out) :: nomvar
     character(len = 1), intent(out) :: grtyp
 
     integer :: ier

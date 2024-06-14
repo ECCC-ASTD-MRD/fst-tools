@@ -3,73 +3,81 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
     use ISO_FORTRAN_ENV, only : real64
     use app
     use files, only : outputFile, outputFileMode
+    use packing, only : npack_orig
+    use pgsm_mod, only: validate_date
+    use pgsm_mod, only: iwrit, nsort, message
+    use pgsm_mod, only: dateform, tmplat, tmplon
+    use ecrires, only : etiksrt, typesrt, ip2srt, printsr, compression_level
     implicit none
+
+    !> First dimension of field
+    integer, intent(in) :: ni
+    !> Second dimension of field
+    integer, intent(in) :: nj
+    !> Third dimension of field
+    integer, intent(in) :: nk
+    !> Field to write
+    real, intent(in) :: fld(ni, nj, nk)
+    !> Convention of the data in the field to write
+    integer, intent(in) :: npac
+    !> Origin date (CMC stamp)
+    integer, intent(in) :: idat
+    !> Duration of each timestep in seconds
+    integer, intent(in) :: deet
+    !> Timestep number
+    integer, intent(in) :: npas
+    !> Level
+    integer, intent(in) :: ip1
+    !> Forecast hour
+    integer, intent(in) :: ip2
+    !> User defined identifier
+    integer, intent(in) :: ip3
+    !> Variable type
+    character(len = 2), intent(in) :: ctypvar
+    !> Variable name
+    character(len = 4), intent(in) :: cnomvar
+    !> Label
+    character(len = 12), intent(in) :: cetiket
+    !> Grid type
+    character(len = 1), intent(in) :: cgtyp
+    !> First grid descriptor
+    integer, intent(in) :: llg1
+    !> Second grid descriptor
+    integer, intent(in) :: llg2
+    !> Third grid descriptor
+    integer, intent(in) :: llg3
+    !> Forth grid descriptor
+    integer, intent(in) :: llg4
+
+    ! DESCRIPTEUR DE GRILLE
+    ! PS - LLG1 POSITION J DU POLE
+    !      LLG2 POSITION I DU POLE
+    !      LLG3 DGRW*100
+    !      LLG4 D60 HETOMETRE(0-36000)
+    ! LAT-LON  LLG1- DLAT*100
+    !          LLG2- DLON*100
+    !          LLG3- (90-LAT)*100 0=POLE SUD
+    !          LLG4- (LON*100) (0-36000) LONGITUDE COIN
+    ! GAUSSIEN  LLG1= 1 HEMISPHERE NORD
+    !           LLG1= 2 HEMISPHERE SUD
+    !           LLG1= 3 GLOBALE
 
     external :: conver, imprims
     integer, external :: fstopc
-    ! integer, external :: fstecr
 
-!OBJET(ECRITUR)
-!          ECRIRE SUR FICHIER STANDARD AVEC ROUTINE FSTECR
-!          ECRIRE SUR FICHIER MS AVEC PUTFLD
-!          ECRIRE SUR FICHIER SEQUENTIEL AVEC PUTFLD
-
-!ARGUMENTS
-!   IN    fld   fld(NI, NJ, NK) A ECRIRE
-!   IN    NPAC    COMPACTION DU DATA DANS fld
-!   IN    IDAT    DATE DU fld (CMC STAMP)
-!   IN    DEET    PAS DE TEMPS ENTIER SECONDES
-!   IN    NPAS    NUMERO DU PAS DE TEMPS
-!   IN    NI      1 ER DIMENSION DU fld
-!   IN    NJ      2 IEM DIMENSION DU fld
-!   IN    NK      3 IEME DIMENSION DU fld
-!   IN    IP1     NORMALEMENT NIVEAU DU fld
-!   IN    IP2     HEURE DU fld
-!   IN    IP3ENT     LIBRE
-!   IN    TYPEENT   TYPE DU fld 1 CARACTERE
-!   IN    NOM     NOM DU fld 2 CARACTERES
-!   IN    ETIKE   ETIQUETTE 1 MOT CDC (USAGER)
-!   IN    GRTYPE  TYPE DE GRILLE 1 CARACTERE
-!   IN    LLG1    DESCRIPTEUR DE GRILLE
-!   IN    LLG2    PS - LLG1 POSITION J DU POLE
-!   IN    LLG3         LLG2 POSITION I DU POLE
-!   IN    LLG4         LLG3 DGRW*100
-!                      LLG4 D60 HETOMETRE(0-36000)
-!                 LAT-LON  LLG1- DLAT*100
-!                          LLG2- DLON*100
-!                          LLG3- (90-LAT)*100 0=POLE SUD
-!                          LLG4- (LON*100) (0-36000) LONGITUDE COIN
-!                 GAUSSIEN  LLG1= 1 HEMISPHERE NORD
-!                           LLG1= 2 HEMISPHERE SUD
-!                           LLG1= 3 GLOBALE
-
-#include "lires.cdk90"
-#include "voir.cdk90"
-#include "ecrires.cdk90"
-#include "llccmm.cdk90"
-#include "indptr.cdk90"
 #include "enrege.cdk90"
-#include "packin.cdk90"
-#include "dates.cdk90"
-#include "dummys.cdk90"
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
-#include "styles.cdk90"
 
     character(len = 24) :: chaine
-    character(len = 12) :: cetiket, cetksrt
-    character(len = 4) :: cnomvar
-    character(len = 2) :: ctypvar
-    character(len = 1) :: cgtyp
+    character(len = 12) :: cetksrt
 
     character(len = 12) :: letiksrt
     character(len = 4) :: lnomvar
     character(len = 2) :: ltypsrt
 
-    integer :: i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet
-    real, dimension(ni, nj, nk) :: fld
-    real, dimension(2) :: dummy
-    integer :: llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
+    integer :: i, idatv
+    integer :: iun, ip3o, ip2o
     integer :: cdatyp, iopc, ier, gdout, datev
     logical :: rewrit
 
@@ -199,18 +207,12 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 
             write(iun) fld
             if (message) then
-                write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
+                write(app_msg, "(2x, ' ENREG.ECRIT ', 2(a2, '- '), 3(i5, '- '), 'TAILLE ', 2(i5, '- '), 'FICHIER SEQUENTIEL', i4)") &
+                    ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
             endif
         else if (outputFileMode == 5) then
-            if (valid) then
+            if (validate_date) then
                 call chk_userdate(datev)
-                if (datev  /=  -1) then
-                    istamp = datev
-                else
-                    istamp = idat
-                endif
-            else
-                istamp = 0
             endif
 
             delta_t = deet * npas / 3600.0
@@ -242,8 +244,6 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
             endif
         endif
       endif
-
- 610  format(2x, ' ENREG.ECRIT ', 2(a2, '- '), 3(i5, '- '), 'TAILLE ', 2(i5, '- '), 'FICHIER SEQUENTIEL', i4)
 end
 
 
@@ -251,41 +251,65 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
     use ISO_FORTRAN_ENV, only : real64
     use app
     use files, only : outputFile, outputFileMode
+    use packing, only : npack_orig
+    use dates, only: validate_date
     implicit none
 
-    integer, external :: fstopc
-    ! integer, external :: fstecr
+    !> First dimension of field
+    integer, intent(in) :: ni
+    !> Second dimension of field
+    integer, intent(in) :: nj
+    !> Third dimension of field
+    integer, intent(in) :: nk
+    !> Field to write
+    integer, intent(in) :: fld(ni, nj, nk)
+    !> Convention of the data in the field to write
+    integer, intent(in) :: npac
+    !> Origin date (CMC stamp)
+    integer, intent(in) :: idat
+    !> Duration of each timestep in seconds
+    integer, intent(in) :: deet
+    !> Timestep number
+    integer, intent(in) :: npas
+    !> Level
+    integer, intent(in) :: ip1
+    !> Forecast hour
+    integer, intent(in) :: ip2
+    !> User defined identifier
+    integer, intent(in) :: ip3
+    !> Variable type
+    character(len = 2), intent(in) :: ctypvar
+    !> Variable name
+    character(len = 4), intent(in) :: cnomvar
+    !> Label
+    character(len = 12), intent(in) :: cetiket
+    !> Grid type
+    character(len = 1), intent(in) :: cgtyp
+    !> First grid descriptor
+    integer, intent(in) :: llg1
+    !> Second grid descriptor
+    integer, intent(in) :: llg2
+    !> Third grid descriptor
+    integer, intent(in) :: llg3
+    !> Forth grid descriptor
+    integer, intent(in) :: llg4
 
-#include "lires.cdk90"
-#include "voir.cdk90"
-#include "ecrires.cdk90"
-#include "llccmm.cdk90"
-#include "indptr.cdk90"
+    integer, external :: fstopc
+
 #include "enrege.cdk90"
-#include "dates.cdk90"
-#include "packin.cdk90"
-#include "dummys.cdk90"
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
-#include "styles.cdk90"
 
     character(len = 24) :: chaine
-    character(len = 12) :: cetiket, cetksrt
-    character(len = 4) :: cnomvar
-    character(len = 2) :: ctypvar
-    character(len = 1) :: cgtyp
-
-
+    character(len = 12) :: cetksrt
     character(len = 12) :: letiksrt
     character(len = 4) :: lnomvar
     character(len = 2) :: ltypsrt
 
-    integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet, datev
-    integer fld(ni, nj, nk)
-    real dummy(2)
-    integer llg1, llg2, llg3, llg4, iun, istamp, ip3o, ip2o
-    integer cdatyp, iopc, ier, local_npac
-    logical rewrit
+    integer :: i
+    integer :: iun, ip3o, ip2o
+    integer :: cdatyp, iopc, ier, local_npac
+    logical :: rewrit
 
     integer, external :: gdll, ezgetgdout
 
@@ -389,18 +413,12 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
 
             write(iun) fld
             if (message) then
-                write(app_msg, 610)ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
+                write(app_msg, "(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '), 'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)") &
+                    ltypsrt, cnomvar, ip1, ip2o, ip3o, ni, nj, iun
             endif
         else if (outputFileMode == 5) then
-            if (valid) then
+            if (validate_date) then
                 call chk_userdate(datev)
-                if (datev  /=  -1) then
-                    istamp = datev
-                else
-                    istamp = idat
-                endif
-            else
-                istamp = 0
             endif
 
             delta_t = deet * npas / 3600.0
@@ -411,6 +429,4 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
             endif
         endif
     endif
-
- 610  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '), 'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)
 end

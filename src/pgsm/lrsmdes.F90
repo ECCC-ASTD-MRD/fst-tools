@@ -1,55 +1,72 @@
-!> CHAQUE PT D'UN CHAMP LU EST MI AU CARRE DANS ACCUMULATEUR
-subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
+!> Chaque pt d'un champ lu est mi au carre dans accumulateur
+subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     use app
+    use rmn_fst24
+    use accum, only : nni, nnj, nnk, idatt, ideet, npas, jpp1, jpp2, jpp3, igg1, igg2, igg3, igg4, cnumv, ctypv, cetik, cigty, icnt
+    use pgsm_mod, only : ier, ip1style, message
+    use files, only : fentree, fsortie, inputFiles, outputFile
+    use chck, only : ichck
     implicit none
 
-!OBJET(LRSMDE)
-!         LIRE UN CHAMP SUR FICHIER D'ENTRE OU DE SORTI ET SAUVE DANS
-!         L'ACCUMULATEUR CHAQUE PT AU CARRE ET LES DIRECTIVES SUIVANTES
-!         LIRMODE OU LIRMODS AJOUTERONT CHAQUE CHAMP(PT AU CARRE) A
-!         L'ACCUMULATEUR LA SOMME DES CHAMPS EST GARDER DANS L'ACCUMULATEUR
-!         ET PEUT ETRE SAUVE PAR LA DIRECTIVE ECRITS.
+    !> 
+    integer, intent(in) :: nom
+    !> 
+    integer, intent(in) :: type
+    !> 
+    integer, intent(in) :: idat
+    !> 
+    integer, intent(in) :: niv(2)
+    !> 
+    integer, intent(in) :: ihr
+    !> 
+    integer, intent(in) :: etiqet
+    !> File from which to read (fentree|fsortie)
+    integer, intent(in) :: iunit
 
-!ARGUMENTS
-!   IN   NOM     NOM DU CHAMP "GZ", "TT"...LCAR(GZ)
-!   IN   TYPE    TYPE DE CHAMP  "P"=PREVISION   "A"=ANALYSE
-!   IN   NIV     NIVEAU DU CHAMP 500MB....
-!   IN   IHR     HEURE DU CHAMP  (IP2)
-!   IN   IP3     LIBRE A L'USAGER ET COMPTEUR POUR MOYENNE UTILISER PAR ECRITS
-!   IN   ETIQET  ETIQETTE 10 CARACTERES
+    ! lire un champ sur fichier d'entre ou de sorti et sauve dans
+    ! l'accumulateur chaque pt au carre et les directives suivantes
+    ! lirmode ou lirmods ajouteront chaque champ(pt au carre) a
+    ! l'accumulateur la somme des champs est garder dans l'accumulateur
+    ! et peut etre sauve par la directive ecrits.
 
-!APPEL   VIA DIRECTIVE
-!        LIRMDE(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQET)
-!        LIRMDS(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQET)
+    !APPEL   VIA DIRECTIVE
+    !        LIRMDE(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQET)
+    !        LIRMDS(NOM, TYPE, IDAT, NIV, IHR, IP3, ETIQET)
 
-#include "llccmm.cdk90"
-#include "voir.cdk90"
-#include "accum.cdk90"
-#include "chck.cdk90"
-#include "lires.cdk90"
-#include "ecrires.cdk90"
-#include "indptr.cdk90"
 #include "blancs.cdk90"
-#include "styles.cdk90"
 
-    external fstinf, pgsmlir, memoir, fstprm, pgsmabt, imprime, fstopc, messags, fstcvt
-    integer fstinf, pgsmlir, fstprm, fstopc, fstcvt
+    external pgsmabt, imprime, messags
+    integer, external :: argdims, fstopc, fstcvt
 
-    character *12 cetiket
-    character *4 cnomvar
-    character *2 ctypvar
-    character *1 cigtyp
-    integer etiqet(3), idat, ihr, iip3, ip3, irec1, iunit, niv(2), nom, num1, type
-    integer inomb, i, j, iopc, lniv
-    integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
-    integer argdims, letiket(3)
-    external argdims
-    real p
-    character*8 string
+    character(len = 12) :: cetiqet
+    character(len = 4) :: cnomvar
+    character(len = 4) :: c_bidx_don
+    character(len = 2) :: ctypvar
 
-    iunit=1
-    iip3=ip3
-    if (ip3 == 4095) iip3=-1
+    integer :: iip3
+    integer :: i, j, iopc, lniv
+    integer :: letiket(3)
+    real :: p
+    character(len = 8) :: string
+
+    type(fst_file), pointer :: file
+    type(fst_query) :: query
+    type(fst_record) :: record
+
+    if (fentree == iunit) then
+        file = inputFiles(1)
+    else if (fsortie == iunit) then
+        file = outputFile
+    else
+        call app_log(APP_ERROR, 'lrsmdes: Unrecognized file! Must be FENTREE or FSORTIE')
+        call pgsmabt
+    end if
+
+    if (ip3 == 4095) then
+        iip3 = -1
+    else
+        iip3 = ip3
+    end if
 
     ! MODIFICATION DE HOLLERITH A CARACTERE
     cnomvar = '    '
@@ -60,70 +77,85 @@ subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
     letiket(1) = etiqet(1)
     letiket(2) = blancs
     letiket(3) = blancs
-    if (argdims(7).gt.1) then
+    if (argdims(7) > 1) then
         letiket(2) = etiqet(2)
     endif
-    if (argdims(7).gt.2) then
+    if (argdims(7) > 2) then
         letiket(3) = etiqet(3)
     endif
 
     if (argdims(4) > 1) then
         lniv = niv(1)
         p = transfer(niv(1), p)
-        call convip_plus(lniv, p, -1*niv(2)-1000, ip1style, string, .false.)
+        call convip_plus(lniv, p, -1 * niv(2) - 1000, ip1style, string, .false.)
     endif
 
- 100  ier = fstcvt(    nom, type, letiket , -1, cnomvar, ctypvar, cetiket, cigtyp, .true.)
-    irec1 = fstinf(iunit, nni, nnj, nnk, idat, cetiket, lniv, ihr, iip3, ctypvar, cnomvar)
-    if (irec1 .lt. 0)   then
+    !> \bug When this subroutine still contain an entry, all the lines above were skipped when called from lrsmds
+    ier = fstcvt(nom, type, letiket , -1, cnomvar, ctypvar, cetiket, cigtyp, .true.)
+
+    query = file%new_query(nomvar = cnomvar, typvar = ctypvar, datev = idat, ip1 = lniv, ip2 = ihr, ip3 = ip3, etiket = cetiket)
+    if (query%find_next(record)) then
         call app_log(APP_ERROR, 'lrsmde: Record does not exist')
         call pgsmabt
     endif
+    call query%free()
 
     ichck = 1
 
-    ier = fstprm( irec1, idatt, ideet, npas, nni, nnj, nnk, cnbits, cdatyp, jpp1, jpp2, jpp3, ctypvar, cnomvar, cetiket, cigtyp, igg1, igg2, igg3, igg4, cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-    if (ier .lt. 0) call app_log(APP_ERROR, 'lrsmde: FSTPRM failed')
-
-    ! MODIFICATION DE CARACTERE A HOLLERITH
-    cnumv = cnomvar
-    ctypv = ctypvar
-    cetik = cetiket
-    cigty = cigtyp
+    idatt = record%dateo
+    ideet = record%deet
+    npas = record%npas
+    nni = record%nni
+    nnj = record%nnj
+    nnk = record%nnk
+    jpp1 = record%ip1
+    jpp2 = record%ip2
+    jpp3 = record%ip3
+    ctypv = record%typvar
+    cnumv = record%nomvar
+    cetik = record%etiket
+    cigty = record%grtyp
+    igg1 = record%ig1
+    igg2 = record%ig2
+    igg3 = record%ig3
+    igg4 = record%ig4
 
     ! VERIFIER SI GRILLE GAUSSIENNE NI DOIT ETRE PAIR
-    if (cigtyp == 'G'.and.mod(nni, 2).ne.0)  call messags(nni)
+    if (cigtyp == 'G' .and. mod(nni, 2) .ne. 0) call messags(nni)
 
-    inomb = nni * nnj * nnk
-
-    if (.not.message) iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
+    if (.not. message) iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
 
     allocate(tmpif0(nni, nnj))
 
-    ! SI COMPTEUR .NE. 4095 ICNT=1
     icnt = 1
-    if (iunit == 1.and.ip3 == 4095)  icnt=jpp3
-    if (iunit == 2.and.ip3 == 4095)  icnt=jpp3
+    if (ip3 == 4095) icnt = jpp3
 
-    num1 = pgsmlir(tmpif0, iunit, nni, nnj, nnk, idat, cetiket, jpp1, jpp2, jpp3, ctypvar, cnomvar, cigtyp)
-    if (num1 < 0)  then
+    if (.not. file%read(record, data = c_loc(tmpif0(1, 1))))  then
         call app_log(APP_ERROR, 'lrsmde: Record does not exist')
         call pgsmabt
     endif
-    if (printen)  call imprime(cnomvar, tmpif0, nni, nnj)
+    call prefiltre(tmpif0, record%ni, record%nj, record%nomvar, record%grtyp)
+    if (printen) call imprime(cnomvar, tmpif0, nni, nnj)
 
     do j = 1, nnj
         do i = 1, nni
             tmpif0(i, j) = tmpif0(i, j) * tmpif0(i, j)
         enddo
     enddo
+end subroutine lrsmde_orig
 
-    return
 
-entry lrsmds(nom, type, idat, niv, ihr, ip3, etiqet)
-    iunit = 2
-    iip3 = ip3
-    if (ip3 == 4095) iip3 = -1
+subroutine lrsmds(nom, type, idat, niv, ihr, ip3, etiqet)
+    use files, only : fsortie
+    implicit none
 
-    go to 100
-end
+    call lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, fsortie)
+end subroutine lrsmds
+
+
+subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
+    use files, only : fentree
+    implicit none
+
+    call lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, fentree)
+end subroutine lrsmds

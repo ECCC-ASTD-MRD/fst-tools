@@ -1,14 +1,5 @@
-#define maxnom  256
-#define MAXNOM  256
-
-#define mtyp    32
-#define MTYP    32
-
 #define mxchamp 31
 #define MXCHAMP 31
-
-#define mxheure 40
-#define MXHEURE 40
 
 #define nivomax 40
 #define NIVOMAX 40

@@ -1,16 +1,17 @@
-MODULE files
-    USE rmn_fst24
+module files
+    use rmn_fst24, only : fst_file
 
-    IMPLICIT NONE
+    implicit none
 
-    INTEGER, PARAMETER :: sequentiel = 1
-    INTEGER, PARAMETER :: random = 2
+    integer, parameter :: fentree = 1
+    integer, parameter :: fsortie = 2
 
-    SAVE
-    ! integer :: lnkdiun(990)
-    TYPE(fst_file), DIMENSION(990) :: inputFiles
-    ! integer :: idx_ozsrt
-    TYPE(fst_file) :: outputFile
+    integer, parameter :: sequentiel = 1
+    integer, parameter :: random = 2
+
+    save
+    type(fst_file), dimension(990) :: inputFiles
+    type(fst_file) :: outputFile
 
     !> Output file mode/kind
     !> 1 = Fichier standard
@@ -20,9 +21,9 @@ MODULE files
     !> 5 = Fichier sequentiel ascii (sortie(formatee))
     integer :: outputFileMode
 
-    CHARACTER(len = 4096) :: outputFilePath
+    character(len = 4096) :: outputFilePath
 
-    INTEGER :: nInput
-    INTEGER :: inputMode
-    INTEGER :: nRecords = 0
-END MODULE files
+    integer :: nInput
+    integer :: inputMode
+    integer :: nRecords = 0
+end module files

@@ -1,6 +1,10 @@
 !> Lire la position(lat, lon) de chaque point d'une grille de type "Y" ou "Z"
 subroutine gritp12(it, ip1, ip2, ip3)
     use app
+    use rmn_fst24
+    use packing, only : npack
+    use pgsm_mod, only : tmplat, tmplon, message
+    use grilles, only : cgrtyp, gdout, lg1, lg2, lg3, lg4, li, lj, ncoords
     implicit none
 
     integer, intent(in) :: it
@@ -21,12 +25,6 @@ subroutine gritp12(it, ip1, ip2, ip3)
     integer, external :: gdll
     integer, external :: chkenrpos
 
-#include "llccmm.cdk90"
-#include "indptr.cdk90"
-#include "packin.cdk90"
-#include "grilles.cdk90"
-#include "lires.cdk90"
-#include "voir.cdk90"
 #include "tp12ig.cdk90"
 
     character(len = 12) :: etikx
@@ -62,10 +60,8 @@ subroutine gritp12(it, ip1, ip2, ip3)
     type(fst_record) :: tictac
 
     if (it == gr_tape2) then
-        ! iunit = lnkdiun(idx_ozsrt)
         inputFile = outputFile
     else
-        ! iunit = lnkdiun(1)
         inputFile = inputFiles(1)
     endif
 
@@ -85,7 +81,7 @@ subroutine gritp12(it, ip1, ip2, ip3)
     grille_u = .false.
 
     if (it /= gr_stations) then
-        ier = chkenrpos(lnkdiun(1), lnkdiun(idx_ozsrt), ip1, ip2, ip3)
+        ier = chkenrpos(ip1, ip2, ip3)
         if (ier < 0) then
             call app_log(APP_ERROR, 'gritp12: Posisional records missing')
             call pgsmabt
@@ -98,8 +94,6 @@ subroutine gritp12(it, ip1, ip2, ip3)
         if (outputFileMode == 1) then
             if (grille_z) then
                 cgrtyp = 'Z'
-                ! ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-                ! irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
                 tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
                 tic_query%find_next(tic)
                 call tic_query%free()
@@ -118,12 +112,10 @@ subroutine gritp12(it, ip1, ip2, ip3)
 
             if (grille_u) then
                 cgrtyp = 'U'
-                ! irecyy = fstinf(iunit, niu, nju, nku, -1, '            ', ip1, ip2, ip3, '  ', '^>  ')
                 tictac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
                 tictac_query%find_next(tictac)
                 call tictac_query%free()
 
-                ! ier = fstprm(irecyy, dateou, deetu, npasu, niu, nju, nku, nbitsu, datypu, lip1, lip2, lip3, typvaru, nomu, etiku, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
                 niu = tictac%ni
                 nju = tictac%nj
                 nku = tictac%nk
@@ -138,8 +130,6 @@ subroutine gritp12(it, ip1, ip2, ip3)
             lg3 = ig3
             lg4 = ig4
         else
-            ! ireclo = fstinf(iunit, nix, njx, nkx, -1, '            ', ip1, ip2, ip3, '  ', '>>  ')
-            ! irecla = fstinf(iunit, niy, njy, nky, -1, '            ', ip1, ip2, ip3, '  ', '^^  ')
             tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
             tic_query%find_next(tic)
             call tic_query%free()
@@ -152,7 +142,7 @@ subroutine gritp12(it, ip1, ip2, ip3)
             niy = tac%ni
             njy = tac%nj
             nky = tac%nk
-            ! ier = fstprm(ireclo, dateox, deetx, npasx, nix, njx, nkx, nbitsx, datypx, lip1, lip2, lip3, typvarx, nomx, etikx, grref, ig1ref, ig2ref, ig3ref, ig4ref, swa, lng, dltf, ubc, extra1, extra2, extra3)
+
             li = nix
             lj = njy
             gdout = ezqkdef(li, lj, 'Z', tic%ip1, tic%ip2, tic%ip3, 0, 1)
@@ -192,7 +182,6 @@ subroutine gritp12(it, ip1, ip2, ip3)
         enddo
     endif
 
-    ! INITIALISATION DE DGRWXY POUR UTILISATION DANS  ROUTINE VDAUV
     if (cgtypxy == 'E') then
         allocate(tmplong(li, lj))
         allocate(tmplatg(li, lj))

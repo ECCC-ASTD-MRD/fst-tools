@@ -2,128 +2,85 @@
 subroutine uvecteur_masque(uu_record, vv_record)
     use app
     use rmn_fst24
+    use packing, only : npack
+    use pgsm_mod, only : vvent, wdvent, message
+    use accum, only : npas
+    use grilles, only : cgrtyp, gdin, gdout, lg1, lg2, lg3, lg4, li, lj, masque
+    use symetry, only : symetri
     implicit none
 
-    ! integer :: key_uu, key_vv
     type(fst_record) :: uu_record
     type(fst_record) :: vv_record
 
+    external ecritur, imprime
+
+    integer :: ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, get_mask
+
 #include "defin.cdk90"
-
-    ! integer, external :: fstinf, fstprm, fstluk
-
-    external ecritur, pgsmluk, symetri, imprime
-    integer  pgsmluk
-
-    integer ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, fst_get_mask_key, key_mask
-
-#include "accum.cdk90"
-#include "dates.cdk90"
-#include "defin.cdk90"
-#include "dummys.cdk90"
-#include "ecrires.cdk90"
 #include "gdz.cdk90"
-#include "grilles.cdk90"
-#include "indptr.cdk90"
-#include "lires.cdk90"
-#include "llccmm.cdk90"
-#include "packin.cdk90"
-#include "pairs.cdk90"
-#include "voir.cdk90"
 
     character(len = 12):: cetiket
-    character(len = 4) :: cnom_uu, cnom_vv
     character(len = 2) :: ctypvar
     character(len = 1) :: cigtyp
 
-    integer i, j, nunv, ii, key_mask_out, lk
-    integer deet, ig1, ig2, ig3, ig4, iheur
-    integer dateo, datev, nbits, datyp, ip1, ip2, ip3, iun_out
-    integer iprs, irec, iunit, ne, ni, nj, nk, total_keys, nrecs
-    integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
+    integer :: i, j
+    integer :: ier
 
-    integer dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask
-    integer nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask
-    integer ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, cdltf_mask, cubc_mask
-    integer datev_mask, extra2_mask, extra3_mask
-    logical sym, symetri
+    logical sym
 
-    character(len = 4)  :: cnomvar_mask
-    character(len = 2)  :: ctypvar_mask
-    character(len = 12) :: cetiket_mask
-    character(len = 1)  :: cigtyp_mask
+    character(len = 2), parameter :: ctypvar_mask = '@@'
 
-    real fbidon
     real, dimension(:, :), allocatable, target :: tmp_uuin, tmp_uuout, tmp_vvin, tmp_vvout
-    integer, dimension(:, :), allocatable, target :: masque_in, masque_out
+    integer, dimension(:, :), allocatable, target :: mask_in, mask_out
 
     real, dimension(:, :), pointer :: uu_in, vv_in, uu_out, vv_out
     integer, dimension(:, :), pointer :: tmpmsk
 
+    type(fst_record) :: mask_record
+    type(fst_record) :: mask_out_record
 
-    logical masque_present, masque_done, write_masque, ssw
+    allocate(tmp_uuout(li, lj), tmp_vvout(li, lj))
 
-    nunv = 0
-    iunit = 1
-    masque_present = .false.
-    masque_done = .false.
-    ctypvar_mask = '@@'
+    ier = uu_record%read()
+    call uu_record%get_data_array(tmp_uuin)
+    call prefiltre(tmp_uuim, uu_record%ni, uu_record%nj, uu_record%grtyp)
+    ier = vv_record%read()
+    call vv_record%get_data_array(tmp_vvin)
+    call prefiltre(tmp_vvim, vv_record%ni, vv_record%nj, vv_record%grtyp)
+    npas = vv_record%npas
 
-    ! ier = fstprm(key_uu, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_uu, cetiket, &
-    !             cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-    ! ier = fstprm(key_vv, dateo, deet, npas, ni, nj, nk, nbits, datyp, ip1, ip2, ip3, ctypvar, cnom_vv, cetiket, &
-    !             cigtyp, ig1, ig2, ig3, ig4, cswa, clng, cdltf, cubc, datev, extra2, extra3)
-    ! allocate(tmp_uuin(ni, nj), tmp_vvin(ni, nj), tmp_uuout(li, lj), tmp_vvout(li, lj))
-    allocate(tmp_uuin(vv_record%ni, vv_record%nj), tmp_vvin(vv_record%ni, vv_record%nj), tmp_uuout(li, lj), tmp_vvout(li, lj))
+    if (printen) call imprime(uu_record%nomvar, tmp_uuin, uu_record%ni, uu_record%nj)
+    if (vv_record%ig1 /= 0) sym = symetri(uu_record%nomvar)
 
-    ier = fst_get_mask_key(key_mask, key_uu, iunit)
-
-    if (key_mask >= 0) then
-        masque_present = .true.
-        allocate(masque_in(ni, nj), masque_out(li, lj))
-    else
-        masque_present = .false.
-    endif
-
-    ier = pgsmluk(tmp_uuin, key_uu, ni, nj, nk, cnom_uu, cigtyp)
-    ier = pgsmluk(tmp_vvin, key_vv, ni, nj, nk, cnom_vv, cigtyp)
-
-
-    if (printen)  call imprime(cnom_uu, tmp_uuin, ni, nj)
-    if (ig1 /= 0) sym = symetri(cnom_uu)
-
-    !  interpolation ordinaire sans masque
-
-    if (.not. masque_present) then
-        !     si vvent = .true. on calcule la vitesse du vent
-        gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+    ier = get_mask(mask_record, uu_record)
+    if (ier < 0) then
+        !  interpolation ordinaire sans masque
+        gdin = ezqkdef(vv_record%ni, vv_record%nj, vv_record%grtyp, vv_record%ig1, vv_record%ig2, vv_record%ig3, vv_record%ig4, 1)
         ier = ezdefset(gdout, gdin)
 
+        ! si vvent = .true. on calcule la vitesse du vent
         if (vvent) then
-            ssw = .false.
-            if (wdvent) then
-                ssw = .true.
-            endif
-
             ier = ezwdint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
             uu_out => tmp_uuout
 
-            call  ecritur(uu_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, ctypvar, 'UV  ', cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call ecritur(uu_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+                vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, 'UV  ', vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
 
             if (wdvent) then
                 do j = 1, lj
                     do i = 1, li
-                        if (tmp_vvout(i, j).lt.0.0) then
+                        if (tmp_vvout(i, j) < 0.0) then
                             tmp_vvout(i, j) = tmp_vvout(i, j) + 360.0
                         endif
                     enddo
                 enddo
                 vv_out => tmp_vvout
-                call ecritur(vv_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, ctypvar, 'WD  ', cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+                call ecritur(vv_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+                    vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, 'WD  ', vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
             endif
         else
-            if (cigtyp.ne.cgrtyp.or.ig1.ne.lg1.or.ig2.ne.lg2.or.ig3.ne.lg3.or.ig4.ne.lg4.or.li.ne.ni.or.lj.ne.nj) then
-                ssw = .true.
+            if (vv_record%grtyp /= cgrtyp .or. vv_record%ig1 /= lg1 .or. vv_record%ig2 /= lg2 .or. vv_record%ig3 /= lg3 .or. vv_record%ig4 /= lg4 &
+                .or. vv_record%ni /= li .or. vv_record%nj /= lj) then
                 ier = ezuvint(tmp_uuout, tmp_vvout, tmp_uuin, tmp_vvout)
                 uu_out => tmp_uuout
                 vv_out => tmp_vvout
@@ -136,63 +93,60 @@ subroutine uvecteur_masque(uu_record, vv_record)
                     call app_log(APP_WARNING, 'uvecteur_masque: No horizontal interpolation')
                 endif
             endif
-            call ecritur(uu_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, ctypvar, cnom_uu, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-            call ecritur(vv_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, ctypvar, cnom_vv, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call ecritur(uu_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+                vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, uu_record%nomvar, vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
+            call ecritur(vv_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+                vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, vv_record%nomvar, vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
         endif
-    else  !!! Masque present
-        if (cigtyp /= cgrtyp.or.cigtyp == 'Z'.or.ig1 /= lg1.or.ig2 /= lg2.or.ig3 /= lg3.or.ig4 /= lg4.or.li /= ni.or.lj /= nj) then
-            gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
+    else
+        ! Masque present
+        allocate(mask_in(vv_record%ni, vv_record%nj), mask_out(li, lj))
+
+        if (vv_record%grtyp /= cgrtyp .or. vv_record%grtyp == 'Z' .or. &
+            vv_record%ig1 /= lg1 .or. vv_record%ig2 /= lg2 .or. vv_record%ig3 /= lg3 .or. vv_record%ig4 /= lg4 .or. &
+            vv_record%ni /= li .or. vv_record%nj /= lj) then
+            gdin = ezqkdef(vv_record%ni, vv_record%nj, vv_record%grtyp, vv_record%ig1, vv_record%ig2, vv_record%ig3, vv_record%ig4, 1)
             ier = ezdefset(gdout, gdin)
-            ier = fstprm(key_mask, dateo_mask, deet_mask, npas_mask, ni_mask, nj_mask, nk_mask, &
-                    nbits_mask, datyp_mask, ip1_mask, ip2_mask, ip3_mask, &
-                    ctypvar_mask, cnomvar_mask, cetiket_mask, &
-                    cigtyp_mask, ig1_mask, ig2_mask, ig3_mask, ig4_mask, cswa_mask, clng_mask, &
-                    cdltf_mask, cubc_mask, datev_mask, extra2_mask, extra3_mask)
-            ier = fstluk(masque_in, key_mask, ni, nj, nk)
-            ier = ezuvint_mdm(tmp_uuout, tmp_vvout, masque_out, tmp_uuin, tmp_vvin, masque_in)
+            ier = mask_record%read()
+            call mask_record%get_data_array(mask_in)
+            ier = ezuvint_mdm(tmp_uuout, tmp_vvout, mask_out, tmp_uuin, tmp_vvin, mask_in)
             uu_out => tmp_uuout
             vv_out => tmp_vvout
-            tmpmsk => masque_out
+            tmpmsk => mask_out
         else
             uu_out => tmp_uuin
             vv_out => tmp_vvin
-            tmpmsk => masque_in
+            tmpmsk => mask_in
             if (message) then
-                write(app_msg, 662) cnom_uu
+                write(app_msg, 662) uu_record%nomvar
 662           format(2x, 'uvecteur_masque: No horizontal interpolation CHAMP=', a4)
                 call app_log(APP_WARNING, app_msg)
             endif
         endif
 
-        call ecritur(uu_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, &
-            ctypvar, cnom_uu, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
-        call ecritur(vv_out, npack, dateo, deet, npas, li, lj, nk, ip1, ip2, ip3, &
-            ctypvar, cnom_vv, cetiket, cgrtyp, lg1, lg2, lg3, lg4)
+        call ecritur(uu_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+            vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, uu_record%nomvar, vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
+        call ecritur(vv_out, npack, vv_record%dateo, vv_record%deet, vv_record%npas, li, lj, vv_record%nk, &
+            vv_record%ip1, vv_record%ip2, vv_record%ip3, vv_record%typvar, vv_record%nomvar, vv_record%etiket, cgrtyp, lg1, lg2, lg3, lg4)
 
         ! On regarde si le masque existe dans le fichier de sortie
+        mask_out_query = outputFile%new_query(datev = mask_record%datev, etiket = mask_record%etiket, &
+            ip1 = mask_record%ip1, ip2 = mask_record%ip2, ip3 = mask_record%ip3, typvar = mask_record%typvar, nomvar = mask_record%nomvar)
+        ier = mask_out_query%find_next(mask_out_record)
+        call mask_out_query%free()
 
-        iun_out = 2
-        key_mask_out = fstinf(iun_out, ni_mask, nj_mask, nk_mask, datev_mask, cetiket_mask, ip1_mask, ip2_mask, ip3_mask, &
-            ctypvar_mask, cnomvar_mask)
-
-        write_masque = .true.
-        if (key_mask_out >= 0) then
-            write_masque = .false.
-        endif
-
-        if (masque_present.and.write_masque) then
-            call iecritur(tmpmsk, -nbits_mask, dateo_mask, deet_mask, npas_mask, li, lj, nk, &
-                ip1_mask, ip2_mask, ip3_mask, ctypvar_mask, cnomvar_mask, cetiket_mask, &
+        if (ier < 0) then
+            call iecritur(tmpmsk, -mask_record%nbits, mask_record%dateo, mask_record%deet, mask_record%npas, li, lj, vv_record%nk, &
+                mask_record%ip1, mask_record%ip2, mask_record%ip3, mask_record%typvar, mask_record%nomvar, mask_record%etiket, &
                 cgrtyp, lg1, lg2, lg3, lg4)
-            if (allocated(masque_out)) then
-                deallocate(masque_out, masque_in)
+            if (allocated(mask_out)) then
+                deallocate(mask_out, mask_in)
             endif
         endif
+        mask_out_record%free()
         deallocate(tmp_uuout, tmp_uuin, tmp_vvout, tmp_vvin)
     endif
 
-    if (nunv > 0) then
-        call app_log(APP_WARNING, 'No interpolation on variable pair CHAMP(TOUT, TOUT), you have to use the variable name ex: CHAMP(UU, TOUT)')
-        call app_log(APP_WARNING, 'Scalar interpolation will be scalar')
-    endif
+    uu_record%free()
+    vv_record%free()
 end

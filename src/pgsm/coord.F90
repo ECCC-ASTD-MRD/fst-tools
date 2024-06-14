@@ -1,11 +1,10 @@
 subroutine coord(lescoords, mode)
     use app
+    use grilles, only : coordll, ncoords
     implicit none
 
     real, dimension(*), INTENT(IN) :: lescoords
     integer, INTENT(IN) :: mode
-
-#include "grilles.cdk90"
 
     integer, external :: argdims
 
@@ -26,8 +25,8 @@ subroutine coord(lescoords, mode)
             coordll(ncoords + i / 2 + 1, 1) = lescoords(i)
             coordll(ncoords + i / 2 + 1, 2) = lescoords(i + 1)
         else
-            write(app_msg,*) 'coord: Too many points, Max=', nmaxcoords
-            call app_log(APP_WARNING,app_msg)
+            write(app_msg, *) 'coord: Too many points, Max=', nmaxcoords
+            call app_log(APP_WARNING, app_msg)
         endif
     enddo
 

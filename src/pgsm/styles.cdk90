@@ -1,4 +1,0 @@
-      integer ip1style, dateform
-
-      common /styles/ ip1style, dateform
-

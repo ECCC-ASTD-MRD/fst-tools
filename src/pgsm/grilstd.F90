@@ -1,21 +1,20 @@
 !> Calcul latitude longitude de chaque pt d'une grille std
 subroutine grilstd(nni, nnj, hem)
     use app
+    use pgsm_mod, only: tmplat, tmplon
+    use grilles, only : cgrtyp, gdout, li, lj, lg1, lg2, lg3, lg4
     implicit none
 
-!OBJET(GRILSTD)
-!          CALCULER LA LATITUDE ET LA LONGITUDE DE TOUS LES POINTS
-!          DE LA GRILLE DE SORTIE STANDARD INTERVAL REGULIER MAIS DECALE
-!          1/2 POINT DU POLE ET DE L'EQUATEUR
+    integer, intent(in) :: nni, nnj, hem
 
-    external pgsmabt, grll
-    external ezqkdef, gdll
-    integer ezqkdef, gdll
+    !          CALCULER LA LATITUDE ET LA LONGITUDE DE TOUS LES POINTS
+    !          DE LA GRILLE DE SORTIE STANDARD INTERVAL REGULIER MAIS DECALE
+    !          1/2 POINT DU POLE ET DE L'EQUATEUR
 
-#include "llccmm.cdk90"
-#include "grilles.cdk90"
+    external pgsmabt
+    integer, external :: ezqkdef, gdll
 
-    integer nni, nnj, hem, ier
+    integer :: ier
 
     li = nni
     lj = nnj

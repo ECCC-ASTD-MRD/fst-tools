@@ -1,52 +1,71 @@
-!> ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
+!> Ecrire sur fichier standard, ms, sequentiel
 subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, ig1srt, ig2srt, ig3srt, ig4srt)
+    use files, only: outputFile
     use app
+    use pgsm_mod, only: iwrit, tmpif0, message
+    use accum, only : nni, nnj, nnk, idatt, ideet, npas, jpp1, jpp2, jpp3, igg1, igg2, igg3, igg4, cnumv, ctypv, cetik, cigty, icnt
+    use ecrires, only : compression_level, printsr
+    use chck, only : ichck, necrt
     implicit none
 
-    external conver, fstecr, fclos, memoir, pgsmabt, imprims, fstopc, messags, fstcvt, putfld
-    integer fstecr, fstopc, fstcvt, iopc
+    !> Field name
+    integer, intent(in) :: nom
+    !> Data compaction
+    integer, intent(in) :: npac
+    !> Origin date (CMC stamp)
+    integer, intent(in) :: idat
+    !> Level
+    integer, intent(in) :: ip1(2)
+    !> Forecast hour
+    integer, intent(in) :: ip2
+    !> User defined identifier
+    integer, intent(in) :: ip3
+    !> Field type
+    integer, intent(in) :: type
+    !> Label
+    integer, intent(in) :: etiqet(*)
+    !> Grid type
+    integer, intent(in) :: igtyp
+    !> Print field information if true
+    integer, intent(in) :: imprim
+    !> First grid parameter
+    integer, intent(in) :: ig1srt
+    !> Second grid parameter
+    integer, intent(in) :: ig2srt
+    !> Third grid parameter
+    integer, intent(in) :: ig3srt
+    !> Forth grid parameter
+    integer, intent(in) :: ig4srt
 
-!   IN    NOM     NOM DU CHAMP 2 CARACTERES
-!   IN    NPAC    COMPACTION DU DATA DANS CHAMP
-!   IN    IDAT    DATE DU CHAMP (CMC STAMP)
-!   IN    IP1     NORMALEMENT NIVEAU DU CHAMP
-!   IN    IP2     HEURE DU CHAMP
-!   IN    IP3     LIBRE
-!   IN    TYPV    TYPE DU CHAMP 1 CARACTERE
-!   IN    ETIK    ETIQUETTE 1 MOT CDC (USAGER)
-!   IN    IGTYP   TYPE DE GRILLE 1 CARACTERE
-!   IN    IMPRIM   IMPRIMME LES ELEMENTS DES FICHIERS D'ENTRE OU DE SORTI
-
-#include "lires.cdk90"
-#include "voir.cdk90"
-#include "dummys.cdk90"
-#include "ecrires.cdk90"
-#include "chck.cdk90"
-#include "convers.cdk90"
-#include "accum.cdk90"
-#include "indptr.cdk90"
 #include "enrege.cdk90"
-#include "dates.cdk90"
-#include "llccmm.cdk90"
 #include "blancs.cdk90"
-#include "styles.cdk90"
 
-    character *12 cetiqet
-    character *4 cnomvar
-    character *2 ctypvar
-    character *1 cigtyp
+    external conver, pgsmabt, imprims, putfld
+    integer, external :: fstopc, fstcvt
+    integer, external :: argdims
 
-    integer nom, npac, idat, ip1(2), ip2, ip3, igtyp, imprim, npkc
-    integer iun, istamp, etiqet(*), type, cdatyp
-    integer ig1srt, ig2srt, ig3srt, ig4srt, ig1s, ig2s, ig3s, ig4s
-    logical rewrit
-    integer letiket(3)
+    character(*), parameter :: fmt_in = "('ecrits: ENTRE     ', a2, 2x, i10, 3x, i5, 3x, i2, 3x, i3, 4x, a1, 4x, a10, 3x, a1)"
+    character(*), parameter :: fmt_out = "('ecrits: SORTIE    ', a2, 2x, i10, 3x, i5, 3x, i2, 3x, i3, 4x, a1, 4x, a10, 3x, a1)"
+    character(*), parameter :: fmt_wrt = "(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '), 'size ', 2(i5, '- '), 'file SEQUENTIEL')"
 
-    integer argdims
-    external argdims
-    integer lip1
-    real ptr
-    character*8 string
+    type(fst_record) :: record
+    logical :: success
+
+    character(len = 12) :: cetiqet
+    character(len = 4) :: cnomvar
+    character(len = 2) :: ctypvar
+    character(len = 1) :: cigtyp
+
+    integer :: iopc
+    integer :: npkc
+    integer :: cdatyp
+    integer :: ig1s, ig2s, ig3s, ig4s
+    logical :: rewrit
+    integer :: letiket(3)
+
+    integer :: lip1
+    real :: ptr
+    character(len = 8) :: junk
 
     cnomvar = '    '
     ctypvar = '  '
@@ -65,23 +84,23 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     lip1 = ip1(1)
     if (argdims(4) > 1) then
         ptr = transfer(ip1(1), ptr)
-        call convip_plus(lip1, ptr, -1 * ip1(2) - 1000, 2, string, .false.)
+        call convip_plus(lip1, ptr, -1 * ip1(2) - 1000, 2, junk, .false.)
     endif
 
-    ier = fstcvt(      nom,    type,  letiket,  igtyp,       cnomvar, ctypvar, cetiqet, cigtyp, .true.)
+    ier = fstcvt(nom, type, letiket, igtyp, cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
-    if (nom == -1)        cnomvar = cnumv
-    if (type == -1)       ctypvar = ctypv
-    if (etiqet(1) == -1)  cetiqet = cetik
-    if (igtyp == -1)      cigtyp = cigty
+    if (nom == -1) cnomvar = cnumv
+    if (type == -1) ctypvar = ctypv
+    if (etiqet(1) == -1) = cetik
+    if (igtyp == -1) cigtyp = cigty
 
     npkc = npac
-    if (npac == -1)  npkc = -16
-    if (idat == -1)  idat = idatt
-    if (lip1 == -1)  lip1 = jpp1
-    if (ip2 == -1)  ip2 = jpp2
-    if (ip3 == -1)  ip3 = jpp3
-    if (ip3 ==    4095)  ip3 = icnt
+    if (npac == -1) npkc = -16
+    if (idat == -1) idat = idatt
+    if (lip1 == -1) lip1 = jpp1
+    if (ip2 == -1) ip2 = jpp2
+    if (ip3 == -1) ip3 = jpp3
+    if (ip3 == 4095) ip3 = icnt
 
     if (necrt < 11) then
         ig4s = igg4
@@ -119,13 +138,10 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     endif
 
     if (necrt > 9) then
-        write(app_msg, 660) cnumv, idatt, jpp1, jpp2, jpp3, ctypv, cetik, cigty
+        write(app_msg, fmt_in) cnumv, idatt, jpp1, jpp2, jpp3, ctypv, cetik, cigty
         call app_log(APP_INFO, app_msg)
- 
- 660     format('ecrits: ENTRE     ', a2, 2x, i10, 3x, i5, 3x, i2,         3x, i3, 4x, a1, 4x, a10, 3x, a1)
-        write(app_msg, 670) cnomvar, idat, lip1, ip2, ip3, ctypvar, cetiqet, cigtyp
+        write(app_msg, fmt_out) cnomvar, idat, lip1, ip2, ip3, ctypvar, cetiqet, cigtyp
         call app_log(APP_INFO, app_msg)
- 670     format('ecrits: SORTIE    ', a2, 2x, i10, 3x, i5, 3x, i2,         3x, i3, 4x, a1, 4x, a10, 3x, a1)
     endif
 
     if (ichck == 0)  then
@@ -141,7 +157,6 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
         call imprims(cnomvar, tmpif0, nni, nnj)
     endif
 
-    ! iun = lnkdiun(idx_ozsrt)
     if (outputFileMode == 1) then
         if (compression_level == 0) then
             cdatyp = 1
@@ -155,23 +170,40 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
             endif
         endif
 
+        npkc = abs(npac)
+
         if (iwrit == +1) then
             rewrit = .true.
         else
             rewrit = .false.
         endif
         if (.not. message) iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-        !> \todo Replace with fst24 interface
-        ier = fstecr(tmpif0, tmpif0, npkc, iun, idat, ideet, npas,            nni, nnj, nnk, lip1, ip2, ip3, ctypvar, cnomvar, cetiqet, cigtyp,            ig1s, ig2s, ig3s, ig4s, cdatyp, rewrit)
+        record%data = c_loc(tmpif0)
+        record%ni = nni
+        record%nj = nnj
+        record%nk = nnk
+        record%data_type = cdatyp
+        record%data_bits = 32
+        record%pack_bits = npkc
+        record%dateo = idat
+        record%deet = ideet
+        record%npas = npas
+        record%ip1 = lip1
+        record%ip2 = ip2
+        record%ip3 = ip3
+        record%typvar = ctypvar
+        record%nomvar = cnomvar
+        record%etiket = cetiqet
+        record%grtyp = cigtyp
+        record%ig1 = ig1s
+        record%ig2 = ig2s
+        record%ig3 = ig3s
+        record%ig4 = ig4s
+        success = output_file%write(record, rewrit)
     else if (outputFileMode == 3) then
-        if (valid) then
-            istamp = idat
-        else
-            istamp = 0
-        endif
-        call putfld(tmpif0, tmpif0, iun, 0, iwrit, nni, nnj, nbrow, npkc, istamp)
+        write(iun) (tmpif0(i), i=1, nni * nnj)
         if (message) then
-            write(app_msg, 610) ctypvar, cnomvar, lip1, ip2, ip3, nni, nnj, iun
+            write(app_msg, fmt_wrt) ctypvar, cnomvar, lip1, ip2, ip3, nni, nnj
             call app_log(APP_INFO, app_msg)
         endif
     else
@@ -181,6 +213,4 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     endif
 
     deallocate(tmpif0)
-
-    610  format(2x, 'ecritur:  Record written ', 2(a2, '- '), 3(i5, '- '),      'size ', 2(i5, '- '), 'file SEQUENTIEL', i4)
 end

@@ -1,152 +1,143 @@
-#include "defin.cdk90"
 !> coupe zonale ou meridionale d un champ
 subroutine coupzm(iunit, cnom, cjcoup)
     use app
+    use rmn_fst24
+    use packing, only : npack
+    use pgsm_mod, only : nwetike, etikent, message, tmpif1, typeent, ip3ent
+    use accum, only : npas
+    use cfldinf, only : cnomvar, ctypvar, cigtyp, cetiket
+    use nivos, only : nivospr, nmo
+    use heuress, only : nhur, nheures
+    use param, only : dat, deet
     implicit none
 
+    !> 
+    integer, intent(in):: iunit
+    !> Nomvar
+    character(len = 4), intent(in) :: cnom
+    !> Coupe zonale='zon' meridionale='mer'
+    character(len = 8), intent(in) :: cjcoup
+
     external calcul, ecritur, gauss, pgsmabt, imprime, loupmir, louptra, loupin1, messags
-    integer, external :: fstinf
-    integer, external :: pgsmlir
-    integer, external :: fstprm
     integer, external :: fstopc
 
-!            faire une coupe zonale ou meridionale sur un champ dont
-!            le type de grille est "g"-"a"-"l"-"b"-"c"
-!            calcul pour une coupe meridionale sur un champ gaussien
-!            "g" est fait a partir de poids calcule par gaussg
-!            la moyenne zonale(est-ouest) contient nj points
-!            la moyenne meridionale(nord-sud) contient ni points
+    !            faire une coupe zonale ou meridionale sur un champ dont
+    !            le type de grille est "g"-"a"-"l"-"b"-"c"
+    !            calcul pour une coupe meridionale sur un champ gaussien
+    !            "g" est fait a partir de poids calcule par gaussg
+    !            la moyenne zonale(est-ouest) contient nj points
+    !            la moyenne meridionale(nord-sud) contient ni points
 
-!arguments
-!  in   iunit  numero du fichier a lire
-!  in   cnom    nom du champ 2 caracteres gz.tt.dd.......
-!  in   cjcoup  coupe zonale='zon' meridionale='mer'
+#include "defin.cdk90"
 
-!appel
-!         -via routine coupe
-!         call coupzm(iunit, cnom, cjcoup)
+    real coa(500), w(500), sia(500), rad(500), poids(500), sinm2(500), sinm1(500), sin2(500), champ(1000)
+    integer i, datev
+    integer ihr, iheur, iprs, npres
+    integer ilath, j, iopc, ni
 
-!messages
-!          record n'existe pas verifier directive moyent/moysrt
-!          iunit=  niveaux=   heure=   nom=
-!          mauvais type de grille directive moyent/moysrt
-!          grtyp=
-!          doit-etre "g"-"a"-"l"-"c"-"b"
+    type(fst_file), pointer :: file
+    type(fst_query) :: query
+    type(fst_record) :: record
 
-#include "llccmm.cdk90"
-#include "dates.cdk90"
-#include "grilles.cdk90"
-#include "indptr.cdk90"
-#include "lires.cdk90"
-#include "accum.cdk90"
-#include "voir.cdk90"
-#include "ecrires.cdk90"
-#include "packin.cdk90"
-#include "param.cdk90"
-#include "heures.cdk90"
-#include "nivos.cdk90"
-#include "cfldinf.cdk90"
-
-    character cnom*3, cjcoup*8
-    real coa(500), w(500), sia(500), rad(500), poids(500), sinm2(500),      sinm1(500), sin2(500), champ(1000)
-    integer i, iunit, datev
-    integer ihr, iheur, iprs, npres, irec, ni, nj, nk
-    integer jp1, jp2, jp3, ig1, ig2, ig3, ig4
-    integer num, ilath, j, cnbits, cdatyp, iopc,      cswa, clng, cdltf, cubc, extra1, extra2, extra3
-    integer un
-    un = 1
+    if (fentree == iunit) then
+        file = inputFiles(1)
+    else if (fsortie == iunit) then
+        file = outputFile
+    else
+        call app_log(APP_ERROR, 'lrsmdes: Unrecognized file! Must be FENTREE or FSORTIE')
+        call pgsmabt
+    end if
 
     cnomvar = cnom
 
-    do ihr=1, nhur
-        iheur=heures(ihr)
+    do ihr = 1, nhur
+        iheur = heures(ihr)
     enddo
 
-    npres=max0(1, nmo-2)
+    npres = max0(1, nmo-2)
     do iprs = 1, npres
         ! identifier numero du record
         call chk_userdate(datev)
 
         ! modification de hollerith a caractere
-        if (etikent(1) .ne. -1) then
-            write(cetiket, '(3A4)') (etikent(i), i=1, nwetike)
+        if (etikent(1) /= -1) then
+            write(cetiket, '(3A4)') (etikent(i), i = 1, nwetike)
         else
             cetiket = '            '
         endif
 
-        if (typeent .ne. -1) then
+        if (typeent /= -1) then
             write(ctypvar, '(A2)') typeent
         else
             ctypvar = '  '
         endif
 
         cigtyp = ' '
-        irec = fstinf(iunit, ni, nj, nk, datev, cetiket, nivospr(iprs),          iheur, ip3ent, ctypvar, cnomvar)
-
-        if (irec .lt. 0) then
-            write(app_msg, *)  'coupzm: Record does not exist, check directive MOYENT/MOYSRT IUNIT=', iunit, ' NIVEAU=', nivospr(iprs), ' HEURE=', iheur, 'NOM=', cnom
+        query = file%new_query(datev = datev, etiket = cetiket, ip1 = nivospr(iprs), ip2 = iheur, ip3 = ip3ent, typvar = ctypvar, nomvar = cnomvar)
+        if (query%find_next(record)) then
+            write(app_msg, *)  'coupzm: Record does not exist, check directive MOYENT/MOYSRT IUNIT=', iunit, ' NIVEAU=', nivospr(iprs), &
+                ' HEURE=', iheur, 'NOM=', cnomvar
             call app_log(APP_ERROR, app_msg)
             return
         endif
+        call query%free()
 
-        if (nk.gt.1) then
+        if (record%nk > 1) then
             call app_log(APP_ERROR, 'coupzm: PGSM does not accept 3 dimension fields (NK>1)')
             call pgsmabt
         endif
 
         ! identifier parametres si type g-a-b-l-c
-        ier = fstprm( irec, dat, deet, npas, ni, nj, nk, cnbits, cdatyp,         jp1, jp2, jp3, ctypvar, cnomvar, cetiket, cigtyp,          ig1, ig2, ig3, ig4,          cswa, clng, cdltf, cubc, extra1, extra2, extra3)
-        if (ier .lt. 0) then
-            call app_log(APP_ERROR, 'coupzm: FSTPRM failed')
-        endif
+        dat = record%dateo
+        deet = record%deet
+        cigtyp = record%grtyp
 
         ! verifier si grille gaussienne ni doit etre pair
-        if (cigtyp.eq.'G'.and.mod(ni, 2).ne.0)  then
-            call messags(ni)
+        if (cigtyp == 'G' .and. mod(record%ni, 2) /= 0)  then
+            call messags(record%ni)
         endif
 
-        ! nombre de longitude max=1000
-        if (ni.gt.1000) then
+        ! nombre de longitude max = 1000
+        if (record%ni > 1000) then
             call app_log(APP_ERROR, 'coupzm: Too many longitudes within fields (max=1000)')
             call pgsmabt
         endif
 
-        ! verifier si dimension nj .gt. 500
-        if (ig1.eq.0.and.nj.gt.500) then
+        ! verifier si dimension nj > 500
+        if (record%ig1 == 0 .and. record%nj > 500) then
             call app_log(APP_ERROR, 'coupzm: Dimension NJ for MOYENT-MOYSRT too large (max=500)')
             call pgsmabt
         endif
 
         ! verifier type de grille
-        if (cigtyp.ne.'G'.and.cigtyp.ne.'A'.and.cigtyp.ne.'L'         .and.cigtyp.ne.'B'.and.cigtyp.ne.'C') then
+        if (cigtyp /= 'G' .and. cigtyp /= 'A' .and. cigtyp /= 'L' .and. cigtyp /= 'B' .and. cigtyp /= 'C') then
             write(app_msg, *) 'coupzm: Bad grid type: ', cigtyp, ', must be G - L - B - A - C (MOYENT/MOYSRT)'
             call app_log(APP_ERROR, app_msg)
             return
         endif
 
-        ! lire champ
-        allocate(tmpif1(ni, nj))
+        allocate(tmpif1(record%ni, record%nj))
 
-        if (.not.message) then
-            iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
+        if ( .not. message) then
+            iopc = fstopc('TOLRNC', 'DEBUGS', .true. )
         endif
         call chk_userdate(datev)
 
-        num = pgsmlir(tmpif1, iunit, ni, nj, nk, datev, cetiket, jp1, jp2,         jp3, ctypvar, cnomvar, cigtyp)
-
-        if (printen)  then
-            call imprime(cnom, tmpif1, ni, nj)
-        endif
-        if (num .lt. 0)  then
+        if (.not. file%read(record, data = c_loc(tmpif1(1, 1))))  then
             call app_log(APP_ERROR, 'coupzm: Field does not exist in MOYENT/MOYSRT')
             call pgsmabt
         endif
+        call prefiltre(tmpif1, record%ni, record%nj, record%grtyp)
+
+        if (printen)  then
+            call imprime(cnomvar, tmpif1, record%ni, record%nj)
+        endif
 
         ! initialiser les poids pour grille gaussienne meridionale
-        if (cjcoup.eq.'MER'.and.cigtyp.eq.'G') then
-            ilath=nj
-            if (ig1.eq.0) then
-                ilath=nj/2
+        if (cjcoup == 'MER' .and. cigtyp == 'G') then
+            ilath = record%nj
+            if (record%ig1 == 0) then
+                ilath = record%nj / 2
             endif
 
             call gauss(ilath, coa, poids, sia, rad, w, sinm1, sinm2, sin2)
@@ -158,12 +149,12 @@ subroutine coupzm(iunit, cnom, cjcoup)
             enddo
 
             ! si gaussienne globale  transfer hemis nord dans hemis sud (miroir)
-            if (ig1.eq.0)  then
+            if (record%ig1 == 0)  then
                  call loupmir(poids(ilath), poids(ilath), ilath)
             endif
 
             ! hemisphere sud  orientation nord-sud renverse
-            if ((ig1.eq.2.and.ig2.eq.1) .or.(ig1.eq.1.and.ig2.eq.0)) then
+            if ((record%ig1 == 2 .and. record%ig2 == 1) .or. (record%ig1 == 1 .and. record%ig2 == 0)) then
                 call louptra(poids(ilath), coa, ilath)
             else
                 call loupin1(poids(1), poids(1), nj)
@@ -171,20 +162,23 @@ subroutine coupzm(iunit, cnom, cjcoup)
         endif
 
         ! calcul moyenne zonale ou meridional
-        call calcul(tmpif1, champ, ni, nj, poids, cjcoup, cigtyp)
+        call calcul(tmpif1, champ, record%ni, record%nj, poids, cjcoup, cigtyp)
 
-        ! si type de grille 'b' on reduit ni=ni-1
-        if (cigtyp.eq.'B') then
-            ni = ni - 1
+        ! si type de grille 'b' on reduit ni = ni-1
+        if (cigtyp == 'B') then
+            ni = record%ni - 1
+        else
+            ni = record%ni
         endif
 
         ! ecrit champ zonal
-
-        if (cjcoup.eq.'ZON') then
+        if (cjcoup == 'ZON') then
             ! ecrit champ  meridional
-            call ecritur(champ, npack, dat, deet, npas, un, nj, nk, jp1, jp2,           jp3, ctypvar, cnomvar, cetiket, cigtyp, ig1, ig2, ig3, ig4)
+            call ecritur(champ, npack, dat, deet, npas, 1, record%nj, record%nk, record%ip1, record%ip2, record%ip3, &
+                ctypvar, cnomvar, cetiket, cigtyp, record%ig1, record%ig2, record%ig3, record%ig4)
         else
-            call ecritur(champ, npack, dat, deet, npas, ni, un, un, jp1, jp2,           jp3, ctypvar, cnomvar, cetiket, cigtyp, ig1, ig2, ig3, ig4)
+            call ecritur(champ, npack, dat, deet, npas, ni, 1, 1, record%ip1, record%ip2, record%ip3, &
+                ctypvar, cnomvar, cetiket, cigtyp, record%ig1, record%ig2, record%ig3, record%ig4)
         endif
         deallocate(tmpif1)
     enddo

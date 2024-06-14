@@ -1,27 +1,25 @@
-   subroutine qqqecho(chaine)
-      use app
-      implicit none
+subroutine qqqecho(chaine)
+    use app
+    implicit none
 
-      external argdims
-      integer argdims
+    integer, intent(in) :: chaine(20)
 
-      integer chaine(20)
-      integer i,j,longueur,iun
+    integer, external :: argdims
 
-      character*80 message
-      character*16 form
+    integer :: i, j, longueur, iun
 
-      longueur = argdims(1)
+    character(len = 80) :: message
+    character(len = 16) :: form
 
-      message(1:80) = ' '
+    longueur = argdims(1)
 
-      do i=1,longueur
-         j = 4*(i-1)+1
-         write(message(j:j+3),'(a4)') chaine(i)
-      enddo
-      
-      iun = 2
-      call pgsmecho(iun, message,longueur*4)
+    message(1:80) = ' '
 
-      return
-      end
+    do i=1, longueur
+        j = 4*(i-1)+1
+        write(message(j:j+3), '(a4)') chaine(i)
+    enddo
+
+    iun = 2
+    call pgsmecho(iun, message, longueur*4)
+end

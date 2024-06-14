@@ -1,56 +1,49 @@
-#include "defin.cdk90"
 !> interpole difference entre deux champs
 subroutine chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab, ip1s, ip2s, ip3s)
     use app
+    use packing, only : npack
+    use pgsm_mod, only : nwetike, etikent, ip1style, tmplat, message, typeent
+    use grilles, only : cgrtyp, gdin, gdout, li, lj, lg1, lg2, lg3, lg4, ngr
     implicit none
-    external ecritur, fstinf, pgsmlir, fstprm
-    external loupsou, fstopc, argdims, pgsmabt, grille2
+
+    !> Field name in the input file
+    integer, intent(in) :: noment
+    !> Field name in the output file (default = -1 -> nomsrt = noment )
+    integer, intent(out) :: nomsrt
+    !> List of pairs or input field level number
+    integer, intent(in) :: ip1tab(40)
+    !> List of pairs or input field forecast hour
+    integer, intent(in) :: ip2tab(40)
+    !> 
+    integer, intent(in) :: ip3tab(40)
+    integer, intent(in) :: ip1s, ip2s, ip3s
+
+    external ecritur
+    external loupsou, argdims, pgsmabt, grille2
     external imprime, messags
-    integer  fstinf, pgsmlir, fstprm, fstopc
-    integer ezqkdef, ezsint, ezdefset
+    integer, external :: fstopc
+    integer, external :: ezqkdef, ezsint, ezdefset
+    integer, external :: chkenrpos
 
-    integer ip1s, ip2s, ip3s
+    !          extraire la difference entre deux champs par rapport
+    !          a ip1, ip2, ou ip3 determine par l'usager:
+    !          chmpdif ("gz", "dz", [500, 1000], 6, 0) liste sur ip1
+    !          chmpdif ("pr", "pr", 0, [0, 12], 0) liste sur ip2
+    !          chmpdif ("tz", "zt", 0, 12, [1, 2, 3, 4] liste sur ip3
+    !          on peut changer le nom du resultat sur le fichier
+    !          de sortie apres interpolation de la difference
+    !          avec routine fstinf on extrait le record necessaire pour
+    !          routine fstprm qui identifie les parametres utilises
+    !          par routine lire
+    !          on reserve la memoire pour les deux champs de travail
+    !          routine ecritur identifit la sorte de fichier utilise
+    !          pour ecrire
 
-!          extraire la difference entre deux champs par rapport
-!          a ip1, ip2, ou ip3 determine par l'usager:
-!          chmpdif ("gz", "dz", [500, 1000], 6, 0) liste sur ip1
-!          chmpdif ("pr", "pr", 0, [0, 12], 0) liste sur ip2
-!          chmpdif ("tz", "zt", 0, 12, [1, 2, 3, 4] liste sur ip3
-!          on peut changer le nom du resultat sur le fichier
-!          de sortie apres interpolation de la difference
-!          avec routine fstinf on extrait le record necessaire pour
-!          routine fstprm qui identifie les parametres utilises
-!          par routine lire
-!          on reserve la memoire pour les deux champs de travail
-!          routine ecritur identifit la sorte de fichier utilise
-!          pour ecrire
+    !appel     via directive chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab)
 
-!arguments
-!  in    noment  nom du champ sur fichier d'entre
-!  out   nomsrt  nom du champ sur fichier de sorti defaut=-1
-!                nomsrt=noment
-!  in    ip1tab  peut etre une liste nombre pair ou le niveau du
-!                champ d'entre
-!  in    ip2tab  peut etre une liste nombre pair ou l'heure du
-!                champ d'entre
-!  in    ip3tab  peut etre une liste nombre pair valeur determinee
-!                par l'usager sur le champ d'entre
-
-!appel     via directive chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab)
-
-#include "voir.cdk90"
-#include "accum.cdk90"
+#include "defin.cdk90"
 #include "champs.cdk90"
-#include "indptr.cdk90"
-#include "grilles.cdk90"
-#include "lires.cdk90"
-#include "llccmm.cdk90"
-#include "ecrires.cdk90"
-#include "dates.cdk90"
-#include "packin.cdk90"
-#include "dummys.cdk90"
 #include "gdz.cdk90"
-#include "styles.cdk90"
 
     character*12 cetiket
     character*4 cnoment, cnomsrt
@@ -60,14 +53,13 @@ subroutine chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab, ip1s, ip2s, ip3s)
     integer ig1, ig2, ig3, ig4, irec1, irec2
     integer jp01, jp02, jp03, jp11, jp12, jp13, ni, nj, nk, nn
     integer lesips(3), jp(3)
-    integer ip1tab(40), ip2tab(40), ip3tab(40), noment, nomsrt
     integer lcl_ip1tab(40)
     integer num1, num2, num3, nloop, dat1, dat2, deet1, deet2, npas1, npas2
     integer datsrt, deetsrt, npassrt, i, j, k, ii, jj, kk, iloop, n, datev
     integer ni1, ni2, nj1, nj2, nk1, nk2, cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3
     integer argdims
     logical sym
-    integer iunit, chkenrpos
+    integer iunit
     real ptr
     character*8 string
     integer npts
@@ -265,7 +257,7 @@ subroutine chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab, ip1s, ip2s, ip3s)
 
         !     interpolation horizontale
         if (cgrtyp.eq.'*') then
-            ier = chkenrpos(1, 2, ig1, ig2, ig3)
+            ier = chkenrpos(ig1, ig2, ig3)
         else
             gdin = ezqkdef(ni, nj, cigtyp, ig1, ig2, ig3, ig4, iunit)
             ier = ezdefset(gdout, gdin)

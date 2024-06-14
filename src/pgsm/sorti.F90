@@ -1,7 +1,8 @@
-!> IDENTIFICATION DU FICHIER..OUVRIR FICHIER...RESERVER MEMOIRE
+!> Identification du fichier..ouvrir fichier...reserver memoire
 subroutine sorti(modx, norecs, jwrit)
     use app
     use files
+    use pgsm_mod, only: userdate, iwrit, voire, message
     IMPLICIT NONE
 
     !> Type de fichier de sortie
@@ -11,11 +12,6 @@ subroutine sorti(modx, norecs, jwrit)
     INTEGER, INTENT(IN) :: jwrit
 
     INTEGER, EXTERNAL :: fnom
-    INTEGER, EXTERNAL :: fstnbr
-    INTEGER, EXTERNAL :: fsteof
-    INTEGER, EXTERNAL :: fstouv
-    INTEGER, EXTERNAL :: fstvoi
-    INTEGER, EXTERNAL :: fstapp
     INTEGER, EXTERNAL :: exfin
     INTEGER, EXTERNAL :: pgsmof
 
@@ -24,37 +20,13 @@ subroutine sorti(modx, norecs, jwrit)
     !                       RECORD PAREIL   SORTI(STD, 500, A)
     !                    +1=REECRIRE SUR FICHIER FATAL SI RECORD PAS LA.   SORTI(MS, 500, R)
     !                    +1=REMPLACE UN RECORD SI DEJA EXISTANT DETRUIT   SORTI(STD, 500, R)
-    !
-    !MESSAGES
-    !         DEUXIEME APPEL A LA DIRECTIVE SORTIE APPEL IGNORE
-    !         MAUVAIS APPEL A DIRECTIVE SORTIE FICHIER STD
-    !         MAUVAISE DIRECTIVE (SORTIE) FICHIER MS
-    !         DIRECTIVE ENREG=0, INITIALISER A 1
-    !         MAUVAIS APPEL A SORTIE FICHIER SEQ
-    !         TYPE DE FICHIER INCONNU
-    !         MAUVAISE DIRECTIVE MODE DIFFERENT DE (STD, MS, SEQ)
 
-#include "llccmm.cdk90"
-#include "accum.cdk90"
-#include "charac.cdk90"
-#include "dates.cdk90"
-#include "indptr.cdk90"
 #include "enrege.cdk90"
-#include "voir.cdk90"
 
     integer :: i
     common /relu/ dejalue
     logical dejalue
     data dejalue /.false./
-
-    !   DATE DE LA RUN OPERATIONNELLE UTILISEE PAR L'USAGER DIRECTIVE OPDAT=OUI
-    if (lfn(idx_date) /= 'NON') then
-        if (seldat) userdate = jdate
-        if (seldat) then
-            write(app_msg, *)'sorti: Origin date = valid date = ', userdate
-            call app_log(APP_INFO, app_msg)
-        endif
-    endif
 
     if (dejalue) then
         if (message) then
@@ -123,17 +95,6 @@ subroutine sorti(modx, norecs, jwrit)
 
     if (outputFileMode == 1)  then
         ier = output%open(outputFilePath, '')
-        ! if (norecs == 1)  then
-        !    ier = fstouv(lnkdiun(idx_ozsrt), 'SEQ+FTN')
-        ! else if (norecs == 0) then
-        !     ier = fstouv(lnkdiun(idx_ozsrt), 'SEQ')
-        !     if (jwrit == -1) then
-        !         ier = fstapp(lnkdiun(idx_ozsrt), ' ')
-        !         ier = fsteof(lnkdiun(idx_ozsrt))
-        !     endif
-        ! else
-        !     ier = fstouv(lnkdiun(idx_ozsrt), 'RND')
-        ! endif
 
         if (ier < 0) then
             call app_log(APP_ERROR, 'sorti: Problem openning output file')
@@ -142,32 +103,25 @@ subroutine sorti(modx, norecs, jwrit)
     endif
 
     ! OUVRIR FICHIER D'ENTREE STANDARD
-    ! if (inputMode == SEQUENTIEL) then
-    !     ier = fstouv(lnkdiun(1), 'SEQ')
-    ! else
-        nRecords = 0
-        do i = 1, nInput
-            ! ier = fstouv(lnkdiun(i), 'RND+R/O+OLD')
-            ! nRecords = nRecords + fstnbr(lnkdiun(i))
-
-            ier = inputFiles(i)%open(lfn(i), '')
-            if (ier < 0) then
-                write(app_msg, *) 'sorti: File , lfn(i), is not standard random'
-                call app_log(APP_ERROR, app_msg)
-                call pgsmabt
-            endif
-            nRecords = nRecords + inputFiles(i)%get_num_records()
-        enddo
+    nRecords = 0
+    do i = 1, nInput
+        ier = inputFiles(i)%open(lfn(i), '')
+        if (ier < 0) then
+            write(app_msg, *) 'sorti: File , lfn(i), is not standard random'
+            call app_log(APP_ERROR, app_msg)
+            call pgsmabt
+        endif
+        nRecords = nRecords + inputFiles(i)%get_num_records()
+    enddo
+    if (nInput > 1) then
         fst24_link(inputFiles)
+    end if
 
-    !    call fstlnk(lnkdiun, nInput)
-    ! endif
-
-      if (voire) then
-         if (message) then
+    if (voire) then
+        if (message) then
             do i = 1, nInput
-               ier = fstvoi(lnkdiun(i), 'RND')
+                inputFiles(1)%print_summary
             enddo
-         endif
-      endif
+        endif
+    endif
 end subroutine sorti

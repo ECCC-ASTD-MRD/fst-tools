@@ -21,15 +21,6 @@ subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir)
 !APPEL
 !         - VIA DIRECTIVE PAIRES(NOMUSAG,VARUU,VARVV,VARMODULE)
 
-!MESSAGE
-!         - 'VERIFIER NOMBRE D ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
-!           'PAIRES DEJA INITIALISE'
-!           'PAIRES("VENT","UU","VV","UV")
-!           'PAIRES("UV","UU","VV","0")
-!           'PAIRES("VENTUVS","US","VS","UV")
-!           'PAIRES("UVS","UU","VV","0")
-
-
 #include "defin.cdk90"
 #include "pairs.cdk90"
 
@@ -48,14 +39,12 @@ subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir)
     !   SI NON ON AJOUTE SI LA TABLE N'EST PAS PLEINE
 
     nw = min(argdims(1), 2)
-    write (cnomusr, 100) (nomusag(i), i=1,nw)
-100  format(2a4)
+    write (cnomusr, '(2a4)') (nomusag(i), i=1,nw)
 
-    write (cvaruu, 200) varuu
-    write (cvarvv, 200) varvv
-    write (ccontrl, 200) varmodule
-    write (cvarwd, 200) vardir
-200  format(a4)
+    write (cvaruu, '(a4)') varuu
+    write (cvarvv, '(a4)') varvv
+    write (ccontrl, '(a4)') varmodule
+    write (cvarwd, '(a4)') vardir
 
     if (varmodule.eq.0) ccontrl = '??'
     if (vardir.eq.0) cvarwd = '??'
@@ -128,9 +117,8 @@ subroutine pairvc2(cnomusr,cvaruu,cvarvv,ccontrl,cvarwd)
     !   SI ON N'A PAS REMPLACE DANS LA TABLE ON AJOUTE
     npair = npair + 1
     if (npair.gt.NPAIRMX) then
-        write(app_msg, 666) npair,npairmx
+        write(app_msg, "(1x,'pairvct: Too many pairs in table  NPAIR=', i5, /'   NPAIRMX=',i5)") npair, npairmx
         call app_log(APP_ERROR,app_msg)
- 666    format(1x,'pairvct: Too many pairs in table  NPAIR=',i5,         /'   NPAIRMX=',i5)
         return
     endif
 

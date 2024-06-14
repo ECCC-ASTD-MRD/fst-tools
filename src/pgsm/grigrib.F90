@@ -1,23 +1,17 @@
 
 !> Calcul latitude longitude de chaque pt d'une grille grib
 subroutine grigrib(ig1, ig2, ig3, ig4)
-      use app
-      implicit none
+    use app
+    use pgsm_mod, only : tmplat, tmplon
+    use grilles, only : cgrtyp, gdout, lg1, lg2, lg3, lg4, li, lj
+    implicit none
 
-!     OBJET(GRIGRIB)
-!     CALCULER LA LATITUDE ET LA LONGITUDE DE TOUS LES POINTS
-!     DE LA GRILLE DE SORTIE POLAIRE STEREOGRAPHIQUE
+    character(len = 1) :: gtyout
+    real :: xg(20)
+    integer :: nni, nnj, ier, npts
+    integer :: ig1, ig2, ig3, ig4
 
-#include "llccmm.cdk90"
-#include "grilles.cdk90"
-
-    character*1 gtyout
-    real xg(20)
-    integer nni, nnj, ier, npts
-    integer ig1, ig2, ig3, ig4
-
-    external ezqkdef, gdll
-    integer ezqkdef, gdll
+    integer, external :: ezqkdef, gdll
 
     real, dimension(:, :), allocatable :: x, y
 
@@ -29,7 +23,6 @@ subroutine grigrib(ig1, ig2, ig3, ig4)
     endif
 
     allocate(tmplat(nni, nnj))
-    allocate(tmplon(nni, nnj))
     allocate(tmplon(nni, nnj))
     allocate(x(nni, nnj))
     allocate(y(nni, nnj))

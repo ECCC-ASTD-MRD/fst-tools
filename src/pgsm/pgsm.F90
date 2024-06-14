@@ -24,32 +24,28 @@ PROGRAM pgsm
     use app
     use rmn_fst24
     use files
+    use packing, only : npack
+    use pgsm_mod
+    use accum, only : icnt, unefois, once
+    use grilles, only : ncoords
+    use nivos, only : nmoy
+    use heuress, only : nheure, init
+    use ecrires
+    use chck
+    use symetry, only : metsym
     implicit none
 
 #include "fst-tools_build_info.h"
 
-#include "defin.cdk90"
-#include "dates.cdk90"
-#include "charac.cdk90"
-#include "pairs.cdk90"
-#include "accum.cdk90"
-#include "chck.cdk90"
-#include "grilles.cdk90"
-#include "heures.cdk90"
-#include "symnom.cdk90"
-#include "llccmm.cdk90"
-#include "convers.cdk90"
 #include "champs.cdk90"
-#include "lires.cdk90"
-#include "ecrires.cdk90"
-#include "enrege.cdk90"
-#include "packin.cdk90"
-#include "indptr.cdk90"
-#include "voir.cdk90"
-#include "nivos.cdk90"
-#include "gdz.cdk90"
 #include "champseq.cdk90"
+#include "defin.cdk90"
+#include "enrege.cdk90"
+#include "gdz.cdk90"
+#include "nivos.cdk90"
+#include "pairs.cdk90"
 #include "styles.cdk90"
+#include "symnom.cdk90"
 
     ! Source on C-Fortran Interop
     !    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
@@ -70,21 +66,21 @@ PROGRAM pgsm
     integer, dimension(4) :: qlxlval
 
     integer, external :: ezsetopt
-    external heure, champ, sorti, grille2, metsym, cmetsym, convs
+    external heure, champ, sorti, grille2, convs
     external qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
     external moinse, moinss, ecrits, moyene, operat, modul2e, modul2s
     external expon, racine, alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
     external moysrt, imprims, chmpdif, pairvct, messags, champ_seq, qqqecho
     external qqqform, qqqident, coord, qqqfilt
 
-    external ccard, fnom, qlxins, qlxinx, readlx ! , fstfrm, fstvoi
-    ! external fstnbr, fstouv, fclos
+    external ccard, qlxins, qlxinx, readlx
     external fstopc, fstopl
     external lrsmde, lrsmds, qlxopt
 
-    integer fnom! , fstfrm, fstvoi, fstnbr, fstopc, fstopl, fstouv
-    integer i, iopc, ipose, kend, nequiv, npex, nsetin, nsetex, nlirmds, nlirmde
-    real dum
+    integer, external :: fnom
+    integer :: i, iopc, ipose, kend, nequiv, npex, nsetin, nsetex, nlirmds, nlirmde
+    real :: dum
+    integer :: idum
 
     integer, parameter :: str_A = transfer("A   ", 1)
     integer, parameter :: str_P = transfer("P   ", 1)
@@ -112,25 +108,32 @@ PROGRAM pgsm
     integer, parameter :: str_WDUV = transfer("WDUV", 1)
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'DATE.', 'MSGLVL.',      'ISENT:',      'IMPOS:',   'V'/
+
+    integer, parameter :: nentries = 988
+    character(len = 512) :: defo(nentries)
+    character(len = 512) :: listl(nentries)
+    character(len = 512) :: lfn(nentries)
+
+    integer, parameter :: idx_ozsrt = 982
+    integer, parameter :: idx_isll = 983
+    integer, parameter :: idx_log = 985
+    integer, parameter :: idx_msglvl = 986
+    integer, parameter :: idx_isent = 987
+    integer, parameter :: idx_verbose = 988
+
+    data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'MSGLVL.',      'ISENT:',      'IMPOS:',   'V'/
 
     ! liste des defauts pour iment, isll, ozsrt, i, l
-    data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'OPRUN', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'OUI'/
+    data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'OUI'/
 
     ! lfn = liste que l usager propose pour remplacer
-    data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT',   'NON', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'NON'/
+    data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'NON'/
 
-    data form /'(A8)'/
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    data nheure, heures, nnoms, npack, nhur, nomb, ichck /0,  MXHEURE * -2, 0, -16, 1, 0, 0/
+    data nnoms, npack / 0, -16 /
 
-    data nomss /256 * '  '/
-
-    data ecarts,     facts,     pose,     ixlat, ixlon       /256*0.0, 256*1.0, .false., 0, 0 /
-
-    data nchamp,  ngr,  nsort,   nchmp,   icnt, nlalo         /  1,    0,     0,        1,      0,     0 /
-
-    data valid, voire,   voirs, message, seldat       /.false., .false., .false., .true., .false.  /
+    data nchamp, nchmp /  1,    1 /
 
     data numero,  numdel,  iset,  nbrow / 1, 1, -2, 0 /
 
@@ -142,19 +145,7 @@ PROGRAM pgsm
     data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
     data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
 
-    data unefois, once, vvent /.false., .false., .false./
-
-    data cnomqq, cnomqr, cnommt /'QQ', 'QR', 'MT'/
-
-    data printen, printsr, mtdone /.false., .false., .false./
-
-    data nis, njs, nif, njf, ninc, njnc /1, 1, 1000, 1000, 10, 10/
-
-    data niis, njjs, niif, njjf, niinc, njjnc /1, 1, 1000, 1000, 10, 10/
-
     data npairuv, npair /4, 7/
-
-    data clatmin, clatmax, clonmin, clonmax, ncoords /-90.0, +90.0, 0.0, 360.0, 0/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
     data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -251,8 +242,8 @@ PROGRAM pgsm
     data qlxcon(93) /'IP2B'    /  qlxval(93) / 65004 /
     data qlxcon(94) /'IP3A'    /  qlxval(94) / 65005 /
     data qlxcon(95) /'IP3B'    /  qlxval(95) / 65006 /
-    data qlxcon(96) /'FENTREE' /  qlxval(96) /     1 /
-    data qlxcon(97) /'FSORTIE' /  qlxval(97) /     2 /
+    data qlxcon(96) /'FENTREE' /  qlxval(96) / fantree /
+    data qlxcon(97) /'FSORTIE' /  qlxval(97) / fsortie /
     data qlxcon(98) /'LOCAL'   /  qlxval(98) /     1 /
     data qlxcon(99) /'IP1'     /  qlxval(99) /     4 /
     data qlxcon(100)/'IP3'     /  qlxval(100)/     6 /
@@ -300,15 +291,13 @@ PROGRAM pgsm
     data(qlxlcon(i), i = 1, 2) /'OUI', 'NON'/
     data(qlxlval(i), i = 1, 2) /1, 0/
 
-    data idx_ozsrt  /982/
-    integer, parameter :: idx_log = 985
-    integer, parameter :: idx_date = 986
-    integer, parameter :: idx_verbose = 990
-    integer, parameter :: idx_isent = 988
-    integer, parameter :: idx_msglvl = 987
-
-    integer, parameter :: idx_isll = 983
     integer, parameter :: iun_isll = 0
+
+    call pgsm_mod%init()
+    call accum%init()
+    call grilles%init()
+    call heuress%init()
+    call ecrires%init()
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     ! listl = position  iment(tape1 standard), isll(tape4 sequentiel)
@@ -321,7 +310,7 @@ PROGRAM pgsm
     !> \todo What does lnkdiun(1) represent?
     ! lnkdiun(1) = 1
     ! lnkdiun(idx_ozsrt) = 2
-    CALL ccard(listl, defo, lfn, 990, nequiv)
+    CALL ccard(listl, defo, lfn, nentries, nequiv)
 
     ! Imprimer boite debut du programme
     app_ptr = app_init(0, 'pgsm', PGSM_VERSION, '', BUILD_TIMESTAMP)
@@ -393,9 +382,6 @@ PROGRAM pgsm
         !     CALL qqexit(13)
         ! ENDIF
     ENDIF
-
-    mtype = MTYP
-    maxnoms = MAXNOM
 
     CALL initseq
 
@@ -600,7 +586,8 @@ PROGRAM pgsm
     CALL qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
     CALL qlxins ( pose, 'PAUSE', dum, 1, 1)
     CALL qlxins ( userdate, 'DATE', dum, 3, 1)
-    CALL qlxins (seldat, 'OPDAT', dum, 1, 1)
+    ! The code depending on seldat was broken and impossible to reach
+    CALL qlxins (seldat, 'OPDAT', dum, 0, 1)
     CALL qlxins (printen, 'PRINTEN', dum, 7, 1)
     CALL qlxins (printsr, 'PRINTSR', dum, 7, 1)
     CALL qlxins (etikent, 'ETIKENT', nwetike, 3, 1)
@@ -612,7 +599,7 @@ PROGRAM pgsm
     CALL qlxins (ip3srt, 'IP3SRT', dum, 1, 1)
     CALL qlxins (unefois, 'UNEFOIS', dum, 1, 1)
     CALL qlxins (once, 'ONCE', dum, 1, 1)
-    CALL qlxins (diese, 'DIESE', dum, 1, 1)
+    CALL qlxins (idum, 'DIESE', dum, 1, 1)
     CALL qlxins (ip1style, 'IP1STYLE', dum, 1, 1)
     CALL qlxins (dateform, 'DATEFORM', dum, 1, 1)
     CALL qlxins (compression_level, 'COMPRESS', dum, 1, 1)
@@ -626,46 +613,10 @@ PROGRAM pgsm
     ENDDO
 
     ! Defauts pour lire fichier d'entre
-    typeent = -1
-    etikent(1) = -1
-    etikent(2) = -1
-
-    ip3ent = -1
-    userdate = -1
-    date2 = -1
-    date3 = -1
-
-    diese = 1
     ip1style = 2
     dateform = 1
 
-    ! Defauts pour fichier de sorti
-    ip3srt = -1
-    ip2srt = -1
-    etiksrt(1) = -1
-    etiksrt(2) = -1
-    etiksrt(3) = -1
-
-    typesrt = -1
-    compression_level = 0
     masque = 0
-
-    ! Initialiser avec .true. champ symetrique
-    nsym = 2
-    CALL cmetsym('GZ', .true.)
-    CALL cmetsym('TT', .true.)
-    CALL cmetsym('DD', .true.)
-    CALL cmetsym('WW', .true.)
-    CALL cmetsym('ES', .true.)
-    CALL cmetsym('F2', .true.)
-    CALL cmetsym('PN', .true.)
-    CALL cmetsym('PS', .true.)
-    CALL cmetsym('TS', .true.)
-
-    CALL cmetsym('QQ', .false.)
-
-
-    ! directives de l'usager
 
     ! Initialisation parametres de sortie pour fichier formate
     CALL initid
@@ -676,13 +627,12 @@ PROGRAM pgsm
     ipose = 0
     CALL readlx(5, kend, ipose)
 
-    ! initialise variable de printsr
     IF (associated(tmplat)) deallocate(tmplat)
     IF (associated(tmplon)) deallocate(tmplon)
 
     IF (outputFileMode == 1) THEN
-        CALL chk_hy(lnkdiun(1), lnkdiun(idx_ozsrt))
-        CALL chk_toctoc(lnkdiun(1), lnkdiun(idx_ozsrt))
+        CALL copy2outputFile('HY')
+        CALL copy2outputFile('!!')
     END IF
     iopc = app_loglevel('INFO')
     DO i = 1, nInput

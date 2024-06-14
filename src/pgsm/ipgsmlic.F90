@@ -1,13 +1,12 @@
 integer function ipgsmlic(ifld, iun, ni, nj, nk, datev, etiket, ip1, ip2, ip3, typvar, nomvar, ig1, ig2, ig3, ig4, grtyp)
+
     implicit none
-    integer iun, ni, nj, nk, ip1, ip2, ip3, datev, ig1, ig2, ig3, ig4
-    integer ifld(ni, nj, nk)
-    character*12 etiket
-    character*4 nomvar
-    character*2 typvar
-    character*1 grtyp
-    external fstlic
-    integer fstlic
+    integer, intent(in) :: iun, ni, nj, nk, ip1, ip2, ip3, datev, ig1, ig2, ig3, ig4
+    integer, intent(out) :: ifld(ni, nj, nk)
+    character(len = 12), intent(in) :: etiket
+    character(len = 4), intent(in) :: nomvar
+    character(len = 2), intent(in) :: typvar
+    character(len = 1), intent(in) :: grtyp
 
     integer ier
 

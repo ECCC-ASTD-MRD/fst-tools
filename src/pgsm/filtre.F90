@@ -50,15 +50,15 @@ subroutine filtre (slab, NI, NJ, Npass, list, L)
     do pass = 1, Npass
         do J = 1, NJ
             do I = 2, NI-1
-            temp = 0
-            nb_elm = min(I-1, NI-I, L/2)
-            do k = -nb_elm, nb_elm
-                temp = temp + slab(I+k, J) *                  facteur(k, (L/2+1)-nb_elm)
-            enddo
-            result1(I) = temp
+                temp = 0
+                nb_elm = min(I-1, NI-I, L/2)
+                do k = -nb_elm, nb_elm
+                    temp = temp + slab(I+k, J) * facteur(k, (L/2+1)-nb_elm)
+                enddo
+                result1(I) = temp
             enddo
             do I = 2, NI-1
-            slab(I, J) = result1(I)
+                slab(I, J) = result1(I)
             enddo
         enddo
 
