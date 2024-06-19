@@ -1,6 +1,6 @@
 integer function chkenrpos(ip1, ip2, ip3)
     use rmn_fst24
-    use files, only : inputFiles, outputFile
+    use files, only : inputFiles, outputFile, outputFileMode
     implicit none
 
     integer, intent(in) :: ip1
@@ -47,7 +47,7 @@ integer function chkenrpos(ip1, ip2, ip3)
             chkenrpos = 1
         endif
 
-        if (chkenrpos == 1 .and. tac_count >= 0) then
+        if (chkenrpos == 1 .and. tac_found >= 0) then
             ! \todo Comparing record keys makes no sense; what is a sensible equivalent
             if (yy_found > tic_found .and. yy_found > tac_found) then
                 chkenrpos = 0
@@ -57,11 +57,11 @@ integer function chkenrpos(ip1, ip2, ip3)
         if (chkenrpos >= 0) return
     endif
 
-    tic_query = inputFile(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
+    tic_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
     tic_found = tic_query%find_count()
-    tac_query = inputFile(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
+    tac_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
     tac_found = tac_query%find_count()
-    yy_query = inputFile(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
+    yy_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
     yy_found = yy_query%find_count()
 
     if (tic_found < 0 .or. tac_found < 0) then
@@ -85,21 +85,30 @@ integer function chkenrpos(ip1, ip2, ip3)
     if (chkenrpos == -1) return
 
     if (yinyang_grid) then
-        yy_query%read_next(yy)
+        if (.not. yy_query%read_next(yy)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to read record')
+            call pgsmabt
+        end if
 
-        call ecritur(yy%data, -yy%nbits, yy%dateo, yy%deet, yy%npas, yy%ni, yy%nj, yy%nk, &
+        call ecritur(yy%data, -yy%pack_bits, yy%dateo, yy%deet, yy%npas, yy%ni, yy%nj, yy%nk, &
             yy%ip1, yy%ip2, yy%ip3, yy%typvar, yy%nomvar, yy%etiket, &
             yy%grtyp, yy%ig1, yy%ig2, yy%ig3, yy%ig4)
 
         call yy%free()
     else
-        tic_query%read_next(tic)
-        tac_query%read_next(tac)
+        if (.not. tic_query%read_next(tic)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to read record')
+            call pgsmabt
+        end if
+        if (.not. tac_query%read_next(tac)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to read record')
+            call pgsmabt
+        end if
 
-        call ecritur(tic%data, -tic%nbits, tic%dateo, tic%deet, tic%npas, tic%ni, tic%nj, tic%nk, &
+        call ecritur(tic%data, -tic%pack_bits, tic%dateo, tic%deet, tic%npas, tic%ni, tic%nj, tic%nk, &
             tic%ip1, tic%ip2, tic%ip3, tic%typvar, tic%nomvar, tic%etiket, &
             tic%grtyp, tic%ig1, tic%ig2, tic%ig3, tic%ig4)
-        call ecritur(tac%data, -tac%nbits, tac%dateo, tac%deet, tac%npas, tac%ni, tac%nj, tac%nk, &
+        call ecritur(tac%data, -tac%pack_bits, tac%dateo, tac%deet, tac%npas, tac%ni, tac%nj, tac%nk, &
             tac%ip1, tac%ip2, tac%ip3, tac%typvar, tac%nomvar, tac%etiket, &
             tac%grtyp, tac%ig1, tac%ig2, tac%ig3, tac%ig4)
 

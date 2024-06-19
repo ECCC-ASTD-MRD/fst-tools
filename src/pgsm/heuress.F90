@@ -14,6 +14,8 @@ module heuress
 contains
 
     subroutine init()
+        implicit none
+
         integer :: i
         nhur = 1
         nheure = 0

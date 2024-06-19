@@ -1,13 +1,10 @@
-#include "defin.cdk90"
 subroutine qqqident(position, separateur, items)
     implicit none
 
     integer position, separateur, items(16)
 
-    integer argdims
-    external argdims
+    integer, external :: argdims
 
-#include "champs.cdk90"
 #include "idents.cdk90"
 
     integer i

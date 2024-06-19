@@ -8,6 +8,7 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
     use accum, only : npas, unefois
     use grilles, only : cgrtyp, gdin, gdout, li, lj, lg1, lg2, lg3, lg4, masque
     use symetry, only : symetri
+    use pairs, only : npair, paire
     implicit none
 
     !> nom du champ 2 caracteres gz.tt.dd.......
@@ -26,10 +27,6 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
     ! interpolation horizontale des scalaires gz, tt, dd, ww, qq, es.
     ! d'une grille a une autre pour nniv niveaux
     ! ecrire resultat sur fichier standard, ms, sequentiel
-
-#include "defin.cdk90"
-#include "gdz.cdk90"
-#include "pairs.cdk90"
 
     character(len = 4) :: cnomvar
     character(len = 4) :: cnomx

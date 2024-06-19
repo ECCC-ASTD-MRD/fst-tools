@@ -7,8 +7,8 @@ end subroutine
 subroutine plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, fact, iunit)
     use app
     use rmn_fst24
-    use accum, only : nni, nnj, nnk, cigty, igg1, igg2, igg3, igg4, icnt, unafois, once
-    use pgsm_mod, only : ip1style, tmpif0, tmpif1
+    use accum, only : nni, nnj, nnk, cigty, igg1, igg2, igg3, igg4, icnt, unefois, once
+    use pgsm_mod, only : ier, ip1style, printen, tmpif0, tmpif1
     use chck, only : ichck
     use files, only : fentree, fsortie, inputFiles, outputFile
     implicit none

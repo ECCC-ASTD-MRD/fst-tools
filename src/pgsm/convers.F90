@@ -1,4 +1,6 @@
 module convers
+    implicit none
+
     integer, save :: ncon
     !> Indice augmenter a chaque appel de convs
     integer, save :: nomb
@@ -18,9 +20,11 @@ module convers
 contains
 
     subroutine init()
+        implicit none
+
         nomb = 0
         nomss = '    '
         ecarts = 0.0
-        fact = 1.0
+        facts = 1.0
     end subroutine init
 end module

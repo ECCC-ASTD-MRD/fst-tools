@@ -17,7 +17,6 @@ subroutine uvecteur_masque(uu_record, vv_record)
     integer :: ezqkdef, ezuvint, ezuvint_mdm, ezwdint, ezdefset, get_mask
 
 #include "defin.cdk90"
-#include "gdz.cdk90"
 
     character(len = 12):: cetiket
     character(len = 2) :: ctypvar
@@ -26,7 +25,7 @@ subroutine uvecteur_masque(uu_record, vv_record)
     integer :: i, j
     integer :: ier
 
-    logical sym
+    logical :: sym
 
     character(len = 2), parameter :: ctypvar_mask = '@@'
 

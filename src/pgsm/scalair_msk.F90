@@ -24,8 +24,6 @@ subroutine scalair_msk(irec, records, done, nRecords)
     integer, external :: ezdefset
     integer, external :: get_mask
 
-#include "gdz.cdk90"
-
     integer :: i
     logical, save :: unefoys = .true.
     logical :: sym

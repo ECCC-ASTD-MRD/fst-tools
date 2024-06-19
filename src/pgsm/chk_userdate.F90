@@ -1,3 +1,5 @@
+!> \bug The result of this function is undefined if the user-provided value in the userdate is anything other than "oui" or "non"
+!> Furthermore it relies on the values in date2 and date3 which are never set to anything other than -1
 subroutine chk_userdate(datev)
     use app
     use pgsm_mod, only: userdate, date2, date3

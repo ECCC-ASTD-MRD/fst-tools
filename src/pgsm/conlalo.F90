@@ -1,7 +1,6 @@
 !> Calculer lat long de chaque pt d'une grille type "y" ou "z"
 subroutine conlalo(lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4)
     use app
-    use grilles, only : cgrtyp
     implicit none
 
     external conlal2
@@ -96,8 +95,8 @@ subroutine conlale(lat, lon, latg, long, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3,
     integer, intent(in) :: nj
     real, intent(inout) :: lat(ni, nj)
     real, intent(inout) :: lon(ni, nj)
-    real, intent(in) :: latg(ni, nj)
-    real, intent(in) :: long(ni, nj)
+    real, intent(out) :: latg(ni, nj)
+    real, intent(out) :: long(ni, nj)
     character(len = 1), intent(in) :: cgrtyp
     character(len = 1), intent(in) :: cgtypxy
     integer, intent(in) :: ig1, ig2, ig3, ig4

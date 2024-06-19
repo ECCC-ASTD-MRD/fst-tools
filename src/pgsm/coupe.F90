@@ -23,9 +23,6 @@ subroutine pgcoupe(nom, lcoupe, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, 
     !     moysrt(nom, lcoup, ipr..........)
     !     maximum de 30 ipr
 
-#include "defin.cdk90"
-#include "champs.cdk90"
-
     integer nom, lcoupe, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8
     integer ipr9, ipr10, ipr11, ipr12, ipr13, ipr14, ipr15, ipr16, ipr17
     integer ipr18, ipr19, ipr20, ipr21, ipr22, ipr23, ipr24, ipr25

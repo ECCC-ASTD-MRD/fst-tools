@@ -4,7 +4,7 @@ subroutine comme(iunit, nom, type, idat, ip1, ip2, ip3, etiqet)
     use rmn_fst24
     use accum, only : nni, nnj, nnk, idatt, ideet, npas, jpp1, jpp2, jpp3, igg1, igg2, igg3, igg4
     use pgsm_mod, only : tmplat, tmplon, message
-    use grilles, only : cgrtyp, gdout, lg1, lg2, lg3, lg4, li, lj
+    use grilles, only : cgrtyp, cgtypxy, gdout, lg1, lg2, lg3, lg4, li, lj
     use files, only : fentree, fsortie, inputFiles, outputFile
     implicit none
 
@@ -27,18 +27,19 @@ subroutine comme(iunit, nom, type, idat, ip1, ip2, ip3, etiqet)
     integer, external :: fstcvt
     integer, external :: ezqkdef, ezgxprm, gdll, argdims
 
-#include "gdz.cdk90"
 #include "blancs.cdk90"
+
+    integer :: ig1ref, ig2ref, ig3ref, ig4ref
 
     character(len = 12) :: cetiqet
     character(len = 4) :: cnomvar
-    character(len = 4) :: c_bidx_don
+    character(len = 4) :: cbidon
     character(len = 2) :: ctypvar
-    integer :: bidon, ier, iopc
+    integer :: i, bidon, ier, iopc
 
     integer :: letiket(3)
 
-    type(fst_file), pointer :: file
+    type(fst_file), pointer :: file => null()
     type(fst_query) :: query
     type(fst_record) :: record
 
@@ -84,9 +85,9 @@ subroutine comme(iunit, nom, type, idat, ip1, ip2, ip3, etiqet)
         call pgsmabt
     endif
     call query%free()
-    nni = record%nni
-    nnj = record%nnj
-    nnk = record%nnk
+    nni = record%ni
+    nnj = record%nj
+    nnk = record%nk
     if (nnk > 1) then
         call app_log(APP_ERROR, 'comme: PGSM does not accept 3 dimension fields (NK>1)')
         call pgsmabt
@@ -101,7 +102,6 @@ subroutine comme(iunit, nom, type, idat, ip1, ip2, ip3, etiqet)
     igg2 = record%ig2
     igg3 = record%ig3
     igg4 = record%ig4
-
 
     if (record%grtyp /= 'Z' .and. record%grtyp /= 'Y') then
         gdout = ezqkdef(nni, nnj, record%grtyp, igg1, igg2, igg3, igg4, iunit)

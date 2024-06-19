@@ -28,7 +28,6 @@ subroutine uvectur (cnom1, cnom2, cnom3, iheur, npar, itabuv)
     integer, dimension(npar), intent(in) :: itabuv
 
 #include "enrege.cdk90"
-#include "gdz.cdk90"
 #include "tp12ig.cdk90"
 
     external ecritur, cigaxg, pgsmabt, imprime, incdat, messags

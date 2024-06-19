@@ -1,12 +1,3 @@
-#define mxchamp 31
-#define MXCHAMP 31
-
-#define nivomax 40
-#define NIVOMAX 40
-
-#define npairmx 40
-#define NPAIRMX 40
-
 #define non     0
 #define NON     0
 

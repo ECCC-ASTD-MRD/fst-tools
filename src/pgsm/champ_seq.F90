@@ -4,12 +4,12 @@ subroutine champ_seq (listn, listip1, waitOrGo)
     use rmn_fst24
     use files
     use packing, only : npack
-    use pgsm_mod, only : ier, ip1style, message
-    use pgsm_mod, only : tmpif1, tmpif2
+    use pgsm_mod, only : ier, ip1style, message, tmpif1, tmpif2, tmplat
     use accum, only : npas
     use grilles, only : cgrtyp, gdin, gdout, lg1, lg2, lg3, lg4, li, lj
-    use heuress, only : nhur, nheures
+    use heuress, only : heures, nhur
     use symetry, only : symetri
+    use champs, only : npar
     implicit none
 
     !> Liste de nomvar
@@ -22,16 +22,16 @@ subroutine champ_seq (listn, listip1, waitOrGo)
     !> Appel via directive champ_seq(listn, listip1, waitOrGo)
 
     integer, external :: argdims
-    logical, external :: symetri
     external ecritur, pgsmabt, grille2
     integer, external :: ezqkdef, ezsint, ezdefset
 
-#include "champs.cdk90"
 #include "champseq.cdk90"
 
     logical :: heureok, processed
     character(len = 8) :: string
     real :: ptr
+    integer :: i, j, k
+
     type(fst_record) :: record
     type(fst_query) :: query
 
@@ -122,8 +122,11 @@ subroutine champ_seq (listn, listip1, waitOrGo)
                                 if (listniv(i, k) == record%ip1 .or. listniv(i, k) == -1 .and. .not. processed) then
                                     allocate(tmpif1(record%ni, record%nj))
                                     allocate(tmpif2(li, lj))
-                                    record%read(tmpif1)
-                                    prefiltre(tmpif1, record%ni, record%nj, record%grtyp)
+                                    if (.not. inputFiles(1)%read(record, data = c_loc(tmpif1(1, 1))))  then
+                                        call app_log(APP_ERROR, 'champ_seq: Failed to read field')
+                                        return
+                                    endif
+                                    call prefiltre(tmpif1, record%ni, record%nj, record%grtyp)
 
                                     gdin = ezqkdef(record%ni, record%nj, record%grtyp, record%ig1, record%ig2, record%ig3, record%ig4, 1)
                                     ier = ezdefset(gdout, gdin)

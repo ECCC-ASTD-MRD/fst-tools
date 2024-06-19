@@ -7,15 +7,17 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
     use files
     use pgsm_mod, only : vvent, wdvent, ip1style, tmplat, message
     use grilles, only : cgrtyp, ngr
-    use heuress, only : nhur, nheures
+    use heuress, only : heures, nhur
+    use champs, only : nchamp, nchmp, champpr
+    use pairs, only : npair, paire, mxpairs
     implicit none
 
     !> Nom du champ (directives de l'usager)
     integer, intent(in) :: nom(2)
     !> Descripteurs suplementaires (heures - niveaux) demandees par l'usager. 30 maximum
-    integer, intent(in) :: ipr1(2), ipr2(2), ipr3(2), ipr4(2), ipr5(2), ipr6(2), ipr7(2) &
-                           ipr8(2), ipr9(2), ipr10(2), ipr11(2), ipr12(2), ipr13(2), ipr14(2), ipr15(2) &
-                           ipr16(2), ipr17(2), ipr18(2), ipr19(2), ipr20(2), ipr21(2), ipr22(2), ipr23(2) &
+    integer, intent(in) :: ipr1(2), ipr2(2), ipr3(2), ipr4(2), ipr5(2), ipr6(2), ipr7(2), &
+                           ipr8(2), ipr9(2), ipr10(2), ipr11(2), ipr12(2), ipr13(2), ipr14(2), ipr15(2), &
+                           ipr16(2), ipr17(2), ipr18(2), ipr19(2), ipr20(2), ipr21(2), ipr22(2), ipr23(2), &
                            ipr24(2), ipr25(2), ipr26(2), ipr27(2), ipr28(2), ipr29(2), ipr30(2)
 
     !         POINT D'ENTREE APPELE PAR LA DIRECTIVE
@@ -27,10 +29,6 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
 
     external grille2, epaisur, macpcp, uvectur, scalair
     integer, external :: argdims
-
-#include "defin.cdk90"
-#include "champs.cdk90"
-#include "pairs.cdk90"
 
     integer :: ihr, ihrs, nparm
 
@@ -155,7 +153,7 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
         endif
     endif
 
-    if (npair > NPAIRMX) npair = NPAIRMX
+    if (npair > mxpairs) npair = mxpairs
 
     do ihrs = 1, nhur
         ihr = heures(ihrs)

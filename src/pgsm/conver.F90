@@ -1,5 +1,5 @@
 subroutine conver(fld, ni, nj, cnom)
-    use convers, only: nomss, bass, hauts, ecarts, facts
+    use convers, only : nomb, nomss, bass, hauts, ecarts, facts
     implicit none
 
     !> Number of points on the first axis

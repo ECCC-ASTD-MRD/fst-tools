@@ -33,17 +33,14 @@ PROGRAM pgsm
     use ecrires
     use chck
     use symetry, only : metsym
+    use champs, only : nchamp, npar
+    use pair, only : init, npairuv
     implicit none
 
 #include "fst-tools_build_info.h"
 
-#include "champs.cdk90"
 #include "champseq.cdk90"
-#include "defin.cdk90"
 #include "enrege.cdk90"
-#include "gdz.cdk90"
-#include "nivos.cdk90"
-#include "pairs.cdk90"
 #include "styles.cdk90"
 #include "symnom.cdk90"
 
@@ -133,19 +130,7 @@ PROGRAM pgsm
 
     data nnoms, npack / 0, -16 /
 
-    data nchamp, nchmp /  1,    1 /
-
     data numero,  numdel,  iset,  nbrow / 1, 1, -2, 0 /
-
-    data paire(1) /  'VENT    UU  VV  UV      ' /
-    data paire(2) /  'UV      UU  VV  ??      ' /
-    data paire(3) /  'VENTUVS US  VS  UV      ' /
-    data paire(4) /  'UVS     US  VS  ??      ' /
-    data paire(5) /  'WDUV    UU  VV  UV  WD  ' /
-    data paire(6) /  'WDUD    UD  VD  UV  WD  ' /
-    data paire(7) /  '!#@$!#@$>>  ^^  >>  ^^  ' /
-
-    data npairuv, npair /4, 7/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
     data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -298,7 +283,8 @@ PROGRAM pgsm
     call grilles%init()
     call heuress%init()
     call ecrires%init()
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    call champs%init()
+    call pairs%init()
 
     ! listl = position  iment(tape1 standard), isll(tape4 sequentiel)
     !       ozsrt(tape2 - standard - seq file - random ms)
@@ -585,8 +571,10 @@ PROGRAM pgsm
     CALL qlxins ( voire, 'VOIRENT', dum, 1, 1)
     CALL qlxins ( voirs, 'VOIRSRT', dum, 1, 1)
     CALL qlxins ( pose, 'PAUSE', dum, 1, 1)
+    !> \bug this directive as been broken for while! If the user provided the value oui/non, chk_userdate would still return -1.
+    !> If the user provided an actual date, the result of chk_userdate would be undefined
     CALL qlxins ( userdate, 'DATE', dum, 3, 1)
-    ! The code depending on seldat was broken and impossible to reach
+    !> \bug The code depending on seldat was broken and impossible to reach
     CALL qlxins (seldat, 'OPDAT', dum, 0, 1)
     CALL qlxins (printen, 'PRINTEN', dum, 7, 1)
     CALL qlxins (printsr, 'PRINTSR', dum, 7, 1)

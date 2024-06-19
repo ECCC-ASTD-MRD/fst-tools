@@ -1,4 +1,6 @@
 module accum
+    implicit none
+
     !> Nombre de grids pts est-ouest dans acumula
     integer, save :: nni
     !> Nombre de grids pts nord-sud dans acumula
@@ -42,8 +44,10 @@ module accum
 
 contains
     subroutine init()
+        implicit none
+
         icnt = 0
         unefois = .false.
-        once == .false.
+        once = .false.
     end subroutine init
 end module accum

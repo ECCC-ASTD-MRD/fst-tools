@@ -25,14 +25,11 @@ subroutine epaisur(iheur, npar, niveau)
     ! prendre la difference entre les 2 champs ecrire le
     ! resultat sur fichier approprie(standard, ms, seq)
 
-#include "gdz.cdk90"
-
     character(len = 12) :: cetiket
     character(len = 4) :: cnomvar
     character(len = 2) :: ctypvar
     character(len = 1) :: cigtyp
 
-    integer :: iopc
     logical :: junk
 
     type(fst_query) :: query
@@ -45,7 +42,6 @@ subroutine epaisur(iheur, npar, niveau)
         call pgsmabt
     endif
 
-    ! identifier le numero de chaque record avec fstinf
     call chk_userdate(datev)
 
     ! modification de hollerith a caractere
