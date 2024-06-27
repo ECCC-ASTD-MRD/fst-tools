@@ -13,10 +13,9 @@ program voir24
     type(fst_file) :: source
     logical        :: success
 
-    integer ipos, ier, n
+    integer ipos
 
     character(len = 8) :: cles(ncle)
-    character(len = 12) :: status
     character(len = 128) :: val(ncle), def(ncle)
     data cles / 'IMENT:', 'SEQ', 'STYLE', 'MOREHELP', 'V' /
     data def / '/dev/null', 'SEQ', 'NINJNK+DATEV+LEVEL+IP1+GRIDINFO', 'MOREHELP', VERSION /
