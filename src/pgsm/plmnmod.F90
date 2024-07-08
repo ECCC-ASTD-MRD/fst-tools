@@ -1,8 +1,3 @@
-subroutine plmnmod(nom, type, datev, niv, ip2, ip3, etiqet)
-    call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 1, 1)
-end subroutine
-
-
 !> Additionne soustrait multiplit module 2 champs
 subroutine plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, fact, iunit)
     use app
@@ -176,55 +171,230 @@ subroutine plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, fact, iunit)
 end subroutine plmnmod_orig
 
 
+subroutine plmnmod(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
+    call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 1, 1)
+end subroutine
+
+
 subroutine pluss(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact = MULTIPLICATEUR POUR AJOUTER
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 1, 2)
 end subroutine
 
 
 subroutine moinse(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact = MULTIPLICATEUR POUR  SOUSTRAIRE
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, -1, 1)
 end subroutine
 
 
 subroutine moinss(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=MULTIPLICATEUR POUR  SOUSTRAIRE
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, -1, 2)
 end subroutine
 
 
 subroutine modul2e(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! 2   fact=2 ADDITIONNER LES DEUX CHAMPS AU CARRE
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 2, 1)
 end subroutine
 
 
 subroutine modul2s(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=2 ADDITIONNER LES DEUX CHAMPS AU CARRE
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 2, 2)
 end subroutine
 
 
 subroutine foise(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=3 MULTIPLIER CHAQUE PT DES DEUX CHAMPS
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 3, 1)
 end subroutine
 
 
 subroutine foiss(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=3 MULTIPLIER CHAQUE PT DES DEUX CHAMPS
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 3, 2)
 end subroutine
 
 
 subroutine divisee(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=4 MULTIPLIER CHAQUE PT DES DEUX CHAMPS
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 4, 1)
 end subroutine
 
 
 subroutine divises(nom, type, datev, niv, ip2, ip3, etiqet)
+    implicit none
+
+    !> Variable name
+    integer, intent(in) :: nom
+    !> Field type (a = analysis, p = forecast)
+    integer, intent(in) :: type
+    !> Validity date (CMC stamp)
+    integer, intent(in) :: datev
+    !> Level (IP1)
+    integer, intent(in) :: niv(2)
+    !> Forecast hour (IP2)
+    integer, intent(in) :: ip2
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     ! fact=4 MULTIPLIER CHAQUE PT DES DEUX CHAMPS
     call plmnmod_orig(nom, type, datev, niv, ip2, ip3, etiqet, 4, 2)
 end

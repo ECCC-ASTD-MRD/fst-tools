@@ -1,48 +1,55 @@
 module pgsm_mod
-    !> Validate date
-    integer, save :: date2
-    integer, save :: date3
-    integer, save :: userdate
-    logical, save :: validate_date
+    implicit none
 
-    logical, save :: vvent
-    logical, save :: wdvent
-    logical, save :: mtdone
+    !> Length of the reserved space for options parsed by ccard (includes file names)
+    integer, parameter :: opt_len = 512
+
+    !> Validate date
+    integer, save :: date2 = -1
+    integer, save :: date3 = -1
+    integer, save :: userdate = -1
+    logical, save :: validate_date = .false.
+
+    logical, save :: vvent = .false.
+    !> \bug This was not previously initialized
+    logical, save :: wdvent = .false.
+    logical, save :: mtdone = .false.
 
     !> Display the fields in the input file
-    logical, save :: voire
+    logical, save :: voire = .false.
     !> Display the fields in the output file
-    logical, save :: voirs
+    logical, save :: voirs = .false.
     !> 
-    logical, save :: pose
+    logical, save :: pose = .false.
     !> Verbose mode
-    logical, save :: message
+    logical, save :: message = .true.
     !> Print the data read from the input files
-    logical, save :: printen
+    logical, save :: printen = .false.
 
     !> mot de 10 caracteres max de 20 seulement les dix premiers seront utulises defaut -1
-    integer, save :: etikent(3)
-    integer, save :: nwetike
+    integer, save :: etikent(3) = [-1, -1, -1]
+    !> \bug This was not previously initialized
+    integer, save :: nwetike = 0
 
     !> Rewrite mode. Initialized by sorti
-    integer, save  :: iwrit
+    integer, save  :: iwrit = 0
     !> Pointeur temporaire
-    integer, save  :: iset
+    integer, save  :: iset = -2
     !> Number of argument of the sorti directive
     !> 1 = sequential file, 2 = standard file, 3 = ms file
-    integer, save  :: nsort
-    integer, save  :: nlalo
+    integer, save  :: nsort = 0
+    integer, save  :: nlalo = 0
 
     !> type de variable initialiser a -1 dans pgsm peut-etre initialiser avec directive
-    integer :: typeent
+    integer :: typeent = -1
     !> Arguments de la routine lire initialiser a -1 dans pgsm peut etre initialiser avec directive
-    integer :: ip3ent
+    integer :: ip3ent = -1
 
     !> Marqueur d'erreur
-    integer, save :: ier
+    integer, save :: ier = 0
 
-    integer, save :: ip1style
-    integer, save :: dateform
+    integer, save :: ip1style = 2
+    integer, save :: dateform = 1
 
     real, save, dimension(:, :), pointer :: tmpif0
     real, save, dimension(:, :), pointer :: tmpif1
@@ -51,32 +58,4 @@ module pgsm_mod
     real, save, dimension(:, :), pointer :: tmplon
     real, save, dimension(:, :), pointer :: tmplatg
     real, save, dimension(:, :), pointer :: tmplong
-
-contains
-
-    subroutine init()
-        date2 = -1
-        date3 = -1
-        userdate = -1
-        validate_date = .false.
-
-        vvent = .false.
-        mtdone = .false.
-
-        voire = .false.
-        voirs = .false.
-        pose = .false.
-        message = .true.
-        printen = .false.
-
-        etikent(1) = -1
-        etikent(2) = -1
-
-        iwrit = 0
-        nsort = 0
-        nlalo = 0
-
-        typeent = -1
-        ip3ent = -1
-    end subroutine init
 end module pgsm_mod

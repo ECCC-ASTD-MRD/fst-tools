@@ -5,7 +5,7 @@ subroutine scalair_msk(irec, records, done, nRecords)
     use files, only : inputFiles
     use packing, only : npack
     use accum, only : npas
-    use pgsm_mod, only: tmplat, tmpif1, tmpif2, message
+    use pgsm_mod, only: tmplat, tmpif1, tmpif2, message, ier, printen
     use grilles, only : cgrtyp, gdin, gdout, lg1, lg2, lg3, lg4, li, lj
     use symetry, only : symetri
     implicit none
@@ -43,22 +43,24 @@ subroutine scalair_msk(irec, records, done, nRecords)
     mask_present = .false.
     mask_done = .false.
 
-    allocate(fld(records(irec)%ni, records(irec)%nj), fld_out(records(irec)%li, records(irec)%lj))
+    allocate(fld(records(irec)%ni, records(irec)%nj), fld_out(li, lj))
 
     ier = get_mask(mask_record, records(irec))
     if (ier >= 0) then
         mask_present = .true.
-        allocate(mask(ni, nj), mask_out(li, lj))
+        allocate(mask(records(irec)%ni, records(irec)%nj), mask_out(li, lj))
     else
         mask_present = .false.
     endif
 
-    records(irec)%read()
-    call records(irec)%get_data_array(fld)
+    if (.not. records(irec)%read(c_loc(fld))) then
+        call app_log(APP_ERROR, 'scalair_msk: Failed to read field')
+        call pgsmabt
+    end if
     call prefiltre(fld, records(irec)%ni, records(irec)%nj, records(irec)%grtyp)
     npas = records(irec)%npas
 
-    if (records(irec)%datyp == 2 .or. records(irec)%datyp == 4) then
+    if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4) then
         call cvtifr(fld, fld, records(irec)%ni, records(irec)%nj)
     endif
 
@@ -92,7 +94,7 @@ subroutine scalair_msk(irec, records, done, nRecords)
             call app_log(APP_FATAL, app_msg)
             call tourbillon_relatif(tmpif2, li, lj, tmplat)
         endif
-        call ecritur(tmpout, records(irec)%npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
+        call ecritur(tmpout, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
             records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, records(irec)%nomvar, records(irec)%etiket, &
             cgrtyp, lg1, lg2, lg3, lg4)
         deallocate(fld_out)
@@ -104,8 +106,10 @@ subroutine scalair_msk(irec, records, done, nRecords)
             gdin = ezqkdef(records(irec)%ni, records(irec)%nj, records(irec)%grtyp, &
                 records(irec)%ig1, records(irec)%ig2, records(irec)%ig3, records(irec)%ig4, inputFiles(1)%get_unit())
             ier = ezdefset(gdout, gdin)
-            mask_record%read()
-            call mask_record%get_data_array(mask)
+            if (.not. mask_record%read(c_loc(mask))) then
+                call app_log(APP_ERROR, 'scalair_msk: Failed to read field')
+                call pgsmabt
+            end if
             ier = ezsint_mdm(fld_out, mask_out, fld, mask)
             tmpout => fld_out
             tmpmsk => mask_out
@@ -126,7 +130,7 @@ subroutine scalair_msk(irec, records, done, nRecords)
             call app_log(APP_FATAL, app_msg)
             call tourbillon_relatif(tmpif2, li, lj, tmplat)
         endif
-        call ecritur(tmpout, records(irec)%npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
+        call ecritur(tmpout, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
             records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, records(irec)%nomvar, records(irec)%etiket, &
             cgrtyp, lg1, lg2, lg3, lg4)
         mask_done = .false.
@@ -148,7 +152,7 @@ subroutine scalair_msk(irec, records, done, nRecords)
                 unefoys = .false.
                 deallocate(mask_zones)
             endif
-            call iecritur(tmpmsk, -mask_record%nbits, mask_record%dateo, mask_record%deet, mask_record%npas, li, lj, 1, &
+            call iecritur(tmpmsk, -mask_record%pack_bits, mask_record%dateo, mask_record%deet, mask_record%npas, li, lj, 1, &
                     mask_record%ip1, mask_record%ip2, mask_record%ip3, '@@', mask_record%nomvar, mask_record%etiket, &
                     cgrtyp, lg1, lg2, lg3, lg4)
             do i = 1, nRecords

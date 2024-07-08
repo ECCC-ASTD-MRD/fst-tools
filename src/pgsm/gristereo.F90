@@ -2,14 +2,14 @@
 subroutine gristereo(nni, nnj, d60, dgrw, clat, clon)
     use app
     use pgsm_mod, only : tmplat, tmplon
-    use grilles, only : li, lj, cgrtyp, gdout
+    use grilles, only : li, lj, cgrtyp, lg1, lg2, lg3, lg4, gdout
     implicit none
 
     external cigaxg, cxgaig
     integer, external :: ezqkdef, gdll
 
-    integer nni, nnj, ihm, hem, ier
-    real pi, pj, d60, dgrw, pp1, pp2, pp3, pp4, clat, clon
+    integer :: nni, nnj, ier
+    real :: d60, dgrw, pp1, pp2, pp3, pp4, clat, clon
 
     allocate(tmplat(nni, nnj))
     allocate(tmplon(nni, nnj))

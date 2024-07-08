@@ -39,7 +39,7 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
     real :: ptr
 
     if (inputMode == SEQUENTIEL) then
-            app_status=app_end(-1)
+            app_status = app_end(-1)
             call app_log(APP_ERROR, 'champ: Cannot use directive CHAMP with a sequential input file, use directive CHAMP_SEQ instead')
         return
     endif
@@ -130,8 +130,8 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
 
     nparm = max0(1, nchmp - 1)
 
-    do i=1, nparm
-        if (argdims(i+1) > 1) then
+    do i = 1, nparm
+        if (argdims(i + 1) > 1) then
             ptr = transfer(champpr(i), ptr)
             call convip_plus(champpr(i), ptr, -1*kinds(i)-1000, ip1style, string, .false.)
         endif
@@ -165,14 +165,14 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
         enddo
 
         ! SI ON A TROUVE ON VA A L'INTERPOLATION
-        if (trouve  /=  0) then
+        if (trouve /= 0) then
             vvent  = .false.
             wdvent = .false.
             if (paire(trouve)(17:20) /= '??  ') then
-                vvent= .true.
+                vvent = .true.
             endif
             if (paire(trouve)(21:24) == 'WD  ') then
-                wdvent= .true.
+                wdvent = .true.
                 vvent = .true.
             endif
 
@@ -184,14 +184,14 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
 
         else if (cnom == 'DFGZ') then
             ! CALCUL LA DIFFERENCE ENTRE DEUX "GZ"
-            call epaisur(ihr, nparm, champpr)
+            call epaisur(ihr, champpr)
 
         else if (cnom == 'DFST') then
             ! CALCUL LA DIFFERENCE ENTRE DEUX "ST ACCUMULATEUR D'AJUSTEMENT"
             if (ihrs == 1)   then
                 call macpcp('ST  ', nparm, champpr)
                 if (message) then
-                if (nhur>1) call app_log(APP_WARNING, 'champ: HEURE directive not necessary (ST)')
+                if (nhur > 1) call app_log(APP_WARNING, 'champ: HEURE directive not necessary (ST)')
                 endif
             endif
 
@@ -200,7 +200,7 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
             if (ihrs == 1) then
                 call macpcp('PR  ', nparm, champpr)
                 if (message) then
-                if (nhur>1) call app_log(APP_WARNING, 'champ: HEURE directive not necessary (PRECIP)')
+                if (nhur > 1) call app_log(APP_WARNING, 'champ: HEURE directive not necessary (PRECIP)')
                 endif
             endif
 

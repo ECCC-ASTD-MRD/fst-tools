@@ -11,23 +11,26 @@ integer function get_mask(mask, fld) result(status)
 
     type(fst_query) :: query
 
+    status = -1
+
     if (fld%typvar(2:2) /= '@') then
-        write(app_msg, *) 'get_mask_key: This is not a masked field', fld%nomvar, fld%typvar
+        write(app_msg, *) 'get_mask: This is not a masked field', fld%nomvar, fld%typvar
         call app_log(APP_ERROR, app_msg)
-        status = -1
         return
     endif
 
     if (fld%typvar(1:1) == '@') then
-        write(app_msg, *) 'get_mask_key: This is a mask field', fld%nomvar, fld%typvar
+        write(app_msg, *) 'get_mask: This is a mask field', fld%nomvar, fld%typvar
         call app_log(APP_ERROR, app_msg)
-        status = -1
         return
     endif
 
-    query = inputFiles(1)%new_query(datev = fld%datev, etiket = fld%etiket, ip1 = fold_record%ip1, ip2 = fld%ip2, ip3 = fld%ip3, &
+    query = inputFiles(1)%new_query(datev = fld%datev, etiket = fld%etiket, ip1 = fld%ip1, ip2 = fld%ip2, ip3 = fld%ip3, &
         typvar = '@@', nomvar = fld%nomvar)
-    query%find_next(mask)
+    if (.not. query%find_next(mask)) then
+        call app_log(APP_ERROR, "get_mask: Failed to read mask record")
+        return
+    end if
     call query%free()
 
     if (mask%ni == fld%ni .and. mask%nj == fld%nj .and. mask%nk == fld%nk .and. &
@@ -39,7 +42,10 @@ integer function get_mask(mask, fld) result(status)
 
     query = inputFiles(1)%new_query(datev = fld%datev, etiket = fld%etiket, ip1 = -1, ip2 = fld%ip2, ip3 = fld%ip3, &
         typvar = '@@', nomvar = fld%nomvar)
-    query%find_next(mask)
+    if (.not. query%find_next(mask)) then
+        call app_log(APP_ERROR, "get_mask: Failed to read mask record")
+        return
+    end if
     call query%free()
 
     if (mask%ni == fld%ni .and. mask%nj == fld%nj .and. mask%nk == fld%nk .and. &
@@ -51,7 +57,10 @@ integer function get_mask(mask, fld) result(status)
 
     query = inputFiles(1)%new_query(datev = fld%datev, etiket = fld%etiket, ip1 = fld%ip1, ip2 = fld%ip2, ip3 = fld%ip3, &
         typvar = '@@', nomvar = '@@@@')
-    query%find_next(mask)
+    if (.not. query%find_next(mask)) then
+        call app_log(APP_ERROR, "get_mask: Failed to read mask record")
+        return
+    end if
     call query%free()
 
     if (mask%ni == fld%ni .and. mask%nj == fld%nj .and. mask%nk == fld%nk .and. &
@@ -63,7 +72,10 @@ integer function get_mask(mask, fld) result(status)
 
     query = inputFiles(1)%new_query(datev = fld%datev, etiket = fld%etiket, ip1 = -1, ip2 = fld%ip2, ip3 = fld%ip3, &
         typvar = '@@', nomvar = '@@@@')
-    query%find_next(mask)
+    if (.not. query%find_next(mask)) then
+        call app_log(APP_ERROR, "get_mask: Failed to read mask record")
+        return
+    end if
     call query%free()
 
     if (mask%ni == fld%ni .and. mask%nj == fld%nj .and. mask%nk == fld%nk .and. &
@@ -73,7 +85,6 @@ integer function get_mask(mask, fld) result(status)
         return
     endif
 
-    write(app_msg, *) 'get_mask_key: Associated mask not found'
+    write(app_msg, *) 'get_mask: Associated mask not found'
     call app_log(APP_ERROR, app_msg)
-    status = -1
-end function get_mask_key
+end function get_mask

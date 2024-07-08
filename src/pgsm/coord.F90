@@ -1,6 +1,6 @@
 subroutine coord(lescoords, mode)
     use app
-    use grilles, only : coordll, ncoords
+    use grilles, only : coordll, ncoords, nmaxcoords
     implicit none
 
     real, dimension(*), INTENT(IN) :: lescoords

@@ -1,23 +1,20 @@
-   subroutine qqqform(theform)
-      implicit none
+subroutine qqqform(theform)
+    implicit none
 
-      integer theform(4)
+    integer, intent(in) :: theform(4)
+
 #include "idents.cdk90"
-      external argdims
-      integer argdims
 
-      integer i,j,longueur
+    integer, external :: argdims
 
-      character*80 chaine
+    integer i , j, longueur
 
-      longueur = argdims(1)
+    longueur = argdims(1)
 
-      qcform(1:16) = ' '
+    qcform(1:16) = ' '
 
-      do i=1,longueur
-         j = 4*(i-1)+1
-         write(qcform(j:j+3),'(a4)') theform(i)
-      enddo
-      
-      return
-      end
+    do i = 1, longueur
+        j = 4 * (i - 1) + 1
+        write(qcform(j:j + 3),'(a4)') theform(i)
+    enddo
+end

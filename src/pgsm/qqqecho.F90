@@ -9,7 +9,6 @@ subroutine qqqecho(chaine)
     integer :: i, j, longueur, iun
 
     character(len = 80) :: message
-    character(len = 16) :: form
 
     longueur = argdims(1)
 

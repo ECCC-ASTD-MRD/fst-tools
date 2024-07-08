@@ -122,6 +122,14 @@ subroutine chmpdif (noment, nomsrt, ip1tab, ip2tab, ip3tab, ip1s, ip2s, ip3s)
         return
     endif
 
+    ! Just get rid of some compilation warnings
+    i = 1
+    ii = 1
+    j = 1
+    jj = 1
+    k = 1
+    kk = 1
+
     ! execution de chaque paire dans la liste
     do iloop = 1, nloop, 2
         if (num1 > 1) then

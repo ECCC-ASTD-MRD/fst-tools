@@ -4,7 +4,7 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
     use rmn_fst24
     use files, only : nRecords, inputFiles
     use packing, only : npack, npack_orig
-    use pgsm_mod, only : nwetike, etikent, tmpif1, tmpif2, message, typeent, ip3ent
+    use pgsm_mod, only : nwetike, etikent, tmpif1, tmpif2, message, typeent, ip3ent, ier, mtdone, printen, tmplat
     use accum, only : npas, unefois
     use grilles, only : cgrtyp, gdin, gdout, li, lj, lg1, lg2, lg3, lg4, masque
     use symetry, only : symetri
@@ -34,11 +34,10 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
     character(len = 2) :: ctypvar
 
     character(len = 8) :: extrap_option
-    integer datev, i, nunv
-    integer iprs, irec, nrecs
-    logical sym, symetri
-    logical skip
-    integer, dimension(:, :), allocatable :: ifld_in, ifld_out
+    integer :: datev, i, nunv
+    integer :: iprs, irec, nrecs
+    logical :: skip, sym
+    integer, dimension(:, :), allocatable, target :: ifld_in, ifld_out
 
     real, dimension(:, :), pointer :: tmpout
 
@@ -107,7 +106,7 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
 
             !  On verifie d'abord que le champ n'a pas ete traite, car les masques associes sont traites ailleurs.
             if (done_fields(irec)) cycle
-            npack_orig = -records(irec)%nbits
+            npack_orig = -records(irec)%pack_bits
             npas = records(irec)%npas
 
             if (records(irec)%nomvar(1:2) == '>>' .or. records(irec)%nomvar(1:2) == '^^' .or. records(irec)%nomvar(1:2) == 'HY' .or. &
@@ -143,15 +142,23 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
 
             skip = .false.
 
-	        allocate(tmpif1(records(irec)%ni, records(irec)%nj))
+            allocate(tmpif1(records(irec)%ni, records(irec)%nj))
 
-            if (records(irec)%datyp == 2 .or. records(irec)%datyp == 4 .or. records(irec)%datyp == 130 .or. records(irec)%datyp == 132) then
+            if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4 .or. &
+                records(irec)%data_type == 130 .or. records(irec)%data_type == 132) then
+
                 allocate(ifld_in(records(irec)%ni, records(irec)%nj))
                 allocate(ifld_out(li, lj))
-                records(irec)%read(ifld_n)
+                if (.not. records(irec)%read(c_loc(ifld_in))) then
+                    call app_log(APP_ERROR, 'scalair: Failed to read field')
+                    call pgsmabt
+                end if
                 call cvtrfi(tmpif1, ifld_in, records(irec)%ni, records(irec)%nj)
             else
-                records(irec)%read(tmpif1)
+                if (.not. records(irec)%read(c_loc(tmpif1))) then
+                    call app_log(APP_ERROR, 'scalair: Failed to read field')
+                    call pgsmabt
+                end if
                 call prefiltre(tmpif1, records(irec)%ni, records(irec)%nj, records(irec)%grtyp)
             endif
 
@@ -161,7 +168,7 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
             endif
 
             if (.not. skip) then
-                if (records(irec)%grtyp /= cgrtyp .or. records(irec)%ni /= li .or. records(irec)%nj /= .or. &
+                if (records(irec)%grtyp /= cgrtyp .or. records(irec)%ni /= li .or. records(irec)%nj /= lj .or. &
                     records(irec)%ig1 /= lg1 .or. records(irec)%ig2 /= lg2 .or. records(irec)%ig3 /= lg3 .or. records(irec)%ig4 /= lg4) then
                     ! interpolation
                     allocate(tmpif2(li, lj))
@@ -186,15 +193,17 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
                     cnomvar = records(irec)%nomvar
                 endif
 
-                if (records(irec)%datyp == 2 .or. records(irec)%datyp == 4 .or. records(irec)%datyp == 130 .or. records(irec)%datyp == 132) then
+                if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4 .or. &
+                    records(irec)%data_type == 130 .or. records(irec)%data_type == 132) then
+
                     call cvtifr(ifld_out, tmpout, li, lj)
                     call iecritur(ifld_out, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
-                        records(irec)%jp1, records(irec)%jp2, records(irec)%jp3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
+                        records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
                         cgrtyp, lg1, lg2, lg3, lg4)
                     deallocate(ifld_in, ifld_out)
                 else
                     call ecritur(tmpout, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
-                        records(irec)%jp1, records(irec)%jp2, records(irec)%jp3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
+                        records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
                         cgrtyp, lg1, lg2, lg3, lg4)
                     if (associated(tmpif2)) then
                         deallocate(tmpif2)

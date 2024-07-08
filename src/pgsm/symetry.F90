@@ -19,16 +19,16 @@ contains
 
         nnoms = 0
 
-        CALL cmetsym('GZ', .true.)
-        CALL cmetsym('TT', .true.)
-        CALL cmetsym('DD', .true.)
-        CALL cmetsym('WW', .true.)
-        CALL cmetsym('ES', .true.)
-        CALL cmetsym('F2', .true.)
-        CALL cmetsym('PN', .true.)
-        CALL cmetsym('PS', .true.)
-        CALL cmetsym('TS', .true.)
-        CALL cmetsym('QQ', .false.)
+        CALL cmetsym('GZ  ', .true.)
+        CALL cmetsym('TT  ', .true.)
+        CALL cmetsym('DD  ', .true.)
+        CALL cmetsym('WW  ', .true.)
+        CALL cmetsym('ES  ', .true.)
+        CALL cmetsym('F2  ', .true.)
+        CALL cmetsym('PN  ', .true.)
+        CALL cmetsym('PS  ', .true.)
+        CALL cmetsym('TS  ', .true.)
+        CALL cmetsym('QQ  ', .false.)
     end subroutine init
 
 

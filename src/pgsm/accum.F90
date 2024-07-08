@@ -37,17 +37,8 @@ module accum
     character(len = 4), save :: cnumv
 
     !> Compteur augmenter a chaque appel pluse-pluss-moinse-moinss
-    integer, save :: icnt
+    integer, save :: icnt = 0
 
-    logical, save :: unefois
-    logical, save :: once
-
-contains
-    subroutine init()
-        implicit none
-
-        icnt = 0
-        unefois = .false.
-        once = .false.
-    end subroutine init
+    logical, save :: unefois = .false.
+    logical, save :: once = .false.
 end module accum

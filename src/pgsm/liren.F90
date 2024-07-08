@@ -2,15 +2,18 @@
 subroutine liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, iunit)
     use app
     use rmn_fst24
-    use accum, only: idatt, ideet, npas, nni, nnj, nnk, jpp1, jpp2, jpp3, ctypv, cnumv, cetik, cigty, igg1, igg2, igg3, igg4
-    use pgsm_mod, only : ip1style, tmpif0, message
+    use accum, only: icnt, idatt, ideet, npas, nni, nnj, nnk, jpp1, jpp2, jpp3, ctypv, cnumv, cetik, cigty, igg1, igg2, igg3, igg4
+    use pgsm_mod, only : ier, ip1style, tmpif0, message, printen
     use chck, only : ichck
+    use files, only : inputFiles, outputFile, fentree, fsortie
     implicit none
 
     !> Nomvar
     integer, intent(in) :: nom
     !> Typvar (a = analysis, p = forecast)
     integer, intent(in) :: typvar
+    !> Origin date
+    integer, intent(in) :: idat
     !> Level
     integer, intent(in) :: niv(2)
     !> Forecast hour
@@ -40,11 +43,13 @@ subroutine liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, iunit)
     integer :: letiket(3)
     integer :: lniv
     character(len = 8) :: fmtstr
+    real :: ptr
 
     type(fst_file), pointer :: file
     type(fst_query) :: query
     type(fst_record) :: record
 
+    file => null()
     if (fentree == iunit) then
         file = inputFiles(1)
     else if (fsortie == iunit) then
@@ -75,17 +80,13 @@ subroutine liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, iunit)
 
     lniv = niv(1)
     if (argdims(4) > 1) then
-        p = transfer(niv(1), p)
-        call convip_plus(lniv, p, -1*niv(2)-1000, ip1style, fmtstr, .false.)
+        ptr = transfer(niv(1), ptr)
+        call convip_plus(lniv, ptr, -1*niv(2)-1000, ip1style, fmtstr, .false.)
     endif
 
     ier = fstcvt(nom, typvar, letiket, -1, cnomvar, ctypvar, cetiqet, cigtyp, .true.)
 
-    if (iunit) then
-        query = inputFiles(1)%new_query(datev = idat, etiket = cetiqet, ip1 = lniv, ip2 = ihr, ip3 = iip3, typvar = ctypvar, nomvar = cnomvar)
-    else
-        query = outputFile%%new_query(datev = idat, etiket = cetiqet, ip1 = lniv, ip2 = ihr, ip3 = iip3, typvar = ctypvar, nomvar = cnomvar)
-    end if
+    query = file%new_query(datev = idat, etiket = cetiqet, ip1 = lniv, ip2 = ihr, ip3 = iip3, typvar = ctypvar, nomvar = cnomvar)
     if (query%find_next(record)) then
         call app_log(APP_ERROR, 'liren: Record does not exist')
         call pgsmabt
@@ -132,15 +133,48 @@ subroutine liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, iunit)
 end subroutine
 
 
-subroutine lirsr(nom, typvar, idat, niv, ihr, ip3, etiqet)
+subroutine liren(nom, typvar, idat, niv, ihr, ip3, etiqet)
+    use files, only : fentree
     implicit none
 
-    call liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, .true.)
+    !> Nomvar
+    integer, intent(in) :: nom
+    !> Typvar (a = analysis, p = forecast)
+    integer, intent(in) :: typvar
+    !> Origin date
+    integer, intent(in) :: idat
+    !> Level
+    integer, intent(in) :: niv(2)
+    !> Forecast hour
+    integer, intent(in) :: ihr
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
+    call liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, fentree)
 end subroutine
 
 
 subroutine lirsr(nom, typvar, idat, niv, ihr, ip3, etiqet)
+    use files, only : fsortie
     implicit none
 
-    call liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, .false.)
+    !> Nomvar
+    integer, intent(in) :: nom
+    !> Typvar (a = analysis, p = forecast)
+    integer, intent(in) :: typvar
+    !> Origin date
+    integer, intent(in) :: idat
+    !> Level
+    integer, intent(in) :: niv(2)
+    !> Forecast hour
+    integer, intent(in) :: ihr
+    !> IP3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
+
+    call liren_orig(nom, typvar, idat, niv, ihr, ip3, etiqet, fsortie)
 end subroutine

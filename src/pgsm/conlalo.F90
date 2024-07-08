@@ -1,23 +1,3 @@
-!> Calculer lat long de chaque pt d'une grille type "y" ou "z"
-subroutine conlalo(lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4)
-    use app
-    implicit none
-
-    external conlal2
-
-    integer :: lat, lon, ni, nj, grtyp, grtypxy, ig1, ig2, ig3, ig4
-    character(len = 1) :: cgrtyp, cgtypxy
-
-    write(cgrtyp , '(A1)') grtyp
-    write(cgtypxy, '(A1)') grtypxy
-
-    WRITE(app_msg, "(' CONLALO:', 'CGRTYP: ', a1, 'CGTYPXY: ', a1)") cgrtyp, cgtypxy
-    call app_log(APP_INFO, app_msg)
-
-    call conlal2(lat, lon, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3, ig4)
-end
-
-
 !> Calculer la latitude et la longitude de tous les points de la grille de sortie de type "y" ou "z"
 subroutine conlal2(lat, lon, ni, nj, cgrtyp, cgtypxy, ig1, ig2, ig3, ig4)
     use app

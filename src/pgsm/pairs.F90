@@ -3,25 +3,49 @@ module pairs
 
     integer, parameter :: mxpairs = 40
 
-    integer, save :: npair
-    integer, save :: npairuv
+    integer, save :: npair = 7
+    integer, save :: npairuv = 4
 
-    character(len = 24), save :: paire(mxpairs)
-
-contains
-
-    subroutine init()
-        implicit none
-
-        paire(1) = 'VENT    UU  VV  UV      '
-        paire(2) = 'UV      UU  VV  ??      '
-        paire(3) = 'VENTUVS US  VS  UV      '
-        paire(4) = 'UVS     US  VS  ??      '
-        paire(5) = 'WDUV    UU  VV  UV  WD  '
-        paire(6) = 'WDUD    UD  VD  UV  WD  '
-        paire(7) = '!#@$!#@$>>  ^^  >>  ^^  '
-
-        npair = 7
-        npairuv = 4
-    end subroutine init
+    character(len = 24), save :: paire(mxpairs) = [ &
+        'VENT    UU  VV  UV      ', &
+        'UV      UU  VV  ??      ', &
+        'VENTUVS US  VS  UV      ', &
+        'UVS     US  VS  ??      ', &
+        'WDUV    UU  VV  UV  WD  ', &
+        'WDUD    UD  VD  UV  WD  ', &
+        '!#@$!#@$>>  ^^  >>  ^^  ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ', &
+        '                        ' &
+    ]
 end module pairs

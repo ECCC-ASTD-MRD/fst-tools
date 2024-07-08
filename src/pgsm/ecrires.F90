@@ -1,31 +1,17 @@
 module ecrires
-    integer, save :: compression_level
-    integer, save :: etiksrt(3)
-    integer, save :: ip2srt
+    implicit none
+
+    integer, save :: compression_level = 0
+    integer, save :: etiksrt(3) = -1
+    integer, save :: ip2srt = -1
     integer, save :: ip3srt
-    integer, save :: niif
-    integer, save :: niinc
-    integer, save :: niis
-    integer, save :: njjf
-    integer, save :: njjnc
-    integer, save :: njjs
+    integer, save :: niif = 1000
+    integer, save :: niinc = 10
+    integer, save :: niis = 1
+    integer, save :: njjf = 1000
+    integer, save :: njjnc = 10
+    integer, save :: njjs = 1
     integer, save :: nwetiks
-    integer, save :: typesrt
-    logical, save :: printsr
-
-contains
-
-    subroutine init()
-        printsr = .false.
-        niis = 1
-        njjs = 1
-        niif = 1000
-        njjf = 1000
-        niinc = 10
-        njjnc = 10
-        ip2srt = -1
-        etiksrt = -1
-        typesrt = -1
-        compression_level = 0
-    end subroutine
+    integer, save :: typesrt = -1
+    logical, save :: printsr = .false.
 end module ecrires

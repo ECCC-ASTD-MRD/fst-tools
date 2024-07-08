@@ -6,11 +6,9 @@ subroutine qqqfilt(inout, weightlst, ntimes, verbose)
 
 #include "qqqfilt.cdk90"
 
-    integer :: i, j, l, sum
-    integer :: nb_elem, lng_liste, istart, iend
+    integer :: i
 
-    external argdims
-    integer argdims
+    integer, external :: argdims
 
     data(fltoggle(i), i =  1, 2)  /.false., .false./
     data(fltntimes(i), i = 1, 2) /0, 0/

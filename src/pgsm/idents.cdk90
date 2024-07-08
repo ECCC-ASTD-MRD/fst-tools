@@ -3,6 +3,6 @@
    character*16 qcform
 
    common /idents/  qposition, qitems, qnitems
-   common /cidents/ qcsepar,qcform
+   common /cidents/ qcsepar, qcform
 
 

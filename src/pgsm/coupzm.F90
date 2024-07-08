@@ -3,12 +3,13 @@ subroutine coupzm(iunit, cnom, cjcoup)
     use app
     use rmn_fst24
     use packing, only : npack
-    use pgsm_mod, only : nwetike, etikent, message, tmpif1, typeent, ip3ent
+    use pgsm_mod, only : nwetike, etikent, message, tmpif1, typeent, ip3ent, printen
     use accum, only : npas
     use cfldinf, only : cnomvar, ctypvar, cigtyp, cetiket
     use nivos, only : nivospr, nmo
-    use heuress, only : nhur, nheures
+    use heuress, only : nhur, heures
     use param, only : dat, deet
+    use files, only : fentree, fsortie, inputFiles, outputFile
     implicit none
 
     !> 
@@ -28,8 +29,6 @@ subroutine coupzm(iunit, cnom, cjcoup)
     !            la moyenne zonale(est-ouest) contient nj points
     !            la moyenne meridionale(nord-sud) contient ni points
 
-#include "defin.cdk90"
-
     real coa(500), w(500), sia(500), rad(500), poids(500), sinm2(500), sinm1(500), sin2(500), champ(1000)
     integer i, datev
     integer ihr, iheur, iprs, npres
@@ -39,6 +38,7 @@ subroutine coupzm(iunit, cnom, cjcoup)
     type(fst_query) :: query
     type(fst_record) :: record
 
+    file => null()
     if (fentree == iunit) then
         file = inputFiles(1)
     else if (fsortie == iunit) then
@@ -87,7 +87,7 @@ subroutine coupzm(iunit, cnom, cjcoup)
             call pgsmabt
         endif
 
-        ! identifier parametres si type g-a-b-l-c
+        npas = record%npas
         dat = record%dateo
         deet = record%deet
         cigtyp = record%grtyp
@@ -157,7 +157,7 @@ subroutine coupzm(iunit, cnom, cjcoup)
             if ((record%ig1 == 2 .and. record%ig2 == 1) .or. (record%ig1 == 1 .and. record%ig2 == 0)) then
                 call louptra(poids(ilath), coa, ilath)
             else
-                call loupin1(poids(1), poids(1), nj)
+                call loupin1(poids(1), poids(1), record%nj)
             endif
         endif
 

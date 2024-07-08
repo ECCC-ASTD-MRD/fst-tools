@@ -46,19 +46,19 @@ module grilles
     !             lg1 - 0 globale
 
     !> pointeur dans lcm table de latitudes
-    integer, save :: ixlat
+    integer, save :: ixlat = 0
     !> pointeur dans lcm table de longitudes
-    integer, save :: ixlon
+    integer, save :: ixlon = 0
     !> pointeur dans lcd table de latitudes  tournees (grille E)
     integer, save :: ixlatg
     !> pointeur dans lcd table de longitudes tournees (grille E)
     integer, save :: ixlong
     !> Third parameter (output) of qlxinx -> Number of directives? Number of parameters?
-    integer, save :: ngr
-    integer, save :: ncoords
+    integer, save :: ngr = 0
+    integer, save :: ncoords = 0
     integer, save :: gdin
     integer, save :: gdout
-    integer, save :: masque
+    integer, save :: masque = 0
 
     !> \bug Never initialized!
     real, save :: dgrwxy
@@ -69,12 +69,4 @@ module grilles
     !> Output grid type
     character(len = 1), save :: cgrtyp
     character(len = 1), save :: cgtypxy
-
-contains
-    subroutine init()
-        ncoords = 0
-        ixlat = 0
-        ixlon = 0
-        ngr = 0
-    end subroutine init
 end module grilles

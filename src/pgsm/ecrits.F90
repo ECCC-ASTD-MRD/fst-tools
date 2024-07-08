@@ -1,8 +1,9 @@
 !> Ecrire sur fichier standard, ms, sequentiel
 subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, ig1srt, ig2srt, ig3srt, ig4srt)
-    use files, only: outputFile
     use app
-    use pgsm_mod, only: iwrit, tmpif0, message
+    use rmn_fst24
+    use files, only: outputFile, outputFileMode
+    use pgsm_mod, only: ier, iwrit, tmpif0, message
     use accum, only : nni, nnj, nnk, idatt, ideet, npas, jpp1, jpp2, jpp3, igg1, igg2, igg3, igg4, cnumv, ctypv, cetik, cigty, icnt
     use ecrires, only : compression_level, printsr
     use chck, only : ichck, necrt
@@ -13,13 +14,13 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     !> Data compaction
     integer, intent(in) :: npac
     !> Origin date (CMC stamp)
-    integer, intent(in) :: idat
+    integer, intent(inout) :: idat
     !> Level
     integer, intent(in) :: ip1(2)
     !> Forecast hour
-    integer, intent(in) :: ip2
+    integer, intent(inout) :: ip2
     !> User defined identifier
-    integer, intent(in) :: ip3
+    integer, intent(inout) :: ip3
     !> Field type
     integer, intent(in) :: type
     !> Label
@@ -37,7 +38,6 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     !> Forth grid parameter
     integer, intent(in) :: ig4srt
 
-#include "enrege.cdk90"
 #include "blancs.cdk90"
 
     external conver, pgsmabt, imprims, putfld
@@ -60,7 +60,7 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
     integer :: npkc
     integer :: cdatyp
     integer :: ig1s, ig2s, ig3s, ig4s
-    logical :: rewrit
+    integer :: rewrit
     integer :: letiket(3)
 
     integer :: lip1
@@ -91,7 +91,7 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
 
     if (nom == -1) cnomvar = cnumv
     if (type == -1) ctypvar = ctypv
-    if (etiqet(1) == -1) = cetik
+    if (etiqet(1) == -1) cetiqet = cetik
     if (igtyp == -1) cigtyp = cigty
 
     npkc = npac
@@ -173,9 +173,9 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
         npkc = abs(npac)
 
         if (iwrit == +1) then
-            rewrit = .true.
+            rewrit = FST_YES
         else
-            rewrit = .false.
+            rewrit = FST_NO
         endif
         if (.not. message) iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
         record%data = c_loc(tmpif0)
@@ -199,9 +199,10 @@ subroutine ecrits(nom, npac, idat, ip1, ip2, ip3, type, etiqet, igtyp, imprim, i
         record%ig2 = ig2s
         record%ig3 = ig3s
         record%ig4 = ig4s
-        success = output_file%write(record, rewrit)
+        success = outputFile%write(record, rewrite = rewrit)
     else if (outputFileMode == 3) then
-        write(iun) (tmpif0(i), i=1, nni * nnj)
+        !> \todo Handle non-fst files
+        ! write(iun) (tmpif0(i), i=1, nni * nnj)
         if (message) then
             write(app_msg, fmt_wrt) ctypvar, cnomvar, lip1, ip2, ip3, nni, nnj
             call app_log(APP_INFO, app_msg)

@@ -1,9 +1,0 @@
-    !> Numero du premier record sur fichier ms
-    INTEGER :: numero
-    !> Control rangée aux frontieres (voir putfld)
-    INTEGER :: nbrow
-    !> Accroissement entre chaque record a partir de numero
-    INTEGER :: numdel
-    INTEGER :: istart
-    common /enrege/ numero, nbrow, numdel, istart
-    

@@ -3,23 +3,25 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     use app
     use rmn_fst24
     use accum, only : nni, nnj, nnk, idatt, ideet, npas, jpp1, jpp2, jpp3, igg1, igg2, igg3, igg4, cnumv, ctypv, cetik, cigty, icnt
-    use pgsm_mod, only : ier, ip1style, message
+    use pgsm_mod, only : ier, ip1style, message, tmpif0, printen
     use files, only : fentree, fsortie, inputFiles, outputFile
     use chck, only : ichck
     implicit none
 
-    !> 
+    !> Nomvar
     integer, intent(in) :: nom
-    !> 
+    !> Typvar
     integer, intent(in) :: type
-    !> 
+    !> Dateo
     integer, intent(in) :: idat
-    !> 
+    !> Ip1
     integer, intent(in) :: niv(2)
-    !> 
+    !> Ip2
     integer, intent(in) :: ihr
-    !> 
-    integer, intent(in) :: etiqet
+    !> Ip3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
     !> File from which to read (fentree|fsortie)
     integer, intent(in) :: iunit
 
@@ -38,9 +40,9 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     external pgsmabt, imprime, messags
     integer, external :: argdims, fstopc, fstcvt
 
-    character(len = 12) :: cetiqet
+    character(len = 12) :: cetiket
     character(len = 4) :: cnomvar
-    character(len = 4) :: c_bidx_don
+    character(len = 1) :: cbidon
     character(len = 2) :: ctypvar
 
     integer :: iip3
@@ -53,6 +55,7 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     type(fst_query) :: query
     type(fst_record) :: record
 
+    file => null()
     if (fentree == iunit) then
         file = inputFiles(1)
     else if (fsortie == iunit) then
@@ -72,7 +75,6 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     cnomvar = '    '
     ctypvar = '  '
     cetiket = '            '
-    cigtyp  = ' '
 
     letiket(1) = etiqet(1)
     letiket(2) = blancs
@@ -91,7 +93,7 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     endif
 
     !> \bug When this subroutine still contain an entry, all the lines above were skipped when called from lrsmds
-    ier = fstcvt(nom, type, letiket , -1, cnomvar, ctypvar, cetiket, cigtyp, .true.)
+    ier = fstcvt(nom, type, letiket , -1, cnomvar, ctypvar, cetiket, cbidon, .true.)
 
     query = file%new_query(nomvar = cnomvar, typvar = ctypvar, datev = idat, ip1 = lniv, ip2 = ihr, ip3 = ip3, etiket = cetiket)
     if (query%find_next(record)) then
@@ -105,9 +107,9 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     idatt = record%dateo
     ideet = record%deet
     npas = record%npas
-    nni = record%nni
-    nnj = record%nnj
-    nnk = record%nnk
+    nni = record%ni
+    nnj = record%nj
+    nnk = record%nk
     jpp1 = record%ip1
     jpp2 = record%ip2
     jpp3 = record%ip3
@@ -121,7 +123,7 @@ subroutine lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, iunit)
     igg4 = record%ig4
 
     ! VERIFIER SI GRILLE GAUSSIENNE NI DOIT ETRE PAIR
-    if (cigtyp == 'G' .and. mod(nni, 2) .ne. 0) call messags(nni)
+    if (record%grtyp == 'G' .and. mod(nni, 2) .ne. 0) call messags(nni)
 
     if (.not. message) iopc= fstopc('TOLRNC', 'DEBUGS', .true.)
 
@@ -149,6 +151,21 @@ subroutine lrsmds(nom, type, idat, niv, ihr, ip3, etiqet)
     use files, only : fsortie
     implicit none
 
+    !> Nomvar
+    integer, intent(in) :: nom
+    !> Typvar
+    integer, intent(in) :: type
+    !> Dateo
+    integer, intent(in) :: idat
+    !> Ip1
+    integer, intent(in) :: niv(2)
+    !> Ip2
+    integer, intent(in) :: ihr
+    !> Ip3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     call lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, fsortie)
 end subroutine lrsmds
 
@@ -157,5 +174,20 @@ subroutine lrsmde(nom, type, idat, niv, ihr, ip3, etiqet)
     use files, only : fentree
     implicit none
 
+    !> Nomvar
+    integer, intent(in) :: nom
+    !> Typvar
+    integer, intent(in) :: type
+    !> Dateo
+    integer, intent(in) :: idat
+    !> Ip1
+    integer, intent(in) :: niv(2)
+    !> Ip2
+    integer, intent(in) :: ihr
+    !> Ip3
+    integer, intent(in) :: ip3
+    !> Label
+    integer, intent(in) :: etiqet(3)
+
     call lrsmde_orig(nom, type, idat, niv, ihr, ip3, etiqet, fentree)
-end subroutine lrsmds
+end subroutine lrsmde

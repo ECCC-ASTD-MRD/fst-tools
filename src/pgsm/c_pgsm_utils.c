@@ -28,23 +28,23 @@ FILE *ftnUnits[100];
 
 
 void newdate_(int*, int*, int*, int*);
-void ImprimeIdent(char longString[], int items[],char *separateur, char *nomvar, char *typvar, char *etiket,
+void ImprimeIdent(char longString[], int items[], char *separateur, char *nomvar, char *typvar, char *etiket,
              int ip1, int ip2, int ip3, int dateo, int datev, int ni, int nj, int nk);
 void strconvdate(char strdate[], int fstdate);
 static int c_dateform = 1;
 
 
-int f77name(pgsmform)(char format[],int *nrepeats, int *lenFormat, F2Cl fortranLenFormat){
-    char cFormat[32], cNrepeats[8];
-    int i, mode, yyyymmhh, hhmmssss;
+void pgsmform(char format[], int *nrepeats, int lenFormat){
+    char cFormat[32];
+    char cNrepeats[8];
 
     *nrepeats = 0;
 
-    for (i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++) {
         cFormat[i] = '\0';
     }
 
-    i = *lenFormat - 1;
+    int i = lenFormat - 1;
     while (i >= 0 && format[i] == ' ') {
         format[i] = '\0';
         i--;
@@ -63,14 +63,14 @@ int f77name(pgsmform)(char format[],int *nrepeats, int *lenFormat, F2Cl fortranL
     }
 
     cFormat[0] = '%';
-    strcpy(&cFormat[1],&format[1]);
+    strcpy(&cFormat[1], &format[1]);
 
     cFormat[strlen(cFormat)] = (char) tolower(format[0]);
     strcpy(format, cFormat);
 }
 
 
-int f77name(pgsmecho)(int *iun, char message[], int *lenMessage, F2Cl fortranLenMessage) {
+void f77name(pgsmecho)(int *iun, char message[], int *lenMessage, F2Cl fortranLenMessage) {
     message[*lenMessage] = '\0';
     fprintf(ftnUnits[*iun], "%s\n", message);
 }
@@ -93,29 +93,30 @@ int f77name(pgsmof)(int *iun, char *nomFichier, F2Cl lenNomFichier) {
 }
 
 
-int f77name(pgsmcf)(int *iun) {
+void f77name(pgsmcf)(int *iun) {
     fclose(ftnUnits[*iun]);
 }
 
 
-int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format,int *position,int *idents,char *separateur,
-             char *nomvar,char *typvar,char *etiket,int *dateo,int *datev,int *dateform, int *ip1,int *ip2,int *ip3,
-             float *lat,float *lon, F2Cl len_format, F2Cl len_separateur, F2Cl len_nomvar, F2Cl len_typvar, F2Cl len_etiket)
+void f77name(pgsmwr)(int *iun, float *data, int *ni, int *nj, int *nk , char *format, int *position, int *idents, char *separateur,
+             char *nomvar, char *typvar, char *etiket, int *dateo, int *datev, int *dateform, int *ip1, int *ip2, int *ip3,
+             float *lat, float *lon, F2Cl len_format, F2Cl len_separateur, F2Cl len_nomvar, F2Cl len_typvar, F2Cl len_etiket)
 {
-    char c_etiket[16], c_typvar[4],c_nomvar[8], c_separateur[2];
+    char c_etiket[16], c_typvar[4], c_nomvar[8], c_separateur[2];
     char string[256];
-    char internalFormat[16], latlonformat[32];
+    char internalFormat[17];
+    char latlonformat[37];
     int latlonflag = 0;
-    int longform=16;
+    int longform = 16;
     int npts = *ni * *nj * *nk;
     int nrepeats;
 
     c_dateform = *dateform;
 
-    strncpy(c_nomvar, nomvar,4);
-    strncpy(c_typvar, typvar,2);
-    strncpy(c_etiket, etiket,12);
-    strncpy(internalFormat, format,16);
+    strncpy(c_nomvar, nomvar, 4);
+    strncpy(c_typvar, typvar, 2);
+    strncpy(c_etiket, etiket, 12);
+    strncpy(internalFormat, format, 16);
     c_separateur[0] = separateur[0];
 
     if (c_separateur[0] == 'T') {
@@ -127,8 +128,8 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
     c_etiket[12] = '\0';
     c_separateur[1] = '\0';
 
-    f77name(pgsmform)(internalFormat,&nrepeats, &longform,(F2Cl) 16);
-    sprintf(latlonformat,"%s%s%s%s","%s",internalFormat,"%s",internalFormat);
+    pgsmform(internalFormat, &nrepeats, longform);
+    sprintf(latlonformat, "%s%s%s%s", "%s", internalFormat, "%s", internalFormat);
     int i = 0;
     while (i < 16) {
         if (idents[i] == LAT || idents[i] == LON) {
@@ -192,7 +193,7 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
             if (j == npts - 1) {
                 ImprimeIdent(string, idents, c_separateur, c_nomvar, c_typvar, c_etiket, *ip1, *ip2, *ip3, *dateo, *datev, *ni, *nj, *nk);
                 string[strlen(string) - 1] = '\n';
-                fprintf(ftnUnits[*iun],"\n%s",string);
+                fprintf(ftnUnits[*iun], "\n%s", string);
             }
         }
 
@@ -207,9 +208,8 @@ int f77name(pgsmwr)(int *iun,float *data,int *ni, int *nj, int *nk ,char *format
 }
 
 
-int GetIdent(char string[],int item, char *nomvar, char *typvar, char *etiket,
+int GetIdent(char string[], int item, char *nomvar, char *typvar, char *etiket,
          int ip1, int ip2, int ip3, int dateo, int datev, int ni, int nj, int nk) {
-    int mode, yyyymmdd, hhmmssss;
     switch(item) {
         case NOMVAR:
             strcpy(string, nomvar);
@@ -263,7 +263,7 @@ int GetIdent(char string[],int item, char *nomvar, char *typvar, char *etiket,
 }
 
 
-void ImprimeIdent(char longString[], int items[],char *separateur, char *nomvar, char *typvar, char *etiket,
+void ImprimeIdent(char longString[], int items[], char *separateur, char *nomvar, char *typvar, char *etiket,
              int ip1, int ip2, int ip3, int dateo, int datev, int ni, int nj, int nk) {
     char string[32];
     strcpy(longString, "");
@@ -288,7 +288,7 @@ void ImprimeIdent(char longString[], int items[],char *separateur, char *nomvar,
 
 void strconvdate(char strdate[], int fstdate) {
     int lfstdate, yyyymmdd, hhmmssss, mode;
-    int yyyy, month, day, hour, minutes, sec, fracsec;
+    int yyyy, month, day, hour, minutes, sec;
 
     switch(c_dateform) {
         case 0:

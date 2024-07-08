@@ -1,22 +1,22 @@
 !> difference entre 2 champs de hauteur
-subroutine epaisur(iheur, npar, niveau)
+subroutine epaisur(iheur, niveau)
     use app
+    use rmn_fst24
     use packing, only : npack
-    use pgsm_mod, only : nwetike, etikent, tmpif1, tmpif2, message, typeent, ip3ent
+    use pgsm_mod, only : nwetike, etikent, tmpif1, tmpif2, message, typeent, ip3ent, printen, ier
     use accum, only : npas
     use grilles, only : cgrtyp, gdin, gdout, li, lj, lg1, lg2, lg3, lg4
     use param, only : dat, deet
     use symetry, only : symetri
+    use files, only : inputFiles
     implicit none
 
     !> Field hour
     integer, intent(in) :: iheur
-    !> Number of levels
-    integer, intent(in) :: npar
     !> Level table
     integer, intent(in) :: niveau(2)
 
-    external ecritur, pgsmabt, imprime, loupsou, fstopc, messags
+    external ecritur, pgsmabt, imprime, loupsou, messags
     integer, external :: fstopc
     integer, external :: ezsint, ezqkdef, ezdefset
     integer, external :: chkenrpos
@@ -26,11 +26,11 @@ subroutine epaisur(iheur, npar, niveau)
     ! resultat sur fichier approprie(standard, ms, seq)
 
     character(len = 12) :: cetiket
-    character(len = 4) :: cnomvar
     character(len = 2) :: ctypvar
     character(len = 1) :: cigtyp
 
-    logical :: junk
+    integer :: i, datev, ijunk
+    logical :: ljunk
 
     type(fst_query) :: query
     type(fst_record) :: rec1
@@ -59,21 +59,24 @@ subroutine epaisur(iheur, npar, niveau)
 
     cigtyp = ' '
 
-    query = file%new_query(datev = datev, etiket = cetiket, ip1 = niveau(1), ip2 = iheur, ip3 = ip3ent, typvar = ctypvar, nomvar = 'GZ')
-    if (.not. query%findNext(rec1)) then
+    query = inputFiles(1)%new_query(datev = datev, etiket = cetiket, ip1 = niveau(1), ip2 = iheur, ip3 = ip3ent, typvar = ctypvar, nomvar = 'GZ  ')
+    if (.not. query%find_next(rec1)) then
         call app_log(APP_ERROR, 'epaisur: Record does not exist in input file')
         return
     endif
     call query%free()
 
-    query = file%new_query(datev = datev, etiket = cetiket, ip1 = niveau(2), ip2 = iheur, ip3 = ip3ent, typvar = ctypvar, nomvar = 'GZ')
-    if (.not. query%findNext(rec2)) then
+    query = inputFiles(1)%new_query(datev = datev, etiket = cetiket, ip1 = niveau(2), ip2 = iheur, ip3 = ip3ent, typvar = ctypvar, nomvar = 'GZ  ')
+    if (.not. query%find_next(rec2)) then
         call app_log(APP_ERROR, 'epaisur: Record does not exist in input file')
         return
     endif
     call query%free()
+    npas = rec2%npas
+    dat = rec2%dateo
+    deet = rec2%deet
 
-    if (rec1%nk > 1 .or. rec2%nk) then
+    if (rec1%nk > 1 .or. rec2%nk > 1) then
         call app_log(APP_ERROR, 'epaisur: PGSM does not accept 3 dimension fields (NK>1)')
         call pgsmabt
     endif
@@ -85,12 +88,12 @@ subroutine epaisur(iheur, npar, niveau)
 
     allocate(tmpif1(rec1%ni, rec1%nj))
     if ( .not. message) then
-        junk = fstopc('TOLRNC', 'DEBUGS', .true. )
+        ijunk = fstopc('TOLRNC', 'DEBUGS', .true. )
     endif
 
     call chk_userdate(datev)
 
-    if (.not. file%read(rec1, data = c_loc(tmpif1(1, 1))))  then
+    if (.not. inputFiles(1)%read(rec1, data = c_loc(tmpif1(1, 1))))  then
         call app_log(APP_ERROR, 'epaisur: Failed to read field')
         return
     endif
@@ -105,12 +108,12 @@ subroutine epaisur(iheur, npar, niveau)
 
     allocate(tmpif2(max0(li, rec2%ni), max0(rec2%nj, lj)))
     if ( .not. message)  then
-        junk = fstopc('TOLRNC', 'DEBUGS', .true. )
+        ijunk = fstopc('TOLRNC', 'DEBUGS', .true. )
     endif
 
     call chk_userdate(datev)
 
-    if (.not. file%read(rec2, data = c_loc(tmpif2(1, 1))))  then
+    if (.not. inputFiles(1)%read(rec2, data = c_loc(tmpif2(1, 1))))  then
         call app_log(APP_ERROR, 'epaisur: Failed to read field')
         return
     endif
@@ -122,7 +125,7 @@ subroutine epaisur(iheur, npar, niveau)
 
     ! interpolation horizontale
     if (rec2%grtyp == 'A' .or. rec2%grtyp == 'B' .or. rec2%grtyp == 'G') then
-        if (rec2%ig1 /= 0) junk = symetri(rec2%nomvar)
+        if (rec2%ig1 /= 0) ljunk = symetri(rec2%nomvar)
     endif
 
     if (cgrtyp == '*') then

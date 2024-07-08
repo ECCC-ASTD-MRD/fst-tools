@@ -1,8 +1,9 @@
 !> Determiner la sorte de grille demande par usager
 subroutine grille2(it, p1, p2, p3, p4, p5, p6, p7, p8)
     use app
-    use pgsm_mod, only: tmplat, tmplon, tmplatg, tmplong
-    use grilles, only : cgrtyp, ngr
+    use pgsm_mod, only: tmplat, tmplon, tmplatg, tmplong, iset
+    use grilles, only : cgtypxy, ngr, gr_a, gr_b, gr_comme, gr_g, gr_grib, gr_latlon, gr_ps, &
+        gr_stations, gr_stereo, gr_tape1, gr_tape2, gr_tape4
     implicit none
 
     !> Grid type

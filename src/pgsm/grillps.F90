@@ -6,14 +6,14 @@ subroutine grillps(nni, nnj, pi, pj, d60, dgrw, hem)
     use grilles, only : cgrtyp, gdout, li, lj, lg1, lg2, lg3, lg4
     implicit none
 
-    integer, intent(in) :: nni, nnj, ihm, hem
+    integer, intent(in) :: nni, nnj, hem
     real, intent(in) :: pi, pj, d60, dgrw
 
     external pgsmabt, cigaxg, cxgaig
 
     integer, external :: ezqkdef, gdll
 
-    integer :: ier
+    integer :: ier, ihm
     real :: pp1, pp2, pp3, pp4
 
     allocate(tmplat(nni, nnj))

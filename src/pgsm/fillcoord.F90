@@ -2,8 +2,8 @@ subroutine fillcoord(lat, lon)
     use grilles, only : coordll, ncoords
     implicit none
 
-    real, intent(out) :: lat(ncords)
-    real, intent(out) :: lon(ncords)
+    real, intent(out) :: lat(ncoords)
+    real, intent(out) :: lon(ncoords)
 
     integer :: i
 

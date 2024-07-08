@@ -4,11 +4,11 @@ subroutine pgsmabt
     use files
     implicit none
 
-    integer, external :: fstfrm
+    logical :: junk
 
     !> \todo Find out if app_status is still usefull/relevant
     app_status = app_end(13)
 
-    if (outputFileMode == 1) outputFile%close()
+    if (outputFileMode == 1) junk = outputFile%close()
     call qqexit(13)
 end

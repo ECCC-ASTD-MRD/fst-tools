@@ -1,12 +1,14 @@
 !> Extraire la difference entre deux champs dont les heures sont differents
 subroutine macpcp(cnom, npar, itime)
     use app
+    use rmn_fst24
     use packing, only : npack
-    use pgsm_mod, only : nwetike, etikent, message, typeent, ip3ent
+    use pgsm_mod, only : nwetike, etikent, message, typeent, ip3ent, ier, printen
     use accum, only : npas
     use grilles, only : cgrtyp, gdin, gdout, li, lj, lg1, lg2, lg3, lg4
     use param, only : dat, deet
     use symetry, only : symetri
+    use files, only : inputFiles
     implicit none
 
     !> Nom du champ
@@ -18,16 +20,15 @@ subroutine macpcp(cnom, npar, itime)
 
     external ecritur
     external loupneg, loupsou, pgsmabt, imprime, messags
-    integer, external :: ezqkdef, ezdefset, ezsint, chkenrpos, datev
+    integer, external :: ezqkdef, ezdefset, ezsint, chkenrpos
     integer, external :: fstopc
-    logical, external :: symetri
 
     character(len = 12) :: cetiket
     character(len = 2) :: ctypvar
 
-    real, dimension(:), allocatable :: lclif1, lclif2
+    real, dimension(:), allocatable, target :: lclif1, lclif2
 
-    integer :: i
+    integer :: i, datev
     integer :: junk
     logical :: sym
 
@@ -56,15 +57,15 @@ subroutine macpcp(cnom, npar, itime)
         ctypvar = '  '
     endif
 
-    query = file%new_query(datev = datev, etiket = cetiket, ip1 = 0, ip2 = itime(1), ip3 = ip3ent, typvar = ctypvar, nomvar = cnom)
-    if (.not. query%findNext(rec1)) then
+    query = inputFiles(1)%new_query(datev = datev, etiket = cetiket, ip1 = 0, ip2 = itime(1), ip3 = ip3ent, typvar = ctypvar, nomvar = cnom)
+    if (.not. query%find_next(rec1)) then
         call app_log(APP_ERROR, 'macpcp: Record does not exist in input file')
         return
     endif
     call query%free()
 
-    query = file%new_query(datev = datev, etiket = cetiket, ip1 = 0, ip2 = itime(2), ip3 = ip3ent, typvar = ctypvar, nomvar = cnom)
-    if (.not. query%findNext(rec2)) then
+    query = inputFiles(1)%new_query(datev = datev, etiket = cetiket, ip1 = 0, ip2 = itime(2), ip3 = ip3ent, typvar = ctypvar, nomvar = cnom)
+    if (.not. query%find_next(rec2)) then
         call app_log(APP_ERROR, 'macpcp: Record does not exist in input file')
         return
     endif
@@ -74,6 +75,9 @@ subroutine macpcp(cnom, npar, itime)
         call app_log(APP_ERROR, 'macpcp: PGSM does not accept 3 dimension fields (NK>1)')
         call pgsmabt
     endif
+    npas = rec2%npas
+    dat = rec2%dateo
+    deet = rec2%deet
 
     ! verifier si grille gaussienne ni doit etre pair
     if (rec1%grtyp .eq. 'G' .and. mod(rec1%ni, 2) .ne. 0) call messags(rec1%ni)
@@ -81,7 +85,7 @@ subroutine macpcp(cnom, npar, itime)
     allocate(lclif1(rec1%ni * rec1%nj))
     if ( .not. message) junk = fstopc('TOLRNC', 'DEBUGS', .true. )
 
-    if (.not. file%read(rec1, data = c_loc(lclif1(1, 1))))  then
+    if (.not. inputFiles(1)%read(rec1, data = c_loc(lclif1(1))))  then
         call app_log(APP_ERROR, 'macpcp: Failed to read field')
         return
     endif
@@ -95,7 +99,7 @@ subroutine macpcp(cnom, npar, itime)
     allocate(lclif2(max0(li * lj, rec2%ni * rec2%nj)))
     if ( .not. message) junk = fstopc('TOLRNC', 'DEBUGS', .true. )
 
-    if (.not. file%read(rec2, data = c_loc(lclif2(1, 1))))  then
+    if (.not. inputFiles(1)%read(rec2, data = c_loc(lclif2(1))))  then
         call app_log(APP_ERROR, 'macpcp: Failed to read field')
         return
     endif
@@ -118,12 +122,6 @@ subroutine macpcp(cnom, npar, itime)
         ier = ezsint(lclif2, lclif1)
     endif
 
-    !     #   jp1 - contient heure du premier champ
-    !     #   jp2 - contient heure du deuxieme champ
-    jp1 = itime(1)
-    jp2 = itime(2)
-    jp3 = 0
-
     ! deet et npas contiennent les dernieres valeurs lues dans le dernier record
 
     ! eliminer toutes les valeurs du champ negative precip et acumulateur d'ajustement ne peuvent etre negatif
@@ -131,10 +129,10 @@ subroutine macpcp(cnom, npar, itime)
 
     ! ecrire sur fichier standard, ms, sequentiel
     if (cgrtyp .eq. '*') then
-        call ecritur(lclif1, npack, rec2%dateo, rec2%deet, rec2%npas, rec2%ni, rec2%nj, rec2%nk, rec2%ip1, rec2%ip2, rec2%ip3, &
+        call ecritur(lclif1, npack, rec2%dateo, rec2%deet, rec2%npas, rec2%ni, rec2%nj, rec2%nk, itime(1), itime(2), 0, &
             rec2%typvar, rec2%nomvar, rec2%etiket, rec2%grtyp, rec2%ig1, rec2%ig2, rec2%ig3, rec2%ig4)
     else
-        call ecritur(lclif2, npack, rec2%dateo, rec2%deet, rec2%npas, li, lj, rec2%nk, rec2%ip1, rec2%ip2, rec2%ip3, &
+        call ecritur(lclif2, npack, rec2%dateo, rec2%deet, rec2%npas, li, lj, rec2%nk, itime(1), itime(2), 0, &
             rec2%typvar, rec2%nomvar, rec2%etiket, cgrtyp, lg1, lg2, lg3, lg4)
     endif
 

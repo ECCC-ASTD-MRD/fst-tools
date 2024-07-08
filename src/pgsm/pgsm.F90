@@ -26,23 +26,22 @@ PROGRAM pgsm
     use files
     use packing, only : npack
     use pgsm_mod
-    use accum, only : icnt, unefois, once
-    use grilles, only : ncoords
+    use accum, only : unefois, once
+    use grilles, only : gr_a, gr_b, gr_g, gr_latlon, gr_ps, gr_tape1, gr_tape2, gr_tape4, gr_xylis, gr_xydir, gr_lldir, &
+        gr_lllist, gr_gem, gr_gef, gr_grib, gr_stations, gr_comme, gr_stereo, masque, ngr
     use nivos, only : nmoy
-    use heuress, only : nheure, init
+    use heuress, only : nheure
     use ecrires
     use chck
     use symetry, only : metsym
     use champs, only : nchamp, npar
-    use pair, only : init, npairuv
+    use pairs, only : npairuv
+    use convers, only : ncon
     implicit none
 
 #include "fst-tools_build_info.h"
 
 #include "champseq.cdk90"
-#include "enrege.cdk90"
-#include "styles.cdk90"
-#include "symnom.cdk90"
 
     ! Source on C-Fortran Interop
     !    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
@@ -71,13 +70,14 @@ PROGRAM pgsm
     external qqqform, qqqident, coord, qqqfilt
 
     external ccard, qlxins, qlxinx, readlx
-    external fstopc, fstopl
     external lrsmde, lrsmds, qlxopt
 
+    integer, external :: fstopc, fstopl
     integer, external :: fnom
     integer :: i, iopc, ipose, kend, nequiv, npex, nsetin, nsetex, nlirmds, nlirmde
     real :: dum
     integer :: idum
+    logical :: ldum
 
     integer, parameter :: str_A = transfer("A   ", 1)
     integer, parameter :: str_P = transfer("P   ", 1)
@@ -104,33 +104,26 @@ PROGRAM pgsm
     integer, parameter :: str_MT = transfer("MT  ", 1)
     integer, parameter :: str_WDUV = transfer("WDUV", 1)
 
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     integer, parameter :: nentries = 988
-    character(len = 512) :: defo(nentries)
-    character(len = 512) :: listl(nentries)
-    character(len = 512) :: lfn(nentries)
+    character(len = opt_len) :: defo(nentries)
+    character(len = opt_len) :: listl(nentries)
+    character(len = opt_len) :: lfn(nentries)
 
     integer, parameter :: idx_ozsrt = 982
     integer, parameter :: idx_isll = 983
+    integer, parameter :: idx_i = 984
     integer, parameter :: idx_log = 985
     integer, parameter :: idx_msglvl = 986
     integer, parameter :: idx_isent = 987
     integer, parameter :: idx_verbose = 988
 
-    data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'MSGLVL.',      'ISENT:',      'IMPOS:',   'V'/
+    data listl /981*'IMENT:', 'OZSRT:', 'ISLL:',     'I.',      'L.', 'MSGLVL.',      'ISENT:',   'V'/
 
     ! liste des defauts pour iment, isll, ozsrt, i, l
-    data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'OUI'/
+    data defo  /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'OUI'/
 
     ! lfn = liste que l usager propose pour remplacer
-    data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'IMPOS_SCRAP', 'NON'/
-
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    data nnoms, npack / 0, -16 /
-
-    data numero,  numdel,  iset,  nbrow / 1, 1, -2, 0 /
+    data lfn   /981*'SCRAP',   'TAPE2', 'TAPE4', '$INPUT', '$OUTPUT', 'INFO   ', 'ISENT_SCRAP', 'NON'/
 
     data qlxcon( 1) /'ZON'     /  qlxval( 1) /      1 /
     data qlxcon( 2) /'MER'     /  qlxval( 2) /      2 /
@@ -227,7 +220,7 @@ PROGRAM pgsm
     data qlxcon(93) /'IP2B'    /  qlxval(93) / 65004 /
     data qlxcon(94) /'IP3A'    /  qlxval(94) / 65005 /
     data qlxcon(95) /'IP3B'    /  qlxval(95) / 65006 /
-    data qlxcon(96) /'FENTREE' /  qlxval(96) / fantree /
+    data qlxcon(96) /'FENTREE' /  qlxval(96) / fentree /
     data qlxcon(97) /'FSORTIE' /  qlxval(97) / fsortie /
     data qlxcon(98) /'LOCAL'   /  qlxval(98) /     1 /
     data qlxcon(99) /'IP1'     /  qlxval(99) /     4 /
@@ -278,14 +271,6 @@ PROGRAM pgsm
 
     integer, parameter :: iun_isll = 0
 
-    call pgsm_mod%init()
-    call accum%init()
-    call grilles%init()
-    call heuress%init()
-    call ecrires%init()
-    call champs%init()
-    call pairs%init()
-
     ! listl = position  iment(tape1 standard), isll(tape4 sequentiel)
     !       ozsrt(tape2 - standard - seq file - random ms)
     ! 6 = nombre de lfn
@@ -297,6 +282,9 @@ PROGRAM pgsm
     ! lnkdiun(1) = 1
     ! lnkdiun(idx_ozsrt) = 2
     CALL ccard(listl, defo, lfn, nentries, nequiv)
+
+    ier = fnom(5, lfn(idx_i), 'SEQ', 0)
+    ier = fnom(6, lfn(idx_log), 'SEQ', 0)
 
     ! Imprimer boite debut du programme
     app_ptr = app_init(0, 'pgsm', PGSM_VERSION, '', BUILD_TIMESTAMP)
@@ -339,35 +327,28 @@ PROGRAM pgsm
     ENDIF
 
 
-    IF (inputMode == RANDOM) THEN
-        nInput = 1
-        DO WHILE (lfn(nInput) /= 'SCRAP')
-            nInput = nInput + 1
-        END DO
-        nInput = nInput - 1
+    nInput = 1
+    DO WHILE (lfn(nInput) /= 'SCRAP')
+        nInput = nInput + 1
+    END DO
+    nInput = nInput - 1
 
-        IF (nInput < 1) THEN
-            CALL app_log(APP_ERROR, 'No input files given as arguments')
-            app_status = app_end(13)
-            CALL qqexit(13)
-        ENDIF
-        ! do i = 1, nInput
-        !     ier = fnom(lnkdiun(i), lfn(i), 'STD+RND+OLD+R/O+REMOTE', 0)
-        !     IF (ier < 0) THEN
-        !         CALL app_log(APP_ERROR, 'Problem opening file ' // lfn(i))
-        !         app_status = app_end(13)
-        !         CALL qqexit(13)
-        !     ENDIF
-        ! ENDDO
-    ELSE
-        nInput = 1
-        ! ier = fnom(lnkdiun(1), lfn(idx_isent), 'STD+SEQ+OLD+R/O+REMOTE', 0)
-        ! IF (ier < 0) THEN
-        !     CALL app_log(APP_ERROR, 'Problem opening file '// lfn(idx_isent))
-        !     app_status = app_end(13)
-        !     CALL qqexit(13)
-        ! ENDIF
+    IF (nInput < 1) THEN
+        CALL app_log(APP_ERROR, 'No input files given as arguments')
+        app_status = app_end(13)
+        CALL qqexit(13)
     ENDIF
+
+    IF (inputMode == RANDOM .and. nInput > 1) THEN
+        CALL app_log(APP_ERROR, 'Only one input file can be provided in sequential mode')
+        app_status = app_end(13)
+        CALL qqexit(13)
+    ENDIF
+
+    allocate(inputFilePaths(nInput))
+    do i = 1, nInput
+        inputFilePaths(i) = lfn(i)
+    end do
 
     CALL initseq
 
@@ -515,7 +496,7 @@ PROGRAM pgsm
     ! metsym(z, oui)
     ! z = geopotentiel "gz"
     ! oui = symetrique
-    CALL qlxinx (metsym, 'METSYM', nsym, 0202, 2)
+    CALL qlxinx (metsym, 'METSYM', idum, 0202, 2)
 
     CALL qlxinx (outlalo, 'OUTLALO', nlalo, 0108, 2)
     ! outlalo(ip1, ip2, ip3, nomlat, nomlon, grtyp, etiklat, etiklon)
@@ -565,7 +546,7 @@ PROGRAM pgsm
 
     CALL qlxins (npack, 'COMPAC', dum, 1, 1)
     CALL qlxins (message, 'MESSAGE', dum, 1, 1)
-    CALL qlxins (numdel, 'DELTA', dum, 1, 1)
+    CALL qlxins (idum, 'DELTA', dum, 1, 1)
     CALL qlxins (typeent, 'TYPEENT', dum, 1, 1)
     CALL qlxins (typesrt, 'TYPESRT', dum, 1, 1)
     CALL qlxins ( voire, 'VOIRENT', dum, 1, 1)
@@ -575,13 +556,13 @@ PROGRAM pgsm
     !> If the user provided an actual date, the result of chk_userdate would be undefined
     CALL qlxins ( userdate, 'DATE', dum, 3, 1)
     !> \bug The code depending on seldat was broken and impossible to reach
-    CALL qlxins (seldat, 'OPDAT', dum, 0, 1)
+    CALL qlxins (idum, 'OPDAT', dum, 0, 1)
     CALL qlxins (printen, 'PRINTEN', dum, 7, 1)
     CALL qlxins (printsr, 'PRINTSR', dum, 7, 1)
     CALL qlxins (etikent, 'ETIKENT', nwetike, 3, 1)
     CALL qlxins (masque, 'MASQUE', dum, 1, 1)
     CALL qlxins (etiksrt, 'ETIKSRT', nwetiks, 3, 1)
-    CALL qlxins (numero, 'ENREG', dum, 1, 1)
+    CALL qlxins (idum, 'ENREG', dum, 1, 1)
     CALL qlxins (ip2srt, 'IP2SRT', dum, 1, 1)
     CALL qlxins (ip3ent, 'IP3ENT', dum, 1, 1)
     CALL qlxins (ip3srt, 'IP3SRT', dum, 1, 1)
@@ -599,12 +580,6 @@ PROGRAM pgsm
     do i = 1, 2
        CALL qlxins(qlxlval(i), qlxlcon(i), dum, 1, 0)
     ENDDO
-
-    ! Defauts pour lire fichier d'entre
-    ip1style = 2
-    dateform = 1
-
-    masque = 0
 
     ! Initialisation parametres de sortie pour fichier formate
     CALL initid
@@ -626,7 +601,7 @@ PROGRAM pgsm
     DO i = 1, nInput
         ! ier = fstfrm(lnkdiun(i))
         ! CALL fclos(lnkdiun(i))
-        inputFiles(i)%close()
+        ldum = inputFiles(i)%close()
     END DO
 
     IF (outputFileMode == 1) THEN
@@ -640,22 +615,14 @@ PROGRAM pgsm
 
         ! ier = fstfrm(lnkdiun(idx_ozsrt))
         ! CALL fclos(lnkdiun(idx_ozsrt))
-        outputFilePath%close()
-    ELSE
-#if defined (unix)
-        IF (outputFileMode == 2) THEN
-            CALL app_log(APP_WARNING, '"MS" Nfile type are not supported in this version of PGSM')
-        END IF
-#endif
-
+        ldum = outputFile%close()
+    ELSE IF (outputFileMode == 2) THEN
+        CALL app_log(APP_WARNING, '"MS" Nfile type are not supported in this version of PGSM')
+    ELSE IF (outputFileMode == 3)  THEN
         ! Fermer fichier sequentiel
-        IF (outputFileMode == 3)  THEN
-            CALL fclos(lnkdiun(idx_ozsrt))
-        END IF
-
-        IF (outputFileMode == 4)  THEN
-            CALL pgsmcf(lnkdiun(idx_ozsrt))
-       END IF
+        ! CALL fclos(lnkdiun(idx_ozsrt))
+    ELSE IF (outputFileMode == 4)  THEN
+            ! CALL pgsmcf(lnkdiun(idx_ozsrt))
     END IF
 
     ! Imprime boite avec le temps d execution du pgm  pgsm

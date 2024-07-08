@@ -2,12 +2,11 @@
 subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
     use ISO_FORTRAN_ENV, only : real64
     use app
+    use rmn_fst24
     use files, only : outputFile, outputFileMode
     use packing, only : npack_orig
-    use pgsm_mod, only: validate_date
-    use pgsm_mod, only: iwrit, nsort, message
-    use pgsm_mod, only: dateform, tmplat, tmplon
-    use ecrires, only : etiksrt, typesrt, ip2srt, printsr, compression_level
+    use pgsm_mod, only: validate_date, iwrit, message, dateform, tmplat, tmplon
+    use ecrires, only : etiksrt, typesrt, ip2srt, ip3srt, printsr, compression_level, nwetiks
     implicit none
 
     !> First dimension of field
@@ -17,7 +16,7 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
     !> Third dimension of field
     integer, intent(in) :: nk
     !> Field to write
-    real, intent(in) :: fld(ni, nj, nk)
+    real, target, intent(in) :: fld(ni, nj, nk)
     !> Convention of the data in the field to write
     integer, intent(in) :: npac
     !> Origin date (CMC stamp)
@@ -65,7 +64,6 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
     external :: conver, imprims
     integer, external :: fstopc
 
-#include "enrege.cdk90"
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 
@@ -78,8 +76,8 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 
     integer :: i, idatv
     integer :: iun, ip3o, ip2o
-    integer :: cdatyp, iopc, ier, gdout, datev
-    logical :: rewrit
+    integer :: cdatyp, ier, gdout, datev
+    integer :: rewrit
 
     integer, external :: gdll, ezgetgdout
 
@@ -136,11 +134,8 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
         endif
     endif
 
-    if (printsr)  then
-        call imprims(cnomvar, fld, ni, nj)
-    endif
+    if (printsr) call imprims(cnomvar, fld, ni, nj)
 
-    !iun = lnkdiun(idx_ozsrt)
     if (outputFileMode == 1) then
         if (compression_level == 0) then
             cdatyp = 1
@@ -154,46 +149,35 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
             endif
         endif
 
+        record%data = c_loc(fld)
+        record%pack_bits = local_npac
+        record%dateo = idat
+        record%deet = deet
+        record%npas = npas
+        record%ni = ni
+        record%nj = nj
+        record%nk = nk
+        record%ip1 = ip1
+        record%ip2 = ip2o
+        record%ip3 = ip3o
+        record%typvar = ltypsrt
+        record%nomvar = cnomvar
+        record%etiket = cetksrt
+        record%grtyp = cgtyp
+        record%ig1 = llg1
+        record%ig2 = llg2
+        record%ig3 = llg3
+        record%ig4 = llg4
+        record%data_type = cdatyp
 
         if (iwrit == +1) then
-            ! if (.not. message) then
-            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-            ! endif
-            rewrit = .true.
-
-            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+            rewrit = FST_YES
         else
-            ! if (.not. message) then
-            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-            ! endif
-            rewrit = .false.
-            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+            rewrit = FST_NO
         endif
-        if (.not. message) then
-            iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-        endif
-            record%data => c_loc(fld)
-            record%npak = local_npac
-            record%date = idat
-            record%deet = deet
-            record%npas = npas
-            record%ni = ni
-            record%nj = nj
-            record%nk = nk
-            record%ip1 = ip1
-            record%ip2 = ip2o
-            record%ip3 = ip3o
-            record%typvar = ltypsrt
-            record%nomvar = cnomvar
-            record%etiket = cetksrt
-            record%grtyp = cgtyp
-            record%ig1 = llg1
-            record%ig2 = llg2
-            record%ig3 = llg3
-            record%ig4 = llg4
-            record%datyp = cdatyp
-            record%rewrite = rewrit
-            outputFile%write(record)
+        if (.not. outputFile%write(record, rewrite = rewrit)) then
+            call app_log(APP_ERROR, 'ecritur: Failed to write record')
+        end if
     else
         if (outputFileMode == 2) then
             call app_log(APP_WARNING, 'ecritur: "MS" file type are not supported anymore')
@@ -237,7 +221,8 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
             endif
 
             ier = gdll(gdout, tmplat, tmplon)
-            call pgsmwr(2, fld, ni, nj, nk, qcform, qposition, qitems, qcsepar, cnomvar, ctypvar, cetiket, idat, idatv, dateform, ip1, ip2, ip3, tmplat, tmplon)
+            call pgsmwr(2, fld, ni, nj, nk, qcform, qposition, qitems, qcsepar, cnomvar, ctypvar, cetiket, idat, idatv, &
+                dateform, ip1, ip2, ip3, tmplat, tmplon)
         else
             if (message) then
                 call app_log(APP_ERROR, 'ecritur: Unknown file')
@@ -250,9 +235,11 @@ end
 subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
     use ISO_FORTRAN_ENV, only : real64
     use app
+    use rmn_fst24
     use files, only : outputFile, outputFileMode
     use packing, only : npack_orig
-    use dates, only: validate_date
+    use pgsm_mod, only: validate_date, iwrit, message
+    use ecrires, only : etiksrt, typesrt, ip2srt, ip3srt, compression_level, nwetiks
     implicit none
 
     !> First dimension of field
@@ -262,7 +249,7 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
     !> Third dimension of field
     integer, intent(in) :: nk
     !> Field to write
-    integer, intent(in) :: fld(ni, nj, nk)
+    integer, target, intent(in) :: fld(ni, nj, nk)
     !> Convention of the data in the field to write
     integer, intent(in) :: npac
     !> Origin date (CMC stamp)
@@ -296,7 +283,6 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
 
     integer, external :: fstopc
 
-#include "enrege.cdk90"
 #include "idents.cdk90"
 #include "qqqfilt.cdk90"
 
@@ -306,10 +292,10 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
     character(len = 4) :: lnomvar
     character(len = 2) :: ltypsrt
 
-    integer :: i
+    integer :: i, idatv
     integer :: iun, ip3o, ip2o
-    integer :: cdatyp, iopc, ier, local_npac
-    logical :: rewrit
+    integer :: cdatyp, local_npac, datev
+    integer :: rewrit
 
     integer, external :: gdll, ezgetgdout
 
@@ -362,44 +348,35 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
             endif
         endif
 
-        if (iwrit == +1) then
-            ! if (.not. message) then
-            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-            ! endif
-            rewrit = .true.
+        record%data = c_loc(fld)
+        record%pack_bits = local_npac
+        record%dateo = idat
+        record%deet = deet
+        record%npas = npas
+        record%ni = ni
+        record%nj = nj
+        record%nk = nk
+        record%ip1 = ip1
+        record%ip2 = ip2o
+        record%ip3 = ip3o
+        record%typvar = ltypsrt
+        record%nomvar = cnomvar
+        record%etiket = cetksrt
+        record%grtyp = cgtyp
+        record%ig1 = llg1
+        record%ig2 = llg2
+        record%ig3 = llg3
+        record%ig4 = llg4
+        record%data_type = cdatyp
 
-            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, &
-            !   ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+        if (iwrit == +1) then
+            rewrit = FST_YES
         else
-            ! if (.not. message) then
-            !     iopc = fstopc('TOLRNC', 'DEBUGS', .true.)
-            ! endif
-            rewrit = .false.
-            ! ier = fstecr(fld, dummy, local_npac, iun, idat, deet, npas, ni, nj, nk, &
-            !   ip1, ip2o, ip3o, ltypsrt, cnomvar, cetksrt, cgtyp, llg1, llg2, llg3, llg4, cdatyp, rewrit )
+            rewrit = FST_NO
         endif
-            record%data => c_loc(fld)
-            record%npak = local_npac
-            record%date = idat
-            record%deet = deet
-            record%npas = npas
-            record%ni = ni
-            record%nj = nj
-            record%nk = nk
-            record%ip1 = ip1
-            record%ip2 = ip2o
-            record%ip3 = ip3o
-            record%typvar = ltypsrt
-            record%nomvar = cnomvar
-            record%etiket = cetksrt
-            record%grtyp = cgtyp
-            record%ig1 = llg1
-            record%ig2 = llg2
-            record%ig3 = llg3
-            record%ig4 = llg4
-            record%datyp = cdatyp
-            record%rewrite = rewrit
-            outputFile%write(record)
+        if (.not. outputFile%write(record, rewrite = rewrit)) then
+            call app_log(APP_ERROR, 'ecritur: Failed to write record')
+        end if
     else
         if (outputFileMode == 2) then
             call app_log(APP_WARNING, 'ecritur: "MS" file type are not supported anymore')

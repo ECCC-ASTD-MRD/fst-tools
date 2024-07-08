@@ -1,6 +1,7 @@
 !> REMPLACE OU AJOUTE NOM AU DICTIONNAIRE COMMON/PAIR/...
 subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir)
     use app
+    use pairs, only : npairuv
     implicit none
 
     !> Name given by the user in the PAIRES directive

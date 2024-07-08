@@ -1,4 +1,5 @@
 module files
+    use pgsm_mod, only : opt_len
     use rmn_fst24, only : fst_file
 
     implicit none
@@ -9,9 +10,9 @@ module files
     integer, parameter :: sequentiel = 1
     integer, parameter :: random = 2
 
-    save
-    type(fst_file), dimension(990) :: inputFiles
-    type(fst_file) :: outputFile
+    character(len = opt_len), allocatable, save :: inputFilePaths(:)
+    type(fst_file), dimension(990), save :: inputFiles
+    type(fst_file), save :: outputFile
 
     !> Output file mode/kind
     !> 1 = Fichier standard
@@ -19,11 +20,11 @@ module files
     !> 3 = Fichier sequentiel
     !> 4 = Fichier sequentiel avec paramètres de fstecr
     !> 5 = Fichier sequentiel ascii (sortie(formatee))
-    integer :: outputFileMode
+    integer, save :: outputFileMode
 
-    character(len = 4096) :: outputFilePath
+    character(len = 4096), save :: outputFilePath
 
-    integer :: nInput
-    integer :: inputMode
-    integer :: nRecords = 0
+    integer, save :: nInput
+    integer, save :: inputMode
+    integer, save :: nRecords = 0
 end module files

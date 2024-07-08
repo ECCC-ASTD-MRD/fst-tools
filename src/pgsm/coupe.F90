@@ -1,7 +1,7 @@
 !> Calcul coupe zonale\meridionale
 subroutine pgcoupe(nom, lcoupe, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr10, ipr11, ipr12, ipr13, ipr14, ipr15, ipr16, ipr17, ipr18, ipr19, ipr20, ipr21, ipr22, ipr23, ipr24, ipr25, ipr26, ipr27, ipr28, ipr29, ipr30)
     use app
-    use cfldinf, only : cnomvar, ctypvar, cigtyp, cetiket
+    use cfldinf, only : cnomvar
     use nivos, only : nivospr, nmo, nmoy
     implicit none
 

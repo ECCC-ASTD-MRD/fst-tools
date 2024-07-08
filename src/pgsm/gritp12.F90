@@ -3,8 +3,9 @@ subroutine gritp12(it, ip1, ip2, ip3)
     use app
     use rmn_fst24
     use packing, only : npack
-    use pgsm_mod, only : tmplat, tmplon, message
-    use grilles, only : cgrtyp, gdout, lg1, lg2, lg3, lg4, li, lj, ncoords
+    use pgsm_mod, only : tmplat, tmplon, tmplatg, tmplong, message, printen
+    use grilles, only : cgrtyp, cgtypxy, gdout, lg1, lg2, lg3, lg4, li, lj, ncoords, gr_stations, gr_tape2
+    use files, only : inputFiles, outputFile, outputFileMode
     implicit none
 
     integer, intent(in) :: it
@@ -24,30 +25,21 @@ subroutine gritp12(it, ip1, ip2, ip3)
     integer, external :: gdgaxes
     integer, external :: gdll
     integer, external :: chkenrpos
+    integer, external :: fstopc
 
 #include "tp12ig.cdk90"
 
-    character(len = 12) :: etikx
-    character(len = 4) :: nomx
-    character(len = 2) :: grref
-
     integer :: i
-    integer :: swa, lng, dltf, ubc, extra1, extra2, extra3
 
-    integer :: ni, nj, nk
-    integer :: dateo, deet, npas
     integer :: ier, iopc
     integer :: ig1, ig2, ig3, ig4, ig1ref, ig2ref, ig3ref, ig4ref
     integer :: ip1x, ip2x, ip3x
+    integer :: dateox, npasx, deetx
 
-    character(len = 4) :: nomvarx, nomvary, nomu
-    character(len = 12) :: etiketx, etikety, etiku
-    character(len = 2) :: typvarx, typvary, typvaru
+    character(len = 12) :: etiketx, etikety
+    character(len = 4) :: nomvarx, nomvary
+    character(len = 2) :: typvarx, typvary
     integer :: nix, njx, niu, niy, njy, nju, nkx, nky, nku
-    integer :: dateox, deetx, npasx, nbitsx, datypx
-    integer :: dateou, deetu, npasu, nbitsu, datypu
-
-    integer :: lip1, lip2, lip3
 
     logical :: grille_z, grille_u
 
@@ -95,13 +87,17 @@ subroutine gritp12(it, ip1, ip2, ip3)
             if (grille_z) then
                 cgrtyp = 'Z'
                 tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
-                tic_query%find_next(tic)
+                if (.not. tic_query%find_next(tic)) then
+                    call app_log(APP_ERROR, 'gritp12: Failed to find >> record')
+                end if
                 call tic_query%free()
                 nix = tic%ni
                 njx = tic%nj
                 nkx = tic%nk
                 tac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
-                tac_query%find_next(tac)
+                if (.not. tac_query%find_next(tac)) then
+                    call app_log(APP_ERROR, 'gritp12: Failed to find ^^ record')
+                end if
                 call tac_query%free()
                 niy = tac%ni
                 njy = tac%nj
@@ -113,7 +109,9 @@ subroutine gritp12(it, ip1, ip2, ip3)
             if (grille_u) then
                 cgrtyp = 'U'
                 tictac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
-                tictac_query%find_next(tictac)
+                if (.not. tictac_query%find_next(tictac)) then
+                    call app_log(APP_ERROR, 'gritp12: Failed to find ^> record')
+                end if
                 call tictac_query%free()
 
                 niu = tictac%ni
@@ -131,13 +129,17 @@ subroutine gritp12(it, ip1, ip2, ip3)
             lg4 = ig4
         else
             tic_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
-            tic_query%find_next(tic)
+            if (.not. tic_query%find_next(tic)) then
+                call app_log(APP_ERROR, 'gritp12: Failed to find >> record')
+            end if
             call tic_query%free()
             nix = tic%ni
             njx = tic%nj
             nkx = tic%nk
             tac_query = inputFile%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
-            tac_query%find_next(tac)
+            if (.not. tac_query%find_next(tac)) then
+                call app_log(APP_ERROR, 'gritp12: Failed to find ^^ record')
+            end if
             call tac_query%free()
             niy = tac%ni
             njy = tac%nj
@@ -195,11 +197,9 @@ subroutine gritp12(it, ip1, ip2, ip3)
         call fillcoord(tmplat, tmplon)
         gdout = ezgdef(nix, njx, cgrtyp, cgtypxy, ig1la, ig2la, ig3la, ig4la, tmplon, tmplat)
 
-        nj = 1
-        nk = 1
         if (outputFileMode == 1) then
-            call ecritur(tmplon, npack, dateox, deetx, npasx, ncoords, nj, nk, ip1x, ip2x, ip3x, typvarx, nomvarx, etiketx, cgtypxy, ig1lo, ig2lo, ig3lo, ig4lo)
-            call ecritur(tmplat, npack, dateox, deetx, npasx, ncoords, nj, nk, ip1x, ip2x, ip3x, typvary, nomvary, etikety, cgtypxy, ig1la, ig2la, ig3la, ig4la)
+            call ecritur(tmplon, npack, dateox, deetx, npasx, ncoords, 1, 1, ip1x, ip2x, ip3x, typvarx, nomvarx, etiketx, cgtypxy, ig1lo, ig2lo, ig3lo, ig4lo)
+            call ecritur(tmplat, npack, dateox, deetx, npasx, ncoords, 1, 1, ip1x, ip2x, ip3x, typvary, nomvary, etikety, cgtypxy, ig1la, ig2la, ig3la, ig4la)
             lg1 = ip1x
             lg2 = ip2x
             lg3 = ip3x

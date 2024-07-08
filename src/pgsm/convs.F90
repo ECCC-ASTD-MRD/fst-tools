@@ -1,6 +1,6 @@
 !> Batir une table avec noms, ecart, facteur, bas, haut
 subroutine convs(nom, ecart, facteur, bas, haut)
-    use app, only : app_log
+    use app, only : app_log, APP_WARNING
     use convers, only : nomb, bass, ecarts, hauts, facts, nomss, ncon
     use pgsm_mod, only : message
     implicit none

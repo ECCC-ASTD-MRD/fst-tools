@@ -2,7 +2,7 @@
 subroutine gristdb(nni, nnj, hem)
     use app
     use pgsm_mod, only: tmplat, tmplon
-    use grilles, only : cgrtyp, gdout, li, lg, lg1, lg2, lg3, lg4
+    use grilles, only : cgrtyp, gdout, li, lj, lg1, lg2, lg3, lg4
     implicit none
 
     integer, intent(in) :: nni, nnj, hem
