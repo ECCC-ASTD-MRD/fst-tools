@@ -29,6 +29,7 @@
 !
 !MODULES
       type(fst_record) :: record
+      type(fst_query)  :: query
 
       EXTERNAL FERMED, qqexit
       INTEGER  RENDUA, I, J, K
@@ -79,8 +80,8 @@
       IF( DSEQ ) THEN  ! fichier sequentiel, aller se placer a la fin
          RENDUA = 0
 
-         success = destination%set_search_criteria()
-10       COPIES = destination%find_next(record)
+         query = destination%new_query()
+10       COPIES = query%find_next(record)
          IF(COPIES .GE. 0) THEN
             RENDUA = RENDUA+1
             GO TO 10

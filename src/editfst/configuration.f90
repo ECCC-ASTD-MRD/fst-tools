@@ -67,11 +67,11 @@ module configuration
                        IG1S=-1, IG2S=-1, IG3S=-1, IG4S=-1, REQN(NMD), REQT(NMD),    &
                        REQE(NMD), Z1, Z2, Z3, ZD
       integer, save :: NP  ! nb de parametres passes lors de l'appel courant a une directive (readlx)
-      integer, save :: MEOF=1, COPIES, NDS, NDD, EOF, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0, NRECMIN
+      integer, save :: MEOF=1, COPIES, NDS, NDD, EOF, ECR=0, CEOF=0, LEOF=0, LIMITE, NFS=0,  NFSO=0, NRECMIN
       logical, save :: SCRI=.false., XPRES=.false., ESAIS=.false.,      &
                        DM1, DEBUG=.false., SELEC, BOX, DIAG,            &
                        INTERAC=.false., ZA=.false., DRYRUN=.false.,     &
-                       FIXD=.false., ECR, SSEQ=.false., VS=.false.,     &
+                       FIXD=.false., SSEQ=.false., VS=.false.,     &
                        OUVS=.false., DSEQ, VD, OUVD=.false.
       integer, save :: max_requetes_exdes = 0
       integer, save :: max_nlist_exdes = 0

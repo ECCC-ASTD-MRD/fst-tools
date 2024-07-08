@@ -1,52 +1,44 @@
 !> Calcule la moyenne, la variance, le rminimum et le maximum d'un champs et imprime les resultats
-subroutine statfld4(nomvar, typvar, ip1, ip2, ip3, date, etiket, field, ni, nj, nk)
+subroutine statfld4(record)
     use iso_fortran_env
-
+    use rmn_fst24
     implicit none
 
-    !> Nom de la variable du champs
-    character(len = 4), intent(in) :: nomvar
-    !> Type de la variable du champs
-    character(len = 2), intent(in) :: typvar
-    !> Identificateurs et date d'origine du champs
-    integer, intent(in) :: ip1, ip2, ip3, date
-    !> Étiquette du champs
-    character(len = 12), intent(in) :: etiket
-
-    !> Dimensions du champs
-    integer, intent(in) :: ni, nj, nk
-    !> Champs
-    real, dimension(ni, nj, nk), intent(in) :: field
-
+    type(fst_record) :: record
+ 
     integer :: i, j, k
+    integer(C_INT64_T) :: size 
+    real(kind = real32), dimension(:, :, :), pointer :: data_r4
     real(kind = real64) :: sum, moy, var
     real :: rmin, rmax
     integer :: imin, jmin, kmin, imax, jmax, kmax, kind
     character(len = 15) :: Level
     real :: rlevel
 
+    size=record%ni*record%nj*record%nk
+    call record % get_data_array(data_r4) 
 
     ! Calculer la moyenne
     sum = 0.0
-    do k = 1, nk
-        do j = 1, nj
-            do i = 1, ni
-                sum = sum + field(i, j, k)
+    do k = 1, record%nk
+        do j = 1, record%nj
+            do i = 1, record%ni
+                sum = sum + data_r4(i,j,k)
             end do
         end do
     end do
-    moy = sum / float(ni * nj * nk)
+    moy = sum / float(size)
 
     ! Calculer la variance
     sum = 0.0
-    do k = 1, nk
-        do j = 1, nj
-            do i = 1, ni
-                sum = sum + ((field(i, j, k) - moy) * (field(i, j, k) - moy))
+    do k = 1, record%nk
+        do j = 1, record%nj
+            do i = 1, record%ni
+                sum = sum + ((data_r4(i,j,k) - moy) * (data_r4(i,j,k) - moy))
             end do
         end do
     end do
-    var = sqrt (sum / float(ni * nj * nk))
+    var = sqrt (sum / float(size))
 
     ! Identifier le minimum et le maximum.
     imin = 1
@@ -55,20 +47,20 @@ subroutine statfld4(nomvar, typvar, ip1, ip2, ip3, date, etiket, field, ni, nj, 
     imax = 1
     jmax = 1
     kmax = 1
-    rmax = field(1, 1, 1)
-    rmin = field(1, 1, 1)
+    rmax = data_r4(1,1,1)
+    rmin = data_r4(1,1,1)
 
-    do k = 1, nk
-        do j = 1, nj
-            do i = 1, ni
-                if (field(i, j, k) > rmax) then
-                    rmax  = field(i, j, k)
+    do k = 1, record%nk
+        do j = 1, record%nj
+            do i = 1, record%ni
+                if (data_r4(i,j,k) > rmax) then
+                    rmax  = data_r4(i,j,k)
                     imax = i
                     jmax = j
                     kmax = k
                 end if
-                if (field(i, j, k) < rmin) then
-                    rmin  = field(i, j, k)
+                if (data_r4(i,j,k) < rmin) then
+                    rmin  = data_r4(i,j,k)
                     imin = i
                     jmin = j
                     kmin = k
@@ -77,15 +69,14 @@ subroutine statfld4(nomvar, typvar, ip1, ip2, ip3, date, etiket, field, ni, nj, 
         end do
     end do
 
-    call convip_plus(ip1, rlevel, kind, -1, level, .true.)
+    call convip_plus(record%ip1, rlevel, kind, -1, level, .true.)
 
-    write(6, 10) nomvar, typvar, level, ip2, ip3, date, etiket, &
-        moy, var, imin, jmin + (kmin - 1) * nj, rmin, &
-        imax, jmax + (kmax - 1) * nj, rmax
+    write(6, 10) record%nomvar, record%typvar, level, record%ip2, record%ip3, record%datev, record%etiket, &
+        moy, var, imin, jmin + (kmin - 1) * record%nj, rmin, imax, jmax + (kmax - 1) * record%nj, rmax
 
 10  format (' ', a4, 1x, a2, 1x, a15, 1x, i4, 1x, i3, 1x, i9, 1x, a12, 1x, &
         ' Mean:', e13.6, ' StDev:', e13.6, &
-        '  Min:[(', i5, ',', i5, '):',  e11.4, ']', &
+        ' Min:[(', i5, ',', i5, '):',  e11.4, ']', &
         ' Max:[(', i5, ',', i5, '):', e11.4, ']')
 
 end subroutine

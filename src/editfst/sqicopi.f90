@@ -36,6 +36,7 @@
       INTEGER       PRE, CSD,  POS
       CHARACTER(len=128) :: DD
       type(fst_file)     :: fstfile
+      type(fst_query)    :: query
  
 !     INITIALISATION
       SNOM = 'STD+SEQ+OLD'
@@ -114,9 +115,9 @@
   
       IF(PRE .GT. 0) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU PRE
-         success = fstfile%set_search_criteria(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
+         query = fstfile%new_query(ni=ni,nj=nj,nk=nk,datev=0,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
-   90    IF (fstfile%find_next()) GOTO 90
+   90    IF (query%find_next()) GOTO 90
          LEOF = fstfile%eof()
          WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
          call app_log(APP_DEBUG,app_msg)
@@ -142,9 +143,9 @@
 !     SAUTE DES MARQUES DE FIN DE FICHIER LOGIQUES APRES COPIE
       IF(LEOF .LT. POS) THEN
 !        SAUTE AU PROCHAIN EOF NIVEAU POS
-         success = fstfile%set_search_criteria(ni=ni,nj=nj,nk=nk,datev=0_int64,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
+         query = fstfile%new_query(ni=ni,nj=nj,nk=nk,datev=0,etiket='0           ',ip1=0,ip2=0,ip3=0,nomvar='0   ',typvar='0 ')
 
-  100    IF (fstfile%find_next()) GOTO 100
+  100    IF (query%find_next()) GOTO 100
          LEOF = fstfile%eof()
          WRITE(app_msg,*) 'sqicopi: Encountered EOF #',LEOF
          call app_log(APP_DEBUG,app_msg)

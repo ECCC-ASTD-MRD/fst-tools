@@ -16,7 +16,7 @@ message(STATUS "(EC) ${PROJECT_NAME} version = ${PROJECT_VERSION}")
 
 include(ec_compiler_presets)
 
-set(CMAKE_VERBOSE_MAKEFILE TRUE)
+# set(CMAKE_VERBOSE_MAKEFILE TRUE)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_Fortran_PREPROCESS ON)
 

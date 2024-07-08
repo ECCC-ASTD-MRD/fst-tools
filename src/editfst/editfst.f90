@@ -7,6 +7,8 @@
       use ISO_C_BINDING
       use configuration
       use app
+      use rmn_fst24
+
       IMPLICIT NONE 
       include 'excdes.inc'
 #include "fst-tools_build_info.h"
@@ -144,7 +146,7 @@
 !                   -ds               ( d=sequentiel sqi)
 !                   -df               ( d=sequentiel fortran)
 !                   -n                ( pas de boite)
-!                   -e                ( reecrire un enregistrement dans d)
+!                   -e                ( reecrire ou ne rien faire si un enregistrement dans d existe déja)
 !                   -f                ( fast IO)
 !                   -eof 0<entier<15  ( marquer d si sequentiel)
 !                   -m inform         ( diagnostiques)
@@ -275,6 +277,7 @@
       def2 = def2b
 
       SAUV = 0
+      ECR = FST_NO
       CALL SAUVDEZ
   
 !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
@@ -290,9 +293,11 @@
       VD     = (DEF1(6) .EQ.'OUI')  .OR.  (DEF1(18).EQ.'OUI')   ! -vd , -v  voir destination
       VS     = (DEF1(20).EQ.'OUI')                              ! -vs   voir source
       BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON')   ! -nobox , -n
-      ECR    = (DEF1(9) .EQ.'OUI')  .OR.  (DEF1(21).EQ.'OUI')   ! -ecr , -e
       SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i 
-!
+      if ((DEF1(9) .EQ.'OUI') .OR.  (DEF1(21).EQ.'OUI')) ECR=FST_YES  ! -ecr , -e oui
+      if ((DEF1(9) .EQ.'SKIP') .OR.  (DEF1(21).EQ.'SKIP')) ECR=FST_SKIP ! -ecr , -e skip
+
+! 
 !     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
 !
       IF (.NOT. SELEC) THEN  ! def1(10) = "$IN" si cle non specifiee, selec = .true. par defaut

@@ -80,11 +80,14 @@ static struct Flag
   {"deet",               ParseInt},
   {"npas",               ParseInt},
   {"npak",               ParseInt},
+  {"pack_bits",          ParseInt},
   {"ig1",                ParseInt},
   {"ig2",                ParseInt},
   {"ig3",                ParseInt},
   {"ig4",                ParseInt},
   {"nbits",              ParseInt},
+  {"data_bits",          ParseInt},
+  {"data_type",          ParseInt},
   {"datyp",              ParseInt},
   {"swa",                ParseInt},
   {"lng",                ParseInt},
@@ -101,19 +104,10 @@ static struct Flag
   {0,  0}
 };
 
-int ni, nj, nk, ier, ip1, ip2, ip3, ig1, ig2, ig3, ig4;
-int dateo, datev, datyp, deet, nbits, npak, npas, swa, lng;
-int dltf, ubc, extra1, extra2, extra3;
+fst_file*  fstfile=NULL;
+fst_record record;
 
-
-char *nomvar, *etiket, *typvar, *grtyp, *values;
-
-double nhours;
-int iun;
-
-int *intdata;
-float *floatdata;
-char *chardata;
+char *values;
 
 /* type of data in RPN standard files*/
 #define RBINARY 0
@@ -167,44 +161,34 @@ void xml2fst(int argc, char **argv)
   def[3] = &lcl_def[3][0];
 
 
-  for (i = 0; i < 4; i++)
-    {
-      strcpy(val[i], def[i]);
-    }
+  for (i = 0; i < 4; i++) {
+    strcpy(val[i], def[i]);
+  }
 
   npos = 0;
 
   c_ccard(argv, argc, &liste[0], val, &def[0], 4, &npos);
 
-    App_Init(APP_MASTER,"xml2fst",VERSION,"",BUILD_TIMESTAMP);
-    App_Start();
+  App_Init(APP_MASTER,"xml2fst",VERSION,"",BUILD_TIMESTAMP);
+  App_Start();
 
-  strcpy(xmlFile, val[0]);
-  strcpy(fstFile, val[1]);
   strcpy(encoding, val[2]);
   strcpy(format,  val[3]);
 
-#ifdef DEBGU
-  fprintf(stderr, "output fstFile is: %s\n", fstFile);
+#ifdef DEBUG
+  fprintf(stderr, "output fstFile is: %s\n", val[1]);
 #endif
 
-  iun = 1;
+  fstfile=fst24_open(val[1],"RND+R/W");
 
-  c_fnom(&iun, fstFile, "RND+R/W", 0);
-  ier = c_fstouv(iun, "RND");
-
-  if (0 == strcmp(val[1], def[1]))
-    {
-      ier = c_fstopc("MSGLVL", "FATALE", 0);
-    }
-
-  else
-    {
-      ParseConfigFile(xmlFile); /* start parsing xml file to fst file */
-    }
+  if (0 == strcmp(val[1], def[1])) {
+      c_fstopc("MSGLVL", "FATALE", 0);
+  } else{
+      ParseConfigFile(val[0]); /* start parsing xml file to fst file */
+  }
 
   /* close fst file once data has been written */
-  ier = c_fstfrm(iun);
+  fst24_close(fstfile);
 
   App_End(-1);
   exit(0);
@@ -378,150 +362,79 @@ void write_to_fstFile()
 
 #ifdef DEBUG
   fprintf(stderr, "************** c_fstecr args are: **********************\n");
-  fprintf(stderr, "nomvar = %s\n", nomvar);
-  fprintf(stderr, "typvar = %s\n", typvar);
-  fprintf(stderr, "etiket = %s\n", etiket);
-  fprintf(stderr, "ip1    = %d\n", ip1);
-  fprintf(stderr, "ip2    = %d\n", ip2);
-  fprintf(stderr, "ip3    = %d\n", ip3);
-  fprintf(stderr, "ni     = %d\n", ni);
-  fprintf(stderr, "nj     = %d\n", nj);
-  fprintf(stderr, "nk     = %d\n", nk);
-  fprintf(stderr, "dateo  = %d\n", dateo);
-  fprintf(stderr, "deet   = %d\n", deet);
-  fprintf(stderr, "npas   = %d\n", npas);
-  fprintf(stderr, "grtyp  = %s\n", grtyp);
-  fprintf(stderr, "ig1    = %d\n", ig1);
-  fprintf(stderr, "ig2    = %d\n", ig2);
-  fprintf(stderr, "ig3    = %d\n", ig3);
-  fprintf(stderr, "ig4    = %d\n", ig4);
-  fprintf(stderr, "nbits  = %d\n", nbits);
-  fprintf(stderr, "datyp  = %d\n", datyp);
-  fprintf(stderr, "swa    = %d\n", swa);
-  fprintf(stderr, "lng    = %d\n", lng);
-  fprintf(stderr, "dltf   = %d\n", dltf);
-  fprintf(stderr, "ubc    = %d\n", ubc);
-  fprintf(stderr, "extra1 = %d\n", extra1);
-  fprintf(stderr, "extra2 = %d\n", extra2);
-  fprintf(stderr, "extra3 = %d\n", extra3);
-  fprintf(stderr, "npak = %d\n", npak);
-  fprintf(stderr, "iun = %d\n\n", iun);
+  fprintf(stderr, "nomvar = %s\n", record.nomvar);
+  fprintf(stderr, "typvar = %s\n", record.typvar);
+  fprintf(stderr, "etiket = %s\n", record.etiket);
+  fprintf(stderr, "ip1    = %d\n", record.ip1);
+  fprintf(stderr, "ip2    = %d\n", record.ip2);
+  fprintf(stderr, "ip3    = %d\n", record.ip3);
+  fprintf(stderr, "ni     = %d\n", record.ni);
+  fprintf(stderr, "nj     = %d\n", record.nj);
+  fprintf(stderr, "nk     = %d\n", record.nk);
+  fprintf(stderr, "dateo  = %d\n", record.dateo);
+  fprintf(stderr, "deet   = %d\n", record.deet);
+  fprintf(stderr, "npas   = %d\n", record.npas);
+  fprintf(stderr, "grtyp  = %s\n", record.grtyp);
+  fprintf(stderr, "ig1    = %d\n", record.ig1);
+  fprintf(stderr, "ig2    = %d\n", record.ig2);
+  fprintf(stderr, "ig3    = %d\n", record.ig3);
+  fprintf(stderr, "ig4    = %d\n", record.ig4);
+  fprintf(stderr, "data_bits = %d\n", record.data_bits);
+  fprintf(stderr, "data_type = %d\n", record.data_type);
+  fprintf(stderr, "pack_bits = %d\n", record.pack_bits);
+
 #endif
 /*   nomvar = "\0"; */
 /*   nomvar = "ABDC\0"; */
 
-  App_Log(APP_INFO,"nomvar = >%s<\n", nomvar);
+  App_Log(APP_INFO,"nomvar = >%s<\n", record.nomvar);
 
-  if (datyp == INTN)
-    {
-      App_Log(APP_INFO,"Writing int values to fst file\n");
-      ier = c_fstecr(intdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
-
-      if (intdata)
-        free(intdata);
-
-    }
-
-  else if (datyp == FLOATN || datyp == I3E)
-    {
-      App_Log(APP_INFO,"Writing float values to fst file \n");
-      ier = c_fstecr(floatdata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
-
-      if (floatdata)
-        free(floatdata);
-
-    }
-  else if (datyp == CHR)
-    {
-      App_Log(APP_INFO,"Writing character values to fst file\n");
-
-      chardata = (char *)malloc(256 * sizeof(char));
-
-      if (chardata)
-        {
-          chardata = "abcedef";
-          ier = c_fstecr(chardata, work, nbits, iun, dateo, deet, npas, ni, nj, nk, ip1, ip2, ip3, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3, ig4, datyp,0);
-
-          /* free(chardata); */
-        }
-
-      else
-        {
-          App_Log(APP_ERROR,"Cannot allocate memory for chardata\n");
-          App_End(-1);
-          exit(FAILURE);
-        }
-
-    }
-
+  App_Log(APP_INFO,"Writing int values to fst file\n");
+  fst24_write(fstfile,&record,FALSE);
 }
 
 void setIntVar(char *option, int number)
 {
- if (strcmp(option, "ip1") == 0)
-   {
-      ip1 = number;
+  if (strcmp(option, "ip1") == 0)
+    record.ip1 = number;
+  else if (strcmp(option, "ip2") == 0)
+    record.ip2 = number;
+  else if (strcmp(option, "ip3") == 0) 
+    record.ip3 = number;
+  else if (strcmp(option, "ni") == 0)
+    record.ni = number;
+  else if (strcmp(option, "nj") == 0)
+    record.nj = number;
+  else if (strcmp(option, "nk") == 0)
+    record.nk = number;
+  else if (strcmp(option, "dateo") == 0)
+    record.dateo = number;
+  else if (strcmp(option, "deet") == 0)
+    record.deet = number;
+  else if (strcmp(option, "ig1") == 0)
+    record.ig1 = number;
+  else if (strcmp(option, "ig2") == 0)
+    record.ig2 = number;
+  else if (strcmp(option, "ig3") == 0)
+    record.ig3 = number;
+  else if (strcmp(option, "ig4") == 0)
+    record.ig4 = number;
+  else if (strcmp(option, "data_bits") == 0 || strcmp(option, "nbits") == 0)
+    record.data_bits = number;
+  else if (strcmp(option, "data_type") == 0 || strcmp(option, "datyp") == 0)
+    record.data_type = number;
+  else if (strcmp(option, "npas") == 0)
+    record.npas = number;
+  else if (strcmp(option, "npak") == 0) {
+    if (number > 0) {
+      App_Log(APP_WARNING, "npak = %d, but can only specify number of bits now (npak must be less than 0)\n", number);
+    }
+    record.pack_bits = number;
+  }
+  else if (strcmp(option, "pack_bits") == 0)
+    record.pack_bits = number;
 
-   }
- else if (strcmp(option, "ip2") == 0)
-   {
-     ip2 = number;
-
-   }
-
- else if (strcmp(option, "ip3") == 0)
-   ip3 = number;
-
- else if (strcmp(option, "ni") == 0)
-   ni = number;
-
- else if (strcmp(option, "nj") == 0)
-   nj = number;
-
- else if (strcmp(option, "nk") == 0)
-   nk = number;
-
- else if (strcmp(option, "dateo") == 0)
-   {
-     dateo = number;
-   }
-
- else if (strcmp(option, "deet") == 0)
-   deet = number;
-
- else if (strcmp(option, "ig1") == 0)
-   ig1 = number;
-
- else if (strcmp(option, "ig2") == 0)
-   ig2 = number;
-
- else if (strcmp(option, "ig3") == 0)
-   ig3 = number;
-
- else if (strcmp(option, "ig4") == 0)
-   ig4 = number;
-
-  else if (strcmp(option, "nbits") == 0)
-    nbits = -number;
-
-  else if (strcmp(option, "datyp") == 0)
-    datyp = number;
-
- else if (strcmp(option, "swa") == 0)
-   swa = number;
-
- else if (strcmp(option, "lng") == 0)
-   lng = number;
-
- else if (strcmp(option, "npas") == 0)
-   npas = number;
-
- else if (strcmp(option, "npak") == 0)
-   {
-     npak = number;
-   }
-
-}
+  }
 
 /* set string type variables */
 void setStringVar(char *option, char *buf)
@@ -529,44 +442,36 @@ void setStringVar(char *option, char *buf)
 
   if (strcmp(option, "nomvar") == 0)
     {
-      nomvar = (char *)malloc(strlen(buf));
-      strcpy(nomvar, "    ");
-      memcpy(nomvar, buf, strlen(buf));
-      if (strstr(buf, ">") != null)
-        {
-          nomvar = ">>";
+      strcpy(record.nomvar, "    ");
+      memcpy(record.nomvar, buf, strlen(buf));
+      if (strstr(buf, ">") != null) {
+          record.nomvar[0] = '>';
+          record.nomvar[1] = '>';
 
-          trimright(nomvar);
-          App_Log(APP_INFO,"setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
+          trimright(record.nomvar);
+          App_Log(APP_INFO,"setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, record.nomvar);
 
         }
-      /* trimleft(nomvar); */
+      /* trimleft(record.nomvar); */
 #ifdef DEBUG
-      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, nomvar);
+      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with value: \"%s\" 3\n", option, record.nomvar);
 #endif
     }
 
   else if (strcmp(option, "typvar") == 0)
     {
-      typvar = (char *)malloc(strlen(buf));
-
-      memcpy(typvar, buf, strlen(buf));
+      memcpy(record.typvar, buf, strlen(buf));
     }
 
   else if (strcmp(option, "etiket") == 0)
     {
-      etiket = (char *)malloc(strlen(buf));
-
-      memcpy(etiket, buf, strlen(buf));
+      memcpy(record.etiket, buf, strlen(buf));
 
     }
 
   else if (strcmp(option, "grtyp") == 0)
     {
-
-      grtyp = (char *)malloc(strlen(buf));
-
-      memcpy(grtyp, buf, strlen(buf));
+      memcpy(record.grtyp, buf, strlen(buf));
     }
 
   else if (strcmp(option, "values") == 0)
@@ -575,9 +480,9 @@ void setStringVar(char *option, char *buf)
       values = (char *)buf;
 
 #ifdef DEBUG
-      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with datatype \"%d\" \n", option, datyp);
+      fprintf(stderr, "setStringVar(char *option), tag: \"%s\", with datatype \"%d\" \n", option, data_type);
 #endif
-      extract_data(values, datyp);
+      extract_data(record.data, record.data_type);
 
     }
 
@@ -795,115 +700,87 @@ void extract_data(char * buf, int datatype)
   fprintf(stderr, "extract_data(char *option), parsing first token value = \"%s\"\n", token);
 #endif
 
-  if (datatype == INTN)
-    {
-      intdata = (int *)malloc(MAX_SIZE * sizeof(int));
+  if (datatype == INTN) {
+    record.data = (void*)malloc(MAX_SIZE * sizeof(int));
 
 #ifdef DEBUG
-      fprintf(stderr, "extract_data(char *option), parsing int value[%d] = \"%d\"\n", i, atoi(token));
+    fprintf(stderr, "extract_data(char *option), parsing int value[%d] = \"%d\"\n", i, atoi(token));
 #endif
 
-      if (intdata)
-        {
-          if (token)
-            intdata[i] = atoi(token);
-          else
-            intdata[i] = 0;
-        }
+    if (record.data) {
+      if (token)
+        ((int*)record.data)[i] = atoi(token);
       else
-        {
-          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for integer data\n",__func__);
-          App_End(-1);
-          exit(FAILURE);
-        }
-
+        ((int*)record.data)[i] = 0;
+    } else {
+        App_Log(APP_ERROR,"%s: PROBLEM allocating memory for integer data\n",__func__);
+        App_End(-1);
+        exit(FAILURE);
+      }
     }
 
   else if (datatype == FLOATN || datatype == I3E)
     {
-      floatdata = (float *)malloc(MAX_SIZE * sizeof(float));
+      record.data=(void*)malloc(MAX_SIZE * sizeof(float));
 
-      if (floatdata)
-        floatdata[i] = strtod(token, (char **)null);
-      else
-        {
-          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for float data\n",__func__);
-          App_End(-1);
-          exit(FAILURE);
-        }
+      if (record.data)
+        ((float*)record.data)[i] = strtod(token, (char **)null);
+      else {
+        App_Log(APP_ERROR,"%s: PROBLEM allocating memory for float data\n",__func__);
+        App_End(-1);
+        exit(FAILURE);
+      }
 
 
 #ifdef DEBUG
-      if (i == 0 || i%100 == 0)
-        {
-          fprintf(stderr, "extract_data(char *option), before parsing values, nomvar: \"%s\" \n", nomvar);
-          fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%12.4f\"\n", i, floatdata[i]);
+      if (i == 0 || i%100 == 0) {
+          fprintf(stderr, "extract_data(char *option), before parsing values, nomvar: \"%s\" \n", record.nomvar);
+          fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%12.4f\"\n", i, ((float*)record.data)[i]);
         }
 #endif
 
     }
   else if (datatype == CHR)
     {
-      chardata = (char *)malloc(MAX_SIZE * sizeof(char));
+      record.data=(void*)malloc(MAX_SIZE * sizeof(char));
 
-      if (chardata)
-        {
-          if (token)
-            {
-              chardata = token;
-            }
-          else
-            {
-              chardata = " ";
-            }
-        }
-      else
-        {
+      if (record.data) {
+        if (token)
+          ((char*)record.data)[i] = token;
+         else
+          ((char*)record.data)[i] = " ";
+      } else {
           App_Log(APP_ERROR,"%s: PROBLEM allocating memory for character data\n",__func__);
           App_End(-1);
           exit(FAILURE);
         }
     }
 
+  while((token = strtok(null, delimiters)) != null) {
 
-  while((token = strtok(null, delimiters)) != null)
-    {
-
-      if (datatype == INTN)
-        {
-          intdata[++i] = atoi(token);
+      if (datatype == INTN) {
+          ((int*)record.data)[++i] = atoi(token);
 
 #ifdef DEBUG
-          fprintf(stderr, "extract_data(char *option), parsing int value[%d] = \"%d\"\n", i, intdata[i]);
+          fprintf(stderr, "extract_data(char *option), parsing int value[%d] = \"%d\"\n", i, ((int*)record.data)[i]);
 #endif
 
-        }
-      else if (datatype == FLOATN || datatype == I3E)
-        {
-          floatdata[++i] = strtod(token, (char **)null);
+      } else if (datatype == FLOATN || datatype == I3E) {
+          ((float*)record.data)[++i] = strtod(token, (char **)null);
 
 #ifdef DEBUG
-          if (i == 0 || i % 100 == 0)
-            {
-              fprintf(stderr, "extract_data(char *option), before parsing values, nomvar: \"%s\" \n", nomvar);
-              fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%10.4f\"\n", i, floatdata[i]);
-            }
+          if (i == 0 || i % 100 == 0) {
+            fprintf(stderr, "extract_data(char *option), before parsing values, nomvar: \"%s\" \n", record.nomvar);
+            fprintf(stderr, "extract_data(char *option), parsing float value[%d] = \"%10.4f\"\n", i, ((float*)record.data)[i]);
+          }
 #endif
 
-        }
-
-      else if (datatype == CHR)
-        {
-          if (token != null)
-            {
-              chardata = token;
-            }
-          else
-            {
-              chardata = " ";
-            }
-
-        }
+      } else if (datatype == CHR) {
+        if (token != null)
+          ((char*)record.data)[++i] = token;
+        else
+          ((char*)record.data)[++i] = " ";
+      }
     }
 
 }
@@ -1040,7 +917,7 @@ void ParseConfigFile(char *file)
     {
       config_text = null;
       AdvanceChar();  /* first char */
-
+      record=default_fst_record;
       while (c != EOF)
         {
 

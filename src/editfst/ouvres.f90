@@ -38,17 +38,20 @@
          nfs = 0
       else
         do 20 i=1,nfs
-            if(.not. sources(i)%open(dn(i),SNOM//'+REMOTE')) then
+                                write(6,*) nfs,i,trim(dn(i))
+            if(.not. sources(i)%open(dn(i),options=SNOM//'+REMOTE')) then
+               call app_log(APP_ERROR,'ouvres: Cannot open file '//trim(dn(i)))
                do 10 j=1,i
                   success = sources(i)%close()
-   10          continue
+10             continue
                nfs = 0
                goto 30
             endif
+
    20    continue
 
    30    if (nfs .gt. 1) then
-            if (.not. fst24_link(sources)) then
+            if (.not. fst24_link(sources(1:nfs))) then
                call app_log(APP_ERROR, 'Unable to link source files')
                return
             endif

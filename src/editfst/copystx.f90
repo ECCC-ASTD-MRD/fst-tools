@@ -47,6 +47,7 @@
       integer :: date_1, date_2
   
       type(fst_record) :: record
+      type(fst_query)  :: query
       type(meta)       :: metaf
       type(C_PTR)      :: obj
 
@@ -79,13 +80,13 @@
 
 !     OBTENIR LA CLE DU PROCHAIN ENREGISTREMENT QUI NOUS INTERESSE
       
-      success = sources(1)%set_search_criteria()
+      query= sources(1)%new_query()
 
       nrecord=0
-      do while(sources(1)%find_next(record))
+      do while(query%find_next(record))
 
-         if (record%dasiz.GT.48 .AND. record%datyp.EQ.1) then
-            write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%dasiz 
+         if (record%data_bits.GT.48 .AND. record%data_type.EQ.1) then
+            write(app_msg,*) 'copystx: Unable to copy record no ',nrecord,' NBITS=',record%data_bits 
             call app_log(APP_ERROR,app_msg)
             goto 140
          endif
@@ -113,7 +114,7 @@
          else
             success = record%read()
             metaf = record%metadata
-       endif
+         endif
    !
    !     ==================   logique pour directive ZAP  ==================
    !
@@ -125,7 +126,7 @@
             IF(ZD .NE. -1)  then ! zap origin date
                record%dateo = ZD  
                if (metaf%is()) then
-                  obj=metaf%DefForecastTime(ZD)
+                  obj = metaf%DefForecastTime(int(ZD, int64))
                endif
             endif
             IF(ZT .NE. '??') THEN   ! zap type
@@ -174,9 +175,9 @@
    
          else   !  real mode, write into the output file
    
-            success = destination%write(record,ECR)
+            success = destination%write(record, rewrite = ECR)
 
-            if (i .lt. 0) then
+            if (.not. success) then
                call app_log(APP_ERROR,'copystx: write error')
                call qqexit(55)
             endif
@@ -187,6 +188,8 @@
    140   IF(LIMITE .EQ. 0) GO TO 180            ! nombre maximum d'enregistrements a copier atteint
 
       END DO
+
+      call query % free()
 
   160 IF(SSEQ) THEN                          ! le fichier source est sequentiel
          leof=sources(1)%eof()
