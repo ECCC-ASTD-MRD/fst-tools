@@ -90,13 +90,12 @@ add_executable(pgsm ${FICHIERS_FTN90} ${FICHIERS_C})
 add_dependencies(pgsm fst-tools_build_info)
 target_link_libraries(pgsm PRIVATE rmn::rmn)
 target_compile_definitions(pgsm PRIVATE PGSM_VERSION=\"${PROJECT_VERSION}\")
-message(STATUS "PGSM_VERSION=${PROJECT_VERSION}")
-#set_target_properties(pgsm PROPERTIES 
-#   OUTPUT_NAME pgsm-${PGSM_VERSION})
+
+set_target_properties(pgsm PROPERTIES OUTPUT_NAME pgsm-${PGSM_VERSION})
 
 # Symbolic links to latest build
-# add_custom_command(TARGET pgsm POST_BUILD
-#    COMMAND ln -sfv $<TARGET_FILE_NAME:pgsm> pgsm)
+add_custom_command(TARGET pgsm POST_BUILD
+   COMMAND ln -sfv $<TARGET_FILE_NAME:pgsm> pgsm)
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
