@@ -10,6 +10,7 @@ subroutine champ_seq (listn, listip1, waitOrGo)
     use heuress, only : heures, nhur
     use symetry, only : symetri
     use champs, only : npar
+    use champseq, only : wait
     implicit none
 
     !> Liste de nomvar
@@ -25,7 +26,14 @@ subroutine champ_seq (listn, listip1, waitOrGo)
     external ecritur, pgsmabt, grille2
     integer, external :: ezqkdef, ezsint, ezdefset
 
-#include "champseq.cdk90"
+    integer, parameter :: nmaxlist1 = 16
+    integer, parameter :: nmaxlist2 = 16
+
+    character(len = 4), save :: listnom(nmaxlist1, nmaxlist2) = '    '
+    integer, save :: listniv(nmaxlist1, nmaxlist2) = -1
+    integer, save :: ntitems = 0
+    integer, save :: nitems1(nmaxlist1) = 0
+    integer, save :: nitems2(nmaxlist2) = 0
 
     logical :: heureok, processed
     character(len = 8) :: string

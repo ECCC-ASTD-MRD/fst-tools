@@ -147,7 +147,7 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
 
     ! VERIFIER SI DIRECTIVE HEURE EXISTE OBLIGATOIRE AVEC CHAMP
     if (nhur == 0) then
-        if (cnom /= 'DFPR'.or.cnom /= 'DFST') then
+        if (cnom /= 'DFPR' .or. cnom /= 'DFST') then
             call app_log(APP_ERROR, 'champ: HEURE directive must be defined')
             return
         endif
@@ -161,7 +161,7 @@ subroutine champ(nom, ipr1, ipr2, ipr3, ipr4, ipr5, ipr6, ipr7, ipr8, ipr9, ipr1
         ! CALCUL DES VECTEURS OU DE LA VITESSE DU VENT
         trouve = 0
         do np = 1, npair
-            if (cnom == paire(np)(1:8)) trouve=np
+            if (cnom == paire(np)(1:8)) trouve = np
         enddo
 
         ! SI ON A TROUVE ON VA A L'INTERPOLATION

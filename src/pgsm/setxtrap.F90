@@ -14,39 +14,31 @@ subroutine setxtrap(val)
     real    :: rval
     integer :: ier, ezsetval, ezsetopt
 
-    character(len = 8) :: op, v
+    character(len = 8) :: ezopt
 
     equivalence (ival, rval)
 
     ival = val
 
-    op = 'EXTRAP'
-
 #include "defin.cdk90"
 
     if (val .ne. voisin .and. val .ne. minimum .and. val .ne. maximum .and. val .ne. abort .and. val .ne. oui) then
-        v = 'VALEUR'
         ier = ezsetval('extrap_value', rval)
         ier = ezsetopt('extrap_degree', 'value')
     else
         if (val .eq. 100) then
-            ier = ezsetopt('extrap_degree', 'NEAREST')
-            v = '0'
+            ezopt = 'NEAREST'
         else if (val .eq. 1) then
-            ier =  ezsetopt('extrap_degree', 'LINEAR')
-            v = '1'
+            ezopt = 'LINEAR'
         else if (val .eq. 3)  then
-            ier =  ezsetopt('extrap_degree', 'CUBIC')
-            v = '3'
+            ezopt = 'CUBIC'
         else if (val .eq. minimum) then
-            v = 'MINIMUM'
-            ier =  ezsetopt('extrap_degree', v)
+            ezopt = 'MINIMUM'
         else if (val .eq. maximum) then
-            v = 'MAXIMUM'
-            ier =  ezsetopt('extrap_degree', v)
+            ezopt = 'MAXIMUM'
         else
-            v = 'ABORT'
-            ier =  ezsetopt('extrap_degree', v)
+            ezopt = 'ABORT'
         endif
+        ier = ezsetopt('extrap_degree', ezopt)
     endif
 end

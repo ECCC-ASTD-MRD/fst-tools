@@ -36,7 +36,7 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
     character(len = 8) :: extrap_option
     integer :: datev, i, nunv
     integer :: iprs, irec, nrecs
-    logical :: skip, sym
+    logical :: sym
     integer, dimension(:, :), allocatable, target :: ifld_in, ifld_out
 
     real, dimension(:, :), pointer :: tmpout
@@ -140,8 +140,6 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
                 endif
             enddo
 
-            skip = .false.
-
             allocate(tmpif1(records(irec)%ni, records(irec)%nj))
 
             if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4 .or. &
@@ -167,50 +165,49 @@ subroutine scalair(cnom, iheur, nniv, niveaux)
                 if (records(irec)%ig1 /= 0) sym = symetri(records(irec)%nomvar)
             endif
 
-            if (.not. skip) then
-                if (records(irec)%grtyp /= cgrtyp .or. records(irec)%ni /= li .or. records(irec)%nj /= lj .or. &
-                    records(irec)%ig1 /= lg1 .or. records(irec)%ig2 /= lg2 .or. records(irec)%ig3 /= lg3 .or. records(irec)%ig4 /= lg4) then
-                    ! interpolation
-                    allocate(tmpif2(li, lj))
-                    gdin = ezqkdef(records(irec)%ni, records(irec)%nj, records(irec)%grtyp, &
-                        records(irec)%ig1, records(irec)%ig2, records(irec)%ig3, records(irec)%ig4, inputFiles(1)%get_unit())
-                    ier = ezdefset(gdout, gdin)
-                    ier = ezsint(tmpif2, tmpif1)
-                    tmpout => tmpif2
-                else
-                    tmpout => tmpif1
-                    if (message) then
-                        write(app_msg, "(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a4)") records(irec)%nomvar
-                        call app_log(APP_WARNING, app_msg)
-                    endif
-                endif
-
-                ! ecrire sur fichier approprie(std, ms, seq)
-                if (cnomx == 'QR') then
-                    call tourbillon_relatif(tmpif2, li, lj, tmplat)
-                    cnomvar = 'QR'
-                else
-                    cnomvar = records(irec)%nomvar
-                endif
-
-                if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4 .or. &
-                    records(irec)%data_type == 130 .or. records(irec)%data_type == 132) then
-
-                    call cvtifr(ifld_out, tmpout, li, lj)
-                    call iecritur(ifld_out, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
-                        records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
-                        cgrtyp, lg1, lg2, lg3, lg4)
-                    deallocate(ifld_in, ifld_out)
-                else
-                    call ecritur(tmpout, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
-                        records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
-                        cgrtyp, lg1, lg2, lg3, lg4)
-                    if (associated(tmpif2)) then
-                        deallocate(tmpif2)
-                    endif
-                    deallocate(tmpif1)
+            if (records(irec)%grtyp /= cgrtyp .or. records(irec)%ni /= li .or. records(irec)%nj /= lj .or. &
+                records(irec)%ig1 /= lg1 .or. records(irec)%ig2 /= lg2 .or. records(irec)%ig3 /= lg3 .or. records(irec)%ig4 /= lg4) then
+                ! interpolation
+                allocate(tmpif2(li, lj))
+                gdin = ezqkdef(records(irec)%ni, records(irec)%nj, records(irec)%grtyp, &
+                    records(irec)%ig1, records(irec)%ig2, records(irec)%ig3, records(irec)%ig4, inputFiles(1)%get_unit())
+                ier = ezdefset(gdout, gdin)
+                ier = ezsint(tmpif2, tmpif1)
+                tmpout => tmpif2
+            else
+                tmpout => tmpif1
+                if (message) then
+                    write(app_msg, "(2x, 'AUCUNE INTERPOLATION HORIZONTALE CHAMP=', a4)") records(irec)%nomvar
+                    call app_log(APP_WARNING, app_msg)
                 endif
             endif
+
+            ! ecrire sur fichier approprie(std, ms, seq)
+            if (cnomx == 'QR') then
+                call tourbillon_relatif(tmpif2, li, lj, tmplat)
+                cnomvar = 'QR'
+            else
+                cnomvar = records(irec)%nomvar
+            endif
+
+            if (records(irec)%data_type == 2 .or. records(irec)%data_type == 4 .or. &
+                records(irec)%data_type == 130 .or. records(irec)%data_type == 132) then
+
+                call cvtifr(ifld_out, tmpout, li, lj)
+                call iecritur(ifld_out, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
+                    records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
+                    cgrtyp, lg1, lg2, lg3, lg4)
+                deallocate(ifld_in, ifld_out)
+            else
+                call ecritur(tmpout, npack, records(irec)%dateo, records(irec)%deet, records(irec)%npas, li, lj, records(irec)%nk, &
+                    records(irec)%ip1, records(irec)%ip2, records(irec)%ip3, records(irec)%typvar, cnomvar, records(irec)%etiket, &
+                    cgrtyp, lg1, lg2, lg3, lg4)
+                if (associated(tmpif2)) then
+                    deallocate(tmpif2)
+                endif
+                deallocate(tmpif1)
+            endif
+
 99999       continue
 
             if (unefois) goto 23000

@@ -59,10 +59,13 @@ integer function chkenrpos(ip1, ip2, ip3)
 
     tic_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '>>  ')
     tic_found = tic_query%find_count()
+    call tic_query%rewind()
     tac_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^^  ')
     tac_found = tac_query%find_count()
+    call tac_query%rewind()
     yy_query = inputFiles(1)%new_query(ip1 = ip1, ip2 = ip2, ip3 = ip3, nomvar = '^>  ')
     yy_found = yy_query%find_count()
+    call yy_query%rewind()
 
     if (tic_found < 0 .or. tac_found < 0) then
         chkenrpos = -1
@@ -70,7 +73,7 @@ integer function chkenrpos(ip1, ip2, ip3)
         chkenrpos = 0
     endif
 
-    if (yy_found >= 0) then
+    if (yy_found > 0) then
         chkenrpos = 1
         yinyang_grid = .true.
     endif
@@ -90,10 +93,10 @@ integer function chkenrpos(ip1, ip2, ip3)
             call pgsmabt
         end if
 
-        call ecritur(yy%data, -yy%pack_bits, yy%dateo, yy%deet, yy%npas, yy%ni, yy%nj, yy%nk, &
-            yy%ip1, yy%ip2, yy%ip3, yy%typvar, yy%nomvar, yy%etiket, &
-            yy%grtyp, yy%ig1, yy%ig2, yy%ig3, yy%ig4)
-
+        if (.not. outputFile%write(yy)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to write record')
+            call pgsmabt
+        end if
         call yy%free()
     else
         if (.not. tic_query%read_next(tic)) then
@@ -105,13 +108,14 @@ integer function chkenrpos(ip1, ip2, ip3)
             call pgsmabt
         end if
 
-        call ecritur(tic%data, -tic%pack_bits, tic%dateo, tic%deet, tic%npas, tic%ni, tic%nj, tic%nk, &
-            tic%ip1, tic%ip2, tic%ip3, tic%typvar, tic%nomvar, tic%etiket, &
-            tic%grtyp, tic%ig1, tic%ig2, tic%ig3, tic%ig4)
-        call ecritur(tac%data, -tac%pack_bits, tac%dateo, tac%deet, tac%npas, tac%ni, tac%nj, tac%nk, &
-            tac%ip1, tac%ip2, tac%ip3, tac%typvar, tac%nomvar, tac%etiket, &
-            tac%grtyp, tac%ig1, tac%ig2, tac%ig3, tac%ig4)
-
+        if (.not. outputFile%write(tic)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to write record')
+            call pgsmabt
+        end if
+        if (.not. outputFile%write(tac)) then
+            call app_log(APP_ERROR, 'chkenrpos: Failed to write record')
+            call pgsmabt
+        end if
         call tic%free()
         call tac%free()
     endif

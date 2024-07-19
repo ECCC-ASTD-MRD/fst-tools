@@ -5,7 +5,12 @@ subroutine grilstd(nni, nnj, hem)
     use grilles, only : cgrtyp, gdout, li, lj, lg1, lg2, lg3, lg4
     implicit none
 
-    integer, intent(in) :: nni, nnj, hem
+    !> Nombre de points est-ouest
+    integer, intent(in) :: nni
+    !> Nombre de points nord-sud
+    integer, intent(in) :: nnj
+    !> 0=GLOBAL;  1=H. NORD;  2=H. SUD
+    integer, intent(in) :: hem
 
     !          CALCULER LA LATITUDE ET LA LONGITUDE DE TOUS LES POINTS
     !          DE LA GRILLE DE SORTIE STANDARD INTERVAL REGULIER MAIS DECALE
@@ -22,8 +27,8 @@ subroutine grilstd(nni, nnj, hem)
     allocate(tmplat(nni, nnj))
     allocate(tmplon(nni, nnj))
 
-    lg1 = hem
     cgrtyp = 'A'
+    lg1 = hem
     lg2 = 0
     lg3 = 0
     lg4 = 0

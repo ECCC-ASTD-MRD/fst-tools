@@ -78,8 +78,8 @@ subroutine sorti(modx, norecs, jwrit)
         return
     endif
 
-    if (outputFileMode == 1)  then
-        if (.not. outputFile%open(outputFilePath, '')) then
+    if (outputFileMode == 1) then
+        if (.not. outputFile%open(outputFilePath, 'R/W')) then
             call app_log(APP_ERROR, 'sorti: Problem openning output file')
             call pgsmabt
         endif
@@ -88,7 +88,7 @@ subroutine sorti(modx, norecs, jwrit)
     ! OUVRIR FICHIER D'ENTREE STANDARD
     nRecords = 0
     do i = 1, nInput
-        if (.not. inputFiles(i)%open(inputFilePaths(i), options = 'R/O')) then
+        if (.not. inputFiles(i)%open(trim(inputFilePaths(i)), options = 'R/O')) then
             write(app_msg, *) 'sorti: File ', inputFilePaths(i), ' is not standard random'
             call app_log(APP_ERROR, app_msg)
             call pgsmabt
@@ -96,7 +96,7 @@ subroutine sorti(modx, norecs, jwrit)
         nRecords = nRecords + inputFiles(i)%get_num_records()
     enddo
     if (nInput > 1) then
-        if (.not. fst24_link(inputFiles)) then
+        if (.not. fst24_link(inputFiles(1:nInput))) then
             call app_log(APP_ERROR, 'sorti: Failed to link files')
             call pgsmabt
         end if

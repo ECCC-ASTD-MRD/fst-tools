@@ -50,6 +50,7 @@ subroutine copy2outputFile(nomvar)
                 call app_log(APP_ERROR, 'chk_toctoc: Failed to write toctoc!')
                 call pgsmabt
             end if
+            call inRec%free()
         endif
         call outQuery%free()
     enddo

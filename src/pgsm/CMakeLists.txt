@@ -4,6 +4,7 @@ set(FICHIERS_FTN90
     calcul.F90
     cfldinf.F90
     champ_seq.F90
+    champseq.F90
     champ.F90
     champs.F90
     chck.F90
@@ -45,7 +46,6 @@ set(FICHIERS_FTN90
     heuress.F90
     imprime.F90
     initid.F90
-    initseq.F90
     itrouve.F90
     lastcol.F90
     liren.F90

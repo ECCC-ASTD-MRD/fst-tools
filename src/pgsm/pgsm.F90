@@ -37,11 +37,10 @@ PROGRAM pgsm
     use champs, only : nchamp, npar
     use pairs, only : npairuv
     use convers, only : ncon
+    use champseq, only : wait, go
     implicit none
 
 #include "fst-tools_build_info.h"
-
-#include "champseq.cdk90"
 
     ! Source on C-Fortran Interop
     !    https://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
@@ -181,8 +180,8 @@ PROGRAM pgsm
     data qlxcon(54) /'MAXIMUM' /  qlxval(54) /     4 /
     data qlxcon(55) /'GEF'     /  qlxval(55) / gr_gem /
     data qlxcon(56) /'GEM'     /  qlxval(56) / gr_gef /
-    data qlxcon(57) /'WAIT'    /  qlxval(57) /     0 /
-    data qlxcon(58) /'GO'      /  qlxval(58) /     1 /
+    data qlxcon(57) /'WAIT'    /  qlxval(57) /  wait /
+    data qlxcon(58) /'GO'      /  qlxval(58) /    go /
     data qlxcon(59) /'GRIB'    /  qlxval(59) / gr_grib/
     data qlxcon(60) /'FORMATEE'/  qlxval(60) /     5 /
     data qlxcon(61) /'STATIONS'/  qlxval(61) / gr_stations /
@@ -286,6 +285,8 @@ PROGRAM pgsm
     ier = fnom(5, lfn(idx_i), 'SEQ', 0)
     ier = fnom(6, lfn(idx_log), 'SEQ', 0)
 
+    outputFilePath = lfn(idx_ozsrt)
+
     ! Imprimer boite debut du programme
     app_ptr = app_init(0, 'pgsm', PGSM_VERSION, '', BUILD_TIMESTAMP)
     CALL app_logstream(lfn(idx_log))
@@ -311,21 +312,11 @@ PROGRAM pgsm
         ! iun_isll = 0, Unit number 0 = stderr
         ! It makes no sense to set the standard error to read only
         ier = fnom(iun_isll, lfn(idx_isll)(1:5), 'FMT+SEQ+R/O', 0)
-        write(iun_isll, *) 'Gros méchant test!'
-    ENDIF
-
-    IF (LEN(lfn(idx_isll)) > 0) THEN
-        outputFilePath = lfn(idx_isll)
-    ELSE
-        CALL app_log(APP_ERROR, 'Missing output file path!')
-        app_status = app_end(13)
-        CALL qqexit(13)
     ENDIF
 
     IF (lfn(idx_verbose) /= 'NON') THEN
         ier = ezsetopt('verbose', 'yes')
     ENDIF
-
 
     nInput = 1
     DO WHILE (lfn(nInput) /= 'SCRAP')
@@ -339,7 +330,7 @@ PROGRAM pgsm
         CALL qqexit(13)
     ENDIF
 
-    IF (inputMode == RANDOM .and. nInput > 1) THEN
+    IF (inputMode /= RANDOM .and. nInput > 1) THEN
         CALL app_log(APP_ERROR, 'Only one input file can be provided in sequential mode')
         app_status = app_end(13)
         CALL qqexit(13)
@@ -349,8 +340,6 @@ PROGRAM pgsm
     do i = 1, nInput
         inputFilePaths(i) = lfn(i)
     end do
-
-    CALL initseq
 
     ! Initialiser les dictionnaires
     CALL qlxopt ('CARMOT', 4)
