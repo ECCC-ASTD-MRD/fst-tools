@@ -748,7 +748,7 @@ void extract_data(char * buf, int datatype)
         if (token)
           ((char*)record.data)[i] = token;
          else
-          ((char*)record.data)[i] = " ";
+          ((char*)record.data)[i] = ' ';
       } else {
           App_Log(APP_ERROR,"%s: PROBLEM allocating memory for character data\n",__func__);
           App_End(-1);
@@ -779,7 +779,7 @@ void extract_data(char * buf, int datatype)
         if (token != null)
           ((char*)record.data)[++i] = token;
         else
-          ((char*)record.data)[++i] = " ";
+          ((char*)record.data)[++i] = ' ';
       }
     }
 
