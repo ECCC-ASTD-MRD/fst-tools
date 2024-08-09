@@ -305,7 +305,7 @@
         DEF1(10) = '/dev/null'
       ENDIF
 
-      DEBUG  = (DEF1(13)  .EQ.'DEBUG')       ! -m  (non par defaut)
+      DEBUG  = ((DEF1(13)  .EQ.'DEBUG') .or. (DEF1(13) .EQ. 'EXTRA'))       ! -m  (non par defaut)
       DRYRUN  = (DEF1(146)  .EQ.'DRYRUN')    ! -dryrun  (non par defaut)
       FASTIO = (DEF1(22).EQ.'OUI')           ! -f  (oui par defaut)
       DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
