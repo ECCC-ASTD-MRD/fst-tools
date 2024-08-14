@@ -60,15 +60,15 @@
 !     STANDARDS SEQUENTIEL OU ACCES DIRECT, PRODUIT UN RAPPORT.
 !
 !MODULES
-      EXTERNAL CCARD, INCDATR, RCMP1D, fstopc, fstopl,   &
-               ICMP1D, ABORT, LOW2UP, convip_plus, fnom, &
-               ip1_all, qqexit
+      EXTERNAL CCARD, fstopc, fstopl, LOW2UP, convip_plus, fnom, ip1_all, qqexit
 !
-      CHARACTER(len=2) :: TYPVAB
-      CHARACTER(len=4) :: NOMVAB
-      CHARACTER(len=8) :: CLE(22)
-      CHARACTER(len=12) :: ETIKB, NOMA, NOMB, NOMC
-      CHARACTER(len=40) :: NA, NB
+      integer RCMP1D,ICMP1D
+
+      CHARACTER(len=2)    :: TYPVAB
+      CHARACTER(len=4)    :: NOMVAB
+      CHARACTER(len=8)    :: CLE(22)
+      CHARACTER(len=12)   :: ETIKB, NOMA, NOMB, NOMC
+      CHARACTER(len=40)   :: NA, NB
       CHARACTER(len=1024) :: DEF1(22), DEF2(22), NOMD
 
       LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT, &
@@ -179,6 +179,8 @@
       ELSE
          call app_start()
       ENDIF
+      
+      app_status=0;
 
       ier=app_loglevel(DEF1(11))
       ier = fstopl('REDUCTION32',.true.,.false.)
@@ -226,7 +228,7 @@
          write(app_msg,*) 'Invalid input file'
          call app_log(APP_ERROR,app_msg)
          app_status=app_end(-1)
-         call qqexit(app_status)
+         call qqexit(-1)
       endif
       N1 = filea % get_num_records()
 
@@ -236,7 +238,7 @@
          write(app_msg,*) 'Invalid output file'
          call app_log(APP_ERROR,app_msg)
          app_status=app_end(-1)
-         call qqexit(app_status)
+         call qqexit(-1)
       endif
       N2 = fileb % get_num_records()
 
@@ -330,6 +332,7 @@
          IF(.not. success) THEN
             write(app_msg,601) nomvab, typvab, ip1b, ip2b, ip3b, idate, NB
             call app_log(APP_WARNING,app_msg)
+            app_status=1
             cycle
          ENDIF
 
@@ -337,6 +340,7 @@
          IF((recordb%ni.NE.recorda%ni) .OR. (recordb%nj.NE.recorda%nj) .OR. (recordb%nk.NE.recorda%nk)) THEN
             write(app_msg,603) NOMVAB,recorda%ni,recorda%nj,recorda%nk,recordb%ni,recordb%nj,recordb%nk
             call app_log(APP_WARNING,app_msg)
+            app_status=1
             cycle
          ENDIF
 
@@ -347,12 +351,14 @@
                write(app_msg,602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
                             NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
                call app_log(APP_WARNING,app_msg)
+               app_status=1
                cycle
             ENDIF
          ENDIF
 
          IF(recorda%pack_bits .NE. recordb%pack_bits) then
             write(app_msg,*) 'NBITSA=',recorda%pack_bits,' NBITSB=',recordb%pack_bits                   
+            app_status=1
             call app_log(APP_INFO,app_msg)
          endif
 
@@ -373,13 +379,14 @@
          GO TO (40, 50, 30) TABLO(mod(recorda%data_type,128),mod(recordb%data_type,128))
          
    30    WRITE(app_msg,*)' No comparison possible: DATA_TYPE_A=',recorda%data_type,' DATA_TYPE_B=',recordb%data_type
+         app_status=1
          call app_log(APP_WARNING,app_msg)
          GO TO 60
 
-   40    CALL RCMP1D(recorda, recordb, LIMITE, PACK_ERR2, EXCEPTION)
+   40    app_status = RCMP1D(recorda, recordb, LIMITE, PACK_ERR2, EXCEPTION)
          GO TO 60
 
-   50    CALL ICMP1D(recorda, recordb, EXCEPTION)
+   50    app_status = ICMP1D(recorda, recordb, EXCEPTION)
          call queryb % free()
    60  continue
    enddo
@@ -404,7 +411,7 @@
       IF( LN ) THEN
          call app_log(APP_VERBATIM,'* * *  fstcomp end  * * *')
       ELSE
-         app_status=app_end(-1)
+         app_status=app_end(app_status)
       ENDIF
 
   600 FORMAT('  NOM    ETIKET           IP1',  &
@@ -423,19 +430,10 @@
              '  E-REL-MOY    VAR-A      C-COR        MOY-A', &
              '        BIAIS      E-MAX      E-MOY     TOLERANCE')
 
-      STOP
+      STOP app_status
       END
 
 !   S/P RCMP1D  COMPARAISON DE DEUX CHAMPS REELS DE UNE DIMENSION
-!
-      SUBROUTINE RCMP1D(A, B, LIMITE, PACK_ERR, EXCEPTION)
-      use app
-      use rmn_fst24
-      
-      IMPLICIT NONE
-      INTEGER  N, LIMITE
-      INTEGER  PACK_ERR
-      REAL     MAXABS, SUMABS, ERRABS
 !
 !AUTEURS  VERSION ORIGINALE (REALCMP)  M.VALIN DRPN 1987
 !         VERSION (RCMP1D)  Y.BOURASSA DRPN JAN 1990
@@ -446,7 +444,16 @@
 !   "    LIMITE  ERREUR MAXIMUM TOLOREE
 !   "    PACK_ERR NOMBRE D'UNITE D'ERREUR DU A L'ALGORITHME DE PACKING
 !                 A UTILISER POUR DETERMINER SI "A" COMPARE A "B"
-!
+      integer function RCMP1D(A, B, LIMITE, PACK_ERR, EXCEPTION)
+      use app
+      use rmn_fst24
+      
+      IMPLICIT NONE
+
+      INTEGER  N, LIMITE
+      INTEGER  PACK_ERR
+      REAL     MAXABS, SUMABS, ERRABS
+
       type(fst_record) :: a, b
       logical :: exception
       real(kind = real32), dimension(:), pointer :: dataa, datab
@@ -462,6 +469,7 @@
       integer nbdiff
       EXTERNAL statfldx
 
+      RCMP1D=0
       call a % get_data_array(dataa) 
       call b % get_data_array(datab) 
 
@@ -574,11 +582,13 @@
             WRITE(6,603) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
                         ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR, &
                         MAXABS, SUMABS, PACK_ERR*ERR_UNIT
+            RCMP1D=2
          ENDIF
       ELSE
          WRITE(6,601) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
                         ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR, &
                         MAXABS, SUMABS
+            RCMP1D=2
       ENDIF
  
       if ((nbdiff .ne. 0) .and. (PACK_ERR .gt. 0)) then
@@ -607,14 +617,9 @@
   603 FORMAT(/' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X,1PE11.4), &
              3(1X,1PE12.4), 2(1X,1PE11.4), 2X, 1PE11.4 )
 
-      RETURN
-      END
+      end function RCMP1D
 
 !    S/P ICMP1D DIFFERENCES ENTRE DEUX CHAMPS ENTIERS DE UNE DIMENSION
-!
-      SUBROUTINE ICMP1D(A, B, EXCEPTION)
-      use rmn_fst24
-      IMPLICIT    NONE
 !
 !AUTEURS  VERSION ORIGINALE (INTEMP)  M.VALIN DRPN 1987
 !         VERSION (ICMP1D)  Y.BOURASSA DRPN JAN 1990
@@ -623,6 +628,9 @@
 ! ENTRE  A,B     CHAMPS ENTIERS A COMPARER
 !   "    EXCEPTION
 !
+      integer function ICMP1D(A, B, EXCEPTION)
+      use rmn_fst24
+      IMPLICIT    NONE
       type(fst_record) :: a, b
       logical :: exception
 
@@ -632,6 +640,7 @@
       logical :: success
       integer(kind = int32), dimension(:), pointer :: dataa, datab
 
+      ICMP1D = 0
       MD  = 0
       NC  = 0
       
@@ -658,12 +667,12 @@
          WRITE(6,600) a%nomvar, b%etiket, level, a%ip2, a%ip3
       ELSE
          WRITE(6,601) a%nomvar, b%etiket, level, a%ip2, a%ip3, NC, MD, J
+         ICMP1D = 2
       ENDIF
 
  600  FORMAT(' ',  '  ', A4, '  ', A12, a15, 2I5,' SONT EGAUX')
  601  FORMAT(' ',  ' <', A4, '> ', A12, a15, 2I5,' ONT',I6,' POINTS ', &
             'INEGAUX, L''ERREUR MAX.=',I10,'  AU POINT',I6)
 
-      RETURN
-      END
+      end function ICMP1D
       
