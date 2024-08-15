@@ -1,13 +1,21 @@
+# Description
+
 Collection of tools to manipulate RPN standard files
 
-# At CMC
+# Components
 
-## Build dependencies
+  * [fstcomp](src/fstcomp/README.md)
+
+# Compilation
+
+## At CMC
+
+### Build dependencies
 
 - CMake 3.20+
 - librmn
 
-## Environment
+### Environment
 
 Source the right file from the `ECCI_ENV` variable, depending on the desired
 architecture.  This will load the specified compiler, set the
@@ -32,7 +40,7 @@ old, you need to load a version newer than 3.20.  For example: `. ssmuse-sh
 
 Load the latest stable version of librmn.
 
-## Build and install
+### Build and install
 
 ```
 mkdir build
@@ -42,9 +50,9 @@ make -j 4
 make install
 ```
 
-# Outside CMC (external users)
+## Outside CMC (external users)
 
-## Build dependencies
+### Build dependencies
 
 - CMake 3.20+
 - librmn with shared libraries (https://github.com/ECCC-ASTD-MRD/librmn/)
@@ -53,7 +61,7 @@ make install
 `--recursive` option or run `git submodule update --init --recursive` in the
 git repo after having cloned.
 
-## Build and install
+### Build and install
 
 ```
 mkdir build
