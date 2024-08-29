@@ -172,7 +172,7 @@
       IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
       app_ptr=app_init(0,'fstcomp',FSTCOMP_VERSION,'',BUILD_TIMESTAMP)
-!      call app_logstream(DEF1(3))
+      call app_logstream(DEF1(3))
 
       IF( LN ) THEN
          call app_log(APP_VERBATIM,'* * * '//FSTCOMP_VERSION//' * * *')

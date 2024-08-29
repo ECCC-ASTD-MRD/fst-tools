@@ -1,4 +1,4 @@
-program voir24
+program voir
 
     use app
     use rmn_fst24
@@ -38,6 +38,7 @@ program voir24
         print *,'   default : NOMVAR+TYPVAR+ETIKET+NIJK+IPS+DATEO+DATYP+DEET+NPAS+IGS'
     else
         app_ptr=app_init(0,'VOIR',VOIR_VERSION,'',BUILD_TIMESTAMP)
+        call app_logstream('stdout')
         call app_start()
 
         filename = ccard_arg(cles(1))

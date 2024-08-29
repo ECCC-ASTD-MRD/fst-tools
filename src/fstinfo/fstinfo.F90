@@ -69,6 +69,7 @@
       endif
 
       app_ptr=app_init(0,'fstinfo',VERSION,'',BUILD_TIMESTAMP)
+      call app_logstream('stdout')
       call app_start()
 
       ikind = wkoffit(ptvar(1))
