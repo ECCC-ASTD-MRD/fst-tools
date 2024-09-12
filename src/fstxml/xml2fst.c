@@ -681,7 +681,7 @@ void ParseValues(char *option)
 }
 
 /* depending on data type, an array of values
-   will be extratced from data buffer using space token
+   will be extracted from data buffer using space token
    that separate numbers */
 void extract_data(char * buf, int datatype)
 {
@@ -742,18 +742,9 @@ void extract_data(char * buf, int datatype)
     }
   else if (datatype == CHR)
     {
-      record.data=(void*)malloc(MAX_SIZE * sizeof(char));
-
-      if (record.data) {
-        if (token)
-          ((char*)record.data)[i] = token;
-         else
-          ((char*)record.data)[i] = " ";
-      } else {
-          App_Log(APP_ERROR,"%s: PROBLEM allocating memory for character data\n",__func__);
-          App_End(-1);
-          exit(FAILURE);
-        }
+       App_Log(APP_ERROR,"Character data type=3 not supported\n");
+       App_End(-1);
+       exit(FAILURE);
     }
 
   while((token = strtok(null, delimiters)) != null) {
@@ -775,14 +766,14 @@ void extract_data(char * buf, int datatype)
           }
 #endif
 
-      } else if (datatype == CHR) {
-        if (token != null)
-          ((char*)record.data)[++i] = token;
-        else
-          ((char*)record.data)[++i] = " ";
+      }
+      else if (datatype == CHR)
+      {
+         App_Log(APP_ERROR,"Character data type=3 not supported\n");
+         App_End(-1);
+         exit(FAILURE);
       }
     }
-
 }
 
 

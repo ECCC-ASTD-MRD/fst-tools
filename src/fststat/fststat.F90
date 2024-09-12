@@ -5,7 +5,7 @@ program fststat
 
 #include "fst-tools_build_info.h"
 
-    external ccard, fstlnk
+    external ccard
 
     character(len = 1024), dimension(40) :: cle, def, val
     data cle /40*'fst:'/
@@ -21,6 +21,7 @@ program fststat
     call ccard(cle, def, val, 40, ipos)
 
     app_ptr=app_init(0,'fststat',FSTSTAT_VERSION,'',BUILD_TIMESTAMP)
+    call app_logstream('stdout')
     call app_start()
 
     ! Count the number of files
