@@ -7,6 +7,7 @@ Collection of tools to manipulate RPN standard files
   * [editfst](src/editfst/README.md)
   * [fstcomp](src/fstcomp/README.md)
   * [fstcompress](src/fstcompress/README.md)
+  * [fstxml](src/fstxml/README.md)
 
 # Compilation
 
