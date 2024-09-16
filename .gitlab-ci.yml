@@ -581,7 +581,7 @@ build:rhel-8-amd64_gnu-14.1.0:
    script:
       - source ${ECCI_ENV}/latest/profile.sh
       - unset SSMUSE_LD_PREPEND
-      - . r.load.dot /fs/ssm/hpco/exp/cmake/cmake-3.30.0
+      - . r.load.dot /fs/ssm/main/opt/cmake/cmake-3.30.0
       - export MODULEPATH=~sidr000/modules:$MODULEPATH
       - module load gcc14
       - export EC_ARCH=Linux_x86-64/gnu-14.1.0
@@ -610,7 +610,7 @@ test:rhel-8-amd64_gnu-14.1.0:
       - set +e
       - source ${ECCI_ENV}/latest/profile.sh
       - unset SSMUSE_LD_PREPEND
-      - . r.load.dot /fs/ssm/hpco/exp/cmake/cmake-3.30.0
+      - . r.load.dot /fs/ssm/main/opt/cmake/cmake-3.30.0
       - export MODULEPATH=~sidr000/modules:$MODULEPATH
       - module load gcc14
       - export EC_ARCH=Linux_x86-64/gnu-14.1.0
