@@ -4,10 +4,14 @@ Collection of tools to manipulate RPN standard files
 
 # Components
 
+  * [dbzono](src/dbzono/README.md)
   * [editfst](src/editfst/README.md)
   * [fstcomp](src/fstcomp/README.md)
   * [fstcompress](src/fstcompress/README.md)
   * [fstxml](src/fstxml/README.md)
+  * [pgsm](src/pgsm/README.md)
+  * [reflex](src/reflex/README.md)
+  * [voir](src/voir/README.md)
 
 # Compilation
 

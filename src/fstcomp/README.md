@@ -10,16 +10,17 @@ Utility used to compare the contents of two RPN standard files (record by record
 
 # Usage
 
-<source lang="bash">
+```bash
 fstcomp [-a -b -l -as -bs - af -bf -li -nd -ne -d -n -va -vb -nt -n1 -n2 -n3 -nn -x]
-</source>
+```
 <br />
 Examples of usage:
-
-    * fstcomp -a filea -b fileb
-    * fstcomp -a filea -b fileb -ne -nd -nt
-    * fstcomp -va filea -vb fileb -l listing
-    * fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1 <br />
+```bash
+fstcomp -a filea -b fileb
+fstcomp -a filea -b fileb -ne -nd -nt
+fstcomp -va filea -vb fileb -l listing
+fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1
+```
 
 # Command line argument definition
 
