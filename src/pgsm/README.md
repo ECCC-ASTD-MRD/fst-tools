@@ -71,7 +71,7 @@ end
 **WARNING** By default PGSM performs a **CUBIC interpolation**. Use SETINTX to specify another type of interpolation.
 
 # Directives 
-* PGSM recognizes many [directives](src/pgsm/DIRECTIVES.md), providing much flexibility
+* PGSM recognizes many [directives](src/pgsm/doc/DIRECTIVES.md), providing much flexibility
 * It is recommended to write your command scripts in lower case letters.
 * If you do wish to write your commands in CAPITAL letters, be careful to start your commands on the 2nd command of the line, otherwise if your command starts with a C and is in the first column, it will be interpreted as a COMMENT. This is a legacy of FORTRAN 66 coding style that was currently used when pgsm was born, near 1980.
 * The commands must be written in lines of no longer than 80 characters. The length of the command can be extended by writing on succeeding lines, where the split must not be within a list surrounded by square brackets nor within quotes. 
