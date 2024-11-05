@@ -16,7 +16,7 @@ subroutine statfld4(record)
     real :: rlevel
 
     size=record%ni*record%nj*record%nk
-    call record % get_data_array(data_r4) 
+    call record % get_data_array(data_r4, in_check_type = .false.) 
 
     ! Calculer la moyenne
     sum = 0.0

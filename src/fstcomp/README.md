@@ -1,21 +1,28 @@
+# Table of Contents
+1. [Description](#description)
+2. [Usage](#usage)
+3. [Command line argument definition](#command-line-argument-definition)
+4. [Description of Report Heading](#description-of-report-heading)
+
 # Description
 
 Utility used to compare the contents of two RPN standard files (record by record). The comparison is done by looking at the records in file A sequentially and for each record, look in file B for the equivalent record before making a comparison of the values stored within this field. The output of the comparison report is through standard output but maybe redirected given a filename in the "-l" key.<br />
 
 # Usage
 
-<source lang="bash">
+```bash
 fstcomp [-a -b -l -as -bs - af -bf -li -nd -ne -d -n -va -vb -nt -n1 -n2 -n3 -nn -x]
-</source>
+```
 <br />
 Examples of usage:
+```bash
+fstcomp -a filea -b fileb
+fstcomp -a filea -b fileb -ne -nd -nt
+fstcomp -va filea -vb fileb -l listing
+fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1
+```
 
-    * fstcomp -a filea -b fileb
-    * fstcomp -a filea -b fileb -ne -nd -nt
-    * fstcomp -va filea -vb fileb -l listing
-    * fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1 <br />
-
-# Definitions of keys in the command line
+# Command line argument definition
 
 |      key       |     description    | 
 | -------------- | ------------------ |

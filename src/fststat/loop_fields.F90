@@ -12,8 +12,11 @@ subroutine loop_fields(source)
     logical :: success
 
     real(kind = real32), dimension(:, :, :), pointer :: data_r4
+    integer(kind = int32), dimension(:, :, :), pointer :: data_i4
     real :: rtemp
     integer :: itemp
+    type(c_ptr) :: ptr_c
+    integer(int64) :: ptr
 
     equivalence (rtemp, itemp)
 
@@ -24,9 +27,13 @@ subroutine loop_fields(source)
     do while(query%find_next(record))
         if (record%nomvar /= '!!') then
             success = record%read()
-            call record % get_data_array(data_r4) 
+            if (.not. success) then
+                call app_log(APP_WARNING, 'Unable to read record')
+                cycle
+            end if
 
-            if (record%data_type == 2 .or. record%data_type == 4) then
+            if (record%data_type == FST_TYPE_SIGNED .or. record%data_type == FST_TYPE_UNSIGNED) then
+                call record % get_data_array(data_r4, in_check_type = .false.) 
                 do k = 1, record%nk
                    do j = 1, record%nj
                       do i = 1, record%ni
@@ -43,4 +50,7 @@ subroutine loop_fields(source)
         end if
 
     end do
+
+    call record % free()
+    call query % free()
 end subroutine

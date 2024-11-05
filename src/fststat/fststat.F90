@@ -46,6 +46,10 @@ program fststat
         call loop_fields(sources(1))
     endif
 
+    do i = 1, nf
+        success = sources(i) % close()
+    end do
+
     app_status=app_end(-1)
     call qqexit(app_status)
 end program
