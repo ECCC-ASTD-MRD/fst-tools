@@ -59,7 +59,7 @@
 !     ETABLIT DES STATISTIQUES DE COMPARAISON ENTRE DEUX FICHIERS
 !     STANDARDS SEQUENTIEL OU ACCES DIRECT, PRODUIT UN RAPPORT.
 
-    EXTERNAL CCARD, fstopc, fstopl, LOW2UP, convip_plus, fnom, ip1_all, qqexit
+    EXTERNAL CCARD, fstopc, fstopl, LOW2UP, convip_plus, fnom, fclos, ip1_all, qqexit
 
     integer RCMP1D,ICMP1D
 
@@ -76,7 +76,7 @@
             P1, P2, P3, TN ,T, TG, EXCEPTION, EMISSING
     INTEGER KA, KB, N1, N2, LIMITE, L, N, I,   &
             IDATE, IP1B, IP2B, IP3B,            &
-            FSTOPC, fstopl, fnom,               &
+            FSTOPC, fstopl, fnom, fclos,        &
             TABLO(0:6,0:6)
     integer ier, kind, ip1_all, PACK_ERR, PACK_ERR2, ind
     integer lvar, iunexpv
@@ -196,6 +196,7 @@
             call app_log(APP_INFO,app_msg)
         ELSE
             READ(iunexpv,'(a)') exception_vars
+            ier = fclos(iunexpv)
         ENDIF
     ENDIF
 
