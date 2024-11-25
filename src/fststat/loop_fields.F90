@@ -26,6 +26,11 @@ subroutine loop_fields(source)
 
     do while(query%find_next(record))
         if (record%nomvar /= '!!') then
+            ! Read everything as 4-byte elements.
+            ! We don't deal with 8-byte elements yet
+            if (record % data_bits <= 32) then
+                record % data_bits = 32
+            end if
             success = record%read()
             if (.not. success) then
                 call app_log(APP_WARNING, 'Unable to read record')
