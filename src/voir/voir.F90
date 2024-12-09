@@ -18,8 +18,8 @@ program voir
     character(len = 8) :: cles(ncle)
     character(len = 128) :: val(ncle), def(ncle)
     data cles / 'IMENT:', 'SEQ', 'STYLE', 'MOREHELP', 'V' /
-    data def / '/dev/null', 'SEQ', 'NINJNK+DATEV+LEVEL+IP1+GRIDINFO', 'MOREHELP', VERSION /
-    data val / '/dev/null', 'RND' , 'NOMVAR+TYPVAR+ETIKET+NIJK+IPS+DATEO+DATYP+DEET+NPAS+IGS', 2*' ' /
+    data def / '/dev/null', 'SEQ', 'NODATEO+DATEV+NOSTAMP+LEVEL+DATYP+DEET+NPAS+GRIDINFO', 'MOREHELP', VERSION /
+    data val / '/dev/null', 'RND' , 'NOMVAR+TYPVAR+ETIKET+NIJK+IPS+DATEO+NOSTAMP+DATYP+DEET+NPAS+IGS', 2*' ' /
 
     call c_init_appl_var_table()
     ipos = -1
@@ -35,7 +35,7 @@ program voir
          print *
         print *,'   Example #1: -style "NIJK DATEV LEVEL"'
         print *,'   Example #2: -style DATEV+LEVEL+IP1'
-        print *,'   default : NOMVAR+TYPVAR+ETIKET+NIJK+IPS+DATEO+DATYP+DEET+NPAS+IGS'
+        print *,'   default : NOMVAR+TYPVAR+ETIKET+NIJK+IPS+DATEO+NOSTAMP+DATYP+DEET+NPAS+IGS'
     else
         app_ptr=app_init(0,'VOIR',VOIR_VERSION,'',BUILD_TIMESTAMP)
         call app_logstream('stdout')
