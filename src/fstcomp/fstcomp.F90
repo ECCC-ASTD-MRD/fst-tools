@@ -3,6 +3,7 @@
       PROGRAM  FSTCOMP
       use app
       use rmn_fst24
+      use rmn_libc, only: c_exit
 
       IMPLICIT NONE
 
@@ -437,7 +438,7 @@
             app_status = 0
         end if
     end if
-    STOP app_status
+    call c_exit(app_status)
 END
 
 
