@@ -64,7 +64,7 @@
 
     integer RCMP1D,ICMP1D
 
-    integer, parameter :: nkbkeys = 23
+    integer, parameter :: nkbkeys = 24
 
     CHARACTER(len=2)    :: TYPVAB
     CHARACTER(len=4)    :: NOMVAB
@@ -73,9 +73,9 @@
     CHARACTER(len=40)   :: NA, NB
     CHARACTER(len=1024) :: DEF1(nkbkeys), DEF2(nkbkeys), NOMD
 
-    LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, ECRIT, &
+    LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, &
             P1, P2, P3, TN ,T, TG, EXCEPTION, EMISSING
-    INTEGER KA, KB, N1, N2, LIMITE, L, N, I,   &
+    INTEGER KA, KB, N1, N2, LIMITE, LIMVAL, L, N, I,   &
             IDATE, IP1B, IP2B, IP3B,            &
             FSTOPC, fstopl, fnom, fclos,        &
             TABLO(0:6,0:6)
@@ -95,19 +95,18 @@
 
     DATA CLE  /'A:', 'B:', 'L.',    'AS',  'BS ',  'AF', 'BF',  'LI', &
                 'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',    &
-                'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG', 'EMISSING' /
+                'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG', 'EMISSING', 'LD' /
 
-    DATA DEF1 /'A', 'B', '$OUT', 'NON', 'NON', 'NON', 'NON', '-7',   &
+    DATA DEF1 /'A', 'B', '$OUT', 'NON', 'NON', 'NON', 'NON', '-7',  &
                 'NON', 'NON', 'WARNIN', 'NON', 'NON', 'NON', 'NON',   &
-                'NON', 'NON', 'NON', 'NON', 'X', '0', 'NON', 'NON'/
+                'NON', 'NON', 'NON', 'NON', 'X', '0', 'NON', 'NON', '-32'/
 
-    DATA DEF2 /'A', 'B', '$OUT', 'SQI', 'SQI', 'FTN', 'FTN', '-7',   &
+    DATA DEF2 /'A', 'B', '$OUT', 'SQI', 'SQI', 'FTN', 'FTN', '-7',  &
                 'OUI', 'OUI', 'INFORM', 'OUI', 'VA',  'VB',  'OUI',   &
-                'OUI', 'OUI', 'OUI', 'OUI', 'X', '1', 'OUI', 'OUI'/
+                'OUI', 'OUI', 'OUI', 'OUI', 'X', '1', 'OUI', 'OUI', '-32'/
 
     DATA       N, NOMVAB, TYPVAB, ETIKB, IDATE, IP1B, IP2B, IP3B     &
             / 0, ' ',    ' ',    ' ',   4*-1/
-    DATA        ECRIT/ .FALSE. /
 
     !     VALIDE QUAND LA CLE 'X'.NE.'R'
     DATA TABLO/ 2, 1, 2, 3, 2, 1, 1,  &
@@ -122,12 +121,13 @@
 
     !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
-    CALL CCARD(CLE, DEF2, DEF1, 23, I)
+    CALL CCARD(CLE, DEF2, DEF1, nkbkeys, I)
     DO I = 4,11
         CALL LOW2UP(DEF1(I), DEF1(I))
     END DO
     READ(DEF1(8), '(I8)') LIMITE
     READ(DEF1(21),'(I8)') PACK_ERR
+    READ(DEF1(24), '(I8)') LIMVAL
 
     VA = DEF1(13) .NE. 'NON'
     IF(VA .AND. (DEF1(13).NE.'VA')) DEF1(1) = DEF1(13)
@@ -251,7 +251,7 @@
         IF( .NOT.(AS.OR.AF) ) THEN
             WRITE(app_msg,*) 'File declared random ', NA
             call app_log(APP_INFO,app_msg)
-            GOTO 90
+            GOTO 60
         ENDIF
     ELSE
         WRITE(app_msg,*) ' ',N1,' records in ', NA
@@ -285,112 +285,112 @@
     querya = filea%new_query()
     do while(querya%find_next(recorda))
 
-    if (recorda%NOMVAR == '!!') then
-        WRITE(app_msg,*) 'Skipping record "!!", can''t compare'
-        call app_log(APP_INFO,app_msg)
-        cycle
-    endif
-
-    !     SI LA DATE EST A CONSIDERER
-    IF( TD ) then
-        if (recorda%dateo .eq. 0) then
-            idate = 0
-        else
-            idate = recorda%datev
+        if (recorda%NOMVAR == '!!') then
+            WRITE(app_msg,*) 'Skipping record "!!", can''t compare'
+            call app_log(APP_INFO,app_msg)
+            cycle
         endif
-    endif
 
-    !     SI ETIKET EST A CONSIDERER
-    IF( TE ) etikb = recorda%etiket
+        ! SI LA DATE EST A CONSIDERER
+        IF( TD ) then
+            if (recorda%dateo .eq. 0) then
+                idate = 0
+            else
+                idate = recorda%datev
+            endif
+        endif
 
-    !     SI TYPVAR EST A CONSIDERER
-    IF( TT ) typvab = recorda%typvar
+        ! SI ETIKET EST A CONSIDERER
+        IF( TE ) etikb = recorda%etiket
 
-    !     SI NOMVAR EST A CONSIDERER
-    IF( TN ) nomvab = recorda%nomvar
+        ! SI TYPVAR EST A CONSIDERER
+        IF( TT ) typvab = recorda%typvar
 
-    !     SI IP1 EST A CONSIDERER
-    IF( P1 ) then
-        IF (INDEX(exception_vars,recorda%nomvar) .ne. 0) then
-            ip1b = recorda%ip1
-            EXCEPTION = .TRUE.
-        ELSE
-            call convip_plus(recorda%ip1,level,kind,-1,string,.false.)
-            !TODO: fix               ip1b = IP1_ALL(level,kind)
-            ip1b = recorda%ip1
-            EXCEPTION = .FALSE.
+        ! SI NOMVAR EST A CONSIDERER
+        IF( TN ) nomvab = recorda%nomvar
+
+        ! SI IP1 EST A CONSIDERER
+        IF( P1 ) then
+            IF (INDEX(exception_vars,recorda%nomvar) .ne. 0) then
+                ip1b = recorda%ip1
+                EXCEPTION = .TRUE.
+            ELSE
+                call convip_plus(recorda%ip1,level,kind,-1,string,.false.)
+                !TODO: fix               ip1b = IP1_ALL(level,kind)
+                ip1b = recorda%ip1
+                EXCEPTION = .FALSE.
+            ENDIF
         ENDIF
-    ENDIF
 
-    !     SI IP2 EST A CONSIDERER
-    IF( P2 ) ip2b = recorda%ip2
+        ! SI IP2 EST A CONSIDERER
+        IF( P2 ) ip2b = recorda%ip2
 
-    !     SI IP3 EST A CONSIDERER
-    IF( P3 ) ip3b = recorda%ip3
+        ! SI IP3 EST A CONSIDERER
+        IF( P3 ) ip3b = recorda%ip3
 
-    if (BS .OR. BF) l = fileb%rewind()
-    queryb = fileb%new_query(datev=idate, etiket=etikb, ip1=ip1b, ip2=ip2b, ip3=ip3b, typvar=typvab, nomvar=nomvab)
-    success = queryb%find_next(recordb)
+        if (BS .OR. BF) l = fileb%rewind()
+        queryb = fileb%new_query(datev=idate, etiket=etikb, ip1=ip1b, ip2=ip2b, ip3=ip3b, typvar=typvab, nomvar=nomvab)
+        success = queryb%find_next(recordb)
 
-    IF(.not. success) THEN
-        write(app_msg,601) nomvab, typvab, ip1b, ip2b, ip3b, idate, NB
-        call app_log(APP_WARNING,app_msg)
-        app_status = 2
-        cycle
-    ENDIF
-
-    !     VERIFICATION DES DIMENSIONS DE LA GRILLE SI PRESENT
-    IF((recordb%ni.NE.recorda%ni) .OR. (recordb%nj.NE.recorda%nj) .OR. (recordb%nk.NE.recorda%nk)) THEN
-        write(app_msg,603) NOMVAB,recorda%ni,recorda%nj,recorda%nk,recordb%ni,recordb%nj,recordb%nk
-        call app_log(APP_WARNING,app_msg)
-        app_status = 1
-        cycle
-    ENDIF
-
-    !     VERIFICATION DES PARAMETRES DE LA GRILLE
-    IF (TG) THEN
-        IF((recorda%grtyp .NE. recordb%grtyp) .OR. (recorda%ig1 .NE.recordb%ig1) .OR. (recorda%ig2.NE.recordb%ig2) .OR. &
-            (recorda%ig3.NE.recordb%ig3) .OR. (recorda%ig4.NE.recordb%ig4)) THEN
-            write(app_msg,602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
-                        NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
+        IF(.not. success) THEN
+            write(app_msg,601) nomvab, typvab, ip1b, ip2b, ip3b, idate, NB
             call app_log(APP_WARNING,app_msg)
-            app_status=1
+            app_status = 2
             cycle
         ENDIF
-    ENDIF
 
-    IF(recorda%pack_bits .NE. recordb%pack_bits) then
-        write(app_msg, *) 'NBITSA=',recorda%pack_bits,' NBITSB=',recordb%pack_bits
-        app_status = 1
-        call app_log(APP_INFO, app_msg)
-    endif
-
-    WRITE(app_msg, *) 'COMPARE DATA_TYPE_A=',recorda%data_type,'  @  DATA_TYPE_B=',recordb%data_type
-    call app_log(APP_INFO, app_msg)
-
-    !     TOUT EST OK LIT ET COMPARE
-    success = recorda%read()
-    success = recordb%read()
-    recordb%etiket = etikb
-
-    IF ((mod(recorda%data_type,128) .ne. 1) .and. (mod(recorda%data_type,128) .ne. 6)) THEN
-        PACK_ERR2 = 0
-    ELSE
-        PACK_ERR2 = PACK_ERR
-    ENDIF
-    IF ((mod(recorda%data_type,128) .gt. 6).or.(mod(recordb%data_type,128) .gt. 6)) goto 30
-    GO TO (40, 50, 30) TABLO(mod(recorda%data_type, 128), mod(recordb%data_type, 128))
-
-    30    WRITE(app_msg,*)' No comparison possible: DATA_TYPE_A=',recorda%data_type,' DATA_TYPE_B=',recordb%data_type
-            app_status=1
+        ! VERIFICATION DES DIMENSIONS DE LA GRILLE SI PRESENT
+        IF((recordb%ni.NE.recorda%ni) .OR. (recordb%nj.NE.recorda%nj) .OR. (recordb%nk.NE.recorda%nk)) THEN
+            write(app_msg,603) NOMVAB,recorda%ni,recorda%nj,recorda%nk,recordb%ni,recordb%nj,recordb%nk
             call app_log(APP_WARNING,app_msg)
-            GO TO 60
+            app_status = 1
+            cycle
+        ENDIF
 
-    40    app_status = RCMP1D(recorda, recordb, LIMITE, PACK_ERR2, EXCEPTION)
-            GO TO 60
+        ! VERIFICATION DES PARAMETRES DE LA GRILLE
+        IF (TG) THEN
+            IF((recorda%grtyp .NE. recordb%grtyp) .OR. (recorda%ig1 .NE.recordb%ig1) .OR. (recorda%ig2.NE.recordb%ig2) .OR. &
+                (recorda%ig3.NE.recordb%ig3) .OR. (recorda%ig4.NE.recordb%ig4)) THEN
+                write(app_msg,602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
+                            NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
+                call app_log(APP_WARNING,app_msg)
+                app_status=1
+                cycle
+            ENDIF
+        ENDIF
 
-    50    app_status = ICMP1D(recorda, recordb, EXCEPTION)
-            call queryb % free()
+        IF(recorda%pack_bits .NE. recordb%pack_bits) then
+            write(app_msg, *) 'NBITSA=',recorda%pack_bits,' NBITSB=',recordb%pack_bits
+            app_status = 1
+            call app_log(APP_INFO, app_msg)
+        endif
+
+        WRITE(app_msg, *) 'COMPARE DATA_TYPE_A=',recorda%data_type,'  @  DATA_TYPE_B=',recordb%data_type
+        call app_log(APP_INFO, app_msg)
+
+        ! TOUT EST OK LIT ET COMPARE
+        success = recorda%read()
+        success = recordb%read()
+        recordb%etiket = etikb
+
+        IF ((mod(recorda%data_type,128) .ne. 1) .and. (mod(recorda%data_type,128) .ne. 6)) THEN
+            PACK_ERR2 = 0
+        ELSE
+            PACK_ERR2 = PACK_ERR
+        ENDIF
+        IF ((mod(recorda%data_type,128) .gt. 6).or.(mod(recordb%data_type,128) .gt. 6)) goto 30
+        GO TO (40, 50, 30) TABLO(mod(recorda%data_type, 128), mod(recordb%data_type, 128))
+
+    30  WRITE(app_msg,*)' No comparison possible: DATA_TYPE_A=',recorda%data_type,' DATA_TYPE_B=',recordb%data_type
+        app_status=1
+        call app_log(APP_WARNING,app_msg)
+        GO TO 60
+
+    40  app_status = RCMP1D(recorda, recordb, LIMITE, LIMVAL, PACK_ERR2, EXCEPTION)
+        GO TO 60
+
+    50  app_status = ICMP1D(recorda, recordb, EXCEPTION)
+        call queryb % free()
     60  continue
     enddo
 
@@ -453,13 +453,13 @@ END
 !   "    LIMITE  ERREUR MAXIMUM TOLOREE
 !   "    PACK_ERR NOMBRE D'UNITE D'ERREUR DU A L'ALGORITHME DE PACKING
 !                 A UTILISER POUR DETERMINER SI "A" COMPARE A "B"
-      integer function RCMP1D(A, B, LIMITE, PACK_ERR, EXCEPTION)
+      integer function RCMP1D(A, B, LIMITE, LIMVAL, PACK_ERR, EXCEPTION)
       use app
       use rmn_fst24
 
       IMPLICIT NONE
 
-      INTEGER  N, LIMITE
+      INTEGER  N,NR, LIMITE, LIMVAL
       INTEGER  PACK_ERR
       REAL     MAXABS, SUMABS, ERRABS
 
@@ -471,7 +471,7 @@ END
       CHARACTER(len=15) :: Level
       REAL      rlevel
       REAL(kind=real64) :: SA, SB, SA2, SB2, ERR, DERR, ERRMAX, ABAR, BBAR, &
-                             AA, BB, FN, ERRLIM, VARA, VARB, SAB
+                             AA, BB, FN, ERRLIM, ERRVAL, VARA, VARB, SAB
       REAL MIN_A, MAX_A, MIN_B, MAX_B, RANGE_A, RANGE_B, DEUX_EXP_NB
       REAL ratio_max, ratio
       REAL ERR_UNIT
@@ -483,9 +483,11 @@ END
       call b % get_data_array(datab)
 
       nbdiff = 0
+      NR=0
       n=a%ni*a%nj*a%nk
 
       ERRLIM = 10.**LIMITE
+      ERRVAL = 10.**LIMVAL
       DEUX_EXP_NB = 2.0 ** MIN(a%pack_bits,b%pack_bits)
       SA     = 0.
       SB     = 0.
@@ -502,36 +504,39 @@ END
       MIN_B = datab(1)
       MAX_B = datab(1)
       DO 10 I=1,N
-         AA     = dataa(I)
-         BB     = datab(I)
-         MIN_A = MIN(MIN_A,dataa(I))
-         MAX_A = MAX(MAX_A,dataa(I))
-         MIN_B = MIN(MIN_B,datab(I))
-         MAX_B = MAX(MAX_B,datab(I))
-         SA     = SA+AA
-         SB     = SB+BB
-         IF(AA .NE. BB) THEN
+        AA     = dataa(I)
+        BB     = datab(I)
+        MIN_A = MIN(MIN_A,dataa(I))
+        MAX_A = MAX(MAX_A,dataa(I))
+        MIN_B = MIN(MIN_B,datab(I))
+        MAX_B = MAX(MAX_B,datab(I))
+        IF(ABS(AA-BB) .LT. ERRVAL) THEN
+           AA=BB
+        ENDIF
+        SA     = SA+AA
+        SB     = SB+BB
+        IF(AA .NE. BB) THEN
             if (aa .ne. 0.) ratio = (max(aa,bb) - min(aa,bb)) / aa * 100
             if (ratio > ratio_max) ratio_max = ratio
 !            write(6,888) 'Debug difference A vs B au point I=',i,'AA, AA-BB=',aa,aa-bb
             nbdiff = nbdiff +1
- 888        format(a,i8,2x,a,e14.7,2x,e14.7)
+888        format(a,i8,2x,a,e14.7,2x,e14.7)
             ERRABS = ABS(AA-BB)
             SUMABS = SUMABS+ERRABS
             MAXABS = MAX(ERRABS,MAXABS)
             derr=0.0
             IF(AA .NE. 0.) THEN
-               DERR = ABS(1.-BB/AA)
+                DERR = ABS(1.-BB/AA)
             ELSEIF(BB .NE. 0.)THEN
-               DERR = ABS(1.-AA/BB)
+                DERR = ABS(1.-AA/BB)
             ENDIF
             ERRMAX = MAX(ERRMAX,DERR)
             ERR    = ERR+DERR
-         ENDIF
-   10    CONTINUE
+        ENDIF
+   10 CONTINUE
 
-      WRITE(app_msg,*) 'nbdiff = ',nbdiff,' sur un total de ',n
-      call app_log(APP_DEBUG,app_msg)
+      WRITE(app_msg,*) 'nbdiff = ',nbdiff,' sur un total de ',NR
+      call app_log(APP_INFO,app_msg)
 
       RANGE_A = MAX_A - MIN_A
       RANGE_B = MAX_B - MIN_B
@@ -539,15 +544,20 @@ END
       irange = ISHFT(ISHFT(irange,-23) +1,23)
       RANGE_A = TRANSFER(irange,1.0)
       FN   = FLOAT(N)
+
       ERR  = ERR/FN
       ABAR = SA/FN
       BBAR = SB/FN
       DO 20 I=1,N
-         AA  = dataa(I)-ABAR
-         BB  = datab(I)-BBAR
-         SAB = SAB+AA*BB
-         SA2 = SA2+AA*AA
-         SB2 = SB2+BB*BB
+            AA  = dataa(I)-ABAR
+            BB  = datab(I)-BBAR
+            IF(ABS(dataa(I)-datab(I)) .LT. ERRVAL) THEN
+               BB=AA
+            ENDIF
+            SAB = SAB+AA*BB
+            SA2 = SA2+AA*AA
+            SB2 = SB2+BB*BB
+!         ENDIF
    20 continue
       SUMABS = SUMABS/FN
       VARA   = SA2/FN
@@ -662,6 +672,7 @@ END
             NC = NC+1
             K  = ABS(dataa(I)-datab(I))
             IF(K .GT. MD) THEN
+               J  = size
                MD = K
             ENDIF
          ENDIF

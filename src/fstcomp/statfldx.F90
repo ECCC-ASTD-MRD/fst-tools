@@ -32,7 +32,7 @@
       type(fst_record ) :: record  
 
       integer i,j,k
-      real(kind=real32) :: sum,moy,var,rmin,rmax
+      real(kind=real64) :: sum,moy,var,rmin,rmax
       integer imin,jmin,kmin,imax,jmax,kmax,kind,dat2,dat3
       character(len=15) :: Level
       REAL      rlevel

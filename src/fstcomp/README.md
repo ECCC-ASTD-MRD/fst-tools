@@ -34,6 +34,7 @@ fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1
 | -af            | obsolete do not use |
 | -bf            | obsolete do not use |
 | -li            | the exponent of the maximum relative error tolerance. Example: ```-li =-3``` means that FSTCOMP will tolerate differences not greater than 0.001. The default value is E-07 (.0000001) |
+| -ld            | the exponent of the maximum error between values before considering them equal. Example: ```-ld =-4``` means that FSTCOMP will consider values to be equal if differences not greater than 0.001. The default value is E-32  |
 | -packerr       | the multiplier (usually 1) on the tolerance criterion (which is the compaction error) for the comparison. Example: Tolerance criterion for R16 (16bit compaction) = (Max - Min) / 2**16 If the difference between two values are smaller than (tolerance)*(packerr), it will be tagged as no difference |
 | -nd            | To ignore the "date validity" parameter when searching for the equivalent record in file "B" to the record in file "A". (datev=dateo+npas*deet) |
 | -ne            | To ignore the "etiket" parameter when searching for the equivalent record in file "B" to the record in file "A" |
