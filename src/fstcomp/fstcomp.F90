@@ -74,7 +74,7 @@
     CHARACTER(len=1024) :: DEF1(nkbkeys), DEF2(nkbkeys), NOMD
 
     LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, &
-            P1, P2, P3, TN ,T, TG, EXCEPTION, EMISSING
+            P1, P2, P3, TN ,T, TG, EXCEPTION, ECODE
     INTEGER KA, KB, N1, N2, LIMITE, LIMVAL, L, N, I,   &
             IDATE, IP1B, IP2B, IP3B,            &
             FSTOPC, fstopl, fnom, fclos,        &
@@ -95,7 +95,7 @@
 
     DATA CLE  /'A:', 'B:', 'L.',    'AS',  'BS ',  'AF', 'BF',  'LI', &
                 'ND',  'NE',  'D',      'N',   'VA',  'VB',  'NT',    &
-                'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG', 'EMISSING', 'LD' /
+                'N1',  'N2',  'N3',  'NN',  'X', 'PACKERR', 'NG', 'ECODE', 'LD' /
 
     DATA DEF1 /'A', 'B', '$OUT', 'NON', 'NON', 'NON', 'NON', '-7',  &
                 'NON', 'NON', 'WARNIN', 'NON', 'NON', 'NON', 'NON',   &
@@ -170,7 +170,7 @@
     TG = DEF1(22) .EQ. 'NON'
     DI = DEF1(11) .EQ. 'INFORM'
     LN = DEF1(12) .EQ. 'OUI'
-    EMISSING = DEF1(23) .EQ. 'OUI'
+    ECODE = DEF1(23) .EQ. 'OUI'
     IF(DEF1(20) .EQ. 'R') TABLO(0,0) = 1
 
     app_ptr = app_init(0,'fstcomp',FSTCOMP_VERSION,'',BUILD_TIMESTAMP)
@@ -433,7 +433,7 @@
              '  E-REL-MOY    VAR-A      C-COR        MOY-A', &
              '        BIAIS      E-MAX      E-MOY     TOLERANCE')
 
-    if (.NOT. EMISSING) then
+    if (.NOT. ECODE) then
         if (app_status == 2) then
             app_status = 0
         end if

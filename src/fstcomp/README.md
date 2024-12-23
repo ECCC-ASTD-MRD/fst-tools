@@ -29,6 +29,7 @@ fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1
 | -a ''filea''   | filename of one of the two input RPN standard files for comparison. Default filename is "a" |
 | -b ''fileb''   | filename of the other input RPN standard file for comparison. Default filename is "b" |
 | -l ''listing'' | file given for the stdout listing |
+| -ecode         | Output error code 2 if differences are found |
 | -as            | obsolete do not use |
 | -bs            | obsolete do not use |
 | -af            | obsolete do not use |
