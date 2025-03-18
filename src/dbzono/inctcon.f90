@@ -3,6 +3,7 @@
       SUBROUTINE INCTCON
 ! 
       use app
+      use rmn_libc, only: c_exit
       IMPLICIT NONE 
 ! 
 !Author
@@ -56,7 +57,7 @@
             call app_log(APP_ERROR,app_msg)
 600         FORMAT('LA CONSTANTE',2X,A10,1X,'N EXISTE PAS')
             app_status=app_end(-1)
-            error stop 'CTE ABS.' 
+            call c_exit(-1)
          ELSE 
 !           WRITE(6,610)NOM1(I),TEMP1(I)
 610         FORMAT(1X,'VALEUR DE',1X,A10,2X,'=',1X,E15.7) 
