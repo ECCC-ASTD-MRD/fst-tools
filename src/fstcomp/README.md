@@ -28,6 +28,7 @@ fstcomp now returns error codes on exit:
 
 |      value     |     description    | 
 | -------------- | ------------------ |
+| -1             | error              |
 | 1              | no comparison possible (different dimensions,grid,pack_bits, ...) |
 | 2              | found differences above specified parameters |
 
