@@ -1,6 +1,7 @@
 # Table of Contents
 1. [Description](#description)
 2. [Usage](#usage)
+2. [Exit value](#exit-value)
 3. [Command line argument definition](#command-line-argument-definition)
 4. [Description of Report Heading](#description-of-report-heading)
 
@@ -21,6 +22,14 @@ fstcomp -a filea -b fileb -ne -nd -nt
 fstcomp -va filea -vb fileb -l listing
 fstcomp_7.7 -a fichier1 -b fichier2 -packerr 1
 ```
+
+# Exit value
+fstcomp now returns error codes on exit:
+
+|      value     |     description    | 
+| -------------- | ------------------ |
+| 1              | no comparison possible (different dimensions,grid,pack_bits, ...) |
+| 2              | found differences above specified parameters |
 
 # Command line argument definition
 
