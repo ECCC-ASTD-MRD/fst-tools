@@ -16,6 +16,7 @@ fstcomp [-a -b -l -as -bs - af -bf -li -nd -ne -d -n -va -vb -nt -n1 -n2 -n3 -nn
 ```
 <br />
 Examples of usage:
+
 ```bash
 fstcomp -a filea -b fileb
 fstcomp -a filea -b fileb -ne -nd -nt
