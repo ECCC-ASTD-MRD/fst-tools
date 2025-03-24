@@ -8,6 +8,8 @@ variables:
 .env:
    build:
       - . r.load.dot ${ECCI_PROCESS_SSM}/libs
+   variables:
+      ALLOW_FAILURE_ARCHS: ""
 
 include:
    - project: 'RPN-SI/ci-admin'
