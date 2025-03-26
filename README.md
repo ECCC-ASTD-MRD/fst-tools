@@ -1,13 +1,28 @@
+# Description
+
 Collection of tools to manipulate RPN standard files
 
-# At CMC
+# Components
 
-## Build dependencies
+  * [dbzono](src/dbzono/README.md)
+  * [editfst](src/editfst/README.md)
+  * [fstcomp](src/fstcomp/README.md)
+  * [fstcompress](src/fstcompress/README.md)
+  * [fstxml](src/fstxml/README.md)
+  * [pgsm](src/pgsm/README.md)
+  * [reflex](src/reflex/README.md)
+  * [voir](src/voir/README.md)
+
+# Compilation
+
+## At CMC
+
+### Build dependencies
 
 - CMake 3.20+
 - librmn
 
-## Environment
+### Environment
 
 Source the right file from the `ECCI_ENV` variable, depending on the desired
 architecture.  This will load the specified compiler, set the
@@ -26,13 +41,9 @@ architecture.  This will load the specified compiler, set the
 . $ECCI_ENV/latest/ubuntu-22.04-amd-64/gnu.sh
 ```
 
-Since the default version of CMake available on ECCC systems is probably too
-old, you need to load a version newer than 3.20.  For example: `. ssmuse-sh
--d main/opt/cmake/cmake-3.21.1`.
-
 Load the latest stable version of librmn.
 
-## Build and install
+### Build and install
 
 ```
 mkdir build
@@ -42,9 +53,9 @@ make -j 4
 make install
 ```
 
-# Outside CMC (external users)
+## Outside CMC (external users)
 
-## Build dependencies
+### Build dependencies
 
 - CMake 3.20+
 - librmn with shared libraries (https://github.com/ECCC-ASTD-MRD/librmn/)
@@ -53,7 +64,7 @@ make install
 `--recursive` option or run `git submodule update --init --recursive` in the
 git repo after having cloned.
 
-## Build and install
+### Build and install
 
 ```
 mkdir build
@@ -62,5 +73,3 @@ cmake .. -DCMAKE_INSTALL_PREFIX=${your_choice} -Drmn_ROOT=${librmn_install_path}
 make -j 4
 make install
 ```
-
-
