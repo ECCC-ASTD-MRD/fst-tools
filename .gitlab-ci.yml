@@ -22,6 +22,8 @@ deploy:staging:
       - master
       - tags
       - dev
+      - alpha
+      - dev_alpha
       - schedules
    script:
       - ~/ci-admin-bundle/bin/ci-stage-ssm.sh utils ${CI_PROJECT_NAME} "${CI_COMMIT_TAG}" "${ECCI_PROCESS}"
@@ -31,6 +33,8 @@ trigger:
    only:
       - master
       - dev
+      - alpha
+      - dev_alpha
       - tags
       - schedules
    script:
