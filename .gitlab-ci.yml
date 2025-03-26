@@ -20,9 +20,9 @@ deploy:staging:
    stage: deploy
    only:
       - master
-      - alpha
       - tags
       - dev
+      - alpha
       - dev_alpha
       - schedules
    script:
@@ -32,8 +32,8 @@ trigger:
    stage: trigger
    only:
       - master
-      - alpha
       - dev
+      - alpha
       - dev_alpha
       - tags
       - schedules
