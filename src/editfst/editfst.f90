@@ -407,13 +407,12 @@
 !     IMPRIMER L'INDICATIF DE FIN DU PGM.
    30 IF( BOX ) THEN
          app_status=app_end(-1)
+         CALL QQEXIT(app_status)
+      ELSE IF(ETAT .EQ. 'ABORT') THEN
+         WRITE(6,*)'***   E D I T F S T   A V O R T E   ***'
+         CALL QQEXIT(50)
       ELSE
-         IF(ETAT .EQ. 'ABORT') THEN
-            WRITE(6,*)'***   E D I T F S T   A V O R T E   ***'
-         ELSE
-            WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
-         ENDIF
+         WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
       ENDIF
-      IF(ETAT .EQ. 'ABORT') CALL QQEXIT(50)  ! get error exit code back to shell
       STOP
       END 
