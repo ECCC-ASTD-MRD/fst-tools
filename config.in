@@ -2,11 +2,6 @@
 #
 # This forms the basis for the xx-config utility, which tells you
 # various things about the library installation.
-# Usage:
-#    Copy to your project directory and remove/add packages
-#    Call this within cmake:
-#       configure_file(config.in ${CMAKE_BINARY_DIR}/${NAME}-config @ONLY)
-#       install(PROGRAMS ${CMAKE_BINARY_DIR}/${NAME}-config DESTINATION bin)
 
 cc="@CMAKE_C_COMPILER_ID@ @CMAKE_C_COMPILER_VERSION@"
 fc="@CMAKE_Fortran_COMPILER_ID@ @CMAKE_Fortran_COMPILER_VERSION@"
@@ -18,7 +13,6 @@ libs=CMAKE_LIBS
 version=@PROJECT_VERSION@
 env=@EC_CI_ENV@
 arch=@EC_ARCH@
-date="@BUILD_TIMESTAMP@"
 
 has_rmn=@rmn_VERSION@@rmn_STATE@
 
@@ -30,7 +24,6 @@ Usage: @NAME@-config [OPTION]
 Available values for OPTION include:
 
   --help         display this help message and exit
-  --build-date   build timestamp [${date}]
   --cc           C compiler [${cc}]
   --fc           FORTRAN compiler [${fc}]
   --cflags       C compiler flags [${cflags}]
@@ -62,10 +55,6 @@ while test $# -gt 0; do
     --help)
 	usage 0
 	;;
-
-    --build-date)
-        echo ${date}
-        ;;
 
     --cc)
        	echo ${cc:-no}

@@ -47,7 +47,7 @@ reflex -ixent ficent1 [ficent2 ... ficent10] [-oxsrt ficsrt] [-rstr] [-stats] [-
 
 * Required routines: BSORT,DEBALZN,LITZON,OUTFLD,ZON
 
-# Ecamples
+# Examples
 * When DBZONO is run, the first record read is the information table. This table appears as follows:
 
 ```

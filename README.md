@@ -41,10 +41,6 @@ architecture.  This will load the specified compiler, set the
 . $ECCI_ENV/latest/ubuntu-22.04-amd-64/gnu.sh
 ```
 
-Since the default version of CMake available on ECCC systems is probably too
-old, you need to load a version newer than 3.20.  For example: `. ssmuse-sh
--d main/opt/cmake/cmake-3.21.1`.
-
 Load the latest stable version of librmn.
 
 ### Build and install
@@ -77,5 +73,3 @@ cmake .. -DCMAKE_INSTALL_PREFIX=${your_choice} -Drmn_ROOT=${librmn_install_path}
 make -j 4
 make install
 ```
-
-
