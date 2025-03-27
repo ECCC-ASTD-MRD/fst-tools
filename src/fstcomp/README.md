@@ -1,9 +1,9 @@
 # Table of Contents
 1. [Description](#description)
 2. [Usage](#usage)
-2. [Exit value](#exit-value)
-3. [Command line argument definition](#command-line-argument-definition)
-4. [Description of Report Heading](#description-of-report-heading)
+3. [Exit value](#exit-value)
+4. [Command line argument definition](#command-line-argument-definition)
+5. [Description of Report Heading](#description-of-report-heading)
 
 # Description
 
