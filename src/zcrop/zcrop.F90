@@ -1,6 +1,7 @@
    program zcrop
    use app
    use rmn_fst24
+   use rmn_libc
    implicit none
 
 #include "fst-tools_build_info.h"
@@ -38,7 +39,13 @@
    success=dst%open(val(2), 'STD+RND+R/W')
 
    success=src%read(ax,nomvar='>>  ')
-   success=src%read(ay,nomvar='^^  ')
+   success=src%read(ay,nomvar='^^  ') .and. success
+
+   if (.not. success) then
+      call app_log(APP_ERROR, 'Unable to read grid descriptors')
+      app_status = app_end(-1)
+      call c_exit(app_status)
+   endif
 
    read(val(03), *)  ip1
    read(val(04), *)  ip2
