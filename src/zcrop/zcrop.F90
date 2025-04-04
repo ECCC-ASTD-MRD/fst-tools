@@ -52,6 +52,13 @@
 
   key_ax = fstinf(iun_src,nix,njx,nkx,-1, ' ',  -1,-1,-1, ' ', '>>  ')
   key_ay = fstinf(iun_src,niy,njy,nky,-1, ' ',  -1,-1,-1, ' ', '^^  ')
+
+  if (key_ax < 0 .or. key_ay < 0) then
+    call app_log(APP_ERROR, 'Unable to read grid descriptors')
+    app_status=app_end(-1)
+    CALL QQEXIT(app_status)
+  endif
+
   ier = fstprm(key_ax,dateo,deet, npas, nix, njx, nkx, nbits, datyp, ip1x,&
               ip2x, ip3x, typvar, nomvar, etiket, grtyp, ig1, ig2, ig3,&
               ig4, swa, lng, dltf, ubc, datev, extra2, extra3)
@@ -130,7 +137,7 @@
          write(app_msg,*) 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
          call app_log(APP_ERROR,app_msg)
          app_status=app_end(-1)
-         stop app_status
+         call qqexit(app_status)
     endif
   endif
 
@@ -157,7 +164,7 @@
     write(app_msg,*) 'invalid indexes : imin, jmin, imax, jmax',imin,jmin,imax,jmax
     call app_log(APP_ERROR,app_msg)
     app_status=app_end(-1)
-    stop app_status
+    call qqexit(app_status)
   endif
 
   new_ni = imax - imin + 1
@@ -179,5 +186,5 @@
    ier = fstfrm(iun_dst)
 
    app_status=app_end(-1)
-   stop app_status
+   call qqexit(app_status)
    end
