@@ -28,7 +28,7 @@
    data def /'void',  'void', '-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
    data val /'void',  'void','-99', '-99', '-99',  '-99',  '-99',  '-99',  '-99',  '-99.0','-99.0','-99.0','-99.0'/
 
-   app_ptr=app_init(0,'ZCROP',VERSION,'',BUILD_TIMESTAMP)
+   app_ptr=app_init(0,'ZCROP',ZCROP_VERSION,'',BUILD_TIMESTAMP)
    call app_start()
 
    mode = non_defini
