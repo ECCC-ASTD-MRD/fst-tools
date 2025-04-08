@@ -13,6 +13,7 @@ PGSM_VERSION       : 7.9.2
 EDITFST_VERSION    : 7.12.1
 REFLEX_VERSION     : 3.5.0
 VOIR_VERSION       : 99.0.0
+ZCROP_VERSION      : 20.0.7
 
 # Dependencies 
 #    =,<,<=,>,>= : Version rules
