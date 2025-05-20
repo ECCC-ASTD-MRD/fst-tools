@@ -2,7 +2,42 @@
 !**s/p coupe, calcul coupe zonale\meridionale
 !
 #include "defin.cdk90"
-   subroutine pgcoupe(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,      ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,      ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,      ipr26,ipr27,ipr28,ipr29,ipr30)
+   subroutine pgcoupe(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
+      implicit none
+
+      #include "nivos.cdk90"
+
+      integer nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8
+      integer ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17
+      integer ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25
+      integer ipr26,ipr27,ipr28,ipr29,ipr30
+      integer iunit, i
+
+      do i=1,30
+         nivospr(i)=-1
+      enddo
+
+      iunit=1
+
+      call pgcoupe_common(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
+   end
+
+   subroutine moysrt(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
+      implicit none
+
+      integer nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8
+      integer ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17
+      integer ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25
+      integer ipr26,ipr27,ipr28,ipr29,ipr30
+      integer iunit
+
+      iunit=2
+      
+      call pgcoupe_common(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
+   end
+
+
+   subroutine pgcoupe_common(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,ipr26,ipr27,ipr28,ipr29,ipr30)
       use app            
       implicit none
       external coupzm,messags,fstcvt,pgsmabt
@@ -87,15 +122,7 @@
       integer iunit,nparm,i
 !     
       character*8 cjcoup
-!     
-!     initialiser nivospr
-!     
-      do i=1,30
-         nivospr(i)=-1
-      enddo
-!     
-!     
-      iunit=1
+
  1000 nmoy = min0(31,nmoy)
       go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,        21,22,23,24,25,26,27,28,29,30,31) nmoy
  31   nivospr(30) = ipr30
@@ -152,12 +179,5 @@
 
       call coupzm(iunit,cnomvar,cjcoup) 
       return
-!     
-!     directive moysrt lire sur fichier de sorti
-!     
-      entry moysrt(nom,lcoupe,ipr1,ipr2,ipr3,ipr4,ipr5,ipr6,ipr7,ipr8,      ipr9,ipr10,ipr11,ipr12,ipr13,ipr14,ipr15,ipr16,      ipr17,ipr18,ipr19,ipr20,ipr21,ipr22,ipr23,ipr24,ipr25,      ipr26,ipr27,ipr28,ipr29,ipr30)
-      iunit=2
-      go to 1000
-!     
+
       end 
-      
