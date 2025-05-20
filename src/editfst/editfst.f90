@@ -378,7 +378,7 @@
 !     LIRE UN JEU DE DIRECTIVES
 
       IF( SELEC ) THEN
-         I = FNOM(5, DEF1(10), 'SEQ', 0)
+         I = FNOM(5, DEF1(10), 'SEQ+R/O', 0)
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             INTERAC = .TRUE.
             PRINT*,'DIRECTIVES ?'
@@ -404,6 +404,11 @@
 !     TOUT EST TERMINE , FERME LES FICHIERS
       CALL FERMES
       CALL FERMED
+
+      IF( SELEC ) THEN
+         CALL FCLOS(5)
+      ENDIF
+
 !     IMPRIMER L'INDICATIF DE FIN DU PGM.
    30 IF( BOX ) THEN
          app_status=app_end(-1)
