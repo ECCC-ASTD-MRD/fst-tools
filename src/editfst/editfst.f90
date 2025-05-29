@@ -379,6 +379,11 @@
 
       IF( SELEC ) THEN
          I = FNOM(5, DEF1(10), 'SEQ+R/O', 0)
+         IF (I /= 0) THEN
+            write(app_msg, '(A, I10)') 'fnom returned non-zero value: ', I
+            call app_log(APP_ERROR, app_msg)
+            goto 30
+         ENDIF
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             INTERAC = .TRUE.
             PRINT*,'DIRECTIVES ?'
