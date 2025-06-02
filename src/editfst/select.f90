@@ -1,5 +1,5 @@
 !** S/R SELECT TRAITER LES DIRECTIVES DE L'USAGER
-      SUBROUTINE SELECT
+      SUBROUTINE SELECT(iun)
       use configuration
       use app
       IMPLICIT NONE 
@@ -18,6 +18,8 @@
 !LANGUAGE FTN77
 !
 !MODULES
+      integer, intent(in) :: iun
+
       EXTERNAL QLXINX
       EXTERNAL SAUTSEQ, STDCOPI, WEOFILE, SETPER, QLXINS, ZAP
       EXTERNAL EXCLURE, SEQCOPI, REWINDS, DESIRE, qqexit
@@ -93,7 +95,7 @@
       CALL QLXINS(M1017  , 'INDX'   , DUMY, 1, 0)
       CALL QLXINS(M1021  , 'MPRES'  , DUMY, 1, 0)
   
-      CALL READLX(5, DUMY, KERR)  ! on appelle l'interprete READLX
+      CALL READLX(iun, DUMY, KERR)  ! on appelle l'interprete READLX
   
       IF(KERR .NE. 0 .and. strict_mode) THEN
          call app_log(APP_ERROR,'select: Error(s) found in directives')

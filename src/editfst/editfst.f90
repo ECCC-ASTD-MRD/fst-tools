@@ -259,6 +259,7 @@
       LOGICAL     FASTIO
       character(len=4096) ,dimension(:), pointer, save:: def1,     def2
       character(len=4096), save :: PRINTR
+      integer :: read_iun !< Unit number for reading directives
 !      character(len=78), dimension(2):: MSG_ABT
 !      character(len=78), dimension(4):: MSG_000
 
@@ -378,19 +379,22 @@
 !     LIRE UN JEU DE DIRECTIVES
 
       IF( SELEC ) THEN
-         I = FNOM(5, DEF1(10), 'SEQ+R/O', 0)
-         IF (I /= 0) THEN
-            write(app_msg, '(A, I10)') 'fnom returned non-zero value: ', I
-            call app_log(APP_ERROR, app_msg)
-            goto 30
-         ENDIF
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
+            read_iun = 5
             INTERAC = .TRUE.
             PRINT*,'DIRECTIVES ?'
             PRINT*,'TAPER  END A LA FIN DES DIRECTIVES'
             PRINT*,'TYPE  END  AFTER LAST DIRECTIVE'
+         ELSE
+            read_iun = 0
+            I = FNOM(read_iun, DEF1(10), 'SEQ+R/O', 0)
+            IF (I /= 0) THEN
+               write(app_msg, '(A, I10)') 'fnom returned non-zero value: ', I
+               call app_log(APP_ERROR, app_msg)
+               goto 30
+            ENDIF
          ENDIF
-         CALL SELECT                    ! process directives
+         CALL SELECT(read_iun)                    ! process directives
       ENDIF
 
 !     SI PAS DE DIRECTIVES STDCOPI OU SEQCOPI ALORS
@@ -410,8 +414,8 @@
       CALL FERMES
       CALL FERMED
 
-      IF( SELEC ) THEN
-         CALL FCLOS(5)
+      IF( SELEC .and. read_iun /= 5 ) THEN
+         CALL FCLOS(read_iun)
       ENDIF
 
 !     IMPRIMER L'INDICATIF DE FIN DU PGM.
