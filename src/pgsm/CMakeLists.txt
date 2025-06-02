@@ -48,17 +48,3 @@ target_link_libraries(pgsm PUBLIC "-Wl,--disable-new-dtags")
 
 install(TARGETS pgsm)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pgsm DESTINATION bin)
-
-######################## TESTING ###################################
-
-# Unit test executable
-add_executable(test_pgsm test.f90)
-target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
-target_link_libraries(test_pgsm PRIVATE pgsmlib rmn::rmn)
-
-if (EC_INIT_DONE LESS 2)
-   if(BUILD_TESTING)
-      add_test(NAME test_pgsm COMMAND test_pgsm)
-      add_dependencies(check test_pgsm)
-    endif()
-endif()

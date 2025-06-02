@@ -45,6 +45,7 @@ add_subdirectory(src/reflex)
 add_subdirectory(src/voir)
 add_subdirectory(src/dbzono)
 add_subdirectory(src/zcrop)
+add_subdirectory(tests)
 
 #----- Packaging
 ec_package_name()                # Define package prefix  
