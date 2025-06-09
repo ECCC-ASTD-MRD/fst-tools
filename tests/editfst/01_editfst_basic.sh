@@ -23,10 +23,12 @@ function run_test() {
     directives=editfst.dir
     echo "desire('', '', '', -1, 3, -1, -1)" > ${directives}
 
+    # Copy single record (directive from file)
     output_file_1=${test_file}.01
     rm -f ${output_file_1}
     ${EDITFST} -s ${test_file} -d ${output_file_1} -i ${directives} || exit -1
 
+    # Copy single record (directive from stdin)
     output_file_2=${test_file}.02
     rm -f ${output_file_2}
     cat ${directives} | ${EDITFST} -s ${test_file} -d ${output_file_2} || exit -1
@@ -34,12 +36,14 @@ function run_test() {
     ${FSTCOMP} -a ${output_file_1} -b ${output_file_2} -ecode || exit -1
     ${FSTCOMP} -a ${output_file_2} -b ${output_file_1} -ecode || exit -1
 
+    # Copy the entire file
     output_file_3=${test_file}.03
     rm -f ${output_file_3}
     ${EDITFST} -s ${test_file} -d ${output_file_3} -i 0 || exit -1
     ${FSTCOMP} -a ${test_file} -b ${output_file_3} -ecode || exit -1
 }
 
+# Compare RSF and XDF test files
 ${FSTCOMP} -a test.rsf -b test.xdf -ecode || exit -1
 
 run_test test.rsf

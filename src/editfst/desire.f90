@@ -1,49 +1,38 @@
 !** S/P DESIRE - EXTRACTION DES ARGUMENTS D'UNE DIRECTIVE "DESIRE"
 
-      SUBROUTINE DESIRE(TC, NV, LBL, DATE, IP1, IP2, IP3)
-      use ISO_C_BINDING
-      use configuration
-      use app
+module desire_exclure_common
+   use app
+   use configuration
+   use iso_c_binding
+   implicit none
+   include 'rmn/excdes.inc'
+contains
+
+   SUBROUTINE desire_exclure(TC, NV, LBL, DATE, IP1, IP2, IP3, request_type)
+      !     AUTEUR YVON R. BOURASSA JAN 86
       use rmn_fst98, only: fstcvt_to_char
       IMPLICIT NONE
 
-      INTEGER, intent(IN) ::  DATE(NML), IP1(NML), IP2(NML), IP3(NML)
-      INTEGER, intent(IN) ::  TC(NML), NV(NML), LBL(30)
-!     AUTEUR YVON R. BOURASSA JAN 86
-!              "  "      "    OCT 90 VERSION QLXINS
-!              "  "      "    FEV 91 BUG DECODING ETIKET
-!Revision 003   M. Lepine - mars 98 - extensions pour fstd98
-!Revision 004   M. Lepine - juil 01 - possibilite d'appel a convip
-!Revision 004   M. Lepine - fev  02 - verification du maximum de 10 elements
-!Revision 005   M. Valin  - fev  14 - nouveau traitement IP1/2/3, intent
-!                           mar  14 - interface avec la selection par le logiciel fstd
-!                           sept 17 - bug fix pour le cas desire avec tous les arguments a -1
-!                           sept 19 - augmenter les limites (listes et requetes)
-!     LANGUAGE FTN90
-!
-!ARGUMENTS
-!  ENT    TC   -  1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
-!   "     NV   -  1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
-!   "     LBL  -  1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
-!   "     DATE -  1 A NML DATES OU INTERVALLE AVEC SAUT
-!   "     IP1  -  1 A NML IP1    "      "      "    "
-!   "     IP2  -  1 A NML IP2    "      "      "    "
-!   "     IP3  -  1 A NML IP3    "      "      "    "
-!
-!MODULES
+      integer, dimension(NML), intent(in) :: TC   !< 1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
+      integer, dimension(NML), intent(in) :: NV   !< 1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
+      integer, dimension(30),  intent(in) :: LBL  !< 1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
+      integer, dimension(NML), intent(in) :: DATE !< 1 A NML DATES OU INTERVALLE AVEC SAUT
+      integer, dimension(NML), intent(in) :: IP1  !< 1 A NML IP1 OU INTERVALLE AVEC SAUT
+      integer, dimension(NML), intent(in) :: IP2  !< 1 A NML IP2 OU INTERVALLE AVEC SAUT
+      integer, dimension(NML), intent(in) :: IP3  !< 1 A NML IP3 OU INTERVALLE AVEC SAUT
+      integer, intent(in) :: request_type !< ID of the request type (desire/exclure) (found in excdes.inc)
+
       EXTERNAL ARGDIMS, ARGDOPE, JULHR, HOLACAR
-      include 'rmn/excdes.inc'
 
       INTEGER  ARGDIMS, ARGDOPE, I, J, LIS(10)
-!      DATA     LIS/10*0/
+      ! DATA     LIS/10*0/
       integer  newip1(NML), newip2(NML), newip3(NML), nip1, nip2, nip3
       integer :: status
-      integer excdes_de, lima(7)
+      integer :: lima(7)
       character(len=6) :: limc(7)
 
       limc = ["TYPVAR","NOMVAR","ETIKET","DATE  ","IP1   ","IP2   ","IP3   "]
       max_requetes_exdes =  min(NMD,max_requetes_exdes)
-      excdes_de = EXCDES_DESIRE
    10 IF(NREQ .EQ. max_requetes_exdes) THEN
          write(app_msg,*) 'desire: Reached maximum ',max_requetes_exdes,' requests'
          call app_log(APP_ERROR,'app_msg')
@@ -60,14 +49,14 @@
         endif
       enddo
 
-!     COMPTER LES DIRECTIVES DESIRE/EXCLURE
-      IF(excdes_de == EXCDES_EXCLURE) NEXC = NEXC + 1   ! compteur pour "exclure"
+      ! COMPTER LES DIRECTIVES DESIRE/EXCLURE
+      IF(request_type == EXCDES_EXCLURE) NEXC = NEXC + 1   ! compteur pour "exclure"
       NREQ = NREQ+1                  ! nombre de requetes
 
-!     INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
+      ! INDICATEUR QUE LA REQUETE NREQ N'EST PAS SATISFAITE
       SATISF(NREQ) = 0
-!     INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
-      DESEXC(NREQ) = excdes_de
+      ! INDICATEUR QUE LA REQUETE NREQ EST DESIRE/EXCLURE
+      DESEXC(NREQ) = request_type
 
       DO 20 J=1,4              ! mise a zero de la requete NREQ dans la table de requetes
       DO 20 I=1,11
@@ -81,19 +70,19 @@
       GO TO(110,90,70,60,50,40,30) NP    ! type, nom, etiket, date, ip1, ip2, ip3
    30 IF(IP3(1) .NE. -1) THEN         ! traiter IP3
          call ip_to_newip(ip3,newip3,min(lima(7),argdims(7)),nip3)  ! transformer les paires p/kind en ip
-         status = Select_ip3(nreq, excdes_de, newip3, nip3)   ! selecteur ip1 fstd98
+         status = Select_ip3(nreq, request_type, newip3, nip3)   ! selecteur ip1 fstd98
          write(app_msg,*) 'desire: IP3 =',(REQ(I,3,NREQ),I=1,11)
          call app_log(APP_DEBUG,app_msg)
       ENDIF
    40 IF(IP2(1) .NE. -1) THEN         ! traiter IP2
          call ip_to_newip(ip2,newip2,min(lima(6),argdims(6)),nip2)  ! transformer les paires p/kind en ip
-         status = Select_ip2(nreq, excdes_de, newip2, nip2)   ! selecteur ip2 fstd98
+         status = Select_ip2(nreq, request_type, newip2, nip2)   ! selecteur ip2 fstd98
          write(app_msg,*) 'desire: IP2 =',(REQ(I,2,NREQ),I=1,11)
          call app_log(APP_DEBUG,app_msg)
       ENDIF
    50 IF(IP1(1) .NE. -1) THEN         ! traiter IP1
          call ip_to_newip(ip1,newip1,min(lima(5),argdims(5)),nip1)  ! transformer les paires p/kind en ip
-         status = Select_ip1(nreq, excdes_de, newip1, nip1)   ! selecteur ip3 fstd98
+         status = Select_ip1(nreq, request_type, newip1, nip1)   ! selecteur ip3 fstd98
          write(app_msg,*) 'desire: IP1 =',(REQ(I,1,NREQ),I=1,11)
          call app_log(APP_DEBUG,app_msg)
       ENDIF
@@ -101,16 +90,16 @@
          IF(date(1)==-4) then   ! COMMUNE, on simule date1 @ date2 DELTA nheures
 !           IF(jours(4) == 0)  OUCH !! periode pas initialisee
            IF(jours(4) == 1) THEN ! juste une date1
-             status = Select_date(nreq,excdes_de,(/jours(1)/),1)
+             status = Select_date(nreq,request_type,(/jours(1)/),1)
            ELSE
              IF(jours(3) == 0) THEN  ! pas de delta
-               status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2)/),3)
+               status = Select_date(nreq,request_type,(/jours(1),-2,jours(2)/),3)
              ELSE                    ! intervalle et delta
-               status = Select_date(nreq,excdes_de,(/jours(1),-2,jours(2),-3,jours(3)/),5)
+               status = Select_date(nreq,request_type,(/jours(1),-2,jours(2),-3,jours(3)/),5)
              ENDIF
            ENDIF
          else  ! directive date normale, sans COMMUNE
-           status = Select_date(nreq,excdes_de,date,min(lima(4),ARGDIMS(4)))
+           status = Select_date(nreq,request_type,date,min(lima(4),ARGDIMS(4)))
            write(app_msg,*) 'desire: calling Select_date with',date(1:ARGDIMS(4))
            call app_log(APP_DEBUG,app_msg)
          endif
@@ -123,7 +112,7 @@
          CALL HOLACAR(ETIS(1,NREQ), LIS, REQE(NREQ), LBL, 12)
          write(app_msg,*) 'desire: ETIKET = ',(ETIS(J,NREQ),J=1,REQE(NREQ))
          call app_log(APP_DEBUG,app_msg)
-         status = Select_etiquette(nreq,excdes_de,etis(1,nreq),REQE(NREQ),12)
+         status = Select_etiquette(nreq,request_type,etis(1,nreq),REQE(NREQ),12)
       ENDIF
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
          REQN(NREQ) = min(lima(2),ARGDIMS(2))
@@ -132,11 +121,11 @@
   100       CONTINUE
          write(app_msg,*) 'desire: NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
          call app_log(APP_DEBUG,app_msg)
-         status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
+         status = Select_nomvar(nreq,request_type,noms(1,nreq),REQN(NREQ),4)
       ELSE
         REQN(NREQ) = 1
         noms(1,nreq) = '    '
-        status = Select_nomvar(nreq,excdes_de,noms(1,nreq),REQN(NREQ),4)
+        status = Select_nomvar(nreq,request_type,noms(1,nreq),REQN(NREQ),4)
       ENDIF
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
          REQT(NREQ) = min(lima(1),ARGDIMS(1))
@@ -145,10 +134,10 @@
   120       CONTINUE
          write(app_msg,*) 'desire: TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
          call app_log(APP_DEBUG,app_msg)
-         status = Select_typvar(nreq,excdes_de,typs(1,nreq),REQT(NREQ),2)
+         status = Select_typvar(nreq,request_type,typs(1,nreq),REQT(NREQ),2)
       ENDIF
 
-!     AJOUTER LES CRITERES SUPPLEMENTAIRES AU BESOIN
+      ! AJOUTER LES CRITERES SUPPLEMENTAIRES AU BESOIN
       IF( SCRI ) THEN
          SUP(8,NREQ) = 1
          SUP(1,NREQ) = NIS
@@ -159,21 +148,17 @@
          SUP(6,NREQ) = IG3S
          SUP(7,NREQ) = IG4S
          GTYS(NREQ)  = GTYPS
-         status =  Select_suppl(nreq,excdes_de,nis,njs,nks,ig1s,ig2s,ig3s,ig4s,gtyps)
+         status =  Select_suppl(nreq,request_type,nis,njs,nks,ig1s,ig2s,ig3s,ig4s,gtyps)
       ENDIF
       IF( DEBUG )  call Dump_Request_table()
       RETURN
 
-!     POUR CHOISIR LES CHAMPS NON VOULUS
-      ENTRY EXCLURE(TC, NV, LBL, DATE, IP1, IP2, IP3)
-      excdes_de = EXCDES_EXCLURE
-      GO TO 10
+   contains
 
-      contains
-!** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
-! transformer la liste ip pouvant contenir des paires valeur/kind
-! en liste de ip entiers
-! des valeurs negatives dans ip comme -1,-2,-3 (@,delta,tous) restent inchangees
+      ! ** S/P ip_to_newip - conversion des paires valeur/kind en codes ip
+      ! transformer la liste ip pouvant contenir des paires valeur/kind
+      ! en liste de ip entiers
+      ! des valeurs negatives dans ip comme -1,-2,-3 (@,delta,tous) restent inchangees
       subroutine ip_to_newip(ip,newip,nip,nnewip)
       use ISO_C_BINDING
       implicit none
@@ -182,20 +167,15 @@
       integer, intent(OUT) :: nnewip
       integer, intent(IN), dimension(nip) :: ip
       integer, intent(OUT), dimension(*) :: newip
-!
-!AUTEUR M. Valin - fev 2014 (d'apres ancien sous-programme ip1_to_newip1)
-!Revision 001  M. Lepine - sept 2106 Remettre l'initialisation du package convip en mode newstyle
-!
-!LANGUAGE Fortran 90
-!
-!ARGUMENTS
-! Entree  ip     -  liste de niveaux (ip [entier] ou paire [reel,code_de_type entier])
-!   "     nip    -  dimension de ip
-! Sortie  newip  -  liste des niveaux encodes (ip entiers)
-!   "     nnewip -  nombre de valeurs dans newip
-!
-!
-!*
+
+      ! AUTEUR M. Valin - fev 2014 (d'apres ancien sous-programme ip1_to_newip1)
+      ! ARGUMENTS
+      ! Entree  ip     -  liste de niveaux (ip [entier] ou paire [reel,code_de_type entier])
+      ! "     nip    -  dimension de ip
+      ! Sortie  newip  -  liste des niveaux encodes (ip entiers)
+      ! "     nnewip -  nombre de valeurs dans newip
+
+      ! *
       integer :: i, kindp, dummyip
       character(len=12) :: dummy
       real :: p, dummyp
@@ -236,3 +216,31 @@
       end subroutine
 
       end subroutine
+
+end module desire_exclure_common
+
+subroutine desire(TC, NV, LBL, DATE, IP1, IP2, IP3)
+   use desire_exclure_common
+   implicit none
+   integer, dimension(NML), intent(in) :: TC   !< 1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
+   integer, dimension(NML), intent(in) :: NV   !< 1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
+   integer, dimension(30),  intent(in) :: LBL  !< 1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
+   integer, dimension(NML), intent(in) :: DATE !< 1 A NML DATES OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP1  !< 1 A NML IP1 OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP2  !< 1 A NML IP2 OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP3  !< 1 A NML IP3 OU INTERVALLE AVEC SAUT
+   call desire_exclure(TC, NV, LBL, DATE, IP1, IP2, IP3, EXCDES_DESIRE)
+end subroutine desire
+
+subroutine exclure(TC, NV, LBL, DATE, IP1, IP2, IP3)
+   use desire_exclure_common
+   implicit none
+   integer, dimension(NML), intent(in) :: TC   !< 1 A NML TYPES DE CHAMPS ( 1 CARACTERE )
+   integer, dimension(NML), intent(in) :: NV   !< 1 A NML NOMS DE VARIABLES ( 1 @A2 CARACTERES )
+   integer, dimension(30),  intent(in) :: LBL  !< 1 A 10 ETIQUETTES ( 1 A 12 CARACTERES ) (4 CARACTERES/ENTIER)
+   integer, dimension(NML), intent(in) :: DATE !< 1 A NML DATES OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP1  !< 1 A NML IP1 OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP2  !< 1 A NML IP2 OU INTERVALLE AVEC SAUT
+   integer, dimension(NML), intent(in) :: IP3  !< 1 A NML IP3 OU INTERVALLE AVEC SAUT
+   call desire_exclure(TC, NV, LBL, DATE, IP1, IP2, IP3, EXCDES_EXCLURE)
+end subroutine exclure
