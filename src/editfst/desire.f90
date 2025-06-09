@@ -4,6 +4,7 @@
       use ISO_C_BINDING
       use configuration
       use app
+      use rmn_fst98, only: fstcvt_to_char
       IMPLICIT NONE
 
       INTEGER, intent(IN) ::  DATE(NML), IP1(NML), IP2(NML), IP3(NML)
@@ -30,10 +31,10 @@
 !   "     IP3  -  1 A NML IP3    "      "      "    "
 !
 !MODULES
-      EXTERNAL FSTCVT, ARGDIMS, ARGDOPE, JULHR, HOLACAR
+      EXTERNAL ARGDIMS, ARGDOPE, JULHR, HOLACAR
       include 'excdes.inc'
 
-      INTEGER  FSTCVT, ARGDIMS, ARGDOPE, I, J, LIS(10)
+      INTEGER  ARGDIMS, ARGDOPE, I, J, LIS(10)
 !      DATA     LIS/10*0/
       integer  newip1(NML), newip2(NML), newip3(NML), nip1, nip2, nip3
       integer :: status
@@ -127,7 +128,7 @@
    90 IF(NV(1) .NE.-1) THEN         ! traiter NOMVAR
          REQN(NREQ) = min(lima(2),ARGDIMS(2))
          DO 100 J=1, ARGDIMS(2)
-            I = FSTCVT(NV(J), -1, -1, -1, NOMS(J,NREQ), TYP, ETI, GTY, .TRUE.)
+            I = fstcvt_to_char(NV(J), -1, [-1, -1, -1], -1, NOMS(J,NREQ), TYP, ETI, GTY)
   100       CONTINUE
          write(app_msg,*) 'desire: NOMVAR = ',(NOMS(J,NREQ),J=1,ARGDIMS(2))
          call app_log(APP_DEBUG,app_msg)
@@ -140,7 +141,7 @@
   110 IF(TC(1) .NE. -1) THEN         ! traiter TYPVAR
          REQT(NREQ) = min(lima(1),ARGDIMS(1))
          DO 120 J=1, ARGDIMS(1)
-            I = FSTCVT(-1, TC(J), -1, -1, NOM, TYPS(J,NREQ), ETI, GTY, .TRUE.)
+            I = fstcvt_to_char(-1, TC(J), [-1, -1, -1], -1, NOM, TYPS(J,NREQ), ETI, GTY)
   120       CONTINUE
          write(app_msg,*) 'desire: TYPVAR = ',(TYPS(J,NREQ),J=1,ARGDIMS(1))
          call app_log(APP_DEBUG,app_msg)

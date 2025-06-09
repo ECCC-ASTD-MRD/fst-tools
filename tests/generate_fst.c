@@ -4,24 +4,12 @@
 #include <App.h>
 #include <rmn.h>
 
-int gen_file(const char* base_filename, const int is_rsf) {
-    
-    char filename[256];
-    sprintf(filename, "%s.%s", base_filename, is_rsf ? "rsf" : "xdf");
-    const char* options = is_rsf ? "RSF+R/W" : "XDF+R/W";
+const float dummy[1] = {1.0};
 
-    remove(filename);
-
-    fst_file* test_file = fst24_open(filename, options);
-    if (test_file == NULL) {
-        App_Log(APP_ERROR, "%s: Unable to create file %s\n", __func__, filename);
-        return -1;
-    }
-
-    float dummy[1] = {1.0};
+static inline fst_record get_basic_record(void) {
     fst_record rec = default_fst_record;
 
-    rec.data = dummy;
+    rec.data = (void*)dummy;
     rec.data_type = FST_TYPE_REAL;
     rec.data_bits = 32;
     rec.pack_bits = 32;
@@ -41,9 +29,27 @@ int gen_file(const char* base_filename, const int is_rsf) {
     rec.ig3 = 1;
     rec.ig4 = 1;
 
-    sprintf(rec.nomvar, "A");
-    sprintf(rec.etiket, "FOR_TEST");
+    return rec;
+}
 
+int gen_file(const char* base_filename, const int is_rsf) {
+    
+    char filename[256];
+    sprintf(filename, "%s.%s", base_filename, is_rsf ? "rsf" : "xdf");
+    const char* options = is_rsf ? "RSF+R/W" : "XDF+R/W";
+
+    remove(filename);
+
+    fst_file* test_file = fst24_open(filename, options);
+    if (test_file == NULL) {
+        App_Log(APP_ERROR, "%s: Unable to create file %s\n", __func__, filename);
+        return -1;
+    }
+
+    fst_record rec = get_basic_record();
+
+    sprintf(rec.nomvar, "A");
+    sprintf(rec.etiket, "FOR_TEST_01");
     for (int i = 0; i < 3; i++) {
         rec.ip1++;
         if (fst24_write(test_file, &rec, FST_NO) != TRUE) {
@@ -51,6 +57,9 @@ int gen_file(const char* base_filename, const int is_rsf) {
             return -1;
         }
     }
+
+    rec = get_basic_record();
+    sprintf(rec.etiket, "FOR_TEST_02");
 
     if (fst24_close(test_file) != TRUE) {
         App_Log(APP_ERROR, "%s: Unable to close test file %s\n", __func__, filename);

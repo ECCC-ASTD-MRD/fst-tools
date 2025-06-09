@@ -40,7 +40,7 @@ function run_test() {
     ${FSTCOMP} -a ${test_file} -b ${output_file_3} -ecode || exit -1
 }
 
-${FSTCOMP} -a test.rsf -b test.xdf -ecode
+${FSTCOMP} -a test.rsf -b test.xdf -ecode || exit -1
 
 run_test test.rsf
 run_test test.xdf
