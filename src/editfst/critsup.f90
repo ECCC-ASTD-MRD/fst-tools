@@ -4,7 +4,7 @@
       use configuration
       use app
       IMPLICIT NONE 
-      include 'excdes.inc'
+      include 'rmn/excdes.inc'
       INTEGER     NI, NJ, NK, GRID, IG1, IG2, IG3, IG4
 !
 !AUTEUR       AUTEUR YVON BOURASSA . JAN 90

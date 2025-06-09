@@ -3,7 +3,7 @@
       use ISO_C_BINDING
       use configuration
       IMPLICIT NONE 
-      include 'excdes.inc'
+      include 'rmn/excdes.inc'
 !
 !AUTEURS
 !VERSION ORIGINALE -   Y. BOURASSA NOV 89

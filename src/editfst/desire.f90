@@ -32,7 +32,7 @@
 !
 !MODULES
       EXTERNAL ARGDIMS, ARGDOPE, JULHR, HOLACAR
-      include 'excdes.inc'
+      include 'rmn/excdes.inc'
 
       INTEGER  ARGDIMS, ARGDOPE, I, J, LIS(10)
 !      DATA     LIS/10*0/

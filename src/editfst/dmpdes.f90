@@ -6,7 +6,7 @@
       use app
       IMPLICIT NONE
 
-      include 'excdes.inc'
+      include 'rmn/excdes.inc'
   
 !     AUTEUR - Y. R. BOURASSA AVR 86
 !Revision 002   M. Lepine - mars 98  - extensions pour fstd98

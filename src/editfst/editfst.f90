@@ -10,7 +10,7 @@
       use rmn_fst24
 
       IMPLICIT NONE 
-      include 'excdes.inc'
+      include 'rmn/excdes.inc'
 #include "fst-tools_build_info.h"
 
 !
