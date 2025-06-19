@@ -423,7 +423,7 @@
              '        BIAIS       E-MAX       E-MOY')
 
 
-  601 FORMAT(' Not found ',A4,' ',A2,' IP123=', 3I8, I10,' in ',A40)
+  601 FORMAT(' Not found ',A4,' ',A2,' IP123=', 3I10, I10,' in ',A40)
   602 FORMAT(' ',A40,' GRTYP IG1@4=', A1,1X, 4I6,/ &
             ' ',A40,' GRTYP IG1@4=', A1,1X, 4I6)
   603 FORMAT(' ',A4,' -Dimensions found',3I5,' looking for',3I5)
