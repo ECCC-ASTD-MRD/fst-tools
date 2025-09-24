@@ -24,24 +24,27 @@ Collection of tools to manipulate RPN standard files
 
 ### Environment
 
-Source the right file from the `ECCI_ENV` variable, depending on the desired
-architecture.  This will load the specified compiler, set the
-`ECCI_DATA_DIR` variable for the test datasets, and set the
+Load the right environment, depending on the architecture you need.  This
+will load the specified compiler and its parameters, and set the
 `EC_CMAKE_MODULE_PATH` variable for the `cmake_rpn` modules.
 
-- Example for PPP5:
+- Example for ppp6/sc6 and icelake specific architecture:
 
 ```
-. $ECCI_ENV/latest/ppp5/inteloneapi-2022.1.2.sh
+. r.load.dot mrd/rpn/code-tools/latest/env/rhel-8-icelake-64@inteloneapi-2025.1.0
 ```
 
-- Example for CMC network and gnu 11.4.0:
+- Example for generic architecture on ppp6/sc6
 
 ```
-. $ECCI_ENV/latest/ubuntu-22.04-amd-64/gnu.sh
+. r.load.dot mrd/rpn/code-tools/latest/env/rhel-8-amd64-64@inteloneapi-2025.1.0
 ```
 
-Load the latest stable version of librmn.
+- Example for GNU on any architecture:
+
+```
+. r.load.dot mrd/rpn/code-tools/latest/env/gnu
+```
 
 ### Build and install
 
@@ -61,8 +64,8 @@ make install
 - librmn with shared libraries (https://github.com/ECCC-ASTD-MRD/librmn/)
 
 `cmake_rpn` is included as a git submodule.  Please clone with the
-`--recursive` option or run `git submodule update --init --recursive` in the
-git repo after having cloned.
+`--recurse --remote-submodules` options, or run `git submodule update --init
+--remote` in the git repo after having cloned.
 
 ### Build and install
 
