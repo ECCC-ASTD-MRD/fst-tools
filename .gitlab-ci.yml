@@ -15,7 +15,7 @@ include:
    - project: 'RPN-SI/ci-admin'
      ref: dev
      file: '/ci/.gitlab-ci-config.yml'
-      
+
 deploy:staging:
    stage: deploy
    only:
