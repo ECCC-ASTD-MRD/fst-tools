@@ -33,7 +33,7 @@ void newdate_(int*, int*, int*, int*);
 static int c_dateform = 1;
 
 
-void strconvdate(char strdate[], int fstdate) {
+static void strconvdate(char strdate[], int fstdate) {
     int lfstdate, yyyymmdd, hhmmssss, mode;
     int yyyy, month, day, hour, minutes, sec;
 
@@ -70,20 +70,20 @@ void strconvdate(char strdate[], int fstdate) {
 }
 
 
-int GetIdent(
+static int printIdent2Str(
     char string[],
-    int item,
+    const int item,
     const char * const nomvar,
     const char * const typvar,
     const char * const etiket,
-    int ip1,
-    int ip2,
-    int ip3,
-    int dateo,
-    int datev,
-    int ni,
-    int nj,
-    int nk
+    const int ip1,
+    const int ip2,
+    const int ip3,
+    const int dateo,
+    const int datev,
+    const int ni,
+    const int nj,
+    const int nk
 ) {
     switch(item) {
         case NOMVAR:
@@ -132,35 +132,36 @@ int GetIdent(
 
         default:
             sprintf(string, "%s", "KABOOM!");
+            return -1;
             break;
     }
     return 0;
 }
 
 
-void ImprimeIdent(
+static void ImprimeIdent(
     char longString[],
     const int items[],
     const char * const separateur,
     const char * const nomvar,
     const char * const typvar,
     const char * const etiket,
-    int ip1,
-    int ip2,
-    int ip3,
-    int dateo,
-    int datev,
-    int ni,
-    int nj,
-    int nk
+    const int ip1,
+    const int ip2,
+    const int ip3,
+    const int dateo,
+    const int datev,
+    const int ni,
+    const int nj,
+    const int nk
 ) {
     char string[32];
     strcpy(longString, "");
 
     int i = 0;
     while (items[i] != 0 && i < 16) {
-        if (items[i] != LAT || items[i] != LON) {
-            GetIdent(string, items[i], nomvar, typvar, etiket, ip1, ip2, ip3, dateo, datev, ni, nj, nk);
+        if (items[i] != LAT && items[i] != LON) {
+            printIdent2Str(string, items[i], nomvar, typvar, etiket, ip1, ip2, ip3, dateo, datev, ni, nj, nk);
             strcat(string, separateur);
             strcat(longString, string);
         }
@@ -207,7 +208,7 @@ void pgsmform(char format[], int * const nrepeats, int lenFormat){
 //! Return a format string for integer with the same with as the provided one
 //! \note The user of this function must free the returned string after use
 //! \return ointer to new format string or NULL on error
-const char * convertFmt4Int(char * format) {
+static const char * convertFmt4Int(char * format) {
     if (format[0] != '%') return NULL;
 
     size_t len = strlen(format);
