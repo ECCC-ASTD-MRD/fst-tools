@@ -12,6 +12,7 @@ add_custom_command(TARGET fststat POST_BUILD
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(fststat PUBLIC "-Wl,--disable-new-dtags")
+target_link_libraries(fststat PUBLIC gcc_s)
 
 install(TARGETS fststat)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fststat DESTINATION bin)
