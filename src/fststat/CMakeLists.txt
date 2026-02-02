@@ -12,7 +12,10 @@ add_custom_command(TARGET fststat POST_BUILD
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
 target_link_libraries(fststat PUBLIC "-Wl,--disable-new-dtags")
-target_link_libraries(fststat PUBLIC gcc_s)
+
+# Enable traceback functionality
+target_link_options(fststat PUBLIC $<$<LINK_LANG_AND_ID:Fortran,IntelLLVM>:-static-libgcc>)
+target_link_libraries(fststat PUBLIC $<$<LINK_LANG_AND_ID:Fortran,IntelLLVM>:gcc_s>)
 
 install(TARGETS fststat)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fststat DESTINATION bin)
