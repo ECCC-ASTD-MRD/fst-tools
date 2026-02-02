@@ -14,7 +14,8 @@ add_custom_command(TARGET fststat POST_BUILD
 target_link_libraries(fststat PUBLIC "-Wl,--disable-new-dtags")
 
 # Enable traceback functionality
-target_link_libraries(fststat PUBLIC gcc_s)
+target_link_options(fststat PUBLIC $<$<LINK_LANG_AND_ID:Fortran,IntelLLVM>:-static-libgcc>)
+target_link_libraries(fststat PUBLIC $<$<LINK_LANG_AND_ID:Fortran,IntelLLVM>:gcc_s>)
 
 install(TARGETS fststat)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fststat DESTINATION bin)
