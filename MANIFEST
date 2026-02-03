@@ -8,7 +8,7 @@ URL        : https://gitlab.science.gc.ca/RPN-SI/fst-tools
 
 FSTCOMP_VERSION    : 8.14.0-b2
 FSTCOMPRESS_VERSION: 3.9.0-b2
-FSTSTAT_VERSION    : 6.9.0-b2
+FSTSTAT_VERSION    : 6.9.0-b3
 PGSM_VERSION       : 7.9.4
 EDITFST_VERSION    : 7.13.1-b2
 REFLEX_VERSION     : 3.5.0
