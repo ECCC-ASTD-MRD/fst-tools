@@ -1,13 +1,10 @@
-!
-!**FONCTION SYMETRI FUNCTION QUI RECONNAIT SI LA VARIABLE EST SYMETRIQUE
-!
-   logical function symetri(cnom)
-      use app
-      implicit none
-      
-      external cmetsym
-#include "defin.cdk90"
-!
+!> FUNCTION QUI RECONNAIT SI LA VARIABLE EST SYMETRIQUE
+logical function symetri(cnom)
+    use app
+    implicit none
+
+    external cmetsym
+
 !AUTEUR  P.SARRAZIN  FEVRIER  DRPN  DORVAL  P.Q.  CANADA
 !
 !REVISION 4.0.2
@@ -40,34 +37,33 @@
 !MODULES
 !
 ! - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -*
-!
+
+#include "defin.cdk90"
 #include "voir.cdk90"
 #include "symnom.cdk90"
 #include "grilles.cdk90"
-!
-!
-      integer  i
-      character*4 cnom
-!
-      symetri = .true.
-!
 
-      do i = 1,nnoms
-         if (cnom.eq.noms(i)) then
+    character(len = *), parameter :: fmt = &
+        "(2x, 'symetri: Symetry of variable ', a4, ' is unknown it will be supposed to be symetric')"
+
+    character(len = 4) :: cnom
+    integer :: i
+
+    symetri = .true.
+
+    do i = 1, nnoms
+        if (cnom == noms(i)) then
             symetri = ssym(i)
             return
-         endif
-      enddo
-!
-      if (message) then
-         if (cgrtyp == 'A'.or.cgrtyp == 'B'.or.cgrtyp =='G') then
-            write(app_msg,101) cnom
-            call app_log(APP_WARNING,app_msg)
-      endif
-      endif
+        endif
+    enddo
 
- 101  format(//2x,'symetri: Symetry of variable ',       a4,' is unknown',      ' it will be supposed to be symetric'//)
-!
-      call cmetsym(cnom, .true.)
-      return
-      end
+    if (message) then
+        if (cgrtyp == 'A' .or. cgrtyp == 'B' .or. cgrtyp =='G') then
+            write(app_msg, fmt) cnom
+            call app_log(APP_WARNING, app_msg)
+        endif
+    endif
+
+    call cmetsym(cnom, .true.)
+end
