@@ -52,9 +52,10 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pgsm DESTINATION bin)
 ######################## TESTING ###################################
 
 # Unit test executable
-add_executable(test_pgsm test.f90)
+add_executable(test_pgsm EXCLUDE_FROM_ALL test.f90)
 target_compile_options(test_pgsm PRIVATE -DTEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/tests\")
 target_link_libraries(test_pgsm PRIVATE pgsmlib rmn::rmn)
+add_dependencies(test_execs test_pgsm)
 
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)
