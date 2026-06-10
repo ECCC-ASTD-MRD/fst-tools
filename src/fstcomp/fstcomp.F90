@@ -121,6 +121,7 @@ PROGRAM  FSTCOMP
     !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
     CALL CCARD(CLE, DEF2, DEF1, nbkeys, I)
+    !> \todo Figure out why this is done: The content of DEF1 is already in upper case. Also why operate only from indexes 4 to 11?
     DO I = 4, 11
         CALL LOW2UP(DEF1(I), DEF1(I))
     END DO
