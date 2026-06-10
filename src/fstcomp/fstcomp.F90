@@ -1,11 +1,10 @@
-!   PROGRAM FSTCOMP - COMPARAISON DE 2 FICHIERS STANDARDS
+!> Compare 2 fst files
+PROGRAM  FSTCOMP
+    use app
+    use rmn_fst24
+    use rmn_libc, only: c_exit
 
-      PROGRAM  FSTCOMP
-      use app
-      use rmn_fst24
-      use rmn_libc, only: c_exit
-
-      IMPLICIT NONE
+    IMPLICIT NONE
 
 #include "fst-tools_build_info.h"
 
@@ -62,16 +61,16 @@
 
     EXTERNAL CCARD, fstopc, fstopl, LOW2UP, convip_plus, fnom, fclos, ip1_all, qqexit
 
-    integer RCMP1D,ICMP1D
+    integer RCMP1D, ICMP1D
 
-    integer, parameter :: nkbkeys = 24
+    integer, parameter :: nbkeys = 24
 
     CHARACTER(len=2)    :: TYPVAB
     CHARACTER(len=4)    :: NOMVAB
-    CHARACTER(len=8)    :: CLE(nkbkeys)
+    CHARACTER(len=8)    :: CLE(nbkeys)
     CHARACTER(len=12)   :: ETIKB, NOMA, NOMB, NOMC
     CHARACTER(len=40)   :: NA, NB
-    CHARACTER(len=1024) :: DEF1(nkbkeys), DEF2(nkbkeys), NOMD
+    CHARACTER(len=1024) :: DEF1(nbkeys), DEF2(nbkeys), NOMD
 
     LOGICAL TD, TE, TT, AS, AF, BS, BF, VA, VB, DI, LN, &
             P1, P2, P3, TN ,T, TG, EXCEPTION, ECODE
@@ -121,8 +120,8 @@
 
     !     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
-    CALL CCARD(CLE, DEF2, DEF1, nkbkeys, I)
-    DO I = 4,11
+    CALL CCARD(CLE, DEF2, DEF1, nbkeys, I)
+    DO I = 4, 11
         CALL LOW2UP(DEF1(I), DEF1(I))
     END DO
     READ(DEF1(8), '(I8)') LIMITE
