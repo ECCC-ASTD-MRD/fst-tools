@@ -121,7 +121,7 @@ PROGRAM  FSTCOMP
     DATA       N, NOMVAB, TYPVAB, ETIKB, IDATE, IP1B, IP2B, IP3B     &
             / 0, ' ',    ' ',    ' ',   4*-1/
 
-    ! VALIDE QUAND LA CLE 'X' .NE. 'R'
+    ! VALIDE QUAND LA CLE 'X' /= 'R'
     ! 0=BINAIRE 1=REEL 2=ENTIER 3=CARACTERE 4=ENTIER SANS SIGNE 5=IEEE
     DATA TABLO/ 2, 1, 2, 3, 2, 1, 1,  &
                 1, 1, 3, 3, 3, 1, 1,  &
@@ -130,7 +130,7 @@ PROGRAM  FSTCOMP
                 2, 3, 2, 3, 2, 3, 3,  &
                 1, 1, 3, 3, 3, 1, 1,  &
                 1, 1, 3, 3, 3, 1, 1 /
-    ! NOTE: QUAND LA CLE('X'.EQ.'R') DATA TABLO(0, 0)=1
+    ! NOTE: QUAND LA CLE('X' == 'R') DATA TABLO(0, 0)=1
 
     ! EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
@@ -143,17 +143,17 @@ PROGRAM  FSTCOMP
     READ(DEF1(pack_err_idx), '(I8)') PACK_ERR
     READ(DEF1(limval_idx), '(I8)') LIMVAL
 
-    VA = DEF1(va_idx) .NE. 'NON'
-    IF (VA .AND. (DEF1(va_idx) .NE. 'VA')) DEF1(a_idx) = DEF1(va_idx)
-    VB = DEF1(vb_idx) .NE. 'NON'
-    IF (VB .AND. (DEF1(vb_idx) .NE. 'VB')) DEF1(b_idx) = DEF1(vb_idx)
+    VA = DEF1(va_idx) /= 'NON'
+    IF (VA .AND. (DEF1(va_idx) /= 'VA')) DEF1(a_idx) = DEF1(va_idx)
+    VB = DEF1(vb_idx) /= 'NON'
+    IF (VB .AND. (DEF1(vb_idx) /= 'VB')) DEF1(b_idx) = DEF1(vb_idx)
 
-    AF = INDEX(DEF1(af_idx), 'FTN') .NE. 0
+    AF = INDEX(DEF1(af_idx), 'FTN') /= 0
     IF (AF) THEN
         NOMA = 'STD+SEQ+FTN'
         AS   = .FALSE.
     ELSE
-        AS = INDEX(DEF1(as_idx), 'SQI') .NE. 0
+        AS = INDEX(DEF1(as_idx), 'SQI') /= 0
         IF (AS) THEN
             NOMA = 'STD+SEQ'
         ELSE
@@ -161,12 +161,12 @@ PROGRAM  FSTCOMP
         ENDIF
     ENDIF
 
-    BF = INDEX(DEF1(bf_idx), 'FTN') .NE. 0
+    BF = INDEX(DEF1(bf_idx), 'FTN') /= 0
     IF (BF) THEN
         NOMB = 'STD+SEQ+FTN'
         BS   = .FALSE.
     ELSE
-        BS = INDEX(DEF1(bs_idx), 'SQI') .NE. 0
+        BS = INDEX(DEF1(bs_idx), 'SQI') /= 0
         IF (BS) THEN
             NOMB = 'STD+SEQ'
         ELSE
@@ -174,24 +174,24 @@ PROGRAM  FSTCOMP
         ENDIF
     ENDIF
     I  = FNOM(6, DEF1(out_idx), 'SEQ+FTN', 0)
-    TD = DEF1( 9) .EQ. 'NON'
-    TE = DEF1(10) .EQ. 'NON'
-    TT = DEF1(15) .EQ. 'NON'
-    P1 = DEF1(16) .EQ. 'NON'
-    P2 = DEF1(17) .EQ. 'NON'
-    P3 = DEF1(18) .EQ. 'NON'
-    TN = DEF1(19) .EQ. 'NON'
-    TG = DEF1(22) .EQ. 'NON'
-    DI = DEF1(11) .EQ. 'INFORM'
-    LN = DEF1(12) .EQ. 'OUI'
-    ECODE = DEF1(23) .EQ. 'OUI'
-    IF(DEF1(20) .EQ. 'R') TABLO(0, 0) = 1
+    TD = DEF1( 9) == 'NON'
+    TE = DEF1(10) == 'NON'
+    TT = DEF1(15) == 'NON'
+    P1 = DEF1(16) == 'NON'
+    P2 = DEF1(17) == 'NON'
+    P3 = DEF1(18) == 'NON'
+    TN = DEF1(19) == 'NON'
+    TG = DEF1(22) == 'NON'
+    DI = DEF1(11) == 'INFORM'
+    LN = DEF1(12) == 'OUI'
+    ECODE = DEF1(23) == 'OUI'
+    IF(DEF1(20) == 'R') TABLO(0, 0) = 1
 
     app_ptr = app_init(0, 'fstcomp', FSTCOMP_VERSION, '', BUILD_TIMESTAMP)
     call app_logstream(DEF1(3))
 
     IF( LN ) THEN
-        call app_log(APP_VERBATIM, '* * * '//FSTCOMP_VERSION//' * * *')
+        call app_log(APP_VERBATIM, '* * * ' // FSTCOMP_VERSION // ' * * *')
     ELSE
         call app_start()
     ENDIF
@@ -203,10 +203,10 @@ PROGRAM  FSTCOMP
 
     CALL GETENV('ARMNLIB', ARMNLIB_var)
     lvar = len_trim(ARMNLIB_var)
-    IF (lvar .gt. 0) THEN
+    IF (lvar > 0) THEN
         iunexpv = 0
-        ier = fnom(iunexpv, ARMNLIB_var(1:lvar)//'/data/exception_vars_ok', 'SEQ+FTN+FMT+OLD+R/O', 0)
-        IF (ier .lt. 0) THEN
+        ier = fnom(iunexpv, ARMNLIB_var(1:lvar) // '/data/exception_vars_ok', 'SEQ+FTN+FMT+OLD+R/O', 0)
+        IF (ier < 0) THEN
             WRITE(app_msg, *) '$ARMNLIB_DATA/exception_vars file not found; using internal exception list'
             call app_log(APP_INFO, app_msg)
         ELSE
@@ -234,13 +234,13 @@ PROGRAM  FSTCOMP
         BF = T
     ENDIF
 
-    IF((DEF1(1).EQ.DEF1(2))) then
+    IF((DEF1(1) == DEF1(2))) then
         WRITE(app_msg, *) 'Comparing file "A" with itself'
         call app_log(APP_WARNING, app_msg)
     endif
 
     NA = DEF1(1)
-    success = filea%open(DEF1(1), NOMA//'+OLD+R/O+REMOTE')
+    success = filea%open(DEF1(1), NOMA // '+OLD+R/O+REMOTE')
     if (.not. success) then
         write(app_msg, *) 'Invalid input file'
         call app_log(APP_ERROR, app_msg)
@@ -250,7 +250,7 @@ PROGRAM  FSTCOMP
     N1 = filea % get_num_records()
 
     NB = DEF1(2)
-    success = fileb%open(DEF1(2), NOMB//'+OLD+R/O+REMOTE')
+    success = fileb%open(DEF1(2), NOMB // '+OLD+R/O+REMOTE')
     if (.not. success) then
         write(app_msg, *) 'Invalid output file'
         call app_log(APP_ERROR, app_msg)
@@ -259,7 +259,7 @@ PROGRAM  FSTCOMP
     endif
     N2 = fileb % get_num_records()
 
-    IF(N1 .Le. 0) THEN
+    IF(N1 <= 0) THEN
         WRITE(app_msg, *) 'Sequential file ', NA
         call app_log(APP_INFO, app_msg)
         IF( .NOT.(AS.OR.AF) ) THEN
@@ -270,10 +270,10 @@ PROGRAM  FSTCOMP
     ELSE
         WRITE(app_msg, *) ' ', N1, ' records in ', NA
         call app_log(APP_INFO, app_msg)
-        IF(N1 .EQ. 0) GOTO 90
+        IF(N1 == 0) GOTO 90
     ENDIF
 
-    IF(N2 .Le. 0) THEN
+    IF(N2 <= 0) THEN
         WRITE(app_msg, *) 'Sequential file ', NB
         call app_log(APP_INFO, app_msg)
         IF( .NOT.BS ) THEN
@@ -284,11 +284,11 @@ PROGRAM  FSTCOMP
     ELSE
         WRITE(app_msg, *) ' ', N2, ' records in ', NB
         call app_log(APP_INFO, app_msg)
-        IF(N2 .EQ. 0) GOTO 80
+        IF(N2 == 0) GOTO 80
     ENDIF
 
     !     ECRIRE L'ENTETE DE PAGE
-    IF (PACK_ERR .eq. 0) THEN
+    IF (PACK_ERR == 0) THEN
         WRITE(6, 600)
     ELSE
         WRITE(6, 700)
@@ -307,7 +307,7 @@ PROGRAM  FSTCOMP
 
         ! SI LA DATE EST A CONSIDERER
         IF( TD ) then
-            if (recorda%dateo .eq. 0) then
+            if (recorda%dateo == 0) then
                 idate = 0
             else
                 idate = recorda%datev
@@ -325,7 +325,7 @@ PROGRAM  FSTCOMP
 
         ! SI IP1 EST A CONSIDERER
         IF( P1 ) then
-            IF (INDEX(exception_vars, recorda%nomvar) .ne. 0) then
+            IF (INDEX(exception_vars, recorda%nomvar) /= 0) then
                 ip1b = recorda%ip1
                 EXCEPTION = .TRUE.
             ELSE
@@ -354,7 +354,7 @@ PROGRAM  FSTCOMP
         ENDIF
 
         ! VERIFICATION DES DIMENSIONS DE LA GRILLE SI PRESENT
-        IF((recordb%ni.NE.recorda%ni) .OR. (recordb%nj.NE.recorda%nj) .OR. (recordb%nk.NE.recorda%nk)) THEN
+        IF((recordb%ni /= recorda%ni) .OR. (recordb%nj /= recorda%nj) .OR. (recordb%nk /= recorda%nk)) THEN
             write(app_msg, 603) NOMVAB, recorda%ni, recorda%nj, recorda%nk, recordb%ni, recordb%nj, recordb%nk
             call app_log(APP_WARNING, app_msg)
             app_status = 1
@@ -363,8 +363,8 @@ PROGRAM  FSTCOMP
 
         ! VERIFICATION DES PARAMETRES DE LA GRILLE
         IF (TG) THEN
-            IF((recorda%grtyp .NE. recordb%grtyp) .OR. (recorda%ig1 .NE.recordb%ig1) .OR. (recorda%ig2.NE.recordb%ig2) .OR. &
-                (recorda%ig3.NE.recordb%ig3) .OR. (recorda%ig4.NE.recordb%ig4)) THEN
+            IF((recorda%grtyp /= recordb%grtyp) .OR. (recorda%ig1 /= recordb%ig1) .OR. (recorda%ig2 /= recordb%ig2) .OR. &
+                (recorda%ig3 /= recordb%ig3) .OR. (recorda%ig4 /= recordb%ig4)) THEN
                 write(app_msg, 602) NA, recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
                             NB, recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
                 call app_log(APP_WARNING, app_msg)
@@ -373,7 +373,7 @@ PROGRAM  FSTCOMP
             ENDIF
         ENDIF
 
-        IF(recorda%pack_bits .NE. recordb%pack_bits) then
+        IF(recorda%pack_bits /= recordb%pack_bits) then
             write(app_msg, *) 'NBITSA=', recorda%pack_bits, ' NBITSB=', recordb%pack_bits
             app_status = 1
             call app_log(APP_INFO, app_msg)
@@ -387,12 +387,12 @@ PROGRAM  FSTCOMP
         success = recordb%read()
         recordb%etiket = etikb
 
-        IF ((mod(recorda%data_type, 128) .ne. 1) .and. (mod(recorda%data_type, 128) .ne. 6)) THEN
+        IF ((mod(recorda%data_type, 128) /= 1) .and. (mod(recorda%data_type, 128) /= 6)) THEN
             PACK_ERR2 = 0
         ELSE
             PACK_ERR2 = PACK_ERR
         ENDIF
-        IF ((mod(recorda%data_type, 128) .gt. 6).or.(mod(recordb%data_type, 128) .gt. 6)) goto 30
+        IF ((mod(recorda%data_type, 128) > 6).or.(mod(recordb%data_type, 128) > 6)) goto 30
         GO TO (40, 50, 30) TABLO(mod(recorda%data_type, 128), mod(recordb%data_type, 128))
 
     30  WRITE(app_msg, *)' No comparison possible: DATA_TYPE_A=', recorda%data_type, ' DATA_TYPE_B=', recordb%data_type
@@ -524,13 +524,13 @@ END
         MAX_A = MAX(MAX_A, dataa(I))
         MIN_B = MIN(MIN_B, datab(I))
         MAX_B = MAX(MAX_B, datab(I))
-        IF(ABS(AA-BB) .LT. ERRVAL) THEN
+        IF(ABS(AA-BB) < ERRVAL) THEN
            AA=BB
         ENDIF
         SA     = SA+AA
         SB     = SB+BB
-        IF(AA .NE. BB) THEN
-            if (aa .ne. 0.) ratio = (max(aa, bb) - min(aa, bb)) / aa * 100
+        IF(AA /= BB) THEN
+            if (aa /= 0.) ratio = (max(aa, bb) - min(aa, bb)) / aa * 100
             if (ratio > ratio_max) ratio_max = ratio
 !            write(6, 888) 'Debug difference A vs B au point I=', i, 'AA, AA-BB=', aa, aa-bb
             nbdiff = nbdiff +1
@@ -539,9 +539,9 @@ END
             SUMABS = SUMABS+ERRABS
             MAXABS = MAX(ERRABS, MAXABS)
             derr=0.0
-            IF(AA .NE. 0.) THEN
+            IF(AA /= 0.) THEN
                 DERR = ABS(1.-BB/AA)
-            ELSEIF(BB .NE. 0.)THEN
+            ELSEIF(BB /= 0.)THEN
                 DERR = ABS(1.-AA/BB)
             ENDIF
             ERRMAX = MAX(ERRMAX, DERR)
@@ -565,7 +565,7 @@ END
       DO 20 I=1, N
             AA  = dataa(I)-ABAR
             BB  = datab(I)-BBAR
-            IF(ABS(dataa(I)-datab(I)) .LT. ERRVAL) THEN
+            IF(ABS(dataa(I)-datab(I)) < ERRVAL) THEN
                BB=AA
             ENDIF
             SAB = SAB+AA*BB
@@ -578,15 +578,15 @@ END
       VARB   = SB2/FN
       WRITE(app_msg, *) 'sab avant=', sab
       call app_log(APP_DEBUG, app_msg)
-      IF(SA2*SB2 .NE. 0.) THEN
+      IF(SA2*SB2 /= 0.) THEN
          SAB    = SAB/SQRT(SA2*SB2)
 
       WRITE(app_msg, *) 'sa2,sb2,sqtr,sab=', sa2, sb2, SQRT(SA2*SB2), sab
       call app_log(APP_DEBUG, app_msg)
 
-      ELSEIF(SA2.EQ.0. .AND. SB2.EQ.0.) THEN
+      ELSEIF(SA2 == 0. .AND. SB2 == 0.) THEN
          SAB = 1.0
-      ELSEIF(SA2 .EQ. 0.) THEN
+      ELSEIF(SA2 == 0.) THEN
          SAB = SQRT(VARB)
       ELSE
          SAB = SQRT(VARA)
@@ -602,12 +602,12 @@ END
       ENDIF
       ERR_UNIT = RANGE_A / DEUX_EXP_NB
 
-      IF ((ERRMAX .LE. ERRLIM) .and. (PACK_ERR .eq.0)) THEN
+      IF ((ERRMAX <= ERRLIM) .and. (PACK_ERR == 0)) THEN
          WRITE(6, 600) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
                         ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR, &
                         MAXABS, SUMABS
-      ELSE IF (PACK_ERR .gt. 0) THEN
-         IF (MAXABS .le. (PACK_ERR*ERR_UNIT*1.001)) THEN
+      ELSE IF (PACK_ERR > 0) THEN
+         IF (MAXABS <= (PACK_ERR*ERR_UNIT*1.001)) THEN
            WRITE(6, 602) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
                         ERRMAX, ERR, VARA, SAB, ABAR, BBAR-ABAR, &
                         MAXABS, SUMABS, PACK_ERR*ERR_UNIT
@@ -624,7 +624,7 @@ END
             RCMP1D=2
       ENDIF
 
-      if ((nbdiff .ne. 0) .and. (PACK_ERR .gt. 0)) then
+      if ((nbdiff /= 0) .and. (PACK_ERR > 0)) then
         write(6, 900) '  <Difference> Number of elements differing is', &
           nbdiff, ' out of ', n, &
           ' elements, Ratio = ', (float(nbdiff) / float(n)) * 100.0, '%'
@@ -682,10 +682,10 @@ integer function icmp1d(a, b, rawIp1)
     call b%get_data_array(datab)
 
     do i = 1, size
-        if (dataa(i) .ne. datab(i)) then
+        if (dataa(i) /= datab(i)) then
             nbDiff = nbDiff + 1
             absDiff = abs(dataa(i) - datab(i))
-            if (absDiff .gt. maxAbsDiff) then
+            if (absDiff > maxAbsDiff) then
                 maxDiffPt = size
                 maxAbsDiff = absDiff
             endif
@@ -697,7 +697,7 @@ integer function icmp1d(a, b, rawIp1)
     else
         call convip_plus(a%ip1, rlevel, kind, -1, level, .true.)
     endif
-    if (maxAbsDiff .eq. 0) then
+    if (maxAbsDiff == 0) then
         write(6, 600) a%nomvar, b%etiket, level, a%ip2, a%ip3
     else
         write(6, 601) a%nomvar, b%etiket, level, a%ip2, a%ip3, nbDiff, maxAbsDiff, maxDiffPt
