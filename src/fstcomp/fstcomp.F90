@@ -653,12 +653,12 @@ END
       end function RCMP1D
 
 
-!> Compare 2 32 bits integer scalar fields
+!> Compare two 32 bits integer scalar fields
 integer function icmp1d(a, b, rawIp1)
     use rmn_fst24
     implicit none
 
-    !< \return 0 when the fields are identical
+    !< \return 0 when the fields are identical, to when they are different
 
     !> First field to compare
     type(fst_record), intent(in) :: a
@@ -666,6 +666,11 @@ integer function icmp1d(a, b, rawIp1)
     type(fst_record), intent(in) :: b
     !> Print raw numeric IP1 values if true
     logical, intent(in) :: rawIp1
+
+    character(*, parameter) :: equal_fmt = &
+        "(' ',  '  ', a4, '  ', a12, a15, 2i5, ' SONT EGAUX')"
+    character(*, parameter) :: diff_fmt = &
+        "(' ',  ' <', a4, '> ', a12, a15, 2i5, ' ONT', i6, ' POINTS ', 'INEGAUX, L''ERREUR MAX.=', i10, '  AU POINT', i6)"
 
     integer i, maxDiffPt, absDiff, maxAbsDiff, nbDiff, kind, size
     character(len = 15) :: level
@@ -697,13 +702,9 @@ integer function icmp1d(a, b, rawIp1)
         call convip_plus(a%ip1, rlevel, kind, -1, level, .true.)
     endif
     if (maxAbsDiff == 0) then
-        write(6, 600) a%nomvar, b%etiket, level, a%ip2, a%ip3
+        write(6, equal_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3
     else
-        write(6, 601) a%nomvar, b%etiket, level, a%ip2, a%ip3, nbDiff, maxAbsDiff, maxDiffPt
+        write(6, diff_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3, nbDiff, maxAbsDiff, maxDiffPt
         icmp1d = 2
     endif
-
- 600  FORMAT(' ',  '  ', A4, '  ', A12, a15, 2I5, ' SONT EGAUX')
- 601  FORMAT(' ',  ' <', A4, '> ', A12, a15, 2I5, ' ONT', I6, ' POINTS ', &
-            'INEGAUX, L''ERREUR MAX.=', I10, '  AU POINT', I6)
 end function icmp1d
