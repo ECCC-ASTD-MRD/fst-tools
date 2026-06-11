@@ -652,31 +652,30 @@ END
 
       end function RCMP1D
 
-!    S/P ICMP1D DIFFERENCES ENTRE DEUX CHAMPS ENTIERS DE UNE DIMENSION
 
-!AUTEURS  VERSION ORIGINALE (INTEMP)  M.VALIN DRPN 1987
-!         VERSION (ICMP1D)  Y.BOURASSA DRPN JAN 1990
-
-!ARGUMENTS
-! ENTRE  A, B     CHAMPS ENTIERS A COMPARER
-!   "    EXCEPTION
-integer function icmp1d(a, b, exception)
+!> Compare 2 32 bits integer scalar fields
+integer function icmp1d(a, b, rawIp1)
     use rmn_fst24
     implicit none
 
-    type(fst_record), intent(in) :: a
-    type(fst_record), intent(in) :: b
-    logical, intent(in) :: exception
+    !< \return 0 when the fields are identical
 
-    integer i, j, k, md, nc, kind, size
+    !> First field to compare
+    type(fst_record), intent(in) :: a
+    !> Second field to compare
+    type(fst_record), intent(in) :: b
+    !> Print raw numeric IP1 values if true
+    logical, intent(in) :: rawIp1
+
+    integer i, maxDiffPt, absDiff, maxAbsDiff, nbDiff, kind, size
     character(len = 15) :: level
     real :: rlevel
     logical :: success
     integer(kind = int32), dimension(:), pointer :: dataa, datab
 
     icmp1d = 0
-    md = 0
-    nc = 0
+    maxAbsDiff = 0
+    nbDiff = 0
 
     size = a%ni * a%nj * a%nk
     call a%get_data_array(dataa)
@@ -684,24 +683,24 @@ integer function icmp1d(a, b, exception)
 
     do i = 1, size
         if (dataa(i) .ne. datab(i)) then
-            nc = nc + 1
-            k = abs(dataa(i) - datab(i))
-            if (k .gt. md) then
-                j = size
-                md = k
+            nbDiff = nbDiff + 1
+            absDiff = abs(dataa(i) - datab(i))
+            if (absDiff .gt. maxAbsDiff) then
+                maxDiffPt = size
+                maxAbsDiff = absDiff
             endif
         endif
     end do
 
-    if (exception) then
+    if (rawIp1) then
         write(level, '(i5)') a%ip1
     else
         call convip_plus(a%ip1, rlevel, kind, -1, level, .true.)
     endif
-    if (md .eq. 0) then
+    if (maxAbsDiff .eq. 0) then
         write(6, 600) a%nomvar, b%etiket, level, a%ip2, a%ip3
     else
-        write(6, 601) a%nomvar, b%etiket, level, a%ip2, a%ip3, nc, md, j
+        write(6, 601) a%nomvar, b%etiket, level, a%ip2, a%ip3, nbDiff, maxAbsDiff, maxDiffPt
         icmp1d = 2
     endif
 
