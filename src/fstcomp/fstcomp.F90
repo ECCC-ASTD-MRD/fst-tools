@@ -685,7 +685,7 @@ integer function icmp1d(a, b, rawIp1)
             nbDiff = nbDiff + 1
             absDiff = abs(dataa(i) - datab(i))
             if (absDiff > maxAbsDiff) then
-                maxDiffPt = size
+                maxDiffPt = i
                 maxAbsDiff = absDiff
             endif
         endif
