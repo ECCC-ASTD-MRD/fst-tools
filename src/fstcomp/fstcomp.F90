@@ -670,7 +670,6 @@ integer function icmp1d(a, b, rawIp1)
     integer i, maxDiffPt, absDiff, maxAbsDiff, nbDiff, kind, size
     character(len = 15) :: level
     real :: rlevel
-    logical :: success
     integer(kind = int32), dimension(:), pointer :: dataa, datab
 
     icmp1d = 0
