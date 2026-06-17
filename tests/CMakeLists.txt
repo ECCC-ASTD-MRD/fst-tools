@@ -4,7 +4,7 @@ target_link_libraries(generate_fst PRIVATE rmn::rmn)
 
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)
-        add_dependencies(test_execs editfst)
+        add_dependencies(test_execs editfst fstcomp)
 
         add_test(NAME generate_fst COMMAND $<TARGET_FILE_NAME:generate_fst>)
         add_dependencies(test_execs generate_fst)
