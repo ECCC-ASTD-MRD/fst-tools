@@ -69,7 +69,7 @@
       Real          S(NSIG),SH(NSIG)
       Real          theta(NBANDE)   
 
-      Character*8   listvar(NVAR)
+      Character(len=8) :: listvar(NVAR)
       Integer       propvar(NVAR), posvar(0:NVAR)
 
       Integer       NombreC 

@@ -102,11 +102,11 @@ SORTIE(type,nrec,R/A) [R]
 * SEQWPRM 
     - Sequential binary FORTRAN file with RPN standard file parameters: a record containing the field descriptors is written before the data field. The FORTRAN sequence for writing the descriptor is as follows:
 ```Fortran
-      character*2 typvar
-      character*4 nomvar
-      character*12 etiket
-      character*1 grtyp
-      character*24 chaine
+      character(len=2)  :: typvar
+      character(len=4)  :: nomvar
+      character(len=12) :: etiket
+      character(len=1)  :: grtyp
+      character(len=24) :: chaine
 
       write (chaine, 10) typvar, nomvar, etiket, grtyp
 

@@ -121,7 +121,7 @@
       integer ipr26,ipr27,ipr28,ipr29,ipr30
       integer iunit,nparm,i
 !     
-      character*8 cjcoup
+      character(len=8) :: cjcoup
 
  1000 nmoy = min0(31,nmoy)
       go to (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,        21,22,23,24,25,26,27,28,29,30,31) nmoy

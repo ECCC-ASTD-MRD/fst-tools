@@ -84,7 +84,7 @@
       Real          S(Maxniv), SH(Maxniv), Dlat(maxbin)
       Integer       var(MaxVarP3),NVAR,NSIG
 
-      Character*8   listvar(MaxVar)
+      Character(len=8) :: listvar(MaxVar)
       Integer       propvar(MaxVar), posvar(0:MaxVar)
 
       save          listvar,propvar,posvar,NVAR,NSIG

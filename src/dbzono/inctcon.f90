@@ -38,7 +38,7 @@
 ! 
 !   DATA INIT/.FALSE./
 ! 
-      CHARACTER *10 NOM1(NBRE)
+      CHARACTER (len=10) :: NOM1(NBRE)
 ! 
       DATA NOM1/ 'CPD', 'CPV', 'RGASD', 'RGASV', 'TRPL',           &
                 'TCDK', 'RAUW', 'EPS1', 'EPS2', 'DELTA',           &

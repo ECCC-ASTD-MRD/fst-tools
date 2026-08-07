@@ -4,8 +4,8 @@
       
       integer ni,nj
       real fld(ni,nj)
-      character*4 nomvar
-      character*1 grtyp
+      character(len=4) :: nomvar
+      character(len=1) :: grtyp
 
 #include "qqqfilt.cdk90"
 

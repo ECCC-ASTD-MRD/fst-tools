@@ -13,7 +13,7 @@
 !
 !implicites
 !*
-character*8 op
+character(len=8) :: op
 integer ezsetopt
 integer ier
 
