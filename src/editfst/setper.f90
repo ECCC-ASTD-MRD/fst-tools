@@ -30,7 +30,7 @@
 !*
       INTEGER       ARGDIMS, DTG(14), I, K
       EQUIVALENCE   (K, DTG(14))
-      CHARACTER*128 C
+      CHARACTER(len=128) :: C
 
       WRITE(app_msg,*) 'setper: Period',jours
       call app_log(APP_INFO,app_msg)

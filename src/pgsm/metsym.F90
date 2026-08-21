@@ -43,7 +43,7 @@
 #include "dummys.cdk90"
 !
       logical sym
-      character*4 cnom 
+      character(len=4) :: cnom 
 !     
 !     sauve nsym dans nsymm a cause readlx qui remet a zero      nsymm = nsym 
 !
@@ -80,7 +80,7 @@
 !
       integer nom
       logical sym
-      character*2 cnom
+      character(len=2) :: cnom
       
       write(cnom, '(A4)') nom
       write(app_msg, *) 'metsym: NOM - ',nom,'CNOM - ', cnom 

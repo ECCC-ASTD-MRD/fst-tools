@@ -27,7 +27,7 @@
 #include "fst-tools_build_info.h"
 !
       INTEGER STATZON
-      CHARACTER *128, DEFO(6),LISTL(6),LFN(6) 
+      CHARACTER(len=128) :: DEFO(6),LISTL(6),LFN(6) 
      
       LOGICAL ECHOZ 
       INTEGER IUNZON,ZONSTD                 

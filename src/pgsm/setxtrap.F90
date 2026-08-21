@@ -18,7 +18,7 @@
       real    rval
       integer ier, ezsetval, ezsetopt
 
-      character*8 op,v
+      character(len=8) :: op,v
 
       equivalence (ival, rval)
 

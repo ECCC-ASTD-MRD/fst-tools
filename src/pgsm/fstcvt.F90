@@ -5,9 +5,9 @@
    implicit none
       
       INTEGER NOM, TYP, ETIK(3), GRTP
-      CHARACTER *(*) CNOM
-      CHARACTER *(*) CTYP, CGRTP
-      CHARACTER *(*) CETIK
+      CHARACTER(len=*) :: CNOM
+      CHARACTER(len=*) :: CTYP, CGRTP
+      CHARACTER(len=*) :: CETIK
       LOGICAL HOLACAR
 
       integer carmot

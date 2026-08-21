@@ -1,6 +1,7 @@
 !> ECRIRE SUR FICHIER STANDARD, MS, SEQUENTIEL
 subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
     use app
+    use iso_fortran_env
     implicit none
 
     external conver, fstecr, fclos, memoir, pgsmabt, imprims, fstopc, messags, fstcvt, putfld, pgsmwr
@@ -85,18 +86,18 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 !
 !-----------------------------------------------------------------
 !
-      character *24 chaine
-      character *12 cetiket, cetksrt
-      character *4 cnomvar
-      character *2 ctypvar
-      character *1 cgtyp
+      character(len=24) :: chaine
+      character(len=12) :: cetiket, cetksrt
+      character(len=4)  :: cnomvar
+      character(len=2)  :: ctypvar
+      character(len=1)  :: cgtyp
 
 
-      character*12 letiksrt
-      character*4 lnomvar
-      character*2 ltypsrt
+      character(len=12) :: letiksrt
+      character(len=4)  :: lnomvar
+      character(len=2)  :: ltypsrt
 
-      character*72 form1, form2
+      character(len=72) :: form1, form2
 
       integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet
       real fld(ni, nj, nk)
@@ -110,7 +111,7 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 
       integer local_npac
 
-      real*8 delta_t
+      real(kind=real64) :: delta_t
 
       if (etiksrt(1) .eq. -1) then
          cetksrt = cetiket
@@ -279,6 +280,7 @@ subroutine ecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypv
 
 subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctypvar, cnomvar, cetiket, cgtyp, llg1, llg2, llg3, llg4)
     use app
+    use iso_fortran_env
     implicit none
 
     external conver, fstecr, fclos, memoir, pgsmabt, imprims, fstopc, messags, fstcvt, putfld, pgsmwr
@@ -298,18 +300,18 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
 #include "styles.cdk90"
 #include "lnkflds.cdk90"
 
-    character *24 chaine
-    character *12 cetiket, cetksrt
-    character *4 cnomvar
-    character *2 ctypvar
-    character *1 cgtyp
+    character(len=24) :: chaine
+    character(len=12) :: cetiket, cetksrt
+    character(len=4)  :: cnomvar
+    character(len=2)  :: ctypvar
+    character(len=1)  :: cgtyp
 
 
-    character*12 letiksrt
-    character*4 lnomvar
-    character*2 ltypsrt
+    character(len=12) :: letiksrt
+    character(len=4)  :: lnomvar
+    character(len=2)  :: ltypsrt
 
-    character*72 form1, form2
+    character(len=72) :: form1, form2
 
     integer i, npac, idat, idatv, npas, ni, nj, nk, ip1, ip2, ip3, deet, datev
     integer fld(ni, nj, nk)
@@ -321,7 +323,7 @@ subroutine iecritur(fld, npac, idat, deet, npas, ni, nj, nk, ip1, ip2, ip3, ctyp
     integer gdll, ezgetgdout
     external gdll, ezgetgdout
 
-    real*8 delta_t
+    real(kind=real64) :: delta_t
 
     if (etiksrt(1) .eq. -1) then
         cetksrt = cetiket

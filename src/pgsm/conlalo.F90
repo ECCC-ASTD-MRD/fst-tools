@@ -8,7 +8,7 @@
       external conlal2
       
       integer lat,lon,ni,nj,grtyp,grtypxy,ig1,ig2,ig3,ig4
-      character*1 cgrtyp, cgtypxy
+      character(len=1) :: cgrtyp, cgtypxy
       
 
       write(cgrtyp , '(A1)') grtyp
@@ -50,7 +50,7 @@
       real pii,pjj,d60,dgrw,buflat,buflon,dla,dlo 
       real xlat1,xlon1,xlat2,xlon2
 !     
-      character*1 cgrtyp, cgtypxy
+      character(len=1) :: cgrtyp, cgtypxy
       
 !     
       if (cgrtyp.eq.'Z') then
@@ -126,7 +126,7 @@
       real pii,pjj,d60,dgrw,buflat,buflon,dla,dlo 
       real xlat1,xlon1,xlat2,xlon2
 !     
-      character*1 cgrtyp, cgtypxy
+      character(len=1) :: cgrtyp, cgtypxy
   
 !
       if (cgrtyp.eq.'Z') then

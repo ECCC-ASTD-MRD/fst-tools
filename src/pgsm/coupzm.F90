@@ -68,13 +68,14 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
 !
-      character cnom*3, cjcoup*8
+      character(len=3) :: cnom
+      character(len=8) :: cjcoup
       real coa(500),w(500),sia(500),rad(500),poids(500),sinm2(500),      sinm1(500),sin2(500),champ(1000)
       integer i, iunit, datev
       integer ihr,iheur,iprs,npres,irec,ni,nj,nk
       integer jp1,jp2,jp3,ig1,ig2,ig3,ig4
       integer num,ilath,j,cnbits,cdatyp,iopc,      cswa, clng, cdltf, cubc, extra1, extra2, extra3
-      character*8 cdummy
+      character(len=8) :: cdummy
       integer      dummy
       integer un
       un = 1
