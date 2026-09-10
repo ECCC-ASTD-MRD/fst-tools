@@ -20,7 +20,9 @@ function run_test() {
         exit -1
     fi
 
-    directives=editfst.dir
+    # Distinct directives filename so this test can run in parallel with
+    # 01_editfst_basic.sh without clobbering each other's editfst.dir.
+    directives=02_editfst_exclure.dir
     echo "exclure(-1,['TT','HU'])" > ${directives}
 
     output_file_1=${test_file_in}.01
