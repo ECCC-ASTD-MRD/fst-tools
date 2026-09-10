@@ -484,11 +484,11 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     character(*), parameter :: equiv_fmt = &
         "(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X, 1PE11.4), 2(1X, 1PE12.4), 2(1X, 1PE11.4))"
     character(*), parameter :: equiv_pack_err_fmt = &
-        "(' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X, 1PE11.4), 3(1X, 1PE12.4), 2(1X, 1PE11.4))"
-    character(*), parameter :: diff_pack_err_fmt = &
         "(' ', '  ', A4, '  ', A12, a15, 2I9, 4(1X, 1PE11.4), 2(1X, 1PE12.4), 2(1X, 1PE11.4), 2X, 1PE11.4)"
-    character(*), parameter :: diff_fmt = &
+    character(*), parameter :: diff_pack_err_fmt = &
         "(/' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X, 1PE11.4), 3(1X, 1PE12.4), 2(1X, 1PE11.4), 2X, 1PE11.4)"
+    character(*), parameter :: diff_fmt = &
+        "(' ', ' <', A4, '> ', A12, a15, 2I9, 3(1X, 1PE11.4), 3(1X, 1PE12.4), 2(1X, 1PE11.4))"
     character(*), parameter :: diff_summary_fmt = &
         "(a, i7, a, i8, a, f10.4, a)"
 
