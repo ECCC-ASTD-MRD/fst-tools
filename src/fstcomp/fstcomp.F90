@@ -651,7 +651,7 @@ integer function icmp1d(a, b, rawIp1)
     use rmn_fst24
     implicit none
 
-    !< \return 0 when the fields are identical, to when they are different
+    !< \return 0 when the fields are identical, 2 when they are different
 
     !> First field to compare
     type(fst_record), intent(in) :: a
