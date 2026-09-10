@@ -62,7 +62,7 @@ PROGRAM  FSTCOMP
     external ccard, low2up, convip_plus
     integer, external :: fstopc, fstopl, fnom, fclos
 
-    integer :: rcmp1d, icmp1d
+    integer, external :: rcmp1d, icmp1d
 
     integer, parameter :: nbkeys = 24
 
@@ -76,11 +76,11 @@ PROGRAM  FSTCOMP
     character(*), parameter :: grid_params_fmt = "(' ', A40, ' GRTYP IG1@4=', A1, 1X, 4I6, /, ' ', A40, ' GRTYP IG1@4=', A1, 1X, 4I6)"
     character(*), parameter :: grid_size_fmt = "(' ', A4, ' -Dimensions found', 3I5, ' looking for', 3I5)"
 
-    CHARACTER(len=2)    :: typvab
-    CHARACTER(len=4)    :: nomvab
-    CHARACTER(len=8)    :: CLE(nbkeys)
-    CHARACTER(len=12)   :: etikb, a_opt, b_opt, tmp_opt
-    CHARACTER(len=1024) :: DEF1(nbkeys), DEF2(nbkeys), tmp_path
+    CHARACTER(len = 2)    :: typvab
+    CHARACTER(len = 4)    :: nomvab
+    CHARACTER(len = 8)    :: CLE(nbkeys)
+    CHARACTER(len = 12)   :: etikb, a_opt, b_opt, tmp_opt
+    CHARACTER(len = 1024) :: DEF1(nbkeys), DEF2(nbkeys), tmp_path
 
     LOGICAL :: a_is_seq, a_is_ftn, b_is_seq, b_is_ftn, a_print, b_print, tmp_bool
     LOGICAL :: match_date, match_etiket, match_typvar, log_info, omit_box, match_ip1, match_ip2, match_ip3, match_nomvar, match_grid
@@ -89,9 +89,9 @@ PROGRAM  FSTCOMP
     integer ier, kind, PACK_ERR, PACK_ERR2
     integer lvar, iunexpv
     real Level
-    character(len=30)  :: ip1_str
-    character(len=128) :: exception_vars
-    character(len=512) :: ARMNLIB_var
+    character(len = 30)  :: ip1_str
+    character(len = 128) :: exception_vars
+    character(len = 512) :: ARMNLIB_var
 
     type(fst_file)   :: filea, fileb
     type(fst_record) :: recorda, recordb
