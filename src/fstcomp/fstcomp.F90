@@ -1,5 +1,6 @@
 !> Compare 2 fst files
-PROGRAM  FSTCOMP
+program fstcomp
+    use, intrinsic :: iso_fortran_env, only: int64
     use app
     use rmn_fst24
     use rmn_libc, only: c_exit
@@ -65,6 +66,7 @@ PROGRAM  FSTCOMP
     integer, external :: rcmp1d, icmp1d
 
     integer, parameter :: nbkeys = 24
+    integer, parameter :: key_val_sz = 1024
 
     character(*), parameter :: header_nor = &
         '  NOM    ETIKET           IP1            IP2       IP3   E-REL-MAX &
@@ -75,28 +77,6 @@ PROGRAM  FSTCOMP
     character(*), parameter :: not_found_fmt = "(' Not found ', A4, ' ', A2, ' IP123=', 3I10, I10, ' in ', A40)"
     character(*), parameter :: grid_params_fmt = "(' ', A40, ' GRTYP IG1@4=', A1, 1X, 4I6, /, ' ', A40, ' GRTYP IG1@4=', A1, 1X, 4I6)"
     character(*), parameter :: grid_size_fmt = "(' ', A4, ' -Dimensions found', 3I5, ' looking for', 3I5)"
-
-    CHARACTER(len = 2)    :: typvab
-    CHARACTER(len = 4)    :: nomvab
-    CHARACTER(len = 8)    :: CLE(nbkeys)
-    CHARACTER(len = 12)   :: etikb, a_opt, b_opt, tmp_opt
-    CHARACTER(len = 1024) :: DEF1(nbkeys), DEF2(nbkeys), tmp_path
-
-    LOGICAL :: a_is_seq, a_is_ftn, b_is_seq, b_is_ftn, a_print, b_print, tmp_bool
-    LOGICAL :: match_date, match_etiket, match_typvar, log_info, omit_box, match_ip1, match_ip2, match_ip3, match_nomvar, match_grid
-    LOGICAL :: EXCEPTION, return_err_code
-    INTEGER a_nbrecs, b_nbrecs, LIMITE, LIMVAL, dummy, I, IDATE, IP1B, IP2B, IP3B, TABLO(0:6, 0:6)
-    integer ier, kind, PACK_ERR, PACK_ERR2
-    integer lvar, iunexpv
-    real Level
-    character(len = 30)  :: ip1_str
-    character(len = 128) :: exception_vars
-    character(len = 512) :: ARMNLIB_var
-
-    type(fst_file)   :: filea, fileb
-    type(fst_record) :: recorda, recordb
-    type(fst_query)  :: querya, queryb
-    logical          :: success
 
     integer, parameter :: a_path_idx = 1
     integer, parameter :: b_path_idx = 2
@@ -123,33 +103,66 @@ PROGRAM  FSTCOMP
     integer, parameter :: exit_code_idx = 23
     integer, parameter :: limval_idx = 24
 
-    DATA CLE  / 'A:',   'B:',   'L.',  'AS',      'BS',  'AF',    'BF',  'LI', &
-                'ND',   'NE',    'D',   'N',      'VA',  'VB',    'NT',  'N1', &
-                'N2',   'N3',   'NN',   'X', 'PACKERR',  'NG', 'ECODE',  'LD' /
+    character(len = 8), parameter :: CLE(nbkeys) = [character(len = 8) :: &
+         'A:',  'B:',   'L.',  'AS',      'BS',  'AF',    'BF',  'LI', &
+         'ND',  'NE',    'D',   'N',      'VA',  'VB',    'NT',  'N1', &
+         'N2',  'N3',   'NN',   'X', 'PACKERR',  'NG', 'ECODE',  'LD' ]
 
-    DATA DEF1 /   'A',   'B', '$OUT', 'NON',     'NON', 'NON',   'NON',  '-7', &
-                'NON', 'NON', 'WARN', 'NON',     'NON', 'NON',   'NON', 'NON', &
-                'NON', 'NON',  'NON',   'X',       '0', 'NON',   'NON', '-32' /
+    character(len = key_val_sz) :: DEF1(nbkeys) = [character(len = key_val_sz) :: &
+          'A',   'B', '$OUT', 'NON',     'NON', 'NON',   'NON',  '-7', &
+        'NON', 'NON', 'WARN', 'NON',     'NON', 'NON',   'NON', 'NON', &
+        'NON', 'NON',  'NON',   'X',       '0', 'NON',   'NON', '-32' ]
 
-    DATA DEF2 /   'A',   'B', '$OUT', 'SQI',     'SQI', 'FTN',   'FTN', '-7', &
-                'OUI', 'OUI', 'INFO', 'OUI',      'VA',  'VB',   'OUI', 'OUI', &
-                'OUI', 'OUI',  'OUI',   'X',       '1', 'OUI',   'OUI', '-32' /
+    character(len = key_val_sz) :: DEF2(nbkeys) = [character(len = key_val_sz) :: &
+          'A',   'B', '$OUT', 'SQI',     'SQI', 'FTN',   'FTN',  '-7', &
+        'OUI', 'OUI', 'INFO', 'OUI',      'VA',  'VB',   'OUI', 'OUI', &
+        'OUI', 'OUI',  'OUI',   'X',       '1', 'OUI',   'OUI', '-32' ]
 
-    DATA NOMVAB, TYPVAB, ETIKB, IDATE, IP1B, IP2B, IP3B &
-        /   ' ',    ' ',   ' ',    -1,   -1,   -1,   -1 /
+    !> Compare reals
+    integer, parameter :: ct_real = 1
+    !> Compare integers
+    integer, parameter :: ct_inte = 2
+    !> Comparison impossible
+    integer, parameter :: ct_impo = 3
 
-    DATA exception_vars /'^^  >>  !!   ^>  META'/
+    !> Comparison type matrix based on compared datyp 
+    !> \note If key 'X' is set to 'R', comparison_types(0, 0) = ct_real
+    integer :: comparison_types(0:6, 0:6) = reshape( [ &
+        ct_inte, ct_real, ct_inte, ct_impo, ct_inte, ct_real, ct_real, &
+        ct_real, ct_real, ct_impo, ct_impo, ct_impo, ct_real, ct_real, &
+        ct_inte, ct_impo, ct_inte, ct_impo, ct_inte, ct_impo, ct_impo, &
+        ct_impo, ct_impo, ct_impo, ct_impo, ct_impo, ct_impo, ct_impo, &
+        ct_inte, ct_impo, ct_inte, ct_impo, ct_inte, ct_impo, ct_impo, &
+        ct_real, ct_real, ct_impo, ct_impo, ct_impo, ct_real, ct_real, &
+        ct_real, ct_real, ct_impo, ct_impo, ct_impo, ct_real, ct_real], [7, 7])
+    integer :: comparison_type
 
-    ! VALIDE QUAND LA CLE 'X' /= 'R'
-    ! 0=BINAIRE 1=REEL 2=ENTIER 3=CARACTERE 4=ENTIER SANS SIGNE 5=IEEE
-    DATA TABLO/ 2, 1, 2, 3, 2, 1, 1,  &
-                1, 1, 3, 3, 3, 1, 1,  &
-                2, 3, 2, 3, 2, 3, 3,  &
-                3, 3, 3, 3, 3, 3, 3,  &
-                2, 3, 2, 3, 2, 3, 3,  &
-                1, 1, 3, 3, 3, 1, 1,  &
-                1, 1, 3, 3, 3, 1, 1 /
-    ! NOTE: QUAND LA CLE('X' == 'R') DATA TABLO(0, 0)=1
+    CHARACTER(len = 2) :: typvab = '  '
+    CHARACTER(len = 4) :: nomvab = '    '
+    CHARACTER(len = 12) :: etikb = '            '
+    CHARACTER(len = 12) :: a_opt, b_opt, tmp_opt
+    CHARACTER(len = key_val_sz) :: tmp_path
+
+    LOGICAL :: a_is_seq, a_is_ftn, b_is_seq, b_is_ftn, a_print, b_print, tmp_bool
+    LOGICAL :: match_date, match_etiket, match_typvar, log_info, omit_box, match_ip1, match_ip2, match_ip3, match_nomvar, match_grid
+    LOGICAL :: EXCEPTION, return_err_code
+    INTEGER(kind = int64) :: a_nbrecs, b_nbrecs
+    INTEGER :: LIMITE, LIMVAL, dummy, I
+    integer :: IDATE = -1
+    integer :: IP1B = -1
+    integer :: IP2B = -1
+    integer :: IP3B = -1
+    integer ier, kind, PACK_ERR, PACK_ERR2
+    integer lvar, iunexpv
+    real Level
+    character(len = 30)  :: ip1_str
+    character(len = 128) :: exception_vars = '^^  >>  !!   ^>  META'
+    character(len = 512) :: ARMNLIB_var
+
+    type(fst_file)   :: filea, fileb
+    type(fst_record) :: recorda, recordb
+    type(fst_query)  :: querya, queryb
+    logical          :: success
 
     ! EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
@@ -204,7 +217,7 @@ PROGRAM  FSTCOMP
     log_info = DEF1(log_level_idx) == 'INFORM'
     omit_box = DEF1(omit_box_idx) == 'OUI'
     return_err_code = DEF1(exit_code_idx) == 'OUI'
-    IF (DEF1(raw_bin_idx) == 'R') TABLO(0, 0) = 1
+    IF (DEF1(raw_bin_idx) == 'R') comparison_types(0, 0) = 1
 
     app_ptr = app_init(0, 'fstcomp', FSTCOMP_VERSION, '', BUILD_TIMESTAMP)
     call app_logstream(DEF1(out_idx))
@@ -407,23 +420,27 @@ PROGRAM  FSTCOMP
         ELSE
             PACK_ERR2 = PACK_ERR
         ENDIF
-        IF ((mod(recorda%data_type, 128) > 6) .or. (mod(recordb%data_type, 128) > 6)) goto 30
-        GO TO (40, 50, 30) TABLO(mod(recorda%data_type, 128), mod(recordb%data_type, 128))
 
-    30  WRITE(app_msg, *)' No comparison possible: DATA_TYPE_A=', recorda%data_type, ' DATA_TYPE_B=', recordb%data_type
-        app_status = 1
-        call app_log(APP_WARNING, app_msg)
-        cycle
-
-    40  app_status = rcmp1d(recorda, recordb, limite, limval, pack_err2, exception)
-        cycle
-
-    50  app_status = icmp1d(recorda, recordb, exception)
-        call queryb%free()
+        if ((mod(recorda%data_type, 128) > 6) .or. (mod(recordb%data_type, 128) > 6)) then
+            ! Out of bounds!
+            comparison_type = ct_impo
+        else
+            comparison_type = comparison_types(mod(recorda%data_type, 128), mod(recordb%data_type, 128))
+        end if
+        select case (comparison_type)
+            case (ct_real)
+                app_status = rcmp1d(recorda, recordb, limite, limval, pack_err2, exception)
+            case (ct_inte)
+                app_status = icmp1d(recorda, recordb, exception)
+                call queryb%free()
+            case default
+                WRITE(app_msg, *)' No comparison possible: DATA_TYPE_A=', recorda%data_type, ' DATA_TYPE_B=', recordb%data_type
+                app_status = 1
+                call app_log(APP_WARNING, app_msg)
+        end select
     enddo
 
-    !> \todo Moving this label outside of the loop prevents a compilation warning with gcc 16
-    !> However, I'm not sure if it even makes sense to leave it here
+    ! Skip field loop anchor point
     60  continue
 
     IF (a_print .AND. .NOT. a_is_ftn .OR. b_print .AND. .NOT. b_is_ftn) THEN
@@ -545,10 +562,10 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
         sum_a = sum_a + val_a
         sum_b = sum_b + val_b
         if (val_a /= val_b) then
-            if (val_a /= 0.0) ratio = (max(val_a, val_b) - min(val_a, val_b)) / val_a * 100
+            if (val_a /= 0.0) ratio = real( (max(val_a, val_b) - min(val_a, val_b)) / val_a * 100 )
             if (ratio > ratio_max) ratio_max = ratio
             nbDiff = nbDiff + 1
-            err_abs = abs(val_a - val_b)
+            err_abs = real( abs(val_a - val_b) )
             sum_err_abs = sum_err_abs + err_abs
             max_err_abs = max(err_abs, max_err_abs)
             rel_err = 0.0
@@ -585,7 +602,7 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
         sa2 = sa2 + val_a * val_a
         sb2 = sb2 + val_b * val_b
     end do
-    sum_err_abs = sum_err_abs / fsize
+    sum_err_abs = real(sum_err_abs / fsize)
     vara = sa2 / fsize
     varb = sb2 / fsize
     write(app_msg, *) 'sab avant=', sab
