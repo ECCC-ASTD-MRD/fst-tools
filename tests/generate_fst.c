@@ -16,21 +16,30 @@ typedef struct {
     const char* etiket;
     const void* data;
     int ip1;
+    int dateo;    //!< Origin date (YYYYMMDD), 0 = no date
 
     int in_output; //!< Whether to include the record in the expected output file
 } test_record;
 
 // **Records for the same test case must be contiguous in this array**
 const test_record test_records[] = {
-    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 2, 0},
-    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 3, 1},
-    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 4, 0},
+    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 2, 0, 0},
+    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 3, 0, 1},
+    {"01_editfst_desire", 1, "A", "B", "FOR_TEST_01", dummy, 4, 0, 0},
 
-    {"02_editfst_exclure", 2, "AA", "B", "FOR_TEST_02", dummy, 1, 1},
-    {"02_editfst_exclure", 2, "TT", "B", "FOR_TEST_02", dummy, 1, 0},
-    {"02_editfst_exclure", 2, "BB", "B", "FOR_TEST_02", dummy, 1, 1},
-    {"02_editfst_exclure", 2, "HU", "B", "FOR_TEST_02", dummy, 1, 0},
-    {"02_editfst_exclure", 2, "CC", "B", "FOR_TEST_02", dummy, 1, 1},
+    {"02_editfst_exclure", 2, "AA", "B", "FOR_TEST_02", dummy, 1, 0, 1},
+    {"02_editfst_exclure", 2, "TT", "B", "FOR_TEST_02", dummy, 1, 0, 0},
+    {"02_editfst_exclure", 2, "BB", "B", "FOR_TEST_02", dummy, 1, 0, 1},
+    {"02_editfst_exclure", 2, "HU", "B", "FOR_TEST_02", dummy, 1, 0, 0},
+    {"02_editfst_exclure", 2, "CC", "B", "FOR_TEST_02", dummy, 1, 0, 1},
+
+    // Records for the `voir` test. Only the `_in` file is used (voir just prints the
+    // table of contents), so `in_output` is 0 for all of them. The metadata is chosen
+    // to be distinct and easy to grep for in voir's output. The dateo is set to
+    // 2026-09-01 so the DATE-O column shows a readable date instead of zeros.
+    {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_1", dummy, 11, 20260901, 0},
+    {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_2", dummy, 22, 20260901, 0},
+    {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_3", dummy, 33, 20260901, 0},
 };
 
 static inline fst_record get_basic_record(void) {
@@ -66,6 +75,14 @@ static fst_record make_record(const test_record rec_in) {
     strncpy(rec.nomvar, rec_in.nomvar, 4);
     strncpy(rec.typvar, rec_in.typvar, 2);
     strncpy(rec.etiket, rec_in.etiket, 12);
+    if (rec_in.dateo != 0) {
+        // newdate_c takes non-const pointers for the date/time args, so copy the
+        // (const) input values into locals first.
+        int dateo = rec_in.dateo;
+        int timeo = 12300000; // 12:30:00 (HHMMSS00), so the DATE-O column shows a nonzero time
+        const int mode = 3;
+        newdate_c(&rec.dateo, &dateo, &timeo, &mode);
+    }
 
     return rec;
 }

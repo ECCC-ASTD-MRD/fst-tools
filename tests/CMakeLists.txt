@@ -4,7 +4,7 @@ target_link_libraries(generate_fst PRIVATE rmn::rmn)
 
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)
-        add_dependencies(test_execs editfst fstcomp)
+        add_dependencies(test_execs editfst fstcomp voir)
 
         add_test(NAME generate_fst COMMAND $<TARGET_FILE_NAME:generate_fst>)
         add_dependencies(test_execs generate_fst)
@@ -23,5 +23,12 @@ if (EC_INIT_DONE LESS 2)
                     $<TARGET_FILE:editfst> $<TARGET_FILE:fstcomp>
         )
         set_tests_properties(02_editfst_exclure PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 03_voir_basic
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/voir/01_voir_basic.sh
+                    $<TARGET_FILE:voir>
+        )
+        set_tests_properties(03_voir_basic PROPERTIES FIXTURES_REQUIRED GEN_FST)
     endif()
 endif()
