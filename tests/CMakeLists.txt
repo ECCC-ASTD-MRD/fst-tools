@@ -30,5 +30,12 @@ if (EC_INIT_DONE LESS 2)
                     $<TARGET_FILE:voir>
         )
         set_tests_properties(03_voir_basic PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 04_voir_style
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/voir/02_voir_style.sh
+                    $<TARGET_FILE:voir>
+        )
+        set_tests_properties(04_voir_style PROPERTIES FIXTURES_REQUIRED GEN_FST)
     endif()
 endif()
