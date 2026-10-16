@@ -35,7 +35,7 @@ subroutine pairvct(nomusag, varuu, varvv, varmodule, vardir)
     !                 NOM DU DEUXIEME CHAMP = VARVV
     !
     !APPEL
-    !         - VIA DIRECTIVE PAIRES(NOMUSAG, VARUU, VARVV, VARMODULE)
+    !         - VIA DIRECTIVE PAIRES(NOMUSAG, VARUU, VARVV, VARMODULE, VARDIR)
     !
     !MESSAGE
     !         - 'VERIFIER NOMBRE D ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
@@ -139,7 +139,7 @@ subroutine pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
     !                 NOM DU DEUXIEME CHAMP = VARVV
     !
     !APPEL
-    !         - VIA DIRECTIVE PAIRES(NOMUSAG, VARUU, VARVV, VARMODULE)
+    !         - VIA DIRECTIVE PAIRES(NOMUSAG, VARUU, VARVV, VARMODULE, VARDIR)
     !
     !MESSAGE
     !         - 'VERIFIER NOMBRE D ARGUMENTS DIRECTIVE PAIRES(3 OU 4 ARGS)'
@@ -159,7 +159,6 @@ subroutine pairvc2(cnomusr, cvaruu, cvarvv, ccontrl, cvarwd)
     character(len = 4), intent(in) :: ccontrl
     character(len = 4), intent(in) :: cvarwd
 
-    ! Appel via directive PAIRES(NOMUSAG, VARUU, VARVV, VARMODULE)
     integer :: np
     logical :: remplac
 

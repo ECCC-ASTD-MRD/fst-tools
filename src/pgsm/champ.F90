@@ -195,94 +195,73 @@
    endif
 !
 
-!   VERIFIER SI DIRECTIVE HEURE EXISTE OBLIGATOIRE AVEC CHAMP
-!
+   ! VERIFIER SI DIRECTIVE HEURE EXISTE OBLIGATOIRE AVEC CHAMP
    if (nhur == 0) then
       if (cnom /= 'DFPR'.or.cnom /= 'DFST') then
          call app_log(APP_ERROR,'champ: HEURE directive must be defined')
          return
       endif
    endif
-!
-!
-   if (npair>NPAIRMX) npair=NPAIRMX
-!
+
+   if (npair > NPAIRMX) npair = NPAIRMX
+
    do ihrs = 1, nhur
       ihr = heures(ihrs)
-!
-!   CALCUL DES VECTEURS OU DE LA VITESSE DU VENT
-!
-      trouve=0
-      do np=1,npair
-         if (cnom == paire(np)(1:8)) trouve=np
+
+      ! CALCUL DES VECTEURS OU DE LA VITESSE DU VENT
+      trouve = 0
+      do np = 1, npair
+         if (cnom == paire(np)(1:8)) trouve = np
       enddo
-!
-!  SI ON A TROUVE ON VA A L'INTERPOLATION
-!
-      if (trouve  /=  0) then
-         vvent  = .false.
+
+      ! SI ON A TROUVE ON VA A L'INTERPOLATION
+      if (trouve /= 0) then
+         vvent = .false.
          wdvent = .false.
          if (paire(trouve)(17:20) /= '??  ') then
-            vvent= .true.
+            vvent = .true.
          endif
          if (paire(trouve)(21:24) == 'WD  ') then
-            wdvent= .true.
+            wdvent = .true.
             vvent = .true.
          endif
 
          if (cgrtyp == '*') then
             call app_log(APP_WARNING,'champ: GRILLE(AUCUNE) only works for variables PCP, EPAIS, DFST ET NUAG')
          else
-            call uvectur(paire(trouve)(9:12), paire(trouve)(13:16),               paire(trouve)(17:20),ihr,nparm,champpr)
+            call uvectur(paire(trouve)(9:12), paire(trouve)(13:16), paire(trouve)(17:20), ihr, nparm, champpr)
          endif
-!
-!     CALCUL LA DIFFERENCE ENTRE DEUX "GZ"
-!
-!
       else if (cnom == 'DFGZ') then
+         ! CALCUL LA DIFFERENCE ENTRE DEUX "GZ"
          call epaisur(ihr, nparm, champpr)
-!
-!     CALCUL LA DIFFERENCE ENTRE DEUX "ST ACCUMULATEUR D'AJUSTEMENT"
-!
-!
       else if (cnom == 'DFST') then
+         ! CALCUL LA DIFFERENCE ENTRE DEUX "ST ACCUMULATEUR D'AJUSTEMENT"
          if (ihrs == 1)   then
             call macpcp('ST  ', nparm, champpr)
             if (message) then
                if (nhur>1) call app_log(APP_WARNING,'champ: HEURE directive not necessary (ST)')
             endif
          endif
-!
-!
-!     CALCUL LA DIFFERENCE ENTRE DEUX "PR" PRECIPITATION
-!
       else if (cnom == 'DFPR') then
+         ! CALCUL LA DIFFERENCE ENTRE DEUX "PR" PRECIPITATION
          if (ihrs == 1) then
             call macpcp('PR  ', nparm, champpr)
             if (message) then
                if (nhur>1) call app_log(APP_WARNING,'champ: HEURE directive not necessary (PRECIP)')
             endif
          endif
-!
-!     INTERPOLATION DES NUAGES BAS,MOYEN,HAUT
-!
       else if (cnom == 'NUAG') then
+         ! INTERPOLATION DES NUAGES BAS,MOYEN,HAUT
          call scalair('NB  ', ihr, 1, champpr)
          call scalair('NM  ', ihr, 1, champpr)
          call scalair('NH  ', ihr, 1, champpr)
-
-!     AUTRE NOM  (GZ,TT,DD,WW,QQ,ES,DZ,ST,PR........)
-!
       else
+         ! AUTRE NOM  (GZ,TT,DD,WW,QQ,ES,DZ,ST,PR........)
          if (cgrtyp == '*') then
             call app_log(APP_WARNING,'champ: GRILLE(AUCUNE) only works for variables PCP, EPAIS, DFST ET NUAG')
          else
             call scalair(cnom, ihr, nparm, champpr)
          endif
       endif
-
    enddo
-
-   return
-   end
-
+end
