@@ -50,25 +50,22 @@ subroutine uvectur (cnom1, cnom2, cnom3, iheur, npar, itabuv)
 #include "gdz.cdk90"
 #include "tp12ig.cdk90"
 
-    character(len=12) :: cetiket, cetike
-    character(len=4)  :: cnomvar, cnom1, cnom2, cnom3
-    character(len=1)  :: cigtyp
-    character(len=2)  :: ctypvar
+    character(len = 12) :: cetiket, cetike
+    character(len = 4)  :: cnomvar, cnom1, cnom2, cnom3
+    character(len = 1)  :: cigtyp
+    character(len = 2)  :: ctypvar
 
     integer i, j
     integer jp1, jp2, jp3, liljt, ni, nj, nk, npar
     integer, dimension(:), allocatable :: listniv
     real, allocatable, dimension(:, :) :: latgdin, longdin
-    integer itabuv(npar) , deet, ig1, ig2, ig3, ig4
+    integer itabuv(npar), deet, ig1, ig2, ig3, ig4
     integer iheur, ilop, iprs, irec_uu, irec_vv, iopc
     integer numu, numv, infon, dat, datdv
     integer cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3, total_keys
     integer nom2
-    integer tableau(1)
-    integer ig1zz, ig2zz, ig3zz, ig4zz, ezsetgdout, gdwdfuv, gdll, npts
-    real    d60dum, pidum, pjdum
-    real xlat1, xlon1, xlat2, xlon2
-    real dgtord, dumfld, xg1, xg2, xg3, xg4, datev
+    integer gdwdfuv, gdll, npts
+    real datev
     integer iunit
     logical ssw
     integer entier_ou_reel
