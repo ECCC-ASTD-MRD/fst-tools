@@ -1,4 +1,4 @@
-!> 
+!> Horizontaly interpolate vectors
 subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, iheur, nip1s, ip1s)
     use, intrinsic :: iso_fortran_env, only: real64
     use app
