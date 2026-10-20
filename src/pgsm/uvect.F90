@@ -1,5 +1,5 @@
 !> Horizontaly interpolate vectors
-subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, iheur, nip1s, ip1s)
+subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, vec_dir_name, iheur, nip1s, ip1s)
     use, intrinsic :: iso_fortran_env, only: real64
     use app
     implicit none
@@ -10,6 +10,8 @@ subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, iheur, nip1s, i
     character(len = 4), intent(in) :: vec_comp2_name
     !> Vector length nomvar
     character(len = 4), intent(in) :: vec_len_name
+    !> Vector direction nomvar
+    character(len = 4), intent(in) :: vec_dir_name
     !> Forecast hour
     integer, intent(in) :: iheur
     !> Number of levels
@@ -224,10 +226,10 @@ subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, iheur, nip1s, i
                     if (is_integer) then
                         call cvtifr(itmpif4, vvout, li, lj)
                         call iecritur(itmpif4, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
-                            ctypvar, 'WD  ', cetike, cgrtyp, lg1, lg2, lg3, lg4)
+                            ctypvar, vec_dir_name, cetike, cgrtyp, lg1, lg2, lg3, lg4)
                     else
                         call ecritur(vvout, npack, dat, deet, npas, li, lj, nk, jp1, jp2, jp3, &
-                            ctypvar, 'WD  ', cetike, cgrtyp, lg1, lg2, lg3, lg4)
+                            ctypvar, vec_dir_name, cetike, cgrtyp, lg1, lg2, lg3, lg4)
                     endif
                 endif
             else

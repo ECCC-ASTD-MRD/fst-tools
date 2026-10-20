@@ -221,7 +221,7 @@
          if (paire(trouve)(17:20) /= '??  ') then
             vvent = .true.
          endif
-         if (paire(trouve)(21:24) == 'WD  ') then
+         if (paire(trouve)(21:24) /= '    ' .and. paire(trouve)(21:24) /= '^^  ') then
             wdvent = .true.
             vvent = .true.
          endif
@@ -229,7 +229,7 @@
          if (cgrtyp == '*') then
             call app_log(APP_WARNING,'champ: GRILLE(AUCUNE) only works for variables PCP, EPAIS, DFST ET NUAG')
          else
-            call uvectur(paire(trouve)(9:12), paire(trouve)(13:16), paire(trouve)(17:20), ihr, nparm, champpr)
+            call uvectur(paire(trouve)(9:12), paire(trouve)(13:16), paire(trouve)(17:20), paire(trouve)(21:24), ihr, nparm, champpr)
          endif
       else if (cnom == 'DFGZ') then
          ! CALCUL LA DIFFERENCE ENTRE DEUX "GZ"
