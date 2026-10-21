@@ -34,7 +34,7 @@ static int c_dateform = 1;
 
 
 static void strconvdate(char strdate[], int fstdate) {
-    int lfstdate, yyyymmdd, hhmmssss, mode;
+    int lfstdate, yyyymmdd = 0, hhmmssss = 0, mode;
     int yyyy, month, day, hour, minutes, sec;
 
     switch(c_dateform) {

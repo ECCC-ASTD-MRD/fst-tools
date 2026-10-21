@@ -114,6 +114,10 @@
 
       do while(query%find_next(record))
  
+         pndatprinto = 0
+         pntimeo     = 0
+         pndatprintv = 0
+         pntimev     = 0
          call newdate(record%dateo,pndatprinto,pntimeo,-3)
          call newdate(record%datev,pndatprintv,pntimev,-3)
 
