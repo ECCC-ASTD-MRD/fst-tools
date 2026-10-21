@@ -1,14 +1,13 @@
 
-add_executable(generate_fst EXCLUDE_FROM_ALL generate_fst.c)
-target_link_libraries(generate_fst PRIVATE rmn::rmn)
-
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)
         add_dependencies(test_execs editfst fstcomp voir)
 
-        add_test(NAME generate_fst COMMAND $<TARGET_FILE_NAME:generate_fst>)
-        add_dependencies(test_execs generate_fst)
-        set_tests_properties(generate_fst PROPERTIES FIXTURES_SETUP GEN_FST)
+        find_package(Python3 REQUIRED COMPONENTS Interpreter)
+        add_test(NAME generate_fst COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_fst.py)
+        set_tests_properties(generate_fst PROPERTIES
+            FIXTURES_SETUP GEN_FST
+            ENVIRONMENT "PYTHONPATH=${rmn_PYTHONPATH};LD_LIBRARY_PATH=${rmn_LIBRARY_PATH}")
 
         add_test(
             NAME 01_editfst_basic
