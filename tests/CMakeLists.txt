@@ -32,6 +32,13 @@ if (EC_INIT_DONE LESS 2)
         set_tests_properties(03_voir_basic PROPERTIES FIXTURES_REQUIRED GEN_FST)
 
         add_test(
+            NAME 04_editfst_ds
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/editfst/04_editfst_ds.sh
+                    $<TARGET_FILE:editfst> $<TARGET_FILE:fstcomp>
+        )
+        set_tests_properties(04_editfst_ds PROPERTIES FIXTURES_REQUIRED GEN_FST TIMEOUT 10)
+
+        add_test(
             NAME 04_voir_style
             COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/voir/02_voir_style.sh
                     $<TARGET_FILE:voir>

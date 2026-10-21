@@ -40,6 +40,13 @@ const test_record test_records[] = {
     {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_1", dummy, 11, 20260901, 0},
     {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_2", dummy, 22, 20260901, 0},
     {"03_voir_basic", 3, "VOI", "R", "VOIR_ETI_3", dummy, 33, 20260901, 0},
+
+    // Records for the `editfst -ds` (sequential destination) regression test.
+    // All records are included in the expected output so that a full copy of the
+    // input is the expected result.
+    {"04_editfst_ds", 4, "DS", "B", "DS_ETI_1", dummy, 1, 0, 1},
+    {"04_editfst_ds", 4, "DS", "B", "DS_ETI_2", dummy, 2, 0, 1},
+    {"04_editfst_ds", 4, "DS", "B", "DS_ETI_3", dummy, 3, 0, 1},
 };
 
 static inline fst_record get_basic_record(void) {
