@@ -881,7 +881,7 @@ void ParseConfigFile(char *file)
     int i;
     char name[256];
     const char *fname;
-    PList *entry;
+    PList * entry = NULL;
 
     /* setup property name -> parser table*/
 
