@@ -48,7 +48,7 @@ subroutine uvectur(vec_comp1_name, vec_comp2_name, vec_len_name, vec_dir_name, i
     integer :: ilop, ip1_idx, irec_uu, irec_vv, iopc
     integer :: numu, numv, infon, dat, datdv
     integer :: cnbits, cdatyp, cswa, clng, cdltf, cubc, extra1, extra2, extra3, total_keys
-    real :: datev
+    integer :: datev
     integer :: iunit
     logical :: is_integer
     real(kind = real64) :: delta_t

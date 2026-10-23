@@ -113,11 +113,12 @@ END INTERFACE
 
     integer ezsetopt
     external ezsetopt, heure, champ, sorti, grille2, metsym, cmetsym, convs
-    external    qqqintx, setxtrap, liren, lirsr, plmnmod, pluss
+    external setxtrap, liren, lirsr, plmnmod, pluss
     external moinse, moinss, ecrits,moyene, operat, modul2e, modul2s
     external expon, racine,alogn, absolu, carre, outlalo, foise, foiss, divisee, divises, pgcoupe
-    external moysrt, imprims,chmpdif, pairvct, messags, champ_seq,qqqecho
-    external qqqform,qqqident,coord,qqqfilt
+    external moysrt, imprims,chmpdif, pairvct, messags, champ_seq, coord
+    external qqqform, qqqident, qqqfilt, qqqexit, qqqintx, qqqecho
+    external :: initseq, initid, chk_hy, chk_doctoc, pgsmcf
 
     external ccard,fnom,qlxins,qlxinx,readlx,fstfrm,fstvoi
     external fstnbr,fstunl,fstouv
@@ -708,17 +709,17 @@ END INTERFACE
 !    initialiser avec .true. champ symetrique
 
     nsym = 2
-    call cmetsym('GZ',.true.)
-    call cmetsym('TT',.true.)
-    call cmetsym('DD',.true.)
-    call cmetsym('WW',.true.)
-    call cmetsym('ES',.true.)
-    call cmetsym('F2',.true.)
-    call cmetsym('PN',.true.)
-    call cmetsym('PS',.true.)
-    call cmetsym('TS',.true.)
+    call cmetsym('GZ  ', .true.)
+    call cmetsym('TT  ', .true.)
+    call cmetsym('DD  ', .true.)
+    call cmetsym('WW  ', .true.)
+    call cmetsym('ES  ', .true.)
+    call cmetsym('F2  ', .true.)
+    call cmetsym('PN  ', .true.)
+    call cmetsym('PS  ', .true.)
+    call cmetsym('TS  ', .true.)
 
-    call cmetsym('QQ',.false.)
+    call cmetsym('QQ  ', .false.)
 
 
 !    directives de l'usager
