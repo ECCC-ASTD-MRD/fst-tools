@@ -356,7 +356,7 @@ END INTERFACE
     lnkdiun(1) = 1
     lnkdiun(idx_ozsrt) = 2
     call ccard(listl,defo,lfn,990,nequiv)
-    ier = fnom(5,lfn(idx_i),'SEQ',0)
+    ier = fnom(5,lfn(idx_i),'SEQ+R/O',0)
     ier = fnom(6,lfn(idx_l),'SEQ',0)
 
     ! imprime boite debut du programme
