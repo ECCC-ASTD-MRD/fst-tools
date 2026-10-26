@@ -57,6 +57,7 @@
 
    real fbidon
    real, dimension(:,:), allocatable, target ::  fld, fld_out
+   integer, dimension(:,:), allocatable, target ::  ifld
    integer, dimension(:,:), allocatable, target :: masq, masq_out, masq_zones
 
    real, dimension(:,:), pointer :: tmpout
@@ -86,7 +87,10 @@
    key = pgsmluk(fld, key, ni,nj,nk,cnomvar,cigtyp)
 
    if (cdatyp  ==  2 .or. cdatyp  ==  4) then
-      call cvtifr(fld, fld, ni, nj)
+      allocate(ifld(ni, nj))
+      call cvtifr(ifld, fld, ni, nj)
+      fld = reshape(transfer(ifld, fld), [ni, nj])
+      deallocate(ifld)
    endif
 
    if (printen)  call imprime(cnomvar,tmpif1,ni,nj)

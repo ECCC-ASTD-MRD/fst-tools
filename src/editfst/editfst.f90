@@ -1,35 +1,32 @@
-!**PROGRAMME EDITFST - COPIE UNE PARTIE D'UN FICHIER STANDARD DANS UN 
-!                      AUTRE FICHIER DTANDARD.
-      subroutine EDITFST
-!****************************************
-!********    VERSION  'UNIX'    *********
-!****************************************
+!> Copie une partie d'un fichier standard dans un autre fichier dtandard.
+subroutine EDITFST
       use ISO_C_BINDING
       use configuration
       use app
       use rmn_fst24
 
-      IMPLICIT NONE 
+      IMPLICIT NONE
+
       include 'rmn/excdes.inc'
 #include "fst-tools_build_info.h"
 
 !
 !         AUTEURS                                         DATE   VERSION
 !         VERSION ORIGINALE (COPYSTD) C. THIBEAULT  -     FEV. 83
-!         Y.BOURASSA/ M.VALIN (EDITSTD)                   JUL. 86 1.3 
-!         BOURASSA         CORRECTION DANS SEQCOPY        FEV. 87 1.4 
-!         VALIN            AJOUT DE FASTIO                FEV. 87 1.5 
-!         BOURASSA         DIRECTIVE "CRITSUP"            OCT. 89 1.6 
-!            "             DIRECTIVE "EXCLURE"            OCT. 89 1.6 
-!            "             ACCEPTE "OPDATE"               JAN. 90 1.7 
-!            "             NEWEDIT VERSION UNIX/CRAY      JUL. 90 1.8 
-!            "             VERSION EDITFST (CRAY/UNIX)    NOV. 90 2.0 
-!            "             QLXINS, FICHIERS FST..ETC. 
-!            "             CORRECTION DANS COPISEQ        DEC. 90 2.1 
-!            "             OPTION IMAGE                   JAN. 91 2.2 
-!            "             ARGDOPE DES ETIKETS            MAR. 91 2.3 
+!         Y.BOURASSA/ M.VALIN (EDITSTD)                   JUL. 86 1.3
+!         BOURASSA         CORRECTION DANS SEQCOPY        FEV. 87 1.4
+!         VALIN            AJOUT DE FASTIO                FEV. 87 1.5
+!         BOURASSA         DIRECTIVE "CRITSUP"            OCT. 89 1.6
+!            "             DIRECTIVE "EXCLURE"            OCT. 89 1.6
+!            "             ACCEPTE "OPDATE"               JAN. 90 1.7
+!            "             NEWEDIT VERSION UNIX/CRAY      JUL. 90 1.8
+!            "             VERSION EDITFST (CRAY/UNIX)    NOV. 90 2.0
+!            "             QLXINS, FICHIERS FST..ETC.
+!            "             CORRECTION DANS COPISEQ        DEC. 90 2.1
+!            "             OPTION IMAGE                   JAN. 91 2.2
+!            "             ARGDOPE DES ETIKETS            MAR. 91 2.3
 !            "             LEGERE MODIF DANS PRINT        AVR. 91 2.31
-!            "                "     "   SNOM-DNOM         MAI. 91 2.4  
+!            "                "     "   SNOM-DNOM         MAI. 91 2.4
 !            "             DIRECTIVE ZAP                  JUL. 91 2.5
 !            "             LINQUAGE DES FICHIERS SOURCES  OCT. 91 2.6
 !            "             ACCELERATION DU TRIAGE         NOV. 91 2.7
@@ -37,21 +34,21 @@
 !                          CHANHE APPEL A CCARD & HOLACAR JAN. 92 2.8
 !            "             FIX BUG 1e  ALLOCATION MEMOIRE JAN. 92 2.9
 !            "             AJOUTE +OLD AU FICHIER SOURCE  MAR. 92 3.0
-!                          ACCES A $IN VERSION CRAY       
+!                          ACCES A $IN VERSION CRAY
 !                          APPEL A LOW2UP APRES CCARD
-!                          OUVRE SOURCES AVEC FSTNOL 
+!                          OUVRE SOURCES AVEC FSTNOL
 !            "             PERMET FICHIERS FTN SUR UNIX
 !            "             NEUTRALISE LA CLE NPD          MAR. 92 3.1
 !            "             FIX BUG DANS EXDES             AVR. 92 3.2
 !            "             (SAUVDEZ=0) ZAP(-1) APRES COPIEMAI. 93 3.3
-!                          QLXINX POUR TYPE=2    
-!                          MODIF DANS EXDES (RANGE INVERSE) 
-!                          FIX BUG DANS STDCIPI/WEOFILE 
-!                          OUVRE LES 1 @ 15 INPUTS QUI EXTSTENT  
+!                          QLXINX POUR TYPE=2
+!                          MODIF DANS EXDES (RANGE INVERSE)
+!                          FIX BUG DANS STDCIPI/WEOFILE
+!                          OUVRE LES 1 @ 15 INPUTS QUI EXTSTENT
 !                          ENDIQUE L'ETAT DU PGM. A LA SORTIE
 !                          EVITE LES ABORTS EN MODE INTERACTIF
 !            "             CORRECTION FASTIO              JAN. 94 3.4
-!                          PASSAGE DE 15 FICHIERS D'ENTREE A 35    
+!                          PASSAGE DE 15 FICHIERS D'ENTREE A 35
 !            "             BUG FIX DATA NUMERO D'UNITES   JUIL 94 3.5
 !            "             BUG FIX FICHIER SEQ EXISTANT   JUIL 94 3.6
 !            "             BUG FIX LIMITE FICHIER SEQ     AVR. 95 3.7
@@ -71,13 +68,13 @@
 !         M. Lepine        Reload, bug fix c_fnom  - mars 1999 - v5.4
 !         M. Lepine        Menage des if defined - mars 2000 - v5.5
 !         M. Lepine        Reload pour datev (fstd89) - oct 2000 - v5.6
-!         M. Lepine        Possibilite d'appel a convip pour les ip1 
+!         M. Lepine        Possibilite d'appel a convip pour les ip1
 !                          + fichier source read only - juil 2001 - v5.7
 !         M. Lepine        Julhr en julsec - oct 2001 - v5.8
 !         M. Lepine        fichier de sortie R/W obligatoire - Dec 2001 - v5.81
 !         M. Lepine        verification de la limite de 10 elements - Fev 2002 - v5.82
 !         M. Lepine        reload, bug fix fstecr mode reecriture - Mars 2002 - v5.83
-!         M. Lepine        Codification des ip1 en integer*8 (kind,level) - Mai 2002 - v5.84
+!         M. Lepine        Codification des ip1 en integer*8 (kind, level) - Mai 2002 - v5.84
 !         M. Lepine        Bug fix buftemp dans copystx - Oct 2002 - v5.85
 !         M. Lepine        Bug fix arguments fstcvt dans critsup  - Nov 2002 - v5.86
 !         M. Lepine        Tolerance d'erreur pour les IP1 (ip1equiv)  - Mars 2003 - v5.87
@@ -89,16 +86,16 @@
 !         M. Lepine        Reload avec librmn_x, bug fix requete ip1=0.0 - Fev 2005 - v5.93
 !         M. Lepine        Bug fix reconnaissance des ip1 reel - Mars 2005 - v5.94
 !         M. Lepine        Utilisation optionnelle des fichiers remote - Mars 2005 - v5.95
-!         M. Lepine        Reload pour bugfix datev de excdes, librmnbeta - Mars 2005 v5.96 
+!         M. Lepine        Reload pour bugfix datev de excdes, librmnbeta - Mars 2005 v5.96
 !         M. Lepine        Reload pour bugfix longueur fstecr mode image, librmnbeta - Avril 2005 v5.97
-!         M. Lepine        De 35 fichiers d'entree a 120, Juillet 2005 - v5.98 
+!         M. Lepine        De 35 fichiers d'entree a 120, Juillet 2005 - v5.98
 !         M. Lepine        Remplacement de tous les fstabt par qqexit - v5.99
 !         M. Lepine        Reload avec librmn_rc008.a - v6.00
-!         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006 
-!         M. Lepine        Bug fix longeur fstluk,fstecr datyp=6 mode image - v6.02 - Avril 2006
+!         M. Lepine        Fichier source read only dans stdcopi - v6.01 - Fev 2006
+!         M. Lepine        Bug fix longeur fstluk, fstecr datyp=6 mode image - v6.02 - Avril 2006
 !         M. Lepine        Reload avec librmn_008 - v6.03 - Aout 2006
-!         M. Lepine        Reload avec librmnbeta,nouveau compresseurs IEEE - v6.04 - Oct 2006
-!         M. Lepine        Reload avec librmnbeta,bug fix valid record length = 0 - v6.05 - Fev 2007
+!         M. Lepine        Reload avec librmnbeta, nouveau compresseurs IEEE - v6.04 - Oct 2006
+!         M. Lepine        Reload avec librmnbeta, bug fix valid record length = 0 - v6.05 - Fev 2007
 !         M. Lepine        Taille des noms de fichiers augemntee a 1024 car. - v6.06 - Mars 2007
 !         M. Lepine        Reload avec librmn_009 - v6.07 - Juin 2007
 !         M. Lepine        Reload avec librmnbeta, correction fichiers > 2G - v6.08 - Sept 2007
@@ -141,7 +138,7 @@
 !                   -d (nom  du  fichier  destination)
 !                   -i (nom  du  fichier  stdinp)
 !                   -l (nom  du  fichier  stdout)
-!                   -ss               ( s=sequentiel sqi)         
+!                   -ss               ( s=sequentiel sqi)
 !                   -sf               ( s=sequentiel fortran)
 !                   -ds               ( d=sequentiel sqi)
 !                   -df               ( d=sequentiel fortran)
@@ -158,11 +155,11 @@
 !           FICHIERS (25@39 = SOURCE) (3 = DESTINATION)
 !#include "maxprms.cdk"
 !               NMR = MAXIMUM DE REGIONS
-!               NMS =    "     " SCORES 
-!               NME =    "     " ETAPES 
+!               NMS =    "     " SCORES
+!               NME =    "     " ETAPES
 !               NMN =    "     " NIVEAUX
 !               NMM =    "     " MODELES
-!               NMD =    "     " DESIRES/EXCLURES 
+!               NMD =    "     " DESIRES/EXCLURES
 !#include "tapes.cdk"
 !     - MEOF       - LEVEL D'EOF LOGIQUE A NE PAS PASSER
 !     - COPIES     - NOMBRE D'AJOUTS AU FICHIER DESTINATION EN USAGE
@@ -198,7 +195,7 @@
 !     - DM1        -    "    " PAS DE DATES DANS LES DESIRES
 !     - DEBUG      -    "    " EN MODE DEBUG
 !     - DRYRUN     -    "    " EN MODE DRYRUN
-!     - SELEC      -    "    " FICHIER DE DIRECTIVE PRESENT 
+!     - SELEC      -    "    " FICHIER DE DIRECTIVE PRESENT
 !     - BOX        -    "    " LA CLE NOBOX PAS DANS LA SEQUENSE D'APPEL
 !     - DIAG       -    "    " DIAGNOSTIQUES SERONT A IMPRIMER
 !     - INTERC     -    "    " EN MODE INTERACTIF
@@ -207,18 +204,18 @@
 !     - JOURS      - PERIODE A UTILISER PAR DESIRE/EXCLURE
 !     - NREQ       - NOMBRE DE DIRECTIVES DESIRE/EXCLURE RENCONTREES
 !     - SAUV       -    "    "     "      A CONSERVER APRES COPIE
-!     - NEXC       -    "    "     "      EXCLURE 
+!     - NEXC       -    "    "     "      EXCLURE
 !     - DESEXC(I)  - =0 (POUR EXCLURE),    =-1 (POUR DESIRE)
 !     - SATISF(I)  - 0 = DIRECTIVE INSATISFAITE
 !     - REQ        - TABLEAU DES DESIRES/EXCLURES DE L'USAGER.
 !     - SUP        - TABLEAU DES CLES SUPLEMENTAIRES.
-!     - NIS        - CRITERE SUPLEMENTAIRE DE CELECTION # 1 
-!     - NJS        -    "          "        "     "     # 2 
-!     - NKS        -    "          "        "     "     # 3 
-!     - IG1S       -    "          "        "     "     # 4 
-!     - IG2S       -    "          "        "     "     # 5 
-!     - IG3S       -    "          "        "     "     # 6 
-!     - IG4S       -    "          "        "     "     # 7 
+!     - NIS        - CRITERE SUPLEMENTAIRE DE CELECTION # 1
+!     - NJS        -    "          "        "     "     # 2
+!     - NKS        -    "          "        "     "     # 3
+!     - IG1S       -    "          "        "     "     # 4
+!     - IG2S       -    "          "        "     "     # 5
+!     - IG3S       -    "          "        "     "     # 6
+!     - IG4S       -    "          "        "     "     # 7
 !     - REQN       - NOMBRE DE NOMVAR/REQUETE
 !     - REQT       - NOMBRE DE TYPVAR/REQUETE
 !     - REQE       - NOMBRE D'ETIKET/REQUETE
@@ -236,14 +233,14 @@
 !     - NS         - DN DU FICHIER SOURCE
 !     - ND         -  "  "    "    DESTINATION
 !     - SNOM       - TYPE  PASSE A FNOM FICHIER SOURCE
-!     - DNOM       -   "     "   "   "     "    DESTINATION 
+!     - DNOM       -   "     "   "   "     "    DESTINATION
 !     - ZE         - CARACTERES DE L'ETIQUETTE A ZAPPER SI DIFFERENT DE '????????'
 !     - ZG         - TYPE DE GRILLE A ZAPPER
 !     - ETI        - ETIQUETTE TEMPORAIRE
 !     - ETIS       - ETIQUETTES DES DESIRES/EXCLURES
 !     - ZT         - CARACTERE DU TYPEVAR A ZAPPER SI DIFFERENT DE '?'.
 !     - TYP        - TYPE DE GRILLE
-!     - TYPS       - TYPE DE GRILLEDES DES DESIRES/EXCLURES 
+!     - TYPS       - TYPE DE GRILLEDES DES DESIRES/EXCLURES
 !     - GTY        - TYPE DE GRILLE (SOURCE)
 !     - GTYS       - TYPE DE GRILLE DES CRITERES SUPLEMENTAIRES
 !     - GTYPS      - TYPE DE GRILLE DES CRITERES SUPLEMENTAIRES
@@ -252,12 +249,11 @@
 !     - NOMS       - NOMS DE VARIABLE DES DESIRES/EXCLURES
 !     - ETAT       - INDIQUE L'ETAT DU PGM. DANS LA BOITE A LA FIN
       EXTERNAL    FERMED, SELECT, FNOM, CCARD, OUVRES, SAUVDEZ, FERMES
-      EXTERNAL    FSTOPL, OUVRED, STDCOPI, MEMOIRH
+      EXTERNAL    FSTOPL, OUVRED, STDCOPI, MEMOIRH, FCLOS
       EXTERNAL    QQEXIT
       INTEGER     FSTOPL, OUVRED, FNOM, I
-      integer junk
       LOGICAL     FASTIO
-      character(len=4096) ,dimension(:), pointer, save:: def1,     def2
+      character(len=4096), dimension(:), pointer, save :: def1, def2
       character(len=4096), save :: PRINTR
       integer :: read_iun !< Unit number for reading directives
 !      character(len=78), dimension(2):: MSG_ABT
@@ -273,32 +269,32 @@
       call config_init   ! initialize values in module "configuration"
       max_requetes_exdes = Select_get_MAX_requetes()
       max_nlist_exdes = Select_get_MAX_Nlist()
-      allocate(def1(NCCARDKEYS),def2(NCCARDKEYS))
+      allocate(def1(NCCARDKEYS), def2(NCCARDKEYS))
       def1 = def1b
       def2 = def2b
 
       SAUV = 0
       ECR = FST_NO
       CALL SAUVDEZ
-  
-!     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL. 
+
+!     EXTRACTION DES CLES DE LA SEQUENCE D'APPEL.
       I    = -111
       CALL CCARD(KLE, DEF2, DEF1, NCCARDKEYS, I)
 
       def1b = def1
       READ(DEF1(3), '(I2)') EOF                                 ! -eof
-      READ(DEF1(15),'(I8)') LIMITE                              ! -c
-      READ(DEF1(25),'(I8)') NRECMIN                             ! -nrecmin
+      READ(DEF1(15), '(I8)') LIMITE                              ! -c
+      READ(DEF1(25), '(I8)') NRECMIN                             ! -nrecmin
       PRINTR = DEF1(11)                                         ! -l  fichier pour listing
       ND     = DEF1(2)                                          ! -d  fichier destination
       VD     = (DEF1(6) .EQ.'OUI')  .OR.  (DEF1(18).EQ.'OUI')   ! -vd , -v  voir destination
       VS     = (DEF1(20).EQ.'OUI')                              ! -vs   voir source
       BOX    = (DEF1(7) .EQ.'NON')  .AND. (DEF1(19).EQ.'NON')   ! -nobox , -n
-      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i 
+      SELEC  = (DEF1(10).NE.'NON')  .AND. (DEF1(10).NE.'NIL') .AND. (DEF1(10).NE.'0')  ! -i
       if ((DEF1(9) .EQ.'OUI') .OR.  (DEF1(21).EQ.'OUI')) ECR=FST_YES  ! -ecr , -e oui
       if ((DEF1(9) .EQ.'SKIP') .OR.  (DEF1(21).EQ.'SKIP')) ECR=FST_SKIP ! -ecr , -e skip
 
-! 
+!
 !     Contourner le bug du -i 0 en ouvrant l'unite 5 sur /dev/null
 !
       IF (.NOT. SELEC) THEN  ! def1(10) = "$IN" si cle non specifiee, selec = .true. par defaut
@@ -309,7 +305,7 @@
       DEBUG  = ((DEF1(13)  .EQ.'DEBUG') .or. (DEF1(13) .EQ. 'EXTRA'))       ! -m  (non par defaut)
       DRYRUN  = (DEF1(146)  .EQ.'DRYRUN')    ! -dryrun  (non par defaut)
       FASTIO = (DEF1(22).EQ.'OUI')           ! -f  (oui par defaut)
-      DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM') 
+      DIAG   = (DEF1(8) .EQ.'OUI')  .OR.  (DEF1(13).EQ.'INFORM')
       IF((DEF1(16).NE.'NON') .OR.    &  ! -ss , source is sequential sqi
          (DEF1(4).NE.'NON')  .OR.    &  ! -sseq , source is sequential
          (DEF1(23).NE.'NON') ) THEN    ! -ss -sseq -sf
@@ -334,14 +330,14 @@
          DNOM = 'STD+RND'
       ENDIF
 
-      app_ptr=app_init(0,'editfst',EDITFST_VERSION,'',BUILD_TIMESTAMP)
+      app_ptr=app_init(0, 'editfst', EDITFST_VERSION, '', BUILD_TIMESTAMP)
       call app_logstream(PRINTR)
-      
+
       !     IMPRIME L'INDICATIF DE DEBUT DU PROGRAMME.
       IF( BOX ) THEN
          call app_start()
       ELSE
-         call app_log(APP_VERBATIM,'***   E D I T F S T   '//EDITFST_VERSION//'   ***')
+         call app_log(APP_VERBATIM, '***   E D I T F S T   '//EDITFST_VERSION//'   ***')
       ENDIF
 
       strict_mode = DEF1(147) .eq. 'OUI'
@@ -361,20 +357,20 @@
 !     Verification du remapping faite directement dans fstecr pour le mode image
 
 !     COMPTER LES FICHIERS SOURCES
-      DO I=1,120
+      DO I=1, 120
          IF(DEF1(I+25) .NE. ' ') NFS = NFS+1  ! -s
       ENDDO
       IF(NFS .GT. 0) THEN
          CALL OUVRES( DEF1(26) )    ! ouvrir le premier fichier
          IF(NFSO .EQ. 0) THEN
-            call app_log(APP_ERROR,'Source file unknown, nothing copied')
+            call app_log(APP_ERROR, 'Source file unknown, nothing copied')
             ETAT = 'ABORT'
             GO TO 30
          ENDIF
       ENDIF
-   
+
 !     OUVRE LE FICHIER DESTINATION
-      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )   ! -d 
+      IF(DEF1(2) .NE. ' ') I = OUVRED( DEF1(2) )   ! -d
 
 !     LIRE UN JEU DE DIRECTIVES
 
@@ -382,9 +378,9 @@
          IF(DEF1(10) .EQ. '$IN') THEN   !  (-i ) directives from stdin, prompt for directives
             read_iun = 5
             INTERAC = .TRUE.
-            PRINT*,'DIRECTIVES ?'
-            PRINT*,'TAPER  END A LA FIN DES DIRECTIVES'
-            PRINT*,'TYPE  END  AFTER LAST DIRECTIVE'
+            PRINT *, 'DIRECTIVES ?'
+            PRINT *, 'TAPER  END A LA FIN DES DIRECTIVES'
+            PRINT *, 'TYPE  END  AFTER LAST DIRECTIVE'
          ELSE
             read_iun = 0
             I = FNOM(read_iun, DEF1(10), 'SEQ+R/O', 0)
@@ -401,11 +397,11 @@
       IF( .NOT.ESAIS ) THEN
          IF( OUVS .AND. OUVD ) THEN
             NP = 1
-            CALL STDCOPI( -1,-1,-1,-1 )
+            CALL STDCOPI([-1], [-1], [-1], [-1])
          ELSE
-            call app_log(APP_WARNING,'Nothing copied')
-            IF(.NOT. OUVS) call app_log(APP_ERROR,'Source file unknown')
-            IF(.NOT. OUVD) call app_log(APP_ERROR,'Destination file unknown')
+            call app_log(APP_WARNING, 'Nothing copied')
+            IF(.NOT. OUVS) call app_log(APP_ERROR, 'Source file unknown')
+            IF(.NOT. OUVD) call app_log(APP_ERROR, 'Destination file unknown')
             ETAT = 'ABORT'
          ENDIF
       ENDIF
@@ -423,10 +419,9 @@
          app_status=app_end(-1)
          CALL QQEXIT(app_status)
       ELSE IF(ETAT .EQ. 'ABORT') THEN
-         WRITE(6,*)'***   E D I T F S T   A V O R T E   ***'
+         WRITE(6, *)'***   E D I T F S T   A V O R T E   ***'
          CALL QQEXIT(50)
       ELSE
-         WRITE(6,*)'***   E D I T F S T   T E R M I N E   ***'
+         WRITE(6, *)'***   E D I T F S T   T E R M I N E   ***'
       ENDIF
-      STOP
-      END 
+END

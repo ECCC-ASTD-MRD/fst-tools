@@ -112,7 +112,11 @@ program fstinfo
     success = source%open(trim(ptvar(1)), 'STD+R/O+REMOTE')
     query = source%new_query(datev=pndatev, etiket=ptetiket, ip1=pnip1, ip2=pnip2, ip3=pnip3, typvar=pttypvar, nomvar=ptnomvar)
 
-    do while(query%find_next(record))
+      do while(query%find_next(record))
+        pndatprinto = 0
+        pntimeo     = 0
+        pndatprintv = 0
+        pntimev     = 0
         call newdate(record%dateo, pndatprinto, pntimeo, -3)
         call newdate(record%datev, pndatprintv, pntimev, -3)
 

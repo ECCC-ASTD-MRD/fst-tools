@@ -163,6 +163,8 @@
          strkind1=kind_to_string(kind1)
          strkind2=kind_to_string(kind2)
          strkind3=kind_to_string(kind3)
+         date_1 = 0
+         date_2 = 0
          call newdate(record%dateo,date_1,date_2,-3)   ! translate date time stamp to printable format
          if(can_translate)then
             write(app_msg,667)'copystx: DRYRUN-select: ',date_1,date_2,record%typvar,record%nomvar,record%etiket,P1,strkind1,P2,strkind2,P3,strkind3,record%dateo,record%grtyp,record%ig1,record%ig2,record%ig3,record%ig4

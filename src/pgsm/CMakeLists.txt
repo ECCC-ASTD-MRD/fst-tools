@@ -6,7 +6,7 @@ set(FICHIERS_FTN90
     # better than doing this.
     calcul.F90 champ.F90 champ_seq.F90 chk_extrap.F90
     chk_hy.F90 chk_toctoc.F90 chkenrpos.F90 chk_userdate.F90
-    chmpdif.F90 comme.F90 conlalo.F90 conver.F90 convs.F90
+    chmpdif.F90 comme.F90 conver.F90 convs.F90
     coord.F90 coupe.F90 coupzm.F90 ecrits.F90 ecritur.F90
     epais.F90 fst_get_mask_key.F90 fillcoord.F90 grigaus.F90
     grigef.F90 grigrib.F90 grille2.F90 grillps.F90

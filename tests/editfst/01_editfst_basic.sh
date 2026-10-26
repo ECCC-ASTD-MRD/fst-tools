@@ -21,7 +21,9 @@ function run_test() {
         exit -1
     fi
 
-    directives=editfst.dir
+    # Distinct directives filename so this test can run in parallel with
+    # 02_editfst_exclure.sh without clobbering each other's editfst.dir.
+    directives=01_editfst_basic.dir
     echo "desire('', '', '', -1, 3, -1, -1)" > ${directives}
 
     echo "Copy single record (directive from file)"

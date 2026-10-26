@@ -209,8 +209,8 @@ void xmlconvdate(char xmldate[], int dateo)
     int mode = -3;
     int ldateo = dateo;
 
-    int yyyymmdd;
-    int hhmmssss;
+    int yyyymmdd = 0;
+    int hhmmssss = 0;
     f77name(newdate)(&ldateo, &yyyymmdd, &hhmmssss, &mode);
 
     int yyyy = yyyymmdd / 10000;

@@ -46,7 +46,7 @@
       IF(DN.EQ.ND .AND. OUVD) THEN
          IF(INDEX(DNOM,'SEQ') .GT. 0) THEN
             OUVRED = 0
-            write(app_msg,*) 'ouvred: Sequentila file ',ND,' already opened'
+            write(app_msg,*) 'ouvred: Sequential file ',ND,' already opened'
             call app_log(APP_DEBUG,app_msg)
          ELSE
             OUVRED = destination%get_num_records()
@@ -81,8 +81,8 @@
          RENDUA = 0
 
          query = destination%new_query()
-10       COPIES = query%find_next(record)
-         IF(COPIES .GE. 0) THEN
+10       success = query%find_next(record)
+         IF(success) THEN
             RENDUA = RENDUA+1
             GO TO 10
          ENDIF
