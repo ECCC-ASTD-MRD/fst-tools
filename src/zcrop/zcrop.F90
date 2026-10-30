@@ -6,7 +6,7 @@
 
 #include "fst-tools_build_info.h"
 
-   integer ::  ipos, i, mode, new_ni, new_nj, ip1, ip2, ip3
+   integer ::  ipos, i, mode, ip1, ip2, ip3
 
    integer, parameter :: non_defini = -1, copie = 0, entier = 1, reel = 2
    external ccard
