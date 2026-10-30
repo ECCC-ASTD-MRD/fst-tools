@@ -11,6 +11,7 @@ if (EC_INIT_DONE LESS 2)
             editfst/01_editfst_basic.sh
             editfst/02_editfst_exclure.sh
             editfst/04_editfst_ds.sh
+            editfst/05_editfst_backend.sh
             voir/01_voir_basic.sh
             voir/02_voir_style.sh)
         set(TEST_SCRIPTS_SOURCE ${TEST_SCRIPTS})
@@ -67,6 +68,17 @@ if (EC_INIT_DONE LESS 2)
                     $<TARGET_FILE:editfst> $<TARGET_FILE:fstcomp>
         )
         set_tests_properties(04_editfst_ds PROPERTIES FIXTURES_REQUIRED GEN_FST TIMEOUT 10)
+
+        add_test(
+            NAME 05_editfst_backend
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/editfst/05_editfst_backend.sh
+                    $<TARGET_FILE:editfst> ${Python3_EXECUTABLE}
+        )
+        # Only PYTHONPATH is set: the rmn Python module locates librmn.so via a
+        # path relative to its own install location.
+        set_tests_properties(05_editfst_backend PROPERTIES
+            FIXTURES_REQUIRED GEN_FST
+            ENVIRONMENT "PYTHONPATH=${rmn_PYTHONPATH}")
 
         add_test(
             NAME 04_voir_style
