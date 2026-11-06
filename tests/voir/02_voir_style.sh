@@ -7,17 +7,21 @@
 # whitespace runs to single spaces, and compare the resulting sequence of
 # column labels. This is order-aware but width-tolerant.
 #
-# We check:
-#   1. -style absent  -> the expected default columns are printed
-#   2. -style empty   -> the expected base columns are printed
-#   3. every field    -> each field can be turned off (if on by default) or
-#                        on (if off by default) with the corresponding token
+# Model (see src/voir/README.md):
+#   - a non-empty -style starts from a BASE STATE; each recognized token
+#     overrides it; unrecognized tokens are ignored;
+#   - an ABSENT -style shows the DEFAULT columns;
+#   - a BARE -style (present, no value) shows the 20.0 bare default.
 #
-# Note: the -style string is parsed by fst24_make_fields_from_string, which
-# starts from a base state and only overrides the components matching a token.
-# The on/off checks below are therefore expressed *relative* to the empty-style
-# baseline captured at run time, so they do not depend on the absolute base
-# state.
+# We check:
+#   1. -style absent  -> the expected default columns
+#   2. bare -style    -> the expected 20.0 bare-default columns
+#   3. base state     -> an unrecognized token leaves the base columns
+#   4. every ON token -> adds its column(s) relative to the base state
+#   5. every OFF token-> removes its column(s) relative to the base state
+#   6. aliases        -> each 20.0 alias produces the same header as its
+#                        canonical token
+#   7. FULL           -> shows everything interesting (all three IPs on)
 set -u
 
 if [ $# -lt 1 ]; then
@@ -26,9 +30,14 @@ if [ $# -lt 1 ]; then
 fi
 VOIR="$1"
 
-test_file_in=03_voir_basic_in.rsf
+# Prefer the XDF file (works with both the 20.0 and 20.1 backends); fall back
+# to the RSF file if only that one is present.
+test_file_in=03_voir_basic_in.xdf
+if [ ! -f "${test_file_in}" ] && [ -f 03_voir_basic_in.rsf ]; then
+    test_file_in=03_voir_basic_in.rsf
+fi
 if [ ! -f "${test_file_in}" ]; then
-    echo "Test FST file ${test_file_in} does not exist!"
+    echo "Test FST file 03_voir_basic_in.{xdf,rsf} does not exist!"
     exit 1
 fi
 
@@ -78,68 +87,90 @@ assert_lacks() {
     fi
 }
 
-echo "=== 1. -style absent ==="
-hdr_absent=$(get_header)
-expected_absent='NOMV TV ETIQUETTE NI NJ NK (DATE-O h m s) IP1 IP2 IP3 DEET NPAS DTYP SIZ G IG1 IG2 IG3 IG4'
-assert_header_eq "absent: default columns" "${expected_absent}" "${hdr_absent}"
+# --- Expected headers (normalized) -----------------------------------------
+# Base state: a non-empty -style with no recognized token.
+base='NOMV TV ETIQUETTE IP1 IP2 IP3 DEET NPAS DTY SIZ'
+# Default columns: -style absent.
+absent='NOMV TV ETIQUETTE NI NJ NK (DATE-O h m s) IP1 IP2 IP3 DEET NPAS DTY SIZ G IG1 IG2 IG3 IG4'
+# 20.0 bare default: bare -style (NINJNK+DATEV+LEVEL+GRIDINFO, IP1 on by default).
+bare='NOMV TV ETIQUETTE NI NJ NK (DATE-V h m s) STAMP-V LEVEL IP1 IP2 IP3 DEET NPAS DTY SIZ G XG1 XG2 XG3 XG4'
 
-echo "=== 2. -style present but empty ==="
-hdr_empty=$(get_header -style "")
-expected_empty='NOMV TV ETIQUETTE NI NJ NK DATE-O IP1 IP2 IP3 DTYP SIZ G IG1 IG2 IG3 IG4'
-assert_header_eq "empty: base columns" "${expected_empty}" "${hdr_empty}"
+echo "=== 1. -style absent -> default columns ==="
+assert_header_eq "absent: default columns" "${absent}" "$(get_header)"
 
-echo "=== 3. turn off fields that are on by default ==="
-# For each NO* token, the target column(s) must be present in the empty baseline
-# and absent when the token is given.
-check_off() {  # check_off <token> <col-fixed-string>...
+echo "=== 2. bare -style -> 20.0 bare default ==="
+assert_header_eq "bare: 20.0 bare default" "${bare}" "$(get_header -style)"
+
+echo "=== 3. base state (unrecognized token) ==="
+assert_header_eq "base: base columns" "${base}" "$(get_header -style ZZZNOTOKEN)"
+
+echo "=== 4. ON tokens add a column (relative to the base state) ==="
+# check_on <token> <col-fixed-string>...
+check_on() {
     local token="$1"; shift
     local hdr
     hdr=$(get_header -style "${token}")
     local col
     for col in "$@"; do
-        assert_has   "off ${token}: '${col}' present in baseline" "${col}" "${hdr_empty}"
-        assert_lacks "off ${token}: '${col}' removed"            "${col}" "${hdr}"
+        assert_lacks "on ${token}: '${col}' absent in base" "${col}" "${base}"
+        assert_has   "on ${token}: '${col}' added"          "${col}" "${hdr}"
+    done
+}
+check_on NINJNK     ' NI ' ' NJ ' ' NK '
+check_on DATEO      '(DATE-O'
+check_on DATESTAMPO 'STAMP-O'
+check_on DATEV      '(DATE-V' 'STAMP-V'
+check_on LEVEL      ' LEVEL '
+check_on DECODE     'DECODED IP1/IP2/IP3'
+check_on GRID       'XG1' 'XG2' 'XG3' 'XG4'
+check_on IG1234     'IG1' 'IG2' 'IG3' 'IG4'
+
+echo "=== 5. OFF tokens remove a column (relative to the base state) ==="
+# check_off <token> <col-fixed-string>...
+check_off() {
+    local token="$1"; shift
+    local hdr
+    hdr=$(get_header -style "${token}")
+    local col
+    for col in "$@"; do
+        assert_has   "off ${token}: '${col}' present in base" "${col}" "${base}"
+        assert_lacks "off ${token}: '${col}' removed"         "${col}" "${hdr}"
     done
 }
 check_off NONOMVAR 'NOMV'
 check_off NOTYPVAR ' TV '
 check_off NOETIKET 'ETIQUETTE'
-check_off NONIJK   ' NI ' ' NJ ' ' NK '
-check_off NODATEO  'DATE-O'
-check_off NODATYP  'DTYP'
 check_off NOIP1    ' IP1 '
 check_off NOIP2    ' IP2 '
 check_off NOIP3    ' IP3 '
+check_off NOIP23   ' IP2 ' ' IP3 '
 check_off NOIPS    ' IP1 ' ' IP2 ' ' IP3 '
-check_off NOIGS    'IG1'
+check_off NODEET   ' DEET '
+check_off NONPAS   ' NPAS '
+check_off NODATYP  ' DTY '
+# SIZ is the last column in the base header, so it has no trailing space.
+check_off NOSIZ    ' SIZ'
 
-echo "=== 4. turn on fields that are off by default ==="
-# For each ON token, the target column(s) must be absent in the empty baseline
-# and present when the token is given.
-check_on() {  # check_on <token> <col-fixed-string>...
-    local token="$1"; shift
-    local hdr
-    hdr=$(get_header -style "${token}")
-    local col
-    for col in "$@"; do
-        assert_lacks "on ${token}: '${col}' absent in baseline" "${col}" "${hdr_empty}"
-        assert_has   "on ${token}: '${col}' added"             "${col}" "${hdr}"
-    done
+echo "=== 6. 20.0 aliases match their canonical token ==="
+# check_alias <canonical> <alias>
+check_alias() {
+    local a b
+    a=$(get_header -style "$1")
+    b=$(get_header -style "$2")
+    assert_header_eq "alias ${2} == ${1}" "${a}" "${b}"
 }
-check_on DATEV  ' DATE-V '
-check_on LEVEL  ' LEVEL '
-check_on DEET   ' DEET '
-check_on NPAS   ' NPAS '
-check_on DECODE 'IPs'
-check_on GRID   'XG1'
+check_alias NONOMVAR NONOMV
+check_alias NOTYPVAR NOTYPV
+check_alias NOETIKET NOETIQ
+check_alias NODATYP  NODTY
+check_alias DECODE   IPALL
+check_alias GRID     GRIDINFO
 
-echo "=== 5. NOSTAMP changes the DATE-O format ==="
-# NOSTAMP turns off the date stamps: the DATE-O column changes from the compact
-# 'DATE-O' label to the expanded '(DATE-O  h m s)' label.
-hdr_stamp=$(get_header -style "NOSTAMP")
-assert_has   "NOSTAMP: baseline DATE-O is stamped"     ' DATE-O ' "${hdr_empty}"
-assert_lacks "NOSTAMP: stamped DATE-O label removed"   ' DATE-O ' "${hdr_stamp}"
-assert_has   "NOSTAMP: un-stamped (DATE-O h m s) used" '(DATE-O'  "${hdr_stamp}"
+echo "=== 7. FULL shows everything interesting ==="
+# 20.1 FULL = NINJNK+DATEV+IPALL+GRIDINFO (all three IPs stay on; deviation from
+# 20.0, whose FULL suppressed IP2/IP3).
+full='NOMV TV ETIQUETTE NI NJ NK (DATE-V h m s) STAMP-V DECODED IP1/IP2/IP3 IP1 IP2 IP3 DEET NPAS DTY SIZ G XG1 XG2 XG3 XG4'
+assert_header_eq "FULL: everything interesting" "${full}" "$(get_header -style FULL)"
 
 echo
 echo "Summary: ${pass} passed, ${fail} failed."
