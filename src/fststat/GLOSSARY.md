@@ -28,3 +28,9 @@ An FST data type and bit-width that `fststat` mishandles (e.g. 64-bit data):
 it may log warnings or errors and report garbage values. The behavior for an
 *invalid type* is observed, not specified.
 _Avoid_: unsupported type, unhandled type
+
+**Special field**:
+A field that `fststat` mishandles, either because of its type (an *invalid
+type*) or because of its data values (NaN, ±Inf). Special fields are tested
+separately from the *valid types*.
+_Avoid_: edge case, pathological field

@@ -23,6 +23,14 @@ FSTSTAT_DATA_I4 = np.array([1, 2, 3], dtype="i4")
 FSTSTAT_DATA_U4 = np.array([1, 2, 3], dtype="u4")
 FSTSTAT_DATA_F8 = np.array([1.0, 2.0, 3.0], dtype="f8")
 FSTSTAT_DATA_I8 = np.array([1, 2, 3], dtype="i8")
+# 4-element fields with a non-finite value, for the `fststat` "special" test.
+FSTSTAT_DATA_PINF = np.array([1.0, 2.0, 3.0, np.inf], dtype="f4")
+FSTSTAT_DATA_NINF = np.array([1.0, 2.0, 3.0, -np.inf], dtype="f4")
+FSTSTAT_DATA_NAN = np.array([1.0, 2.0, 3.0, np.nan], dtype="f4")
+# 4-element fields with NO finite value, for the `fststat` "special" test.
+FSTSTAT_DATA_ALLINF = np.array([np.inf, np.inf, np.inf, np.inf], dtype="f4")
+FSTSTAT_DATA_ALLNAN = np.array([np.nan, np.nan, np.nan, np.nan], dtype="f4")
+FSTSTAT_DATA_MIXNF = np.array([np.nan, np.inf, np.nan, np.inf], dtype="f4")
 
 # (test_name, test_id, nomvar, typvar, etiket, ip1, dateo, in_output,
 #  data_type, data_bits, pack_bits, data)
@@ -74,11 +82,18 @@ TEST_RECORDS = [
     ("05_fststat_types", 5, "R16F", "B", "FSTSTAT_REAL16", 6, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 16, FSTSTAT_DATA_F4),
     ("05_fststat_types", 5, "E64F", "B", "FSTSTAT_IEEE64", 7, None, 0, rmn.FstDataType.FST_TYPE_REAL_IEEE, 64, 64, FSTSTAT_DATA_F8),
 
-    # Record for the `fststat` "special" test: a 64-bit SIGNED field, which
-    # triggers an RMN error in fststat ("We don't deal with 8-byte elements
-    # yet", see loop_fields.F90). The test observes the behavior (non-zero
-    # exit, garbage values) rather than specifying it.
+    # Records for the `fststat` "special" test: fields that fststat
+    # mishandles. The order matters: the NaN field must be last, because it
+    # crashes fststat and the process dies before processing any later
+    # records. The test documents the current behavior rather than
+    # specifying it.
     ("06_fststat_special", 6, "I64S", "B", "FSTSTAT_SIGNED64", 8, None, 0, rmn.FstDataType.FST_TYPE_SIGNED, 64, 64, FSTSTAT_DATA_I8),
+    ("06_fststat_special", 6, "PINF", "B", "FSTSTAT_PINF", 9, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_PINF),
+    ("06_fststat_special", 6, "NINF", "B", "FSTSTAT_NINF", 10, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_NINF),
+    ("06_fststat_special", 6, "NANF", "B", "FSTSTAT_NAN", 11, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_NAN),
+    ("06_fststat_special", 6, "AINF", "B", "FSTSTAT_ALLINF", 12, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLINF),
+    ("06_fststat_special", 6, "ANAN", "B", "FSTSTAT_ALLNAN", 13, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLNAN),
+    ("06_fststat_special", 6, "MIXN", "B", "FSTSTAT_MIXNF", 14, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_MIXNF),
 ]
 
 
