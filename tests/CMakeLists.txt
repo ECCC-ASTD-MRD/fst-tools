@@ -1,7 +1,7 @@
 
 if (EC_INIT_DONE LESS 2)
    if(BUILD_TESTING)
-        add_dependencies(test_execs editfst fstcomp voir)
+        add_dependencies(test_execs editfst fstcomp voir fststat)
 
         # Copy the test scripts from the source tree to the build tree so the
         # tests run against the build directory (mirrors what rmn does). The
@@ -13,7 +13,10 @@ if (EC_INIT_DONE LESS 2)
             editfst/04_editfst_ds.sh
             editfst/05_editfst_backend.sh
             voir/01_voir_basic.sh
-            voir/02_voir_style.sh)
+            voir/02_voir_style.sh
+            fststat/01_fststat_types.sh
+            fststat/02_fststat_special.sh
+        )
         set(TEST_SCRIPTS_SOURCE ${TEST_SCRIPTS})
         list(TRANSFORM TEST_SCRIPTS_SOURCE PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
         set(TEST_SCRIPTS_BUILD ${TEST_SCRIPTS})
@@ -22,13 +25,15 @@ if (EC_INIT_DONE LESS 2)
         add_custom_command(
             OUTPUT ${TEST_SCRIPTS_BUILD}
             COMMAND ${CMAKE_COMMAND} -E make_directory
-                    ${CMAKE_CURRENT_BINARY_DIR}/editfst ${CMAKE_CURRENT_BINARY_DIR}/voir
+                    ${CMAKE_CURRENT_BINARY_DIR}/editfst ${CMAKE_CURRENT_BINARY_DIR}/voir ${CMAKE_CURRENT_BINARY_DIR}/fststat
             COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_CURRENT_SOURCE_DIR}/generate_fst.py ${CMAKE_CURRENT_BINARY_DIR}/
             COMMAND ${CMAKE_COMMAND} -E copy_directory
                     ${CMAKE_CURRENT_SOURCE_DIR}/editfst ${CMAKE_CURRENT_BINARY_DIR}/editfst
             COMMAND ${CMAKE_COMMAND} -E copy_directory
                     ${CMAKE_CURRENT_SOURCE_DIR}/voir ${CMAKE_CURRENT_BINARY_DIR}/voir
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_CURRENT_SOURCE_DIR}/fststat ${CMAKE_CURRENT_BINARY_DIR}/fststat
             DEPENDS ${TEST_SCRIPTS_SOURCE}
             COMMENT "Copying test script files to test build directory")
         add_custom_target(test-script-files DEPENDS ${TEST_SCRIPTS_BUILD})
@@ -86,5 +91,19 @@ if (EC_INIT_DONE LESS 2)
                     $<TARGET_FILE:voir>
         )
         set_tests_properties(04_voir_style PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 05_fststat_types
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/fststat/01_fststat_types.sh
+                    $<TARGET_FILE:fststat>
+        )
+        set_tests_properties(05_fststat_types PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 06_fststat_special
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/fststat/02_fststat_special.sh
+                    $<TARGET_FILE:fststat>
+        )
+        set_tests_properties(06_fststat_special PROPERTIES FIXTURES_REQUIRED GEN_FST)
     endif()
 endif()
