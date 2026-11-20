@@ -11,7 +11,10 @@ add_custom_command(TARGET fstcomp POST_BUILD
 
 # Force the use of RPATH instead of RUNPATH to revert to the
 # old behaviour which inherits the search paths in the dependency chain
-target_link_libraries(fstcomp PUBLIC "-Wl,--disable-new-dtags")
+target_link_libraries(fstcomp PUBLIC
+   "-Wl,--disable-new-dtags"
+   $<$<LINK_LANG_AND_ID:Fortran,IntelLLVM>:gcc_s>
+)
 
 install(TARGETS fstcomp)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fstcomp DESTINATION bin)
