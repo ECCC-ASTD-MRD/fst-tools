@@ -16,6 +16,9 @@ if (EC_INIT_DONE LESS 2)
             voir/02_voir_style.sh
             fststat/01_fststat_types.sh
             fststat/02_fststat_special.sh
+            fststat/03_fststat_special_comp.sh
+            fstcomp/01_fstcomp_nonfinite.sh
+            fstcomp/02_fstcomp_ecode.sh
         )
         set(TEST_SCRIPTS_SOURCE ${TEST_SCRIPTS})
         list(TRANSFORM TEST_SCRIPTS_SOURCE PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
@@ -25,7 +28,7 @@ if (EC_INIT_DONE LESS 2)
         add_custom_command(
             OUTPUT ${TEST_SCRIPTS_BUILD}
             COMMAND ${CMAKE_COMMAND} -E make_directory
-                    ${CMAKE_CURRENT_BINARY_DIR}/editfst ${CMAKE_CURRENT_BINARY_DIR}/voir ${CMAKE_CURRENT_BINARY_DIR}/fststat
+                    ${CMAKE_CURRENT_BINARY_DIR}/editfst ${CMAKE_CURRENT_BINARY_DIR}/voir ${CMAKE_CURRENT_BINARY_DIR}/fststat ${CMAKE_CURRENT_BINARY_DIR}/fstcomp
             COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_CURRENT_SOURCE_DIR}/generate_fst.py ${CMAKE_CURRENT_BINARY_DIR}/
             COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -34,6 +37,8 @@ if (EC_INIT_DONE LESS 2)
                     ${CMAKE_CURRENT_SOURCE_DIR}/voir ${CMAKE_CURRENT_BINARY_DIR}/voir
             COMMAND ${CMAKE_COMMAND} -E copy_directory
                     ${CMAKE_CURRENT_SOURCE_DIR}/fststat ${CMAKE_CURRENT_BINARY_DIR}/fststat
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_CURRENT_SOURCE_DIR}/fstcomp ${CMAKE_CURRENT_BINARY_DIR}/fstcomp
             DEPENDS ${TEST_SCRIPTS_SOURCE}
             COMMENT "Copying test script files to test build directory")
         add_custom_target(test-script-files DEPENDS ${TEST_SCRIPTS_BUILD})
@@ -105,5 +110,26 @@ if (EC_INIT_DONE LESS 2)
                     $<TARGET_FILE:fststat>
         )
         set_tests_properties(06_fststat_special PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 07_fststat_special_comp
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/fststat/03_fststat_special_comp.sh
+                    $<TARGET_FILE:fstcomp>
+        )
+        set_tests_properties(07_fststat_special_comp PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 08_fstcomp_nonfinite
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/fstcomp/01_fstcomp_nonfinite.sh
+                    $<TARGET_FILE:fstcomp>
+        )
+        set_tests_properties(08_fstcomp_nonfinite PROPERTIES FIXTURES_REQUIRED GEN_FST)
+
+        add_test(
+            NAME 09_fstcomp_ecode
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/fstcomp/02_fstcomp_ecode.sh
+                    $<TARGET_FILE:fstcomp>
+        )
+        set_tests_properties(09_fstcomp_ecode PROPERTIES FIXTURES_REQUIRED GEN_FST)
     endif()
 endif()

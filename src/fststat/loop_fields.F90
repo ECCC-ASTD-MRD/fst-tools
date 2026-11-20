@@ -26,6 +26,14 @@ subroutine loop_fields(source)
 
     do while(query%find_next(record))
         if (record%nomvar /= '!!') then
+            ! 64-bit integer records are not supported: XDF cannot store them,
+            ! and reading them as 4-byte elements (the fallback below) gives
+            ! garbage. (Supporting 64-bit integers in RSF is a missing feature)
+            if ((record%data_type == FST_TYPE_SIGNED .or. record%data_type == FST_TYPE_UNSIGNED) &
+                .and. record%data_bits == 64) then
+                write(6, *) ' **   SKIPPING 64-bit INTEGER RECORD "', record%nomvar, '": NOT SUPPORTED  **'
+                cycle
+            end if
             ! Read everything as 4-byte elements.
             ! We don't deal with 8-byte elements yet
             if (record % data_bits <= 32) then

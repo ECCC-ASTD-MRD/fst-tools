@@ -32,6 +32,16 @@ FSTSTAT_DATA_ALLINF = np.array([np.inf, np.inf, np.inf, np.inf], dtype="f4")
 FSTSTAT_DATA_ALLNAN = np.array([np.nan, np.nan, np.nan, np.nan], dtype="f4")
 FSTSTAT_DATA_MIXNF = np.array([np.nan, np.inf, np.nan, np.inf], dtype="f4")
 
+# 4-element fields for the `fstcomp` non-finite test. File A and file B share
+# identical record metadata; only the data of some records differs (see the
+# 08_fstcomp_nonfinite_a / _b cases below). The last element is the one that
+# varies between the two files.
+FSTCOMP_BASE = np.array([1.0, 2.0, 3.0, 4.0], dtype="f4")
+FSTCOMP_FIN_DIFF = np.array([1.0, 2.0, 3.0, 9.0], dtype="f4")   # finite vs finite
+FSTCOMP_NAN = np.array([1.0, 2.0, 3.0, np.nan], dtype="f4")
+FSTCOMP_PINF = np.array([1.0, 2.0, 3.0, np.inf], dtype="f4")
+FSTCOMP_NINF = np.array([1.0, 2.0, 3.0, -np.inf], dtype="f4")
+
 # (test_name, test_id, nomvar, typvar, etiket, ip1, dateo, in_output,
 #  data_type, data_bits, pack_bits, data)
 #   dateo: origin date as a "YYYY-MM-DD HH:MM:SS" string, or None for "no date".
@@ -94,6 +104,62 @@ TEST_RECORDS = [
     ("06_fststat_special", 6, "AINF", "B", "FSTSTAT_ALLINF", 12, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLINF),
     ("06_fststat_special", 6, "ANAN", "B", "FSTSTAT_ALLNAN", 13, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLNAN),
     ("06_fststat_special", 6, "MIXN", "B", "FSTSTAT_MIXNF", 14, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_MIXNF),
+
+    # Records for the `fstcomp` non-finite test. Two test cases (A and B) hold
+    # the SAME seven records (identical nomvar/etiket/ip1/metadata); only the
+    # data of some records differs between the two files. The test compares
+    # 08_fstcomp_nonfinite_a_in.rsf against 08_fstcomp_nonfinite_b_in.rsf and
+    # checks fstcomp's per-record "differs" indicator. Only the `_in` files are
+    # used, so in_output is 0 for all of them.
+    #
+    #   SAME  identical data          -> control: reported as SAME
+    #   FINC  4 vs 9 (finite)         -> control: reported as DIFFERENT
+    #   NANF  4 vs NaN                -> should be DIFFERENT
+    #   INFF  4 vs +Inf               -> should be DIFFERENT
+    #   NINF  4 vs -Inf               -> should be DIFFERENT
+    #   NANV  NaN vs +Inf             -> should be DIFFERENT
+    #   INNV  +Inf vs -Inf            -> should be DIFFERENT
+    ("08_fstcomp_nonfinite_a", 7, "SAME", "B", "FSTCMP_SAME", 1, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_a", 7, "FINC", "B", "FSTCMP_FIN", 2, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_a", 7, "NANF", "B", "FSTCMP_NANF", 3, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_a", 7, "INFF", "B", "FSTCMP_INFF", 4, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_a", 7, "NINF", "B", "FSTCMP_NINF", 5, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_a", 7, "NANV", "B", "FSTCMP_NANV", 6, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_NAN),
+    ("08_fstcomp_nonfinite_a", 7, "INNV", "B", "FSTCMP_INNV", 7, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_PINF),
+
+    ("08_fstcomp_nonfinite_b", 8, "SAME", "B", "FSTCMP_SAME", 1, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("08_fstcomp_nonfinite_b", 8, "FINC", "B", "FSTCMP_FIN", 2, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_FIN_DIFF),
+    ("08_fstcomp_nonfinite_b", 8, "NANF", "B", "FSTCMP_NANF", 3, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_NAN),
+    ("08_fstcomp_nonfinite_b", 8, "INFF", "B", "FSTCMP_INFF", 4, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_PINF),
+    ("08_fstcomp_nonfinite_b", 8, "NINF", "B", "FSTCMP_NINF", 5, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_NINF),
+    ("08_fstcomp_nonfinite_b", 8, "NANV", "B", "FSTCMP_NANV", 6, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_PINF),
+    ("08_fstcomp_nonfinite_b", 8, "INNV", "B", "FSTCMP_INNV", 7, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_NINF),
+
+    # Records for the `fstcomp` exit-code test. Two test cases (A and B) hold
+    # the SAME three records (identical nomvar/etiket/ip1/metadata); only the
+    # data of REC3 differs (base in A, diff in B). The records are written in a
+    # DIFFERENT order in the two files: in A, REC3 is last; in B, REC3 is first.
+    # The test runs fstcomp twice (inverting -a/-b) and checks the exit code.
+    # Only the `_in` files are used, so in_output is 0 for all of them.
+    ("09_fstcomp_ecode_a", 9, "REC1", "B", "FSTCMP_REC1", 1, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("09_fstcomp_ecode_a", 9, "REC2", "B", "FSTCMP_REC2", 2, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("09_fstcomp_ecode_a", 9, "REC3", "B", "FSTCMP_REC3", 3, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+
+    ("09_fstcomp_ecode_b", 10, "REC3", "B", "FSTCMP_REC3", 3, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_FIN_DIFF),
+    ("09_fstcomp_ecode_b", 10, "REC1", "B", "FSTCMP_REC1", 1, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+    ("09_fstcomp_ecode_b", 10, "REC2", "B", "FSTCMP_REC2", 2, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTCOMP_BASE),
+
+    # Records for the `fstcomp` RSF-vs-XDF comparison of the non-finite records
+    # (03_fststat_special_comp.sh). Same 6 non-finite REAL records as
+    # 06_fststat_special, but WITHOUT the 64-bit SIGNED record (which XDF cannot
+    # read back, so it would make the two files differ). Only the `_in` files
+    # are used, so in_output is 0 for all of them.
+    ("07_fststat_special_nf", 11, "PINF", "B", "FSTSTAT_PINF", 9, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_PINF),
+    ("07_fststat_special_nf", 11, "NINF", "B", "FSTSTAT_NINF", 10, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_NINF),
+    ("07_fststat_special_nf", 11, "NANF", "B", "FSTSTAT_NAN", 11, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_NAN),
+    ("07_fststat_special_nf", 11, "AINF", "B", "FSTSTAT_ALLINF", 12, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLINF),
+    ("07_fststat_special_nf", 11, "ANAN", "B", "FSTSTAT_ALLNAN", 13, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_ALLNAN),
+    ("07_fststat_special_nf", 11, "MIXN", "B", "FSTSTAT_MIXNF", 14, None, 0, rmn.FstDataType.FST_TYPE_REAL, 32, 32, FSTSTAT_DATA_MIXNF),
 ]
 
 

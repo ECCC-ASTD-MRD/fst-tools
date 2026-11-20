@@ -163,6 +163,7 @@ program fstcomp
     type(fst_record) :: recorda, recordb
     type(fst_query)  :: querya, queryb
     logical          :: success
+    integer          :: status
 
     ! EXTRACTION DES CLES DE LA SEQUENCE D'APPEL
     I = -1
@@ -377,7 +378,7 @@ program fstcomp
         IF (.not. success) THEN
             write(app_msg, not_found_fmt) nomvab, typvab, ip1b, ip2b, ip3b, idate, DEF1(b_path_idx)
             call app_log(APP_WARNING, app_msg)
-            app_status = 2
+            app_status = max(app_status, 2)
             cycle
         ENDIF
 
@@ -385,7 +386,7 @@ program fstcomp
         IF ((recordb%ni /= recorda%ni) .OR. (recordb%nj /= recorda%nj) .OR. (recordb%nk /= recorda%nk)) THEN
             write(app_msg, grid_size_fmt) NOMVAB, recorda%ni, recorda%nj, recorda%nk, recordb%ni, recordb%nj, recordb%nk
             call app_log(APP_WARNING, app_msg)
-            app_status = 1
+            app_status = max(app_status, 1)
             cycle
         ENDIF
 
@@ -396,14 +397,14 @@ program fstcomp
                 write(app_msg, grid_params_fmt) DEF1(a_path_idx), recorda%grtyp, recorda%ig1, recorda%ig2, recorda%ig3, recorda%ig4, &
                             DEF1(b_path_idx), recordb%grtyp, recordb%ig1, recordb%ig2, recordb%ig3, recordb%ig4
                 call app_log(APP_WARNING, app_msg)
-                app_status=1
+                app_status = max(app_status, 1)
                 cycle
             ENDIF
         ENDIF
 
         IF (recorda%pack_bits /= recordb%pack_bits) then
             write(app_msg, *) 'NBITSA=', recorda%pack_bits, ' NBITSB=', recordb%pack_bits
-            app_status = 1
+            app_status = max(app_status, 1)
             call app_log(APP_INFO, app_msg)
         endif
 
@@ -429,13 +430,15 @@ program fstcomp
         end if
         select case (comparison_type)
             case (ct_real)
-                app_status = rcmp1d(recorda, recordb, limite, limval, pack_err2, exception)
+                status = rcmp1d(recorda, recordb, limite, limval, pack_err2, exception)
+                app_status = max(app_status, status)
             case (ct_inte)
-                app_status = icmp1d(recorda, recordb, exception)
+                status = icmp1d(recorda, recordb, exception)
+                app_status = max(app_status, status)
                 call queryb%free()
             case default
                 WRITE(app_msg, *)' No comparison possible: DATA_TYPE_A=', recorda%data_type, ' DATA_TYPE_B=', recordb%data_type
-                app_status = 1
+                app_status = max(app_status, 1)
                 call app_log(APP_WARNING, app_msg)
         end select
     enddo
@@ -481,6 +484,7 @@ END
 integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     use app
     use rmn_fst24
+    use, intrinsic :: ieee_arithmetic
     implicit none
 
     !< \return 0 when the fields are equivalent, 2 otherwise
@@ -515,12 +519,14 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     integer :: i, kind, irange
     character(len = 15) :: level
     real :: rlevel
-    real(kind = real64) :: sum_a, sum_b, sa2, sb2, err, rel_err, max_rel_err, avg_a, avg_b, &
-                           val_a, val_b, fsize, errlim, errval, vara, varb, sab
+    real(kind = real64) :: sum_a, sum_b, sa2, sb2, err, rel_err, max_rel_err, avg_a, avg_b, avg_diff
+    real(kind = real64) :: val_a, val_b, fsize, errlim, errval, vara, varb, sab
     real :: min_a, max_a, min_b, max_b, range_a, range_b, deux_exp_nb
     real :: ratio_max, ratio
     real :: err_unit
-    integer :: nbDiff
+    integer(int64) :: num_diff
+    integer(int64) :: num_nan_a, num_nan_b
+    integer(int64) :: num_inf_a, num_inf_b
 
     external statfldx
 
@@ -528,7 +534,7 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     call a%get_data_array(data_a)
     call b%get_data_array(data_b)
 
-    nbDiff = 0
+    num_diff = 0
     size = a%ni * a%nj * a%nk
 
     errlim = 10.0 ** limite
@@ -545,45 +551,77 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     sum_err_abs = 0.0
     max_err_abs = 0.0
     ratio_max = 0.0
-    min_a = data_a(1)
-    max_a = data_a(1)
-    min_b = data_b(1)
-    max_b = data_b(1)
+    min_a = ieee_value(min_a, ieee_positive_inf)
+    max_a = ieee_value(max_a, ieee_negative_inf)
+    min_b = ieee_value(min_b, ieee_positive_inf)
+    max_b = ieee_value(max_b, ieee_negative_inf)
     do i = 1, size
         val_a = data_a(i)
         val_b = data_b(i)
-        min_a = min(min_a, data_a(i))
-        max_a = max(max_a, data_a(i))
-        min_b = min(min_b, data_b(i))
-        max_b = max(max_b, data_b(i))
-        if (abs(val_a - val_b) < errval) then
-            val_a = val_b
+        ! print '(6(A, F10.1))', 'val_a=', val_a, ' val_b=', val_b, &
+        !         ' min_a=', min_a, ' max_a=', max_a, ' min_b=', min_b, ' max_b=', max_b
+
+        if (ieee_is_nan(val_a)) then
+            num_nan_a = num_nan_a + 1
+        else if (.not. ieee_is_finite(val_a)) then
+            num_inf_a = num_inf_a + 1
         endif
-        sum_a = sum_a + val_a
-        sum_b = sum_b + val_b
-        if (val_a /= val_b) then
-            if (val_a /= 0.0) ratio = real( (max(val_a, val_b) - min(val_a, val_b)) / val_a * 100 )
-            if (ratio > ratio_max) ratio_max = ratio
-            nbDiff = nbDiff + 1
-            err_abs = real( abs(val_a - val_b) )
-            sum_err_abs = sum_err_abs + err_abs
-            max_err_abs = max(err_abs, max_err_abs)
-            rel_err = 0.0
-            if (val_a /= 0.0) then
-                rel_err = abs(1.0 - val_b / val_a)
-            elseif (val_b /= 0.0) then
-                rel_err = abs(1.0 - val_a / val_b)
+        if (ieee_is_nan(val_b)) then
+            num_nan_b = num_nan_b + 1
+        else if (.not. ieee_is_finite(val_b)) then
+            num_inf_b = num_inf_b + 1
+        endif
+
+        if (ieee_is_finite(val_a) .and. ieee_is_finite(val_b)) then
+            min_a = min(min_a, val_a)
+            max_a = max(max_a, val_a)
+            min_b = min(min_b, val_b)
+            max_b = max(max_b, val_b)
+
+            if (abs(val_a - val_b) < errval) then
+                val_a = val_b
             endif
-            max_rel_err = max(max_rel_err, rel_err)
-            err = err + rel_err
+            sum_a = sum_a + val_a
+            sum_b = sum_b + val_b
+            if (val_a /= val_b) then
+                if (val_a /= 0.0) ratio = real( (max(val_a, val_b) - min(val_a, val_b)) / val_a * 100 )
+                if (ratio > ratio_max) ratio_max = ratio
+                num_diff = num_diff + 1
+                err_abs = real( abs(val_a - val_b) )
+                sum_err_abs = sum_err_abs + err_abs
+                max_err_abs = max(err_abs, max_err_abs)
+                rel_err = 0.0
+                if (val_a /= 0.0) then
+                    rel_err = abs(1.0 - val_b / val_a)
+                elseif (val_b /= 0.0) then
+                    rel_err = abs(1.0 - val_a / val_b)
+                endif
+                max_rel_err = max(max_rel_err, rel_err)
+                err = err + rel_err
+            endif
+        else if (ieee_is_nan(val_a) .ne. ieee_is_nan(val_b)) then
+            num_diff = num_diff + 1
+            max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
+        else if (ieee_is_nan(val_a) .and. ieee_is_nan(val_b)) then
+            ! Both are NaN, consider them equivalent
+        else if (ieee_is_finite(val_a) .ne. ieee_is_finite(val_b)) then
+            num_diff = num_diff + 1
+            max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
+        else 
+            print *, 'val_a=', val_a, ' val_b=', val_b
+            if (val_a /= val_b) then
+            num_diff = num_diff + 1
+            max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
+            endif
         endif
     end do
 
-    write(app_msg, *) 'nbDiff = ', nbDiff, ' sur un total de ', size
+    write(app_msg, *) 'num_diff = ', num_diff, ' sur un total de ', size
     call app_log(app_info, app_msg)
 
     range_a = max_a - min_a
     range_b = max_b - min_b
+    print*, 'range_a=', range_a, ' range_b=', range_b
     irange = transfer(range_a, 1)
     irange = ishft(ishft(irange, -23) +1, 23)
     range_a = transfer(irange, 1.0)
@@ -592,32 +630,39 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
     err = err / fsize
     avg_a = sum_a / fsize
     avg_b = sum_b / fsize
-    do i = 1, size
-        val_a = data_a(i) - avg_a
-        val_b = data_b(i) - avg_b
-        if (abs(data_a(i) - data_b(i)) < errval) then
-            val_b = val_a
-        endif
-        sab = sab + val_a * val_b
-        sa2 = sa2 + val_a * val_a
-        sb2 = sb2 + val_b * val_b
-    end do
+    avg_diff = ieee_value(avg_diff, ieee_quiet_nan)
+    if (ieee_is_finite(avg_a) .and. ieee_is_finite(avg_b)) avg_diff = avg_b - avg_a
     sum_err_abs = real(sum_err_abs / fsize)
-    vara = sa2 / fsize
-    varb = sb2 / fsize
-    write(app_msg, *) 'sab avant=', sab
-    call app_log(app_debug, app_msg)
-    if (sa2 * sb2 /= 0.0) then
-        sab = sab / sqrt(sa2 * sb2)
-        write(app_msg, *) 'sa2,sb2,sqtr,sab=', sa2, sb2, sqrt(sa2*sb2), sab
+
+    if (ieee_is_finite(avg_a) .and. ieee_is_finite(avg_b)) then
+        do i = 1, size
+            if (ieee_is_finite(data_a(i)) .and. ieee_is_finite(data_b(i))) then
+                val_a = data_a(i) - avg_a
+                val_b = data_b(i) - avg_b
+                if (abs(data_a(i) - data_b(i)) < errval) then
+                    val_b = val_a
+                endif
+                sab = sab + val_a * val_b
+                sa2 = sa2 + val_a * val_a
+                sb2 = sb2 + val_b * val_b
+            endif
+        end do
+        vara = sa2 / fsize
+        varb = sb2 / fsize
+        write(app_msg, *) 'sab avant=', sab
         call app_log(app_debug, app_msg)
-    elseif (sa2 == 0.0 .and. sb2 == 0.0) then
-        sab = 1.0
-    elseif (sa2 == 0.) then
-        sab = sqrt(varb)
-    else
-        sab = sqrt(vara)
-    endif
+        if (sa2 * sb2 /= 0.0) then
+            sab = sab / sqrt(sa2 * sb2)
+            write(app_msg, *) 'sa2,sb2,sqtr,sab=', sa2, sb2, sqrt(sa2*sb2), sab
+            call app_log(app_debug, app_msg)
+        elseif (sa2 == 0.0 .and. sb2 == 0.0) then
+            sab = 1.0
+        elseif (sa2 == 0.) then
+            sab = sqrt(varb)
+        else
+            sab = sqrt(vara)
+        endif
+    end if
 
     write(app_msg, *) 'sa2,sb2,vara,varb,sab=', sa2, sb2, vara, varb, sab
     call app_log(app_debug, app_msg)
@@ -631,30 +676,30 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
 
     if ((max_rel_err <= errlim) .and. (pack_err == 0)) then
         write(app_msg, equiv_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
-            max_rel_err, err, vara, sab, avg_a, avg_b - avg_a, max_err_abs, sum_err_abs
+            max_rel_err, err, vara, sab, avg_a, avg_diff, max_err_abs, sum_err_abs
         call app_log(APP_VERBATIM, app_msg)
     else if (pack_err > 0) then
         if (max_err_abs <= (pack_err * err_unit * 1.001)) then
             write(app_msg, equiv_pack_err_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
-                max_rel_err, err, vara, sab, avg_a, avg_b - avg_a, max_err_abs, sum_err_abs, pack_err * err_unit
+                max_rel_err, err, vara, sab, avg_a, avg_diff, max_err_abs, sum_err_abs, pack_err * err_unit
             call app_log(APP_VERBATIM, app_msg)
         else
             write(app_msg, diff_pack_err_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
-                max_rel_err, err, vara, sab, avg_a, avg_b - avg_a, max_err_abs, sum_err_abs, pack_err * err_unit
+                max_rel_err, err, vara, sab, avg_a, avg_diff, max_err_abs, sum_err_abs, pack_err * err_unit
             call app_log(APP_VERBATIM, app_msg)
             rcmp1d = 2
         endif
     else
         write(app_msg, diff_fmt) a%nomvar, b%etiket, level, a%ip2, a%ip3, &
-            max_rel_err, err, vara, sab, avg_a, avg_b - avg_a, max_err_abs, sum_err_abs
+            max_rel_err, err, vara, sab, avg_a, avg_diff, max_err_abs, sum_err_abs
         call app_log(APP_VERBATIM, app_msg)
         rcmp1d = 2
     endif
 
-    if ((nbDiff /= 0) .and. (pack_err > 0)) then
+    if ((num_diff /= 0) .and. (pack_err > 0)) then
         write(app_msg, diff_summary_fmt) '  <Difference> Number of elements differing is', &
-            nbDiff, ' out of ', size, &
-            ' elements, Ratio = ', (float(nbDiff) / float(size)) * 100.0, '%'
+            num_diff, ' out of ', size, &
+            ' elements, Ratio = ', (float(num_diff) / float(size)) * 100.0, '%'
         call app_log(APP_VERBATIM, app_msg)
         call statfldx(a)
         call statfldx(b)

@@ -3,8 +3,10 @@
 # differently from the normal case.
 #
 # The file contains seven records, in this order:
-#   I64S  64-bit SIGNED   -> RMN error, garbage values (fststat does not
-#                            handle 64-bit data; to be fixed later)
+#   I64S  64-bit SIGNED   -> skipped with a "NOT SUPPORTED" message (fststat
+#                            does not handle 64-bit integers; XDF cannot store
+#                            them and reading them as 4-byte elements gives
+#                            garbage)
 #   PINF  REAL/32 +Inf    -> stats line with Infinity values + warning
 #   NINF  REAL/32 -Inf    -> stats line with -Infinity values + warning
 #   NANF  REAL/32 NaN     -> stats line with correct values (NaN skipped)
@@ -15,8 +17,8 @@
 #                            NaN and infinity warnings
 #
 # This test checks:
-#   (a) I64S: a stats line is printed (garbage values) and the RMN error is
-#       logged,
+#   (a) I64S: the record is skipped with a "NOT SUPPORTED" message (no stats
+#       line, no RMN error),
 #   (b) PINF/NINF: a stats line is printed with Inf values and its own
 #       "Number of infinities" warning,
 #   (c) NANF: a stats line is printed with the correct mean (NaN is skipped)
@@ -29,7 +31,8 @@
 # (synchronized) logging channel, a record's warnings always appear right after
 # its stats line, so each warning can be attributed to the correct record.
 #
-# The exit code is non-zero because of the I64S RMN error.
+# The exit code is 0: the 64-bit integer record is skipped (not an error), and
+# the non-finite records only produce warnings.
 #
 # Usage: 02_fststat_special.sh <fststat>
 
@@ -83,18 +86,18 @@ get_block() {
 # The first token of the Mean: field (e.g. "0.200000E+01", "Infinity").
 mean_field() { echo "$1" | sed -n 's/.* Mean:[[:space:]]*\([^ ]*\).*/\1/p'; }
 
-echo "=== (a) I64S: 64-bit SIGNED -> RMN error, garbage values ==="
+echo "=== (a) I64S: 64-bit SIGNED -> skipped with a NOT SUPPORTED message ==="
 line=$(get_line "I64S")
-if [ -n "${line}" ]; then
-    ok "stats line for I64S present (garbage values expected)"
+if [ -z "${line}" ]; then
+    ok "no stats line for I64S (skipped)"
+else
+    bad "unexpected stats line for I64S"
     echo "    ${line}"
-else
-    bad "no stats line for I64S"
 fi
-if echo "${output}" | grep -q "compact_u_integer"; then
-    ok "RMN error 'compact_u_integer' logged"
+if echo "${output}" | grep -q "SKIPPING 64-bit INTEGER RECORD"; then
+    ok "'NOT SUPPORTED' skip message logged for I64S"
 else
-    bad "RMN error 'compact_u_integer' not logged"
+    bad "no 'NOT SUPPORTED' skip message for I64S"
 fi
 
 echo "=== (b) PINF/NINF: infinities -> Inf values + warning ==="
@@ -212,10 +215,10 @@ if echo "${output}" | grep -qE '^Status[[:space:]]*:'; then
 else
     bad "final Status banner missing (did fststat crash?)"
 fi
-if [ ${rc} -ne 0 ]; then
-    ok "exit code ${rc} (non-zero, expected due to I64S RMN error)"
+if [ ${rc} -eq 0 ]; then
+    ok "exit code 0 (64-bit int skipped, non-finite records only warn)"
 else
-    bad "exit code 0 (expected non-zero due to I64S RMN error)"
+    bad "exit code ${rc} (expected 0)"
 fi
 
 echo
