@@ -599,16 +599,15 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
                 max_rel_err = max(max_rel_err, rel_err)
                 err = err + rel_err
             endif
-        else if (ieee_is_nan(val_a) .ne. ieee_is_nan(val_b)) then
+        else if (ieee_is_nan(val_a) .neqv. ieee_is_nan(val_b)) then
             num_diff = num_diff + 1
             max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
         else if (ieee_is_nan(val_a) .and. ieee_is_nan(val_b)) then
             ! Both are NaN, consider them equivalent
-        else if (ieee_is_finite(val_a) .ne. ieee_is_finite(val_b)) then
+        else if (ieee_is_finite(val_a) .neqv. ieee_is_finite(val_b)) then
             num_diff = num_diff + 1
             max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
         else 
-            print *, 'val_a=', val_a, ' val_b=', val_b
             if (val_a /= val_b) then
             num_diff = num_diff + 1
             max_rel_err = ieee_value(max_rel_err, ieee_positive_inf)
@@ -621,7 +620,6 @@ integer function rcmp1d(a, b, limite, limval, pack_err, rawIp1)
 
     range_a = max_a - min_a
     range_b = max_b - min_b
-    print*, 'range_a=', range_a, ' range_b=', range_b
     irange = transfer(range_a, 1)
     irange = ishft(ishft(irange, -23) +1, 23)
     range_a = transfer(irange, 1.0)
