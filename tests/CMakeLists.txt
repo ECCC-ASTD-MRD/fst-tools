@@ -44,8 +44,7 @@ if (EC_INIT_DONE LESS 2)
         add_custom_target(test-script-files DEPENDS ${TEST_SCRIPTS_BUILD})
         add_dependencies(test_execs test-script-files)
 
-        find_package(Python3 REQUIRED COMPONENTS Interpreter)
-        add_test(NAME generate_fst COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/generate_fst.py)
+        add_test(NAME generate_fst COMMAND python3 ${CMAKE_CURRENT_BINARY_DIR}/generate_fst.py)
         set_tests_properties(generate_fst PROPERTIES
             FIXTURES_SETUP GEN_FST
             DEPENDS test-script-files
@@ -82,7 +81,7 @@ if (EC_INIT_DONE LESS 2)
         add_test(
             NAME 05_editfst_backend
             COMMAND ${CMAKE_CURRENT_BINARY_DIR}/editfst/05_editfst_backend.sh
-                    $<TARGET_FILE:editfst> ${Python3_EXECUTABLE}
+                    $<TARGET_FILE:editfst> python3
         )
         # Only PYTHONPATH is set: the rmn Python module locates librmn.so via a
         # path relative to its own install location.
